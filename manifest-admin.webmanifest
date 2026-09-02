@@ -1,0 +1,15 @@
+{
+  "name": "درجاتي — الإدارة",
+  "short_name": "درجاتي إدارة",
+  "description": "لوحة الإدارة لاستلام الدرجات",
+  "start_url": "./admin.html",
+  "scope": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#EDF3F0",
+  "theme_color": "#064E3B",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

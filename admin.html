@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#064E3B">
+<title>درجاتي — الإدارة</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest-admin.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#064E3B;--p2:#0A8068;--acc:#16A34A;--bg:#EDF3F0;--card:#fff;--ink:#0F231B;--mut:#6B7F75;--red:#DC2626;--amb:#B45309;--sh:0 4px 16px rgba(6,78,59,.10);--rad:18px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Tajawal',system-ui,sans-serif;background:#DDE5E1;display:flex;justify-content:center;min-height:100vh}
+.frame{width:100%;max-width:480px;height:100vh;height:100dvh;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.25)}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
+.screen.active{display:flex}
+.logo{width:96px;height:96px;border-radius:26px;box-shadow:0 10px 30px rgba(6,78,59,.35);margin-bottom:14px}
+.login-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:26px;background:linear-gradient(160deg,#064E3B 0%,#0A8068 60%,#16A34A 130%)}
+.login-wrap h1{color:#fff;font-size:32px;font-weight:900}
+.login-wrap p{color:#CFEAE0;font-size:13.5px;margin:4px 0 26px}
+.card{background:var(--card);border-radius:var(--rad);padding:16px;box-shadow:var(--sh);width:100%;max-width:380px;margin-bottom:10px}
+.card label{font-size:13px;font-weight:800;color:var(--mut);display:block;margin-bottom:6px}
+.card h3{color:var(--p);margin-bottom:9px;font-size:15px}
+input,textarea{width:100%;border:2px solid #E2E8E5;border-radius:12px;padding:12px;font-family:inherit;font-size:15px;background:#FAFCFB;color:var(--ink);margin-bottom:9px}
+input:focus,textarea:focus{outline:none;border-color:var(--acc)}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:13px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--acc),#0A8068);color:#fff;box-shadow:0 6px 16px rgba(22,163,74,.35);margin-top:6px}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:#fff;color:var(--p2);border:2px solid #D7E4DE;box-shadow:none}
+.btn.danger{background:#fff;color:var(--red);border:2px solid #FECACA;box-shadow:none}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px rgba(0,0,0,.2);z-index:5}
+.top img{width:38px;height:38px;border-radius:11px}
+.h-t{font-weight:900;font-size:17px;display:block}
+.h-s{font-size:11.5px;opacity:.85;display:block}
+.grow{flex:1}
+.ibtn{background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:10px;padding:7px 9px;font-size:16px;cursor:pointer}
+.ibtn:active{background:rgba(255,255,255,.3)}
+.wrap{flex:1;overflow-y:auto;padding:12px}
+.item{display:flex;gap:10px;padding:12px;background:#fff;border-radius:16px;margin-bottom:9px;cursor:pointer;box-shadow:var(--sh);align-items:center}
+.item:active{transform:scale(.985)}
+.avatar{width:44px;height:44px;border-radius:14px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0}
+.l1{display:flex;justify-content:space-between;gap:6px}
+.l1 b{font-size:15px}
+.time{font-size:11px;color:var(--mut);white-space:nowrap}
+.l2{font-size:12.5px;color:var(--mut);margin-top:2px}
+.l3{font-size:12.5px;color:var(--p2);margin-top:3px;font-weight:700}
+.badge{background:#DCFCE7;color:#166534;font-size:11px;font-weight:800;border-radius:12px;padding:4px 10px;white-space:nowrap}.badge.off{background:#E5E7EB;color:#6B7280}
+.badge.lock{background:#FEE2E2;color:var(--red)}
+.bnav{position:absolute;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid #E2E8E5;z-index:6}
+.bnav button{flex:1;background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--mut);padding:9px 0 11px;cursor:pointer;border-top:3px solid transparent}
+.bnav button.act{color:var(--p2);border-top-color:var(--acc)}
+table.pt{width:100%;border-collapse:collapse;font-size:12.5px}
+.pt th{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:9px 5px;font-size:11px;white-space:nowrap}
+.pt td{padding:9px 5px;border-bottom:1px solid #F0F4F2;text-align:center;white-space:nowrap}
+.pt td.nm{text-align:right;font-weight:700;white-space:normal}
+.pt tr:nth-child(even) td{background:#F7FAF9}
+.pt td.fail{color:var(--red);font-weight:800}
+.pt td.avg{background:#DCFCE7;font-weight:800;color:#166534}
+.pt td.none{color:#D1D5DB}
+.ghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:5px}
+.ghead b{color:var(--p);font-size:15px}
+.ghead span{font-size:11.5px;color:var(--mut)}
+.codechip{background:#DCFCE7;color:#166534;font-weight:800;border-radius:8px;padding:3px 9px;font-size:13px;direction:ltr;display:inline-block}
+.mrow{display:flex;gap:8px}
+.ib{background:#F1F5F3;border:none;border-radius:10px;padding:6px 9px;font-size:15px;cursor:pointer}
+.ib:active{background:#E2E8E5}
+.empty{text-align:center;color:var(--mut);padding:40px 15px;font-size:14px;line-height:1.9}
+.hint{font-size:12.5px;color:var(--mut);line-height:1.7;margin-bottom:9px}
+.toast{position:absolute;bottom:70px;left:50%;transform:translateX(-50%) translateY(90px);background:#10221B;color:#fff;padding:12px 20px;border-radius:26px;font-size:13.5px;font-weight:700;z-index:99;opacity:0;transition:.25s;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+.ovl{position:absolute;inset:0;background:rgba(6,30,22,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ovl.show{display:flex}
+.modal{background:#fff;border-radius:20px;padding:18px;width:100%;max-width:400px}
+.modal h3{color:var(--p);margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <section class="screen active" id="s-login">
+    <div class="login-wrap">
+      <img src="icon.png" class="logo" alt="درجاتي">
+      <h1>درجاتي — الإدارة</h1>
+      <p>لوحة استلام درجات المعلمين ومتابعتها</p>
+      <div class="card">
+        <label>مفتاح الإدارة</label>
+        <input id="keyIn" dir="ltr" placeholder="مفتاح الإدارة" style="text-align:center">
+        <button class="btn" onclick="adminLogin()">دخول الإدارة</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="s-main">
+    <header class="top">
+      <img src="icon.png" alt="">      <span class="grow"><span class="h-t">درجاتي — الإدارة</span><span class="h-s" id="admSub"></span></span>
+      <button class="ibtn" onclick="loadDash();toast('⏳ جارٍ التحديث...')">↻</button>
+      <button class="ibtn" onclick="logoutAdmin()">⏻</button>
+    </header>
+    <div class="wrap" style="padding-bottom:64px">
+      <div id="tab-dash">
+        <input id="dashSearch" placeholder="🔍 بحث عن معلم..." oninput="renderDash()">
+        <div id="dashList"></div>
+      </div>
+      <div id="tab-team" hidden>
+        <div class="card">
+          <h3>➕ إضافة معلم جديد</h3>
+          <input id="ntName" placeholder="اسم المعلم">
+          <input id="ntSub" placeholder="المادة">
+          <input id="ntCls" placeholder="الصفوف — افصل بفاصلة: الخامس أ، السادس ب">
+          <button class="btn" onclick="doAddTeacher()">توليد كود وإضافة</button>
+          <div id="ntRes"></div>
+        </div>
+        <div id="teamList"></div>
+      </div>
+      <div id="tab-set" hidden>
+        <div class="card">
+          <h3>🔗 ربط الخادم</h3>
+          <input id="setUrl" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec">
+          <button class="btn" onclick="saveSettings()">حفظ واختبار الاتصال</button>
+          <div id="connRes"></div>
+        </div>
+        <div class="card">
+          <h3>🔑 مفتاح الإدارة</h3>
+          <input id="setKey" dir="ltr">
+          <button class="btn ghost" onclick="saveKey()">حفظ المفتاح</button>
+        </div>
+        <button class="btn danger" onclick="logoutAdmin()">تسجيل الخروج</button>
+      </div>
+    </div>
+    <nav class="bnav">
+      <button data-tab="dash" class="act" onclick="adminTab('dash')">📥 الوارد</button>
+      <button data-tab="team" onclick="adminTab('team')">👨‍ المعلمون</button>
+      <button data-tab="set" onclick="adminTab('set')">⚙️ الإعدادات</button>
+    </nav>
+  </section>
+
+  <section class="screen" id="s-tview">
+    <header class="top">
+      <button class="ibtn" onclick="go('s-main')">→</button>
+      <span class="grow"><span class="h-t" id="tvName"></span><span class="h-s" id="tvSub"></span></span>
+      <button class="ibtn" title="تصدير Excel" onclick="exportCSV()">⬇️</button>
+      <button class="ibtn" title="طباعة" onclick="printTView()">🖨️</button>
+    </header>
+    <div class="wrap" id="tvBox"></div>  </section>
+
+  <div class="ovl" id="confirmOvl"><div class="modal">
+    <h3>تأكيد</h3>
+    <p id="cfMsg" style="margin-bottom:14px;line-height:1.8"></p>
+    <div class="mrow">
+      <button class="btn ghost" style="margin:0" onclick="hideModal('confirmOvl')">إلغاء</button>
+      <button class="btn" style="margin:0" onclick="confirmYes()">نعم، متأكد</button>
+    </div>
+  </div></div>
+
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+/* ⚠️ ضع رابط الخادم بين القوسين (نفس الرابط الموجود في index.html) */
+const SERVER_URL = "https://script.google.com/macros/s/AKfycbwILgufN829u6CAXuyRJGrqIYdYv-8zGAspc3z5nO1TbapO3jn0iQV4ftYoSyPHOmb3/exec";
+
+const MONTHS=['تشرين الأول','تشرين الثاني','كانون الأول','كانون الثاني','شباط','آذار','نيسان'];
+const AR='٠١٢٣٤٥٦٧٨٩';
+const arNum=x=>String(x).replace(/\d/g,d=>AR[d]);
+const $=s=>document.querySelector(s);
+const url=()=>localStorage.getItem('d_url')||SERVER_URL;
+const key=()=>localStorage.getItem('d_key')||'';
+let toastT,_yes=null;
+const ADM={teachers:[],tv:null};
+const AV=['#0A8068','#0EA5E9','#F59E0B','#EF4444','#8B5CF6','#F97316'];
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');}
+function toast(m,e){const t=$('#toast');t.textContent=m;t.className='toast show'+(e?' err':'');clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',3500);}
+function hideModal(id){$('#'+id).classList.remove('show');}
+function confirmDlg(m,f){$('#cfMsg').textContent=m;_yes=f;$('#confirmOvl').classList.add('show');}
+function confirmYes(){hideModal('confirmOvl');if(_yes)_yes();_yes=null;}
+function esc(s){return String(s??'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>');}
+function escA(s){return esc(s).replace(/"/g,'"');}
+function ago(ms){if(!ms)return'';const s=Math.floor((Date.now()-ms)/1000);if(s<60)return'الآن';const m=Math.floor(s/60);if(m<60)return'قبل '+arNum(m)+' د';const h=Math.floor(m/60);if(h<24)return'قبل '+arNum(h)+' س';const d=Math.floor(h/24);return d<30?'قبل '+arNum(d)+' يوم':new Date(ms).toLocaleDateString('ar');}
+function fmtDate(ms){return new Date(ms).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'});}
+function copyText(s){if(navigator.clipboard){navigator.clipboard.writeText(s).then(()=>toast('تم النسخ ✓')).catch(()=>fb(s));}else fb(s);}
+function fb(s){const ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('تم النسخ ✓');}
+function shareWa(code,name){
+  const msg='مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي» لإدخال الدرجات:\n\n🔑 '+code+'\n\nثبّت التطبيق من الرابط الذي أرسلته لك وأدخل هذا الكود.';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+async function api(p,ms){
+  if(!url())throw{net:1};
+  const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),ms||25000);
+  try{const r=await fetch(url(),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p),signal:ctl.signal});return await r.json();}
+  finally{clearTimeout(t);}
+}
+
+async function adminLogin(){  const k=$('#keyIn').value.trim();
+  if(!k){toast('أدخل مفتاح الإدارة',true);return;}
+  if(!url()){toast('⚠️ رابط الخادم غير موضوع في الملف',true);return;}
+  try{
+    const r=await api({action:'adminLogin',key:k});
+    if(!r.ok){toast('❌ '+r.error,true);return;}
+    localStorage.setItem('d_key',k);localStorage.setItem('d_admin','1');
+    enterAdmin();
+  }catch(e){toast('تعذر الاتصال — تحقق من الإنترنت',true);}
+}
+function enterAdmin(){
+  if(localStorage.getItem('d_admin')!=='1'){go('s-login');return;}
+  $('#setUrl').value=url();$('#setKey').value=key();
+  go('s-main');adminTab('dash');loadDash();
+}
+function logoutAdmin(){confirmDlg('تسجيل الخروج من لوحة الإدارة؟',()=>{localStorage.removeItem('d_admin');go('s-login');});}
+function adminTab(t){
+  ['dash','team','set'].forEach(x=>{
+    $('#tab-'+x).hidden=x!==t;
+    document.querySelector('.bnav button[data-tab="'+x+'"]').classList.toggle('act',x===t);
+  });
+  if(t==='team')renderTeam();
+  if(t==='dash')renderDash();
+}
+async function loadDash(){
+  if(!key())return;
+  try{
+    const r=await api({action:'adminData',key:key()});
+    if(!r.ok){
+      if(/مفتاح/.test(r.error)){toast('مفتاح الإدارة غير صحيح',true);localStorage.removeItem('d_admin');go('s-login');}
+      else toast(r.error,true);
+      return;
+    }
+    ADM.teachers=r.teachers;renderDash();renderTeam();
+  }catch(e){$('#dashList').innerHTML='<div class="empty">⚠️ تعذر الاتصال بالخادم<br>تحقق من الإنترنت</div>';}
+}
+function renderDash(){
+  const q=($('#dashSearch').value||'').trim();
+  let list=ADM.teachers.slice();
+  if(q)list=list.filter(t=>(t.name+t.subject+t.code).includes(q));
+  list.sort((a,b)=>(b.lastSent||0)-(a.lastSent||0));
+  const sent=ADM.teachers.filter(t=>t.sentCount>0).length;
+  $('#admSub').textContent='أرسل '+arNum(sent)+' من '+arNum(ADM.teachers.length)+' معلمًا';
+  const box=$('#dashList');
+  if(!list.length){box.innerHTML='<div class="empty">لا يوجد معلمون بعد.<br>أضفهم من تبويب «المعلمون» 👨‍🏫</div>';return;}
+  box.innerHTML=list.map((t,i)=>{
+    const has=t.sentCount>0;
+    return '<div class="item" onclick="openTeacher(\''+escA(t.code)+'\')">'
+      +'<div class="avatar" style="background:'+AV[i%AV.length]+'">'+esc((t.name||'؟').trim().charAt(0))+'</div>'
+      +'<div class="grow"><div class="l1"><b>'+esc(t.name)+(t.locked?' <span class="badge lock">مقفل 🔒</span>':'')+'</b><span class="time">'+(has?ago(t.lastSent):'—')+'</span></div>'      +'<div class="l2">'+esc(t.subject||'—')+(t.classes?' • '+esc(t.classes):'')+'</div>'
+      +'<div class="l3">'+(has?('أرسل '+arNum(t.sentCount)+' درجة — '+esc(t.groups.slice(0,2).join('، '))):'لم يرسل الدرجات بعد')+'</div></div>'
+      +'<span class="badge'+(has?'':' off')+'">'+(has?'✓ مُرسل':'بانتظار')+'</span></div>';
+  }).join('');
+}
+async function openTeacher(code){
+  const t=ADM.teachers.find(x=>x.code===code);
+  $('#tvName').textContent=t?t.name:code;
+  $('#tvSub').textContent=(t&&t.subject?t.subject+' • ':'')+'كود: '+code;
+  $('#tvBox').innerHTML='<div class="empty">⏳ جارٍ تحميل الدرجات...</div>';
+  go('s-tview');
+  try{
+    const r=await api({action:'teacherGrades',key:key(),code:code});
+    if(!r.ok){toast(r.error,true);return;}
+    ADM.tv={code:code,name:t?t.name:code,rows:r.rows,groups:buildPivot(r.rows)};
+    renderTView();
+  }catch(e){$('#tvBox').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';}
+}
+function buildPivot(rows){
+  const g={};
+  rows.forEach(r=>{
+    if(!g[r.cls])g[r.cls]={cls:r.cls,students:{},order:[],last:0,max:100};
+    const x=g[r.cls];
+    if(!x.students[r.name]){x.students[r.name]={name:r.name,m:{}};x.order.push(r.name);}
+    x.students[r.name].m[r.month]=Number(r.degree);
+    x.max=Number(r.max)||x.max;x.last=Math.max(x.last,r.time);
+  });
+  return Object.values(g).sort((a,b)=>b.last-a.last);
+}
+function pivotTable(g){
+  let h='<table class="pt"><tr><th>#</th><th>اسم التلميذ</th>'+MONTHS.map(m=>'<th>'+m+'</th>').join('')+'<th>المعدل</th></tr>';
+  g.order.forEach((n,i)=>{
+    const s=g.students[n];let sum=0,cnt=0;
+    const cells=MONTHS.map(m=>{
+      const v=s.m[m];
+      if(v===undefined)return'<td class="none">—</td>';
+      sum+=v;cnt++;
+      return'<td class="'+(v<g.max/2?'fail':'')+'">'+arNum(v)+'</td>';
+    }).join('');
+    const avg=cnt?arNum((sum/cnt).toFixed(1)).replace('.','٫'):'—';
+    h+='<tr><td>'+arNum(i+1)+'</td><td class="nm">'+esc(n)+'</td>'+cells+'<td class="avg">'+avg+'</td></tr>';
+  });
+  return h+'</table>';
+}
+function renderTView(){
+  const gs=ADM.tv.groups;
+  if(!gs.length){$('#tvBox').innerHTML='<div class="empty">لم يرسل هذا المعلم درجات بعد</div>';return;}
+  $('#tvBox').innerHTML=gs.map(g=>'<div class="card" style="overflow-x:auto;max-width:none"><div class="ghead"><b>🏫 '+esc(g.cls)+'</b><span>العظمى: '+arNum(g.max)+' • آخر إرسال: '+fmtDate(g.last)+'</span></div>'+pivotTable(g)+'</div>').join('');
+  ADM.tv.printHtml='<h2>كشف درجات: '+esc(ADM.tv.name)+'</h2>'+gs.map(g=>'<h3>الصف: '+esc(g.cls)+' — العظمى: '+arNum(g.max)+'</h3>'+pivotTable(g)).join('');
+}function exportCSV(){
+  if(!ADM.tv||!ADM.tv.groups.length){toast('لا توجد درجات للتصدير',true);return;}
+  const c=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const L=[c('كشف درجات المعلم: '+ADM.tv.name)];
+  ADM.tv.groups.forEach(g=>{
+    L.push('');
+    L.push(c('الصف: '+g.cls)+'،'+c('الدرجة العظمى: '+arNum(g.max)));
+    L.push(['اسم التلميذ',...MONTHS,'المعدل'].map(c).join(','));
+    g.order.forEach(n=>{
+      const s=g.students[n];let sum=0,cnt=0;
+      const vals=MONTHS.map(m=>{const v=s.m[m];if(v===undefined)return c('');sum+=v;cnt++;return c(arNum(v));});
+      const avg=cnt?c(arNum((sum/cnt).toFixed(1)).replace('.','٫')):c('');
+      L.push([c(n),...vals,avg].join(','));
+    });
+  });
+  const blob=new Blob(['\uFEFF'+L.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='درجات-'+ADM.tv.name+'.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  toast('تم تنزيل ملف Excel ✓');
+}
+function printTView(){
+  if(!ADM.tv||!ADM.tv.printHtml){toast('لا توجد درجات',true);return;}
+  const w=window.open('','_blank');
+  w.document.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title><style>body{font-family:Arial,Tajawal,sans-serif}table{border-collapse:collapse;width:100%;margin-bottom:22px}td,th{border:1px solid #333;padding:6px;text-align:center;font-size:13px}th{background:#064E3B;color:#fff}td.nm{text-align:right}h2,h3{color:#064E3B}</style></head><body>'+ADM.tv.printHtml+'</body></html>');
+  w.document.close();setTimeout(()=>{try{w.print();}catch(e){}},350);
+}
+function renderTeam(){
+  const box=$('#teamList');
+  if(!ADM.teachers.length){box.innerHTML='<div class="empty">أضف أول معلم من النموذج أعلاه ☝️</div>';return;}
+  box.innerHTML=ADM.teachers.map((t,i)=>
+    '<div class="item" style="cursor:default"><div class="avatar" style="background:'+AV[i%AV.length]+'">'+esc((t.name||'؟').charAt(0))+'</div>'
+    +'<div class="grow"><div class="l1"><b>'+esc(t.name)+'</b>'+(t.locked?'<span class="badge lock">مقفل 🔒</span>':'')+'</div>'
+    +'<div class="l2">'+esc(t.subject||'—')+(t.classes?' • '+esc(t.classes):'')+'</div>'
+    +'<div class="l3"><span class="codechip">'+esc(t.code)+'</span></div></div>'
+    +'<div style="display:flex;flex-direction:column;gap:5px">'
+    +'<div class="mrow">'
+    +'<button class="ib" title="نسخ الكود" onclick="copyText(\''+escA(t.code)+'\')">📄</button>'
+    +'<button class="ib" title="إرسال واتساب" onclick="shareWa(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">💬</button>'
+    +'<button class="ib" title="'+(t.locked?'فتح الحساب':'قفل الحساب')+'" onclick="toggleLock(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">'+(t.locked?'🔓':'🔒')+'</button>'
+    +'</div>'
+    +'<button class="ib" title="حذف" onclick="delTeacherCode(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">🗑️</button>'
+    +'</div></div>').join('');
+}
+function toggleLock(code,name){
+  const t=ADM.teachers.find(x=>x.code===code);
+  const lock=!t.locked;
+  confirmDlg(lock?'قفل حساب «'+name+'»؟ لن يستطيع الدخول أو الإرسال حتى تفتحه.':'فتح حساب «'+name+'»؟',async()=>{
+    try{
+      const r=await api({action:'toggleLock',key:key(),code:code});      toast(r.ok?(r.locked?'🔒 تم قفل الحساب':'🔓 تم فتح الحساب'):r.error,!r.ok);
+      if(r.ok)loadDash();
+    }catch(e){toast('تعذر الاتصال',true);}
+  });
+}
+async function doAddTeacher(){
+  const name=$('#ntName').value.trim(),subject=$('#ntSub').value.trim(),classes=$('#ntCls').value.trim();
+  if(!name){toast('اسم المعلم مطلوب',true);return;}
+  try{
+    const r=await api({action:'addTeacher',key:key(),name:name,subject:subject,classes:classes});
+    if(!r.ok){toast(r.error,true);return;}
+    $('#ntName').value='';$('#ntSub').value='';$('#ntCls').value='';
+    $('#ntRes').innerHTML='<div style="background:#DCFCE7;color:#166534;border-radius:12px;padding:10px;margin-top:8px;font-weight:800;text-align:center">✅ كود المعلم: <span class="codechip">'+esc(r.code)+'</span></div>'
+      +'<div class="mrow"><button class="btn ghost" onclick="copyText(\''+escA(r.code)+'\')">📄 نسخ الكود</button>'
+      +'<button class="btn" onclick="shareWa(\''+escA(r.code)+'\',\''+escA(name)+'\')">💬 إرسال عبر واتساب</button></div>';
+    loadDash();
+  }catch(e){toast('تعذر الاتصال بالخادم',true);}
+}
+function delTeacherCode(code,name){
+  confirmDlg('حذف المعلم «'+name+'» من القائمة؟ (درجاته تبقى محفوظة)',async()=>{
+    try{const r=await api({action:'delTeacher',key:key(),code:code});
+      toast(r.ok?'تم الحذف ✓':r.error,!r.ok);if(r.ok)loadDash();
+    }catch(e){toast('تعذر الاتصال',true);}
+  });
+}
+async function saveSettings(){
+  const v=$('#setUrl').value.trim();if(!v){toast('ألصق الرابط أولًا',true);return;}
+  localStorage.setItem('d_url',v);
+  $('#connRes').innerHTML='<p class="hint">⏳ جارٍ الاختبار...</p>';
+  try{const r=await api({action:'ping'},15000);
+    $('#connRes').innerHTML=r.ok?'<p class="hint" style="color:#166534;font-weight:800">✅ متصل بالخادم</p>':'<p class="hint" style="color:var(--red)">❌ استجابة غير متوقعة</p>';
+  }catch(e){$('#connRes').innerHTML='<p class="hint" style="color:var(--red)">❌ تعذر الاتصال</p>';}
+}
+function saveKey(){localStorage.setItem('d_key',$('#setKey').value.trim());toast('تم حفظ المفتاح ✓');}
+(function init(){
+  if(localStorage.getItem('d_admin')==='1')enterAdmin();
+})();
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+</script>
+</body>
+</html>
