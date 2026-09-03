@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#064E3B">
-<title>درجاتي — الإدارة</title>
+<meta name="theme-color" content="#0F172A">
+<title>درجاتي — لوحة التحكم</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
@@ -12,242 +12,680 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--p:#064E3B;--p2:#0A8068;--acc:#16A34A;--bg:#EDF3F0;--card:#fff;--ink:#0F231B;--mut:#6B7F75;--red:#DC2626;--amb:#B45309;--sh:0 4px 16px rgba(6,78,59,.10);--rad:18px}
+:root{
+  --bg:#F8FAFC;--glass:rgba(255,255,255,.72);--glass-b:rgba(255,255,255,.4);
+  --ink:#0F172A;--ink2:#334155;--mut:#64748B;--line:#E2E8F0;
+  --p:#1E3A8A;--p2:#3B82F6;--p3:#60A5FA;
+  --gold:#D97706;--gold2:#F59E0B;--gold-bg:#FEF3C7;
+  --mgr:#7C3AED;--mgr2:#A78BFA;--mgr-bg:#EDE9FE;
+  --acc:#10B981;--acc2:#34D399;--acc-bg:#D1FAE5;
+  --red:#DC2626;--red-bg:#FEE2E2;
+  --rad:14px;--sh:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.08);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Tajawal',system-ui,sans-serif;background:#DDE5E1;display:flex;justify-content:center;min-height:100vh}
-.frame{width:100%;max-width:480px;height:100vh;height:100dvh;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.25)}
-.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
+html,body{height:100%}
+body{
+  font-family:'Tajawal',system-ui,sans-serif;
+  background:
+    radial-gradient(1200px 600px at 90% -10%,#DBEAFE 0%,transparent 60%),
+    radial-gradient(1000px 500px at -10% 110%,#EDE9FE 0%,transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  overflow:hidden;
+}
+.screen{display:none;height:100dvh;flex-direction:column}
 .screen.active{display:flex}
-.logo{width:96px;height:96px;border-radius:26px;box-shadow:0 10px 30px rgba(6,78,59,.35);margin-bottom:14px}
-.login-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:26px;background:linear-gradient(160deg,#064E3B 0%,#0A8068 60%,#16A34A 130%)}
-.login-wrap h1{color:#fff;font-size:32px;font-weight:900}
-.login-wrap p{color:#CFEAE0;font-size:13.5px;margin:4px 0 26px}
-.card{background:var(--card);border-radius:var(--rad);padding:16px;box-shadow:var(--sh);width:100%;max-width:380px;margin-bottom:10px}
-.card label{font-size:13px;font-weight:800;color:var(--mut);display:block;margin-bottom:6px}
-.card h3{color:var(--p);margin-bottom:9px;font-size:15px}
-input,textarea{width:100%;border:2px solid #E2E8E5;border-radius:12px;padding:12px;font-family:inherit;font-size:15px;background:#FAFCFB;color:var(--ink);margin-bottom:9px}
-input:focus,textarea:focus{outline:none;border-color:var(--acc)}
-.btn{display:block;width:100%;border:none;border-radius:14px;padding:13px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--acc),#0A8068);color:#fff;box-shadow:0 6px 16px rgba(22,163,74,.35);margin-top:6px}
-.btn:active{transform:scale(.98)}
-.btn.ghost{background:#fff;color:var(--p2);border:2px solid #D7E4DE;box-shadow:none}
-.btn.danger{background:#fff;color:var(--red);border:2px solid #FECACA;box-shadow:none}
-.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px rgba(0,0,0,.2);z-index:5}
-.top img{width:38px;height:38px;border-radius:11px}
-.h-t{font-weight:900;font-size:17px;display:block}
-.h-s{font-size:11.5px;opacity:.85;display:block}
-.grow{flex:1}
-.ibtn{background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:10px;padding:7px 9px;font-size:16px;cursor:pointer}
-.ibtn:active{background:rgba(255,255,255,.3)}
-.wrap{flex:1;overflow-y:auto;padding:12px}
-.item{display:flex;gap:10px;padding:12px;background:#fff;border-radius:16px;margin-bottom:9px;cursor:pointer;box-shadow:var(--sh);align-items:center}
-.item:active{transform:scale(.985)}
-.avatar{width:44px;height:44px;border-radius:14px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0}
-.l1{display:flex;justify-content:space-between;gap:6px}
-.l1 b{font-size:15px}
-.time{font-size:11px;color:var(--mut);white-space:nowrap}
-.l2{font-size:12.5px;color:var(--mut);margin-top:2px}
-.l3{font-size:12.5px;color:var(--p2);margin-top:3px;font-weight:700}
-.badge{background:#DCFCE7;color:#166534;font-size:11px;font-weight:800;border-radius:12px;padding:4px 10px;white-space:nowrap}.badge.off{background:#E5E7EB;color:#6B7280}
-.badge.lock{background:#FEE2E2;color:var(--red)}
-.bnav{position:absolute;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid #E2E8E5;z-index:6}
-.bnav button{flex:1;background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--mut);padding:9px 0 11px;cursor:pointer;border-top:3px solid transparent}
-.bnav button.act{color:var(--p2);border-top-color:var(--acc)}
-table.pt{width:100%;border-collapse:collapse;font-size:12.5px}
-.pt th{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:9px 5px;font-size:11px;white-space:nowrap}
-.pt td{padding:9px 5px;border-bottom:1px solid #F0F4F2;text-align:center;white-space:nowrap}
-.pt td.nm{text-align:right;font-weight:700;white-space:normal}
-.pt tr:nth-child(even) td{background:#F7FAF9}
+
+/* ── شاشة الدخول ── */
+.login{
+  flex:1;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 50%,#3B82F6 100%);
+  position:relative;overflow:hidden;
+}
+.login::before,.login::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;
+}
+.login::before{width:400px;height:400px;background:#F59E0B;top:-100px;right:-100px;}
+.login::after{width:500px;height:500px;background:#A78BFA;bottom:-150px;left:-150px;}
+.lcard{  background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.5);border-radius:24px;padding:36px 32px;
+  width:100%;max-width:420px;box-shadow:0 30px 80px rgba(15,23,42,.4);
+  position:relative;z-index:2;animation:pop .5s cubic-bezier(.2,.8,.2,1.2);
+}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:none}}
+.lcard .hero{display:flex;gap:14px;align-items:center;margin-bottom:20px}
+.lcard .hero img{width:64px;height:64px;border-radius:18px;box-shadow:0 10px 28px rgba(30,58,138,.35)}
+.lcard .hero h1{color:var(--p);font-size:24px;font-weight:900;line-height:1.2}
+.lcard .hero small{color:var(--mut);font-size:12.5px;display:block;margin-top:3px}
+.lcard p.lead{color:var(--ink2);font-size:13.5px;margin:6px 0 18px;line-height:1.7}
+input,select,textarea{
+  width:100%;border:1.5px solid var(--line);border-radius:11px;padding:13px 14px;
+  font-family:inherit;font-size:15px;background:#fff;color:var(--ink);margin-bottom:10px;transition:.2s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--p2);box-shadow:0 0 0 4px rgba(59,130,246,.1)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:none;border-radius:11px;padding:13px 18px;font-family:inherit;font-size:14.5px;
+  font-weight:800;cursor:pointer;transition:.15s;width:100%;margin-top:6px;
+}
+.btn.pri{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:0 6px 16px rgba(59,130,246,.35)}
+.btn.pri:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(59,130,246,.45)}
+.btn.pri:active{transform:translateY(0)}
+.btn.ghost{background:#fff;color:var(--p);border:1.5px solid var(--line);box-shadow:none}
+.btn.ghost:hover{background:#F8FAFC;border-color:var(--p2)}
+.btn.danger{background:#fff;color:var(--red);border:1.5px solid #FECACA}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;box-shadow:0 6px 16px rgba(245,158,11,.35)}
+.btn.purp{background:linear-gradient(135deg,var(--mgr),var(--mgr2));color:#fff;box-shadow:0 6px 16px rgba(124,58,237,.3)}
+.btn.ok{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
+.btn.sm{width:auto;padding:9px 14px;font-size:13px;border-radius:9px;margin:0}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+
+/* ── الهيكل ── */
+.app{flex:1;display:flex;overflow:hidden;position:relative}
+.side{
+  width:240px;background:rgba(15,23,42,.96);backdrop-filter:blur(20px);
+  color:#fff;display:flex;flex-direction:column;flex-shrink:0;z-index:10;
+}
+.side .brand{padding:20px 18px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(255,255,255,.08)}
+.side .brand img{width:40px;height:40px;border-radius:12px;box-shadow:0 6px 16px rgba(59,130,246,.35)}
+.side .brand b{font-size:16px;font-weight:900;display:block}
+.side .brand small{font-size:10.5px;opacity:.6;font-weight:500}
+.snav{
+  background:none;border:none;color:rgba(255,255,255,.72);font-family:inherit;
+  font-size:14px;font-weight:700;text-align:right;padding:13px 18px;cursor:pointer;
+  display:flex;align-items:center;gap:11px;transition:.15s;border-inline-start:3px solid transparent;
+}
+.snav .ico{font-size:16px;width:20px;text-align:center}
+.snav:hover{background:rgba(255,255,255,.06);color:#fff}.snav.act{background:linear-gradient(90deg,rgba(59,130,246,.18),transparent);color:#fff;border-inline-start-color:var(--p3)}
+.sfoot{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.rolecard{
+  background:rgba(255,255,255,.05);border-radius:12px;padding:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.rolecard .dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px}
+.rolecard.dev .dot{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff}
+.rolecard.mgr .dot{background:linear-gradient(135deg,var(--mgr),var(--mgr2));color:#fff}
+.rolecard b{font-size:12.5px;font-weight:800;display:block;color:#fff}
+.rolecard small{font-size:10.5px;color:rgba(255,255,255,.5)}
+.rolecard .exit{margin-inline-start:auto;background:rgba(255,255,255,.08);border:none;color:#fff;border-radius:8px;padding:6px 9px;font-size:13px;cursor:pointer}
+.rolecard .exit:hover{background:rgba(255,255,255,.15)}
+
+.maincol{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.topbar{
+  background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--glass-b);padding:14px 22px;
+  display:flex;align-items:center;gap:14px;z-index:5;
+}
+.topbar .tb-title b{font-size:17px;font-weight:900;color:var(--ink);display:block}
+.topbar .tb-title small{font-size:11.5px;color:var(--mut)}
+.topbar .search{flex:1;max-width:380px;position:relative}
+.topbar .search input{padding-right:36px;margin:0}
+.topbar .search::before{content:'🔍';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.topbar .tb-actions{display:flex;gap:8px}
+.iconbtn{
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:.15s;
+}
+.iconbtn:hover{border-color:var(--p2);background:#F8FAFC}
+.content{flex:1;overflow-y:auto;padding:22px;max-width:1400px;width:100%;margin:0 auto}
+.content h2.title{font-size:20px;font-weight:900;color:var(--ink);margin-bottom:6px}
+.content p.subt{color:var(--mut);font-size:13px;margin-bottom:18px}
+
+/* ── بطاقات الإحصاء ── */
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi .k{
+  background:#fff;border-radius:16px;padding:18px;box-shadow:var(--sh);
+  display:flex;gap:14px;align-items:center;border:1px solid var(--line);
+  transition:.2s;position:relative;overflow:hidden;
+}
+.kpi .k:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(15,23,42,.1)}
+.kpi .k .icn{
+  width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.kpi .k .icn.c1{background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:var(--p)}
+.kpi .k .icn.c2{background:linear-gradient(135deg,var(--acc-bg),#A7F3D0);color:#047857}
+.kpi .k .icn.c3{background:linear-gradient(135deg,var(--gold-bg),#FDE68A);color:var(--gold)}.kpi .k .icn.c4{background:linear-gradient(135deg,var(--red-bg),#FECACA);color:var(--red)}
+.kpi .k b{font-size:22px;font-weight:900;color:var(--ink);display:block}
+.kpi .k small{font-size:11.5px;color:var(--mut);font-weight:600}
+
+/* ── البطاقات العامة ── */
+.card{
+  background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;
+  box-shadow:var(--sh);border:1px solid var(--line);
+}
+.card .ctitle{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .csub{color:var(--mut);font-size:12.5px;margin-bottom:14px}
+.card h3{color:var(--ink);margin-bottom:10px;font-size:15px;font-weight:800}
+
+/* ── قائمة المعلمين ── */
+.tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.tcard{
+  background:#fff;border-radius:16px;padding:16px;cursor:pointer;
+  border:1px solid var(--line);box-shadow:var(--sh);transition:.2s;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.tcard:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.12);border-color:var(--p3)}
+.tcard .ava{
+  width:48px;height:48px;border-radius:13px;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0;
+}
+.tcard .body{flex:1;min-width:0}
+.tcard .body .nm{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tcard .body .sub{font-size:12px;color:var(--mut);margin-bottom:6px}
+.tcard .body .meta{font-size:11.5px;color:var(--p2);font-weight:700}
+.tcard .status{text-align:left;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;align-self:flex-start}
+.tcard .status.on{background:var(--acc-bg);color:#047857}
+.tcard .status.off{background:#F1F5F9;color:var(--mut)}
+.tcard .status.lock{background:var(--red-bg);color:var(--red)}
+
+/* ── علامات الحالة ── */
+.pill{display:inline-block;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px}
+.pill.lock{background:var(--red-bg);color:var(--red)}
+.pill.dev{background:var(--gold-bg);color:var(--gold)}
+.pill.mgr{background:var(--mgr-bg);color:var(--mgr)}
+.codechip{
+  background:#F1F5F9;color:var(--ink);font-weight:800;border-radius:7px;
+  padding:3px 9px;font-size:12.5px;direction:ltr;display:inline-block;font-family:monospace;
+}
+
+/* ── الجداول ── */
+.tbl{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:#fff}
+table.pt{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+.pt th{
+  background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;
+  padding:12px 8px;font-size:11.5px;white-space:nowrap;font-weight:800;text-align:center;}
+.pt td{padding:12px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;color:var(--ink2)}
+.pt td.nm{text-align:right;font-weight:700;white-space:normal;color:var(--ink)}
+.pt tr:nth-child(even) td{background:#FAFBFC}
+.pt tr:hover td{background:#F0F7FF}
 .pt td.fail{color:var(--red);font-weight:800}
-.pt td.avg{background:#DCFCE7;font-weight:800;color:#166534}
+.pt td.avg{background:var(--acc-bg);font-weight:800;color:#047857}
 .pt td.none{color:#D1D5DB}
-.ghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:5px}
-.ghead b{color:var(--p);font-size:15px}
-.ghead span{font-size:11.5px;color:var(--mut)}
-.codechip{background:#DCFCE7;color:#166534;font-weight:800;border-radius:8px;padding:3px 9px;font-size:13px;direction:ltr;display:inline-block}
-.mrow{display:flex;gap:8px}
-.ib{background:#F1F5F3;border:none;border-radius:10px;padding:6px 9px;font-size:15px;cursor:pointer}
-.ib:active{background:#E2E8E5}
-.empty{text-align:center;color:var(--mut);padding:40px 15px;font-size:14px;line-height:1.9}
-.hint{font-size:12.5px;color:var(--mut);line-height:1.7;margin-bottom:9px}
-.toast{position:absolute;bottom:70px;left:50%;transform:translateX(-50%) translateY(90px);background:#10221B;color:#fff;padding:12px 20px;border-radius:26px;font-size:13.5px;font-weight:700;z-index:99;opacity:0;transition:.25s;max-width:90%;text-align:center}
+.ghead{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+  flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px dashed var(--line);
+}
+.ghead .gh-left{display:flex;gap:10px;align-items:center}
+.ghead .gh-left b{color:var(--p);font-size:15px;font-weight:900}
+.ghead .gh-left .gchips{display:flex;gap:6px}
+.ghead .gh-left .gchips span{
+  background:#EFF6FF;color:var(--p);border-radius:8px;padding:4px 10px;font-size:11.5px;font-weight:700;
+}
+.ghead .gh-right{font-size:11.5px;color:var(--mut)}
+
+/* ── فريق المعلمين ── */
+.team-list .titem{
+  background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;
+  display:flex;gap:12px;align-items:center;border:1px solid var(--line);
+  transition:.15s;
+}
+.team-list .titem:hover{border-color:var(--p3);box-shadow:0 6px 16px rgba(15,23,42,.08)}
+.team-list .titem .ava{width:44px;height:44px;border-radius:12px;font-size:17px;font-weight:900;color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.team-list .titem .body{flex:1;min-width:0}
+.team-list .titem .body .nm{font-size:14px;font-weight:800;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.team-list .titem .body .sub{font-size:12px;color:var(--mut);margin-top:2px}
+.team-list .titem .actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+
+/* ── التلاميذ ── */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{
+  background:#EFF6FF;color:var(--p);border:1px solid #BFDBFE;
+  border-radius:10px;padding:6px 12px;font-size:12.5px;font-weight:700;
+}
+
+/* ── نموذج التلاميذ/الإضافة ── */
+.row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row2 select,.row2 input{width:auto;flex:1;min-width:100px;margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.label{font-size:12.5px;font-weight:700;color:var(--mut);display:block;margin-bottom:5px}
+.field-group{background:#F8FAFC;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid var(--line)}
+.field-group .ft{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:800;color:var(--ink);font-size:14px}
+
+/* ── الإعدادات/كلمات المرور ── */.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.set-card{background:#fff;border-radius:16px;padding:20px;border:1px solid var(--line);box-shadow:var(--sh)}
+.set-card .h-icon{
+  width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:10px;
+}
+.set-card.gold .h-icon{background:var(--gold-bg);color:var(--gold)}
+.set-card.purp .h-icon{background:var(--mgr-bg);color:var(--mgr)}
+.set-card.blue .h-icon{background:#DBEAFE;color:var(--p)}
+.set-card h3{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:4px}
+.set-card p{font-size:12.5px;color:var(--mut);margin-bottom:12px;line-height:1.6}
+
+/* ── شريط الجوال ── */
+.bnav{
+  display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--glass-b);z-index:10;
+}
+.bnav button{
+  flex:1;background:none;border:none;font-family:inherit;color:var(--mut);
+  padding:8px 0 10px;cursor:pointer;border-top:3px solid transparent;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.bnav button .ico{font-size:17px}
+.bnav button small{font-size:10px;font-weight:800}
+.bnav button.act{color:var(--p2);border-top-color:var(--p2)}
+
+@media(max-width:900px){
+  .side{display:none}
+  .bnav{display:flex}
+  .content{padding:14px 12px 80px}
+  .kpi{grid-template-columns:repeat(2,1fr);gap:10px}
+  .topbar .search{display:none}
+  .tlist{grid-template-columns:1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
+  body{overflow-y:auto}
+  .app{height:100%}
+}
+@media(max-width:480px){
+  .kpi{grid-template-columns:1fr 1fr}
+  .kpi .k{padding:14px}
+  .kpi .k b{font-size:18px}
+  .kpi .k .icn{width:40px;height:40px;font-size:17px}
+}
+
+/* ── نوافذ منبثقة وإشعارات ── */
+.toast{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
+  background:var(--ink);color:#fff;padding:13px 22px;border-radius:14px;  font-size:13.5px;font-weight:700;z-index:99;opacity:0;transition:.25s;
+  max-width:92%;text-align:center;box-shadow:0 10px 30px rgba(15,23,42,.35);
+}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{background:var(--red)}
-.ovl{position:absolute;inset:0;background:rgba(6,30,22,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.toast.ok{background:var(--acc)}
+.ovl{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
 .ovl.show{display:flex}
-.modal{background:#fff;border-radius:20px;padding:18px;width:100%;max-width:400px}
-.modal h3{color:var(--p);margin-bottom:10px}
+.modal{
+  background:#fff;border-radius:20px;padding:22px;width:100%;max-width:420px;
+  box-shadow:0 30px 80px rgba(0,0,0,.3);animation:pop .25s ease;
+}
+.modal h3{color:var(--ink);margin-bottom:6px;font-size:16px;font-weight:900}
+.modal p{color:var(--ink2);font-size:13.5px;line-height:1.7;margin-bottom:14px}
+.mrow{display:flex;gap:8px}
+.mrow .btn{margin-top:0}
+.empty{text-align:center;color:var(--mut);padding:50px 15px;font-size:14px;line-height:2}
+.hint{font-size:12.5px;color:var(--mut);line-height:1.7;margin-bottom:9px}
 </style>
 </head>
 <body>
-<div class="frame">
 
-  <section class="screen active" id="s-login">
-    <div class="login-wrap">
-      <img src="icon.png" class="logo" alt="درجاتي">
-      <h1>درجاتي — الإدارة</h1>
-      <p>لوحة استلام درجات المعلمين ومتابعتها</p>
-      <div class="card">
-        <label>مفتاح الإدارة</label>
-        <input id="keyIn" dir="ltr" placeholder="مفتاح الإدارة" style="text-align:center">
-        <button class="btn" onclick="adminLogin()">دخول الإدارة</button>
+<!-- ═══════ شاشة الدخول ═══════ -->
+<section class="screen active" id="s-login">
+  <div class="login">
+    <div class="lcard">
+      <div class="hero">
+        <img src="icon.png" alt="درجاتي">
+        <div>
+          <h1>لوحة التحكم</h1>
+          <small>درجاتي — نظام إدارة الدرجات</small>
+        </div>
+      </div>
+      <p class="lead">أدخل كلمة المرور للدخول إلى لوحة الإدارة. المطور يرى كل الإعدادات، والمدير يرى الدرجات فقط.</p>
+      <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
+      <button class="btn pri" onclick="adminLogin()">دخول</button>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <span class="pill dev">🛠️ المطور</span>
+        <span class="pill mgr">👔 المدير</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="screen" id="s-main">
-    <header class="top">
-      <img src="icon.png" alt="">      <span class="grow"><span class="h-t">درجاتي — الإدارة</span><span class="h-s" id="admSub"></span></span>
-      <button class="ibtn" onclick="loadDash();toast('⏳ جارٍ التحديث...')">↻</button>
-      <button class="ibtn" onclick="logoutAdmin()">⏻</button>
-    </header>
-    <div class="wrap" style="padding-bottom:64px">
-      <div id="tab-dash">
-        <input id="dashSearch" placeholder="🔍 بحث عن معلم..." oninput="renderDash()">
-        <div id="dashList"></div>
+<!-- ═══════ التطبيق الرئيسي ═══════ -->
+<section class="screen" id="s-main">
+  <div class="app">
+    <!-- الشريط الجانبي -->
+    <aside class="side">
+      <div class="brand">        <img src="icon.png">
+        <div><b>درجاتي</b><small>لوحة التحكم</small></div>
       </div>
-      <div id="tab-team" hidden>
-        <div class="card">
-          <h3>➕ إضافة معلم جديد</h3>
-          <input id="ntName" placeholder="اسم المعلم">
-          <input id="ntSub" placeholder="المادة">
-          <input id="ntCls" placeholder="الصفوف — افصل بفاصلة: الخامس أ، السادس ب">
-          <button class="btn" onclick="doAddTeacher()">توليد كود وإضافة</button>
-          <div id="ntRes"></div>
+      <nav style="padding:10px 0;flex:1;overflow-y:auto">
+        <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">📊</span>نظرة عامة</button>
+        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
+        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
+        <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
+        <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
+      </nav>
+      <div class="sfoot">
+        <div class="rolecard" id="roleCard">
+          <div class="dot" id="roleDot">🛠️</div>
+          <div style="flex:1;min-width:0">
+            <b id="roleLabel">المطور</b>
+            <small id="roleSub">صلاحيات كاملة</small>
+          </div>
+          <button class="exit" onclick="logoutAdmin()" title="خروج">⏻</button>
         </div>
-        <div id="teamList"></div>
       </div>
-      <div id="tab-set" hidden>
-        <div class="card">
-          <h3>🔗 ربط الخادم</h3>
-          <input id="setUrl" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec">
-          <button class="btn" onclick="saveSettings()">حفظ واختبار الاتصال</button>
-          <div id="connRes"></div>
+    </aside>
+
+    <div class="maincol">
+      <!-- الشريط العلوي -->
+      <header class="topbar">
+        <div class="tb-title">
+          <b id="tbTitle">نظرة عامة</b>
+          <small id="admSub">—</small>
         </div>
-        <div class="card">
-          <h3>🔑 مفتاح الإدارة</h3>
-          <input id="setKey" dir="ltr">
-          <button class="btn ghost" onclick="saveKey()">حفظ المفتاح</button>
+        <div class="search"><input id="dashSearch" placeholder="ابحث عن معلم أو صف..." oninput="renderDash()"></div>
+        <div class="tb-actions">
+          <button class="iconbtn" onclick="loadDash();toast('⏳ جارٍ التحديث...')" title="تحديث">↻</button>
+          <button class="iconbtn" onclick="logoutAdmin()" title="خروج">⏻</button>
         </div>
-        <button class="btn danger" onclick="logoutAdmin()">تسجيل الخروج</button>
+      </header>
+
+      <!-- المحتوى -->
+      <div class="content">
+
+        <!-- نظرة عامة -->
+        <div id="tab-dash">
+          <h2 class="title">نظرة عامة</h2>
+          <p class="subt">ملخص درجات المعلمين ومستوى الإرسال</p>
+          <div class="kpi" id="dashKpi"></div>
+          <div class="card">
+            <div class="ctitle">👨‍🏫 المعلمون والدرجات المُرسَلة</div>
+            <div class="csub">اضغط على أي معلم لعرض درجاته بالتفصيل حسب الأشهر السبعة</div>
+            <div class="tlist" id="dashList"></div>
+          </div>
+        </div>
+        <!-- المعلمون -->
+        <div id="tab-team" hidden>
+          <h2 class="title">إدارة المعلمين</h2>
+          <p class="subt">أضف معلمين، ولّد لهم أكوادًا، وأدر حساباتهم</p>
+          <div class="card">
+            <div class="ctitle">➕ إضافة معلم جديد</div>
+            <div class="csub">سيُولَّد كود دخول تلقائيًا للمعلم</div>
+            <div class="grid3">
+              <input id="ntName" placeholder="اسم المعلم">
+              <input id="ntSub" placeholder="المادة (مثل: الرياضيات)">
+              <input id="ntCls" placeholder="الصف والشعبة (الخامس أ، السادس ب)">
+            </div>
+            <button class="btn pri" onclick="doAddTeacher()">✨ توليد كود وإضافة</button>
+            <div id="ntRes"></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">📋 قائمة المعلمين</div>
+            <div class="csub">يمكنك تعديل الكود أو قفل الحساب أو الحذف</div>
+            <div class="team-list" id="teamList"></div>
+          </div>
+        </div>
+
+        <!-- التلاميذ -->
+        <div id="tab-studs" hidden>
+          <h2 class="title">قوائم التلاميذ</h2>
+          <p class="subt">أدخل أسماء التلاميذ لكل صف وشعبة، وستظهر تلقائيًا عند المعلم</p>
+          <div class="card">
+            <div class="ctitle">🎓 اختيار الصف والشعبة</div>
+            <div class="row2">
+              <select id="stCls"><option>الخامس</option><option>السادس</option></select>
+              <select id="stSec"><option>أ</option><option>ب</option><option>ج</option></select>
+              <button class="btn pri sm" onclick="loadStudents()">عرض القائمة</button>
+            </div>
+            <div id="stCount" class="hint" style="margin-top:12px"></div>
+            <div class="field-group" style="margin-top:14px">
+              <div class="ft">📝 أسماء التلاميذ (اسم في كل سطر)</div>
+              <textarea id="stBox" rows="8" placeholder="أحمد محمد&#10;سارة علي&#10;خالد يوسف"></textarea>
+              <div class="chips" id="stList"></div>
+              <div class="grid2">
+                <button class="btn ok" onclick="saveStudents()">💾 حفظ القائمة</button>
+                <button class="btn danger" onclick="clearStudents()">🗑 مسح القائمة</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- كلمات المرور -->
+        <div id="tab-keys" hidden>
+          <h2 class="title">إدارة كلمات المرور</h2>          <p class="subt">تغيير كلمات مرور المطور والمدير — التغيير فوري ومباشر</p>
+          <div class="settings-grid">
+            <div class="set-card gold">
+              <div class="h-icon">🛠️</div>
+              <h3>كلمة مرور المطور</h3>
+              <p>تمنح جميع الصلاحيات: المعلمون، التلاميذ، كلمات المرور، والإعدادات.</p>
+              <label class="label">الكلمة الحالية</label>
+              <input id="kDevCur" dir="ltr" readonly style="background:#F8FAFC">
+              <label class="label">الكلمة الجديدة (٤ أحرف على الأقل)</label>
+              <input id="kDevNew" dir="ltr" type="password" placeholder="كلمة مرور قوية">
+              <button class="btn gold" onclick="doChangeKey('DEV')">🔐 تغيير كلمة المطور</button>
+            </div>
+            <div class="set-card purp">
+              <div class="h-icon">👔</div>
+              <h3>كلمة مرور المدير</h3>
+              <p>تمنح صلاحية عرض الدرجات وتصديرها فقط — بدون تعديل أو حذف.</p>
+              <label class="label">الكلمة الحالية</label>
+              <input id="kMgrCur" dir="ltr" readonly style="background:#F8FAFC">
+              <label class="label">الكلمة الجديدة (٤ أحرف على الأقل)</label>
+              <input id="kMgrNew" dir="ltr" type="password" placeholder="كلمة مرور للمدير">
+              <button class="btn purp" onclick="doChangeKey('MANAGER')">🔐 تغيير كلمة المدير</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <div class="ctitle">📋 سجل التغييرات</div>
+            <div class="csub">كل تغيير يُسجَّل في ورقة «السجل» داخل الجدول</div>
+            <p class="hint">💡 عند تغيير كلمة المطور، ستحتاج للدخول بها في المرة القادمة.</p>
+          </div>
+        </div>
+
+        <!-- الإعدادات -->
+        <div id="tab-set" hidden>
+          <h2 class="title">الإعدادات</h2>
+          <p class="subt">إعدادات الاتصال بالخادم والنظام</p>
+          <div class="settings-grid">
+            <div class="set-card blue">
+              <div class="h-icon">🔗</div>
+              <h3>رابط الخادم</h3>
+              <p>رابط Google Apps Script الذي ينتهي بـ /exec</p>
+              <input id="setUrl" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec">
+              <button class="btn pri" onclick="saveSettings()">💾 حفظ واختبار</button>
+              <div id="connRes" style="margin-top:10px"></div>
+            </div>
+            <div class="set-card">
+              <div class="h-icon">ℹ️</div>
+              <h3>عن التطبيق</h3>
+              <p>
+                <b>اسم التطبيق:</b> درجاتي<br>
+                <b>النسخة:</b> 4.0<br>
+                <b>الأشهر:</b> تشرين الأول → نيسان<br>                <b>التصميم:</b> عصري متجاوب<br>
+                <b>الأرقام:</b> عربية ٠١٢٣
+              </p>
+              <button class="btn ghost" onclick="logoutAdmin()">🚪 تسجيل الخروج</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-    <nav class="bnav">
-      <button data-tab="dash" class="act" onclick="adminTab('dash')">📥 الوارد</button>
-      <button data-tab="team" onclick="adminTab('team')">👨‍ المعلمون</button>
-      <button data-tab="set" onclick="adminTab('set')">⚙️ الإعدادات</button>
-    </nav>
-  </section>
+  </div>
 
-  <section class="screen" id="s-tview">
-    <header class="top">
-      <button class="ibtn" onclick="go('s-main')">→</button>
-      <span class="grow"><span class="h-t" id="tvName"></span><span class="h-s" id="tvSub"></span></span>
-      <button class="ibtn" title="تصدير Excel" onclick="exportCSV()">⬇️</button>
-      <button class="ibtn" title="طباعة" onclick="printTView()">🖨️</button>
-    </header>
-    <div class="wrap" id="tvBox"></div>  </section>
+  <!-- شريط الجوال -->
+  <nav class="bnav">
+    <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>
+    <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
+    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span><small>التلاميذ</small></button>
+    <button data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span><small>الكلمات</small></button>
+    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+  </nav>
+</section>
 
-  <div class="ovl" id="confirmOvl"><div class="modal">
-    <h3>تأكيد</h3>
-    <p id="cfMsg" style="margin-bottom:14px;line-height:1.8"></p>
-    <div class="mrow">
-      <button class="btn ghost" style="margin:0" onclick="hideModal('confirmOvl')">إلغاء</button>
-      <button class="btn" style="margin:0" onclick="confirmYes()">نعم، متأكد</button>
+<!-- ═══════ شاشة عرض درجات معلم ═══════ -->
+<section class="screen" id="s-tview">
+  <header class="topbar">
+    <button class="iconbtn" onclick="go('s-main')">→</button>
+    <div class="tb-title">
+      <b id="tvName"></b>
+      <small id="tvSub"></small>
     </div>
-  </div></div>
+    <span style="flex:1"></span>
+    <button class="iconbtn" onclick="exportCSV()" title="تصدير Excel">⬇️</button>
+    <button class="iconbtn" onclick="printTView()" title="طباعة">🖨️</button>
+  </header>
+  <div class="content" id="tvBox"></div>
+</section>
 
-  <div class="toast" id="toast"></div>
-</div>
+<!-- ═══════ نافذة تعديل كود معلم ═══════ -->
+<div class="ovl" id="codeModal"><div class="modal">
+  <h3>✏️ تعديل كود المعلم</h3>
+  <p id="cmName"></p>
+  <label class="label">الكود الحالي</label>
+  <input id="cmOld" dir="ltr" readonly style="background:#F8FAFC">
+  <label class="label">الكود الجديد (حروف وأرقام فقط، ٣-٢٠ حرفًا)</label>
+  <input id="cmNew" dir="ltr" placeholder="T-ABCD">
+  <div class="mrow">
+    <button class="btn ghost" style="margin:0" onclick="hideModal('codeModal')">إلغاء</button>
+    <button class="btn pri" style="margin:0" onclick="confirmCodeChange()">حفظ</button>
+  </div>
+</div></div>
+<!-- ═══════ نافذة التأكيد ═══════ -->
+<div class="ovl" id="confirmOvl"><div class="modal">
+  <h3 id="cfTitle">تأكيد</h3>
+  <p id="cfMsg"></p>
+  <div class="mrow">
+    <button class="btn ghost" style="margin:0" onclick="hideModal('confirmOvl')">إلغاء</button>
+    <button class="btn pri" style="margin:0" onclick="confirmYes()">تأكيد</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-/* ⚠️ ضع رابط الخادم بين القوسين (نفس الرابط الموجود في index.html) */
-const SERVER_URL = "https://script.google.com/macros/s/AKfycbwILgufN829u6CAXuyRJGrqIYdYv-8zGAspc3z5nO1TbapO3jn0iQV4ftYoSyPHOmb3/exec";
+/* ⚠️ ضع رابط الخادم بين القوسين */
+const SERVER_URL = "";
 
 const MONTHS=['تشرين الأول','تشرين الثاني','كانون الأول','كانون الثاني','شباط','آذار','نيسان'];
 const AR='٠١٢٣٤٥٦٧٨٩';
 const arNum=x=>String(x).replace(/\d/g,d=>AR[d]);
 const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
 const url=()=>localStorage.getItem('d_url')||SERVER_URL;
 const key=()=>localStorage.getItem('d_key')||'';
-let toastT,_yes=null;
-const ADM={teachers:[],tv:null};
-const AV=['#0A8068','#0EA5E9','#F59E0B','#EF4444','#8B5CF6','#F97316'];
+let ROLE='',toastT,_yes=null;
+const ADM={teachers:[],tv:null,keys:{}};
+const AV=['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#F97316','#06B6D4','#EC4899'];
 
-function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');}
-function toast(m,e){const t=$('#toast');t.textContent=m;t.className='toast show'+(e?' err':'');clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',3500);}
+function go(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');}
+function toast(m,type){
+  const t=$('#toast');t.textContent=m;
+  t.className='toast show'+(type==='err'?' err':type==='ok'?' ok':'');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',3800);
+}
 function hideModal(id){$('#'+id).classList.remove('show');}
-function confirmDlg(m,f){$('#cfMsg').textContent=m;_yes=f;$('#confirmOvl').classList.add('show');}
+function confirmDlg(m,f,title){$('#cfTitle').textContent=title||'تأكيد';$('#cfMsg').textContent=m;_yes=f;$('#confirmOvl').classList.add('show');}
 function confirmYes(){hideModal('confirmOvl');if(_yes)_yes();_yes=null;}
 function esc(s){return String(s??'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>');}
 function escA(s){return esc(s).replace(/"/g,'"');}
 function ago(ms){if(!ms)return'';const s=Math.floor((Date.now()-ms)/1000);if(s<60)return'الآن';const m=Math.floor(s/60);if(m<60)return'قبل '+arNum(m)+' د';const h=Math.floor(m/60);if(h<24)return'قبل '+arNum(h)+' س';const d=Math.floor(h/24);return d<30?'قبل '+arNum(d)+' يوم':new Date(ms).toLocaleDateString('ar');}
 function fmtDate(ms){return new Date(ms).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'});}
-function copyText(s){if(navigator.clipboard){navigator.clipboard.writeText(s).then(()=>toast('تم النسخ ✓')).catch(()=>fb(s));}else fb(s);}
-function fb(s){const ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('تم النسخ ✓');}
-function shareWa(code,name){
-  const msg='مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي» لإدخال الدرجات:\n\n🔑 '+code+'\n\nثبّت التطبيق من الرابط الذي أرسلته لك وأدخل هذا الكود.';
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+function copyText(s){
+  if(navigator.clipboard){navigator.clipboard.writeText(s).then(()=>toast('✓ تم النسخ','ok')).catch(()=>fb(s));}
+  else fb(s);
 }
-async function api(p,ms){
+function fb(s){const ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('✓ تم النسخ','ok');}
+function shareWa(code,name){
+  const msg='مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق من الرابط المرسل وأدخل هذا الكود.';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}async function api(p,ms){
   if(!url())throw{net:1};
   const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),ms||25000);
   try{const r=await fetch(url(),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p),signal:ctl.signal});return await r.json();}
   finally{clearTimeout(t);}
 }
 
-async function adminLogin(){  const k=$('#keyIn').value.trim();
-  if(!k){toast('أدخل مفتاح الإدارة',true);return;}
-  if(!url()){toast('⚠️ رابط الخادم غير موضوع في الملف',true);return;}
+/* ═══════ الدخول ═══════ */
+async function adminLogin(){
+  const k=$('#keyIn').value.trim();
+  if(!k){toast('أدخل كلمة المرور','err');return;}
+  if(!url()){toast('⚠️ ضع رابط الخادم في الملف أولًا','err');return;}
   try{
     const r=await api({action:'adminLogin',key:k});
-    if(!r.ok){toast('❌ '+r.error,true);return;}
-    localStorage.setItem('d_key',k);localStorage.setItem('d_admin','1');
+    if(!r.ok){toast('❌ '+r.error,'err');return;}
+    ROLE=r.role;
+    localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);
     enterAdmin();
-  }catch(e){toast('تعذر الاتصال — تحقق من الإنترنت',true);}
+  }catch(e){toast('تعذر الاتصال — تحقق من الإنترنت','err');}
 }
 function enterAdmin(){
-  if(localStorage.getItem('d_admin')!=='1'){go('s-login');return;}
-  $('#setUrl').value=url();$('#setKey').value=key();
-  go('s-main');adminTab('dash');loadDash();
+  ROLE=localStorage.getItem('d_admin')||'';
+  if(!ROLE){go('s-login');return;}
+  $('#setUrl').value=url();
+  applyRole();
+  go('s-main');adminTab('dash');loadDash();loadKeysInfo();
 }
-function logoutAdmin(){confirmDlg('تسجيل الخروج من لوحة الإدارة؟',()=>{localStorage.removeItem('d_admin');go('s-login');});}
+function applyRole(){
+  const dev=ROLE==='dev';
+  $$('[data-dev]').forEach(el=>{el.style.display=dev?'':'none';});
+  const rc=$('#roleCard'),dot=$('#roleDot'),lab=$('#roleLabel'),sub=$('#roleSub');
+  if(dev){
+    rc.classList.add('dev');rc.classList.remove('mgr');
+    dot.textContent='🛠️';lab.textContent='المطور';sub.textContent='صلاحيات كاملة';
+  }else{
+    rc.classList.add('mgr');rc.classList.remove('dev');
+    dot.textContent='👔';lab.textContent='المدير';sub.textContent='عرض الدرجات';
+  }
+}
+function logoutAdmin(){
+  confirmDlg('تسجيل الخروج من لوحة الإدارة؟',()=>{
+    localStorage.removeItem('d_admin');localStorage.removeItem('d_key');
+    ROLE='';go('s-login');$('#keyIn').value='';
+  },'تسجيل الخروج');
+}
 function adminTab(t){
-  ['dash','team','set'].forEach(x=>{
+  ['dash','team','studs','keys','set'].forEach(x=>{
     $('#tab-'+x).hidden=x!==t;
-    document.querySelector('.bnav button[data-tab="'+x+'"]').classList.toggle('act',x===t);
-  });
+    $$('[data-tab="'+x+'"]').forEach(b=>b.classList.toggle('act',x===t));
+  });  const titles={dash:'نظرة عامة',team:'إدارة المعلمين',studs:'قوائم التلاميذ',keys:'كلمات المرور',set:'الإعدادات'};
+  $('#tbTitle').textContent=titles[t];
   if(t==='team')renderTeam();
   if(t==='dash')renderDash();
+  if(t==='keys')loadKeysInfo();
 }
+
+/* ═══════ الوارد ═══════ */
 async function loadDash(){
   if(!key())return;
   try{
     const r=await api({action:'adminData',key:key()});
     if(!r.ok){
-      if(/مفتاح/.test(r.error)){toast('مفتاح الإدارة غير صحيح',true);localStorage.removeItem('d_admin');go('s-login');}
-      else toast(r.error,true);
+      if(/كلمة المرور|مفتاح/.test(r.error)){toast(r.error,'err');localStorage.removeItem('d_admin');go('s-login');}
+      else toast(r.error,'err');
       return;
     }
     ADM.teachers=r.teachers;renderDash();renderTeam();
-  }catch(e){$('#dashList').innerHTML='<div class="empty">⚠️ تعذر الاتصال بالخادم<br>تحقق من الإنترنت</div>';}
+  }catch(e){$('#dashList').innerHTML='<div class="empty">⚠️ تعذر الاتصال بالخادم<br>تحقق من الإنترنت ورابط الخادم</div>';}
 }
 function renderDash(){
-  const q=($('#dashSearch').value||'').trim();
+  const q=($('#dashSearch').value||'').trim().toLowerCase();
   let list=ADM.teachers.slice();
-  if(q)list=list.filter(t=>(t.name+t.subject+t.code).includes(q));
+  if(q)list=list.filter(t=>(t.name+' '+t.subject+' '+t.code+' '+t.classes.join(' ')).toLowerCase().includes(q));
   list.sort((a,b)=>(b.lastSent||0)-(a.lastSent||0));
   const sent=ADM.teachers.filter(t=>t.sentCount>0).length;
-  $('#admSub').textContent='أرسل '+arNum(sent)+' من '+arNum(ADM.teachers.length)+' معلمًا';
+  const locked=ADM.teachers.filter(t=>t.locked).length;
+  const total=ADM.teachers.reduce((a,t)=>a+t.sentCount,0);
+  $('#admSub').textContent=arNum(ADM.teachers.length)+' معلم • '+arNum(sent)+' أرسل';
+  $('#dashKpi').innerHTML=
+    '<div class="k"><div class="icn c1">👥</div><div><b>'+arNum(ADM.teachers.length)+'</b><small>إجمالي المعلمين</small></div></div>'
+    +'<div class="k"><div class="icn c2">✓</div><div><b>'+arNum(sent)+'</b><small>أرسلوا درجات</small></div></div>'
+    +'<div class="k"><div class="icn c3">📊</div><div><b>'+arNum(total)+'</b><small>دفعة مستلمة</small></div></div>'
+    +'<div class="k"><div class="icn c4">🔒</div><div><b>'+arNum(locked)+'</b><small>حسابات مقفلة</small></div></div>';
   const box=$('#dashList');
-  if(!list.length){box.innerHTML='<div class="empty">لا يوجد معلمون بعد.<br>أضفهم من تبويب «المعلمون» 👨‍🏫</div>';return;}
+  if(!list.length){box.innerHTML='<div class="empty">لا توجد نتائج مطابقة'+(ADM.teachers.length?' — أضف معلمين من تبويب «المعلمون»':'')+'</div>';return;}
   box.innerHTML=list.map((t,i)=>{
     const has=t.sentCount>0;
-    return '<div class="item" onclick="openTeacher(\''+escA(t.code)+'\')">'
-      +'<div class="avatar" style="background:'+AV[i%AV.length]+'">'+esc((t.name||'؟').trim().charAt(0))+'</div>'
-      +'<div class="grow"><div class="l1"><b>'+esc(t.name)+(t.locked?' <span class="badge lock">مقفل 🔒</span>':'')+'</b><span class="time">'+(has?ago(t.lastSent):'—')+'</span></div>'      +'<div class="l2">'+esc(t.subject||'—')+(t.classes?' • '+esc(t.classes):'')+'</div>'
-      +'<div class="l3">'+(has?('أرسل '+arNum(t.sentCount)+' درجة — '+esc(t.groups.slice(0,2).join('، '))):'لم يرسل الدرجات بعد')+'</div></div>'
-      +'<span class="badge'+(has?'':' off')+'">'+(has?'✓ مُرسل':'بانتظار')+'</span></div>';
+    const ini=(t.name||'؟').trim().charAt(0);
+    return '<div class="tcard" onclick="openTeacher(\''+escA(t.code)+'\')">'
+      +'<div class="ava" style="background:'+AV[i%AV.length]+'">'+esc(ini)+'</div>'
+      +'<div class="body">'
+      +'<div class="nm">'+esc(t.name)+(t.locked?' <span class="pill lock">🔒 مقفل</span>':'')+'</div>'
+      +'<div class="sub">'+esc(t.subject||'—')+(t.classes?' • '+esc(t.classes.join('، ')):'')+'</div>'
+      +'<div class="meta">'+(has?('✓ '+arNum(t.sentCount)+' درجة — آخر إرسال '+ago(t.lastSent)):'لم يرسل الدرجات بعد')+'</div>'
+      +'</div>'
+      +'<span class="status '+(has?'on':(t.locked?'lock':'off'))+'">'+(has?'✓ مُرسل':(t.locked?'🔒 مقفل':'بانتظار'))+'</span>'
+      +'</div>';
   }).join('');
 }
+/* ═══════ عرض درجات معلم ═══════ */
 async function openTeacher(code){
   const t=ADM.teachers.find(x=>x.code===code);
   $('#tvName').textContent=t?t.name:code;
@@ -256,7 +694,7 @@ async function openTeacher(code){
   go('s-tview');
   try{
     const r=await api({action:'teacherGrades',key:key(),code:code});
-    if(!r.ok){toast(r.error,true);return;}
+    if(!r.ok){toast(r.error,'err');return;}
     ADM.tv={code:code,name:t?t.name:code,rows:r.rows,groups:buildPivot(r.rows)};
     renderTView();
   }catch(e){$('#tvBox').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';}
@@ -290,10 +728,18 @@ function pivotTable(g){
 function renderTView(){
   const gs=ADM.tv.groups;
   if(!gs.length){$('#tvBox').innerHTML='<div class="empty">لم يرسل هذا المعلم درجات بعد</div>';return;}
-  $('#tvBox').innerHTML=gs.map(g=>'<div class="card" style="overflow-x:auto;max-width:none"><div class="ghead"><b>🏫 '+esc(g.cls)+'</b><span>العظمى: '+arNum(g.max)+' • آخر إرسال: '+fmtDate(g.last)+'</span></div>'+pivotTable(g)+'</div>').join('');
+  $('#tvBox').innerHTML=gs.map(g=>{
+    const n=g.order.length,sum=g.order.reduce((a,n)=>a+Object.values(g.students[n].m).reduce((x,y)=>x+y,0),0);
+    const avg=n?arNum((sum/n/MONTHS.filter(m=>g.order.some(nn=>g.students[nn].m[m]!==undefined)).length||1).toFixed(1)).replace('.','٫'):'—';
+    return '<div class="card" style="overflow-x:auto">'
+      +'<div class="ghead"><div class="gh-left"><b>🏫 '+esc(g.cls)+'</b>'
+      +'<div class="gchips"><span>👥 '+arNum(n)+' تلميذ</span><span>📊 '+arNum(g.max)+' درجة عظمى</span></div></div>'      +'<div class="gh-right">آخر إرسال: '+fmtDate(g.last)+'</div></div>'
+      +'<div class="tbl">'+pivotTable(g)+'</div></div>';
+  }).join('');
   ADM.tv.printHtml='<h2>كشف درجات: '+esc(ADM.tv.name)+'</h2>'+gs.map(g=>'<h3>الصف: '+esc(g.cls)+' — العظمى: '+arNum(g.max)+'</h3>'+pivotTable(g)).join('');
-}function exportCSV(){
-  if(!ADM.tv||!ADM.tv.groups.length){toast('لا توجد درجات للتصدير',true);return;}
+}
+function exportCSV(){
+  if(!ADM.tv||!ADM.tv.groups.length){toast('لا توجد درجات','err');return;}
   const c=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const L=[c('كشف درجات المعلم: '+ADM.tv.name)];
   ADM.tv.groups.forEach(g=>{
@@ -311,73 +757,156 @@ function renderTView(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='درجات-'+ADM.tv.name+'.csv';a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-  toast('تم تنزيل ملف Excel ✓');
+  toast('✓ تم تنزيل ملف Excel','ok');
 }
 function printTView(){
-  if(!ADM.tv||!ADM.tv.printHtml){toast('لا توجد درجات',true);return;}
+  if(!ADM.tv||!ADM.tv.printHtml){toast('لا توجد درجات','err');return;}
   const w=window.open('','_blank');
-  w.document.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title><style>body{font-family:Arial,Tajawal,sans-serif}table{border-collapse:collapse;width:100%;margin-bottom:22px}td,th{border:1px solid #333;padding:6px;text-align:center;font-size:13px}th{background:#064E3B;color:#fff}td.nm{text-align:right}h2,h3{color:#064E3B}</style></head><body>'+ADM.tv.printHtml+'</body></html>');
+  w.document.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title><style>body{font-family:Arial,Tajawal,sans-serif}table{border-collapse:collapse;width:100%;margin-bottom:22px}td,th{border:1px solid #333;padding:6px;text-align:center;font-size:13px}th{background:#1E3A8A;color:#fff}td.nm{text-align:right}h2,h3{color:#1E3A8A}</style></head><body>'+ADM.tv.printHtml+'</body></html>');
   w.document.close();setTimeout(()=>{try{w.print();}catch(e){}},350);
 }
+
+/* ═══════ فريق المعلمين ═══════ */
 function renderTeam(){
   const box=$('#teamList');
   if(!ADM.teachers.length){box.innerHTML='<div class="empty">أضف أول معلم من النموذج أعلاه ☝️</div>';return;}
   box.innerHTML=ADM.teachers.map((t,i)=>
-    '<div class="item" style="cursor:default"><div class="avatar" style="background:'+AV[i%AV.length]+'">'+esc((t.name||'؟').charAt(0))+'</div>'
-    +'<div class="grow"><div class="l1"><b>'+esc(t.name)+'</b>'+(t.locked?'<span class="badge lock">مقفل 🔒</span>':'')+'</div>'
-    +'<div class="l2">'+esc(t.subject||'—')+(t.classes?' • '+esc(t.classes):'')+'</div>'
-    +'<div class="l3"><span class="codechip">'+esc(t.code)+'</span></div></div>'
-    +'<div style="display:flex;flex-direction:column;gap:5px">'
-    +'<div class="mrow">'
-    +'<button class="ib" title="نسخ الكود" onclick="copyText(\''+escA(t.code)+'\')">📄</button>'
-    +'<button class="ib" title="إرسال واتساب" onclick="shareWa(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">💬</button>'
-    +'<button class="ib" title="'+(t.locked?'فتح الحساب':'قفل الحساب')+'" onclick="toggleLock(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">'+(t.locked?'🔓':'🔒')+'</button>'
-    +'</div>'
-    +'<button class="ib" title="حذف" onclick="delTeacherCode(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">🗑️</button>'
+    '<div class="titem"><div class="ava" style="background:'+AV[i%AV.length]+'">'+esc((t.name||'؟').charAt(0))+'</div>'
+    +'<div class="body"><div class="nm">'+esc(t.name)+(t.locked?' <span class="pill lock">🔒 مقفل</span>':'')+' <span class="codechip">'+esc(t.code)+'</span></div>'
+    +'<div class="sub">'+esc(t.subject||'—')+(t.classes?' • '+esc(t.classes.join('، ')):'')+'</div></div>'
+    +'<div class="actions">'
+    +'<button class="iconbtn" title="نسخ الكود" onclick="event.stopPropagation();copyText(\''+escA(t.code)+'\')">📄</button>'
+    +'<button class="iconbtn" title="واتساب" onclick="event.stopPropagation();shareWa(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">💬</button>'
+    +'<button class="iconbtn" title="تعديل الكود" onclick="event.stopPropagation();openCodeModal(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">✏️</button>'
+    +'<button class="iconbtn" title="'+(t.locked?'فتح الحساب':'قفل الحساب')+'" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">'+(t.locked?'🔓':'🔒')+'</button>'
+    +'<button class="iconbtn" title="حذف" onclick="event.stopPropagation();delTeacherCode(\''+escA(t.code)+'\',\''+escA(t.name)+'\')" style="color:var(--red)">🗑️</button>'
     +'</div></div>').join('');
+}
+function openCodeModal(code,name){  $('#cmName').textContent='المعلم: '+name;
+  $('#cmOld').value=code;
+  $('#cmNew').value='';
+  $('#codeModal').classList.add('show');
+  setTimeout(()=>$('#cmNew').focus(),100);
+}
+async function confirmCodeChange(){
+  const old=$('#cmOld').value.trim().toUpperCase();
+  const nw=$('#cmNew').value.trim().toUpperCase();
+  if(!nw){toast('أدخل الكود الجديد','err');return;}
+  try{
+    const r=await api({action:'setTeacherCode',key:key(),code:old,newCode:nw});
+    toast(r.ok?'✓ تم تعديل الكود':'❌ '+r.error,r.ok?'ok':'err');
+    if(r.ok){hideModal('codeModal');loadDash();}
+  }catch(e){toast('تعذر الاتصال','err');}
 }
 function toggleLock(code,name){
   const t=ADM.teachers.find(x=>x.code===code);
   const lock=!t.locked;
-  confirmDlg(lock?'قفل حساب «'+name+'»؟ لن يستطيع الدخول أو الإرسال حتى تفتحه.':'فتح حساب «'+name+'»؟',async()=>{
-    try{
-      const r=await api({action:'toggleLock',key:key(),code:code});      toast(r.ok?(r.locked?'🔒 تم قفل الحساب':'🔓 تم فتح الحساب'):r.error,!r.ok);
-      if(r.ok)loadDash();
-    }catch(e){toast('تعذر الاتصال',true);}
-  });
+  confirmDlg(
+    lock?'لن يستطيع «'+name+'» الدخول أو إرسال الدرجات حتى تفتحه.':'فتح حساب «'+name+'»؟',
+    async()=>{
+      try{
+        const r=await api({action:'toggleLock',key:key(),code:code});
+        toast(r.ok?(r.locked?'🔒 تم قفل الحساب':'🔓 تم فتح الحساب'):r.error,r.ok?'ok':'err');
+        if(r.ok)loadDash();
+      }catch(e){toast('تعذر الاتصال','err');}
+    },
+    lock?'قفل حساب':'فتح حساب'
+  );
 }
 async function doAddTeacher(){
   const name=$('#ntName').value.trim(),subject=$('#ntSub').value.trim(),classes=$('#ntCls').value.trim();
-  if(!name){toast('اسم المعلم مطلوب',true);return;}
+  if(!name){toast('اسم المعلم مطلوب','err');return;}
   try{
     const r=await api({action:'addTeacher',key:key(),name:name,subject:subject,classes:classes});
-    if(!r.ok){toast(r.error,true);return;}
+    if(!r.ok){toast(r.error,'err');return;}
     $('#ntName').value='';$('#ntSub').value='';$('#ntCls').value='';
-    $('#ntRes').innerHTML='<div style="background:#DCFCE7;color:#166534;border-radius:12px;padding:10px;margin-top:8px;font-weight:800;text-align:center">✅ كود المعلم: <span class="codechip">'+esc(r.code)+'</span></div>'
-      +'<div class="mrow"><button class="btn ghost" onclick="copyText(\''+escA(r.code)+'\')">📄 نسخ الكود</button>'
-      +'<button class="btn" onclick="shareWa(\''+escA(r.code)+'\',\''+escA(name)+'\')">💬 إرسال عبر واتساب</button></div>';
+    $('#ntRes').innerHTML='<div style="background:var(--acc-bg);color:#047857;border-radius:12px;padding:14px;margin-top:12px;font-weight:800;text-align:center">✨ تمت الإضافة بنجاح! كود المعلم: <span class="codechip">'+esc(r.code)+'</span></div>'
+      +'<div class="grid2" style="margin-top:10px"><button class="btn ghost" onclick="copyText(\''+escA(r.code)+'\')">📄 نسخ الكود</button>'
+      +'<button class="btn ok" onclick="shareWa(\''+escA(r.code)+'\',\''+escA(name)+'\')">💬 إرسال واتساب</button></div>';
     loadDash();
-  }catch(e){toast('تعذر الاتصال بالخادم',true);}
+  }catch(e){toast('تعذر الاتصال بالخادم','err');}
 }
 function delTeacherCode(code,name){
   confirmDlg('حذف المعلم «'+name+'» من القائمة؟ (درجاته تبقى محفوظة)',async()=>{
     try{const r=await api({action:'delTeacher',key:key(),code:code});
-      toast(r.ok?'تم الحذف ✓':r.error,!r.ok);if(r.ok)loadDash();
-    }catch(e){toast('تعذر الاتصال',true);}
-  });
+      toast(r.ok?'✓ تم الحذف':r.error,r.ok?'ok':'err');if(r.ok)loadDash();
+    }catch(e){toast('تعذر الاتصال','err');}
+  },'حذف معلم');}
+
+/* ═══════ التلاميذ ═══════ */
+async function loadStudents(){
+  const grade=$('#stCls').value,section=$('#stSec').value;
+  try{
+    const r=await api({action:'getStudents',key:key(),cls:grade+' '+section});
+    if(!r.ok){toast(r.error,'err');return;}
+    $('#stBox').value=r.names.join('\n');
+    $('#stCount').innerHTML='عدد التلاميذ المحفوظين لـ«<b>'+grade+' '+section+'</b>»: <b>'+arNum(r.names.length)+'</b> تلميذًا';
+    $('#stList').innerHTML=r.names.length?r.names.map(n=>'<span class="chip">'+esc(n)+'</span>').join(''):'<span class="hint">لا توجد قائمة محفوظة بعد.</span>';
+  }catch(e){toast('تعذر الاتصال','err');}
 }
+async function saveStudents(){
+  const grade=$('#stCls').value,section=$('#stSec').value;
+  const names=$('#stBox').value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  if(!names.length){toast('اكتب اسمًا واحدًا على الأقل','err');return;}
+  confirmDlg('حفظ قائمة «'+grade+' '+section+'» بعدد '+arNum(names.length)+' تلميذًا؟ (ستستبدل القائمة السابقة)',async()=>{
+    try{
+      const r=await api({action:'setStudents',key:key(),grade:grade,section:section,names:names});
+      toast(r.ok?'✓ تم حفظ القائمة ('+arNum(r.count)+')':r.error,r.ok?'ok':'err');
+      if(r.ok)loadStudents();
+    }catch(e){toast('تعذر الاتصال','err');}
+  },'حفظ قائمة');
+}
+function clearStudents(){
+  const grade=$('#stCls').value,section=$('#stSec').value;
+  confirmDlg('مسح قائمة «'+grade+' '+section+'» بالكامل؟',async()=>{
+    try{
+      const r=await api({action:'setStudents',key:key(),grade:grade,section:section,names:[]});
+      toast(r.ok?'✓ تم المسح':r.error,r.ok?'ok':'err');
+      if(r.ok)loadStudents();
+    }catch(e){toast('تعذر الاتصال','err');}
+  },'مسح قائمة');
+}
+
+/* ═══════ كلمات المرور ═══════ */
+async function loadKeysInfo(){
+  if(ROLE!=='dev')return;
+  try{
+    const r=await api({action:'getKeysInfo',key:key()});
+    if(r.ok){
+      ADM.keys={dev:r.dev,manager:r.manager};
+      $('#kDevCur').value=r.dev;
+      $('#kMgrCur').value=r.manager;
+    }
+  }catch(e){}
+}
+async function doChangeKey(target){
+  const newInput=target==='DEV'?$('#kDevNew'):$('#kMgrNew');  const nw=newInput.value.trim();
+  if(!nw||nw.length<4){toast('الكلمة الجديدة يجب أن تكون ٤ أحرف على الأقل','err');return;}
+  const label=target==='DEV'?'المطور':'المدير';
+  confirmDlg('تغيير كلمة مرور «'+label+'» إلى الكلمة الجديدة؟',async()=>{
+    try{
+      const r=await api({action:'changeKey',key:key(),target:target,newValue:nw});
+      toast(r.ok?'✓ تم تغيير كلمة '+label:(r.error||'خطأ'),r.ok?'ok':'err');
+      if(r.ok){
+        newInput.value='';
+        await loadKeysInfo();
+        if(target==='DEV'){localStorage.setItem('d_key',nw);}
+      }
+    }catch(e){toast('تعذر الاتصال','err');}
+  },'تغيير كلمة المرور');
+}
+
+/* ═══════ الإعدادات ═══════ */
 async function saveSettings(){
-  const v=$('#setUrl').value.trim();if(!v){toast('ألصق الرابط أولًا',true);return;}
+  const v=$('#setUrl').value.trim();if(!v){toast('ألصق الرابط أولًا','err');return;}
   localStorage.setItem('d_url',v);
   $('#connRes').innerHTML='<p class="hint">⏳ جارٍ الاختبار...</p>';
   try{const r=await api({action:'ping'},15000);
-    $('#connRes').innerHTML=r.ok?'<p class="hint" style="color:#166534;font-weight:800">✅ متصل بالخادم</p>':'<p class="hint" style="color:var(--red)">❌ استجابة غير متوقعة</p>';
+    $('#connRes').innerHTML=r.ok?'<p class="hint" style="color:#047857;font-weight:800">✓ متصل بالخادم بنجاح</p>':'<p class="hint" style="color:var(--red)">❌ استجابة غير متوقعة</p>';
   }catch(e){$('#connRes').innerHTML='<p class="hint" style="color:var(--red)">❌ تعذر الاتصال</p>';}
 }
-function saveKey(){localStorage.setItem('d_key',$('#setKey').value.trim());toast('تم حفظ المفتاح ✓');}
-(function init(){
-  if(localStorage.getItem('d_admin')==='1')enterAdmin();
-})();
+
+(function init(){ if(localStorage.getItem('d_admin'))enterAdmin(); })();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 </script>
 </body>
