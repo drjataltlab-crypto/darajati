@@ -4,8 +4,20 @@ window.addEventListener('error',function(e){var d=document.getElementById('errba
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
 var YEAR='٢٠٢٥ - ٢٠٢٦';
 var AR='٠١٢٣٤٥٦٧٨٩';
-var THEMES={dash:['#047857','#ECFDF5'],res:['#7C3AED','#F5F3FF'],team:['#0D9488','#F0FDFA'],entry:['#B45309','#FFFBEB'],studs:['#0891B2','#ECFEFF'],keys:['#E11D48','#FFF1F2'],set:['#475569','#F1F5F9']};
-var AV=['#047857','#0D9488','#B45309','#DC2626','#7C3AED','#0891B2','#DB2777','#65A30D'];
+
+/* ═══ ثيمات كل صفحة — الأزرق الملكي ═══ */
+var THEMES={
+  dash:['#2563EB','#EFF6FF'],   /* أزرق ملكي */
+  res:['#D97706','#FFFBEB'],    /* ذهبي عنبري */
+  team:['#0D9488','#F0FDFA'],   /* أخضر تركوازي */
+  entry:['#7C3AED','#FAF5FF'],  /* بنفسجي */
+  studs:['#0891B2','#ECFEFF'],  /* سماوي */
+  keys:['#E11D48','#FFF1F2'],   /* وردي */
+  set:['#475569','#F1F5F9']     /* رمادي مزرق */
+};
+
+var AV=['#2563EB','#7C3AED','#0D9488','#D97706','#DC2626','#0891B2','#DB2777','#65A30D'];
+
 var Pages={};
 var ADM={teachers:[],tv:null,res:null};
 var ROLE='',toastT,_yes=null;
@@ -34,20 +46,20 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-/* أنماط الجداول المشتركة (شاشة + Excel) */
-var TH='border:1px solid #0B3B2E;background:#0B3B2E;color:#fff;padding:7px 6px;font-size:11px;font-weight:bold;text-align:center';
-var TH1='border:1px solid #0B3B2E;background:#1D4ED8;color:#fff;padding:7px 6px;font-size:11px;font-weight:bold;text-align:center';
-var TH2='border:1px solid #0B3B2E;background:#0E7490;color:#fff;padding:7px 6px;font-size:11px;font-weight:bold;text-align:center';
-var THC='border:1px solid #0B3B2E;background:#B45309;color:#fff;padding:7px 6px;font-size:11px;font-weight:bold;text-align:center';
-var THF='border:1px solid #0B3B2E;background:#BE123C;color:#fff;padding:7px 6px;font-size:11px;font-weight:bold;text-align:center';
-var TD='border:1px solid #94A3B8;padding:6px 8px;text-align:center;font-size:12px';
-var TDN='border:1px solid #94A3B8;padding:6px 8px;text-align:right;font-size:12px;font-weight:bold';
+/* ═══ أنماط الجداول المشتركة (شاشة + Excel) — بالأزرق الملكي ═══ */
+var TH='border:1px solid #1E40AF;background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';var TH1='border:1px solid #1D4ED8;background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
+var TH2='border:1px solid #0E7490;background:linear-gradient(135deg,#0E7490,#06B6D4);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
+var THC='border:1px solid #B45309;background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
+var THF='border:1px solid #BE123C;background:linear-gradient(135deg,#BE123C,#E11D48);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
+var TD='border:1px solid #CBD5E1;padding:7px 8px;text-align:center;font-size:12px;background:#fff';
+var TDN='border:1px solid #CBD5E1;padding:7px 8px;text-align:right;font-size:12px;font-weight:bold;background:#fff';
 
-/* بطاقة النتيجة بالتصميم المطلوب */
+/* ═══ بطاقة النتيجة بالتصميم الملكي ═══ */
 function resultTable(rows){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
-  var h='<table style="width:100%;border-collapse:collapse;min-width:860px"><thead>';
-  h+='<tr><th style="'+TH+'" rowspan="2">التسلسل</th><th style="'+TH+'" rowspan="2">الدروس</th>'    +'<th style="'+TH1+'" colspan="3">الفصل الأول</th>'
+  var h='<table style="width:100%;border-collapse:collapse;min-width:860px;box-shadow:0 2px 8px rgba(30,64,175,.1)"><thead>';
+  h+='<tr><th style="'+TH+'" rowspan="2">التسلسل</th><th style="'+TH+'" rowspan="2">الدروس</th>'
+    +'<th style="'+TH1+'" colspan="3">الفصل الأول</th>'
     +'<th style="'+THC+'" rowspan="2">معدل الفصل الأول</th><th style="'+TH+'" rowspan="2">نصف السنة</th>'
     +'<th style="'+TH2+'" colspan="2">الفصل الثاني</th>'
     +'<th style="'+THC+'" rowspan="2">معدل الفصل الثاني</th><th style="'+THC+'" rowspan="2">السعي السنوي</th>'
@@ -57,13 +69,14 @@ function resultTable(rows){
     var r=bySub[s];
     function td(v){return(v===null||v===undefined||v==='')?'<td style="'+TD+';color:#CBD5E1">—</td>':'<td style="'+TD+'">'+arNum(v)+'</td>';}
     var fin=r&&r.final!==null&&r.final!==undefined;
-    var finStyle=TD+(fin?(r.final>=(r.max||100)/2?';color:#047857;font-weight:bold':';color:#DC2626;font-weight:bold'):'');
-    h+='<tr><td style="'+TD+'">'+arNum(i+1)+'</td><td style="'+TDN+'">'+s+'</td>'
+    var finStyle=TD+(fin?(r.final>=(r.max||100)/2?';color:#047857;font-weight:bold;background:#D1FAE5':';color:#DC2626;font-weight:bold;background:#FEE2E2'):'');
+    h+='<tr style="'+(i%2===1?'background:#F8FAFC':'')+'">'
+      +'<td style="'+TD+'">'+arNum(i+1)+'</td><td style="'+TDN+'">'+s+'</td>'
       +td(r?r.m1:null)+td(r?r.m2:null)+td(r?r.m3:null)
-      +'<td style="'+TD+';background:#FEF3C7;font-weight:bold">'+(r?arNum(r.a1):'—')+'</td>'
+      +'<td style="'+TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a1):'—')+'</td>'
       +td(r?r.half:null)+td(r?r.m4:null)+td(r?r.m5:null)
-      +'<td style="'+TD+';background:#FEF3C7;font-weight:bold">'+(r?arNum(r.a2):'—')+'</td>'
-      +'<td style="'+TD+';background:#FEF3C7;font-weight:bold">'+(r?arNum(r.annual):'—')+'</td>'
+      +'<td style="'+TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a2):'—')+'</td>'
+      +'<td style="'+TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.annual):'—')+'</td>'
       +td(r?r.exam:null)
       +'<td style="'+finStyle+'">'+(r?arNum(r.final):'—')+'</td></tr>';
   });
@@ -83,12 +96,11 @@ function resultCard(name,grade,section,rows){
     +'<span>ناجح في: <b>'+arNum(pass)+'</b> من <b>'+arNum(rows.length)+'</b></span>'
     +(avg!==null?'<span class="verdict '+(isPass?'pass':'fail')+'">'+(isPass?'ناجح ✔':'راسب ✘')+'</span>':'')
     +'</div><div class="rc-body">'+resultTable(rows)+'</div>'
-    +'<div class="rc-sign"><span>توقيع المعلم</span><span>توقيع المدير</span><span>الختم</span></div></div>';
-}
+    +'<div class="rc-sign"><span>توقيع المعلم</span><span>توقيع المدير</span><span>الختم</span></div></div>';}
 function downloadXLS(filename,title,tablesHTML){
   var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl"><head><meta charset="utf-8">'
     +'<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الدرجات</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->'
-    +'</head><body><h2 style="font-family:Tahoma">'+title+'</h2>'+tablesHTML+'</body></html>';
+    +'</head><body><h2 style="font-family:Tahoma;color:#1E40AF">'+title+'</h2>'+tablesHTML+'</body></html>';
   var blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel;charset=utf-8;'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.xls';
   document.body.appendChild(a);a.click();a.remove();
@@ -96,7 +108,8 @@ function downloadXLS(filename,title,tablesHTML){
   toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
 function printWin(html){
-  var w=window.open('','_blank');  w.document.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title><style>body{font-family:Tahoma,Arial,sans-serif;padding:16px}h2,h3{color:#065F46}table{border-collapse:collapse;width:100%}</style></head><body>'+html+'</body></html>');
+  var w=window.open('','_blank');
+  w.document.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title><style>body{font-family:Tahoma,Arial,sans-serif;padding:16px}h2,h3{color:#1E40AF}table{border-collapse:collapse;width:100%}</style></head><body>'+html+'</body></html>');
   w.document.close();setTimeout(function(){try{w.print();}catch(e){}},400);
 }
 var ICONS={
@@ -106,7 +119,9 @@ var ICONS={
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
   unlock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>',
   del:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
-  xls:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8"/></svg>'
+  xls:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
 };
 
 /* ═══ الدخول والتنقل ═══ */
@@ -130,8 +145,7 @@ function enterAdmin(){
   go('s-main');adminTab('dash');
   setInterval(function(){if(!$('#tab-dash').hidden&&Pages.dash&&Pages.dash.silent)Pages.dash.silent();},60000);
 }
-function fillSubjectSelects(){
-  var opts=SUBJECTS.map(function(s){return'<option>'+s+'</option>';}).join('');
+function fillSubjectSelects(){  var opts=SUBJECTS.map(function(s){return'<option>'+s+'</option>';}).join('');
   $('#ntSub').innerHTML=opts;$('#edSub').innerHTML=opts;
 }
 function applyRole(){
@@ -145,13 +159,20 @@ function applyRole(){
 }
 function logoutAdmin(){confirmDlg('تسجيل الخروج؟',function(){localStorage.removeItem('d_admin');localStorage.removeItem('d_key');ROLE='';go('s-login');$('#keyIn').value='';},'خروج');}
 function refresh(){toast('⏳ تحديث...','');if(Pages.dash&&Pages.dash.enter)Pages.dash.enter();}
-function adminTab(t){  ['dash','res','team','entry','studs','keys','set'].forEach(function(x){
+
+/* ═══ التنقل بين الصفحات مع تطبيق الخلفية ═══ */
+function adminTab(t){
+  ['dash','res','team','entry','studs','keys','set'].forEach(function(x){
     $('#tab-'+x).hidden=x!==t;
     $$('[data-tab="'+x+'"]').forEach(function(b){b.classList.toggle('act',x===t);});
   });
+  
+  /* تطبيق ثيم الصفحة (لون + خلفية) */
   var th=THEMES[t];
   document.documentElement.style.setProperty('--th',th[0]);
   document.documentElement.style.setProperty('--thb',th[1]);
+  document.body.setAttribute('data-page',t);
+  
   $('#tbTitle').textContent={dash:'نظرة عامة',res:'نتائج التلاميذ',team:'المعلمون',entry:'إدخال إداري',studs:'التلاميذ',keys:'كلمات المرور',set:'الإعدادات'}[t];
   if(Pages[t]&&Pages[t].enter)Pages[t].enter();
 }
