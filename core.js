@@ -39,6 +39,20 @@ function api(p,ms){
 
 function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';}
 
+/* ═══ جلب إعدادات العناوين (لون + حجم) ═══ */
+function getHeaderCfg(){
+  return {
+    schoolColor: localStorage.getItem('hdr_school_color')||'#1E40AF',
+    schoolSize:  localStorage.getItem('hdr_school_size')||'18px',
+    titleColor:  localStorage.getItem('hdr_title_color')||'#1E40AF',
+    titleSize:   localStorage.getItem('hdr_title_size')||'22px',
+    subColor:    localStorage.getItem('hdr_subtitle_color')||'#B45309',
+    subSize:     localStorage.getItem('hdr_subtitle_size')||'15px',    yearColor:   localStorage.getItem('hdr_year_color')||'#475569',
+    yearSize:    localStorage.getItem('hdr_year_size')||'13px',
+    logoSize:    localStorage.getItem('hdr_logo_size')||'105px'
+  };
+}
+
 /* ═══ أنماط الجدول ═══ */
 function getTableStyles(compact){
   var sz=compact?'9px':'11px';
@@ -47,7 +61,8 @@ function getTableStyles(compact){
   var pd=compact?'3px 2px':'5px 3px';
   var bord='1px solid #1E293B';
   return {
-    TH:'border:'+bord+';background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',    TH1:'border:'+bord+';background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
+    TH:'border:'+bord+';background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
+    TH1:'border:'+bord+';background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
     TH2:'border:'+bord+';background:linear-gradient(135deg,#0E7490,#06B6D4);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
     THC:'border:'+bord+';background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
     THF:'border:'+bord+';background:linear-gradient(135deg,#BE123C,#E11D48);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
@@ -81,8 +96,7 @@ function calcFinalResult(bySub){
   });
   if(!graded)return{text:'—',cls:'none'};
   if(failedNames.length===0)return{text:'ناجح',cls:'pass'};
-  if(failedNames.length<=2)return{text:'مكمل من '+failedNames.join(' و '),cls:'warn'};
-  return{text:'راسب',cls:'fail'};
+  if(failedNames.length<=2)return{text:'مكمل من '+failedNames.join(' و '),cls:'warn'};  return{text:'راسب',cls:'fail'};
 }
 
 /* ═══ بناء بطاقة نتيجة واحدة ═══ */
@@ -91,70 +105,82 @@ function buildOneResult(rows,compact){
   var halfRes=calcHalfResult(bySub);
   var finalRes=calcFinalResult(bySub);
   var S=getTableStyles(compact);
+  var H=getHeaderCfg();
 
   var schoolName=localStorage.getItem('school_name')||'مدرسة المنهل الابتدائية';
   var schoolLogo=localStorage.getItem('school_logo')||'';
   var guideName=localStorage.getItem('guide_name')||'....................';
   var principalName=localStorage.getItem('principal_name')||'....................';
-  var studyYear=getStudyYear();  var name=rows.length?rows[0].name:'';
+  var studyYear=getStudyYear();
+  var name=rows.length?rows[0].name:'';
   var grade=rows.length?rows[0].grade:'';
   var section=rows.length?rows[0].section:'';
 
   var pad=compact?'10px':'16px';
-  var titleSize=compact?'13px':'16px';
-  var subSize=compact?'11px':'13px';
-  var logoSize=compact?'65px':'85px';
   var mbInfo=compact?'8px':'12px';
   var mTopSign=compact?'14px':'28px';
 
+  /* تقليص الأحجام عند وضع التلميذين */
+  var schoolSz=compact?(parseInt(H.schoolSize)*0.75)+'px':H.schoolSize;
+  var titleSz=compact?(parseInt(H.titleSize)*0.75)+'px':H.titleSize;
+  var subSz=compact?(parseInt(H.subSize)*0.8)+'px':H.subSize;
+  var yearSz=compact?(parseInt(H.yearSize)*0.85)+'px':H.yearSize;
+  var logoSz=compact?(parseInt(H.logoSize)*0.7)+'px':H.logoSize;
+
   var h='<div style="font-family:Tajawal,Arial,sans-serif;width:100%;padding:'+pad+';background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact">';
 
-  /* ═══ الشريط العلوي ═══ */
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double #1E40AF;padding-bottom:8px;margin-bottom:'+mbInfo+'">';
-  h+='<div style="flex:1;text-align:center;font-weight:900;font-size:'+(compact?'12px':'14px')+';color:#1E40AF;line-height:1.6">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
+  /* ═══ الشريط العلوي (عناوين قابلة للتخصيص) ═══ */
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double '+H.schoolColor+';padding-bottom:10px;margin-bottom:'+mbInfo+';gap:10px">';
+  
+  /* اليمين: إدارة المدرسة */
+  h+='<div style="flex:1;text-align:center;font-weight:900;font-size:'+schoolSz+';color:'+H.schoolColor+';line-height:1.5">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
+  
+  /* الوسط: العنوان الرئيسي */
   h+='<div style="flex:1;text-align:center">';
-  h+='<div style="font-size:'+titleSize+';font-weight:900;color:#1E40AF">بطاقة درجات</div>';
-  h+='<div style="font-size:'+subSize+';font-weight:800;color:#B45309;margin-top:2px">الصف الخامس والسادس الابتدائي</div>';
-  h+='<div style="font-size:'+(compact?'10px':'11px')+';font-weight:700;color:#64748B;margin-top:2px">للعام الدراسي '+esc(studyYear)+'</div>';
+  h+='<div style="font-size:'+titleSz+';font-weight:900;color:'+H.titleColor+'">بطاقة درجات</div>';
+  h+='<div style="font-size:'+subSz+';font-weight:800;color:'+H.subColor+';margin-top:3px">الصف الخامس والسادس الابتدائي</div>';
+  h+='<div style="font-size:'+yearSz+';font-weight:700;color:'+H.yearColor+';margin-top:3px">للعام الدراسي '+esc(studyYear)+'</div>';
   h+='</div>';
+  
+  /* اليسار: الشعار */
   h+='<div style="flex:1;text-align:center">';
   if(schoolLogo){
-    h+='<img src="'+schoolLogo+'" style="width:'+logoSize+';height:'+logoSize+';object-fit:contain;border:2px solid #1E40AF;border-radius:8px">';
-  }else{
-    h+='<div style="width:'+logoSize+';height:'+logoSize+';border:2px dashed #CBD5E1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px;margin:0 auto">شعار<br>المدرسة</div>';
+    h+='<img src="'+schoolLogo+'" style="width:'+logoSz+';height:'+logoSz+';object-fit:contain;border:2px solid '+H.schoolColor+';border-radius:8px">';  }else{
+    h+='<div style="width:'+logoSz+';height:'+logoSz+';border:2px dashed #CBD5E1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:11px;margin:0 auto">شعار<br>المدرسة</div>';
   }
   h+='</div></div>';
 
   /* ═══ شريط بيانات التلميذ ═══ */
   var infoPad=compact?'6px 10px':'9px 14px';
   var infoFs=compact?'11px':'13px';
-  h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:'+infoPad+';border-radius:8px;margin-bottom:'+mbInfo+';border:1px solid #BFDBFE;flex-wrap:wrap;gap:4px">';
-  h+='<div style="flex:1;min-width:120px;text-align:right;font-size:'+infoFs+';white-space:nowrap"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;min-width:120px;text-align:center;font-size:'+infoFs+';white-space:nowrap"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:800;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
-  h+='<div style="flex:1;min-width:100px;text-align:left;font-size:'+(compact?'10px':'11px')+';white-space:nowrap"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:'+infoPad+';border-radius:8px;margin-bottom:'+mbInfo+';border:1px solid #BFDBFE;flex-wrap:wrap;gap:6px">';
+  h+='<div style="flex:1;min-width:140px;text-align:right;font-size:'+infoFs+'"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;min-width:140px;text-align:center;font-size:'+infoFs+'"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:800;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;min-width:140px;text-align:left;font-size:'+infoFs+'"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* ═══ جدول الدرجات — العناوين الصحيحة بالترتيب مع rowspan ═══ */
+  /* ═══ جدول الدرجات — العرض الكامل مع الأعمدة المضبوطة ═══ */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid #1E293B;table-layout:fixed"><thead>';
   
-  /* الصف الأول من الرؤوس — كل عمود إما rowspan=2 أو colspan */
+  /* الصف الأول — توزيع الأعمدة: 2+12+21+7+5+14+7+7+7+9 = 91% (الباقي للحدود) */
   h+='<tr>'
     +'<th style="'+S.TH+';width:2%" rowspan="2">ت</th>'
-    +'<th style="'+S.TH+';width:10%" rowspan="2">الدروس</th>'
+    +'<th style="'+S.TH+';width:12%" rowspan="2">الدروس</th>'
     +'<th style="'+S.TH1+'" colspan="3">الفصل الأول</th>'
     +'<th style="'+S.THC+';width:7%" rowspan="2">معدل<br>ف١</th>'
     +'<th style="'+S.TH+';width:5%" rowspan="2">نصف<br>السنة</th>'
     +'<th style="'+S.TH2+'" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+S.THC+';width:7%" rowspan="2">معدل<br>ف٢</th>'    +'<th style="'+S.THC+';width:7%" rowspan="2">السعي<br>السنوي</th>'
-    +'<th style="'+S.TH+';width:6%" rowspan="2">نهاية<br>السنة</th>'
-    +'<th style="'+S.THF+';width:8%" rowspan="2">الدرجة<br>النهائية</th>'
+    +'<th style="'+S.THC+';width:7%" rowspan="2">معدل<br>ف٢</th>'
+    +'<th style="'+S.THC+';width:7%" rowspan="2">السعي<br>السنوي</th>'
+    +'<th style="'+S.TH+';width:7%" rowspan="2">نهاية<br>السنة</th>'
+    +'<th style="'+S.THF+';width:9%" rowspan="2">الدرجة<br>النهائية</th>'
     +'</tr>';
   
-  /* الصف الثاني من الرؤوس — فقط تحت الفصل الأول والفصل الثاني */
+  /* الصف الثاني */
   h+='<tr>'
-    +'<th style="'+S.TH1+';width:6%">ت١</th>'
-    +'<th style="'+S.TH1+';width:6%">ت٢</th>'
-    +'<th style="'+S.TH1+';width:6%">ك١</th>'
+    +'<th style="'+S.TH1+';width:7%">ت١</th>'
+    +'<th style="'+S.TH1+';width:7%">ت٢</th>'
+    +'<th style="'+S.TH1+';width:7%">ك١</th>'
     +'<th style="'+S.TH2+';width:7%">آذار</th>'
     +'<th style="'+S.TH2+';width:7%">نيسان</th>'
     +'</tr></thead><tbody>';
@@ -168,8 +194,7 @@ function buildOneResult(rows,compact){
       +'<td style="'+S.TD+'">'+arNum(i+1)+'</td>'
       +'<td style="'+S.TDN+'">'+s+'</td>'
       +td(r?r.m1:null)+td(r?r.m2:null)+td(r?r.m3:null)
-      +'<td style="'+S.TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a1):'—')+'</td>'
-      +td(r?r.half:null)+td(r?r.m4:null)+td(r?r.m5:null)
+      +'<td style="'+S.TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a1):'—')+'</td>'      +td(r?r.half:null)+td(r?r.m4:null)+td(r?r.m5:null)
       +'<td style="'+S.TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a2):'—')+'</td>'
       +'<td style="'+S.TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.annual):'—')+'</td>'
       +td(r?r.exam:null)
@@ -190,11 +215,12 @@ function buildOneResult(rows,compact){
     +'</tr>';
   h+='</tbody></table>';
 
-  /* ═══ التوقيعات ═══ */
+  /* ═══ التوقيعات — مرشد على اليمين، مدير على اليسار (مع ترتيب RTL طبيعي) ═══ */
   var signFs=compact?'12px':'14px';
-  h+='<div style="display:flex;justify-content:space-between;margin-top:'+mTopSign+';padding:0 10px;font-size:'+signFs+';font-weight:800;color:#0F172A">';
-  h+='<div style="white-space:nowrap">مرشد الصف : <span style="color:#1E40AF">'+esc(guideName)+'</span></div>';
-  h+='<div style="white-space:nowrap">مدير المدرسة : <span style="color:#1E40AF">'+esc(principalName)+'</span></div>';  h+='</div>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:'+mTopSign+';padding:0 10px;font-size:'+signFs+';font-weight:800;color:#0F172A;flex-wrap:wrap;gap:10px">';
+  h+='<div style="flex:1;text-align:right;min-width:200px">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
+  h+='<div style="flex:1;text-align:left;min-width:200px">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
+  h+='</div>';
 
   h+='</div>';
   return h;
@@ -207,17 +233,16 @@ function resultTable(rows,opts){
   var secondRows=opts.secondRows||null;
   
   if(secondRows&&secondRows.length){
-    var h='<div style="width:794px;margin:0 auto">';
+    var h='<div style="width:100%;max-width:794px;margin:0 auto">';
     h+=buildOneResult(rows,true);
-    h+='<div style="border-top:2px dashed #94A3B8;margin:10px 0"></div>';
+    h+='<div style="border-top:2px dashed #94A3B8;margin:10px 0;page-break-after:always"></div>';
     h+=buildOneResult(secondRows,true);
     h+='</div>';
     return h;
   }else{
-    return '<div style="width:794px;margin:0 auto">'+buildOneResult(rows,false)+'</div>';
+    return '<div style="width:100%;max-width:794px;margin:0 auto">'+buildOneResult(rows,false)+'</div>';
   }
 }
-
 function resultCard(name,grade,section,rows){
   var finals=rows.map(function(r){return r.final;}).filter(function(v){return v!=null;});
   var max=rows.length?rows[0].max||100:100;
@@ -243,7 +268,8 @@ function downloadXLS(filename,title,tablesHTML){
   var blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel;charset=utf-8;'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.xls';
   document.body.appendChild(a);a.click();a.remove();
-  setTimeout(function(){URL.revokeObjectURL(a.href);},5000);  toast('✓ تم التنزيل — افتحه في Excel','ok');
+  setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
+  toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
 
 function printWin(html){
@@ -261,13 +287,12 @@ function printWin(html){
   doc.open();
   doc.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
     +'<style>'
-    +'@page{size:A4;margin:6mm}'
+    +'@page{size:A4;margin:8mm}'
     +'*{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
-    +'body{font-family:Tajawal,Arial,sans-serif;margin:0;padding:0}'
-    +'table{page-break-inside:avoid}'
+    +'body{font-family:Tajawal,Arial,sans-serif;margin:0;padding:0;width:100%}'
+    +'table{page-break-inside:avoid;width:100%}'
     +'</style>'
-    +'</head><body>'+html+'</body></html>');
-  doc.close();
+    +'</head><body>'+html+'</body></html>');  doc.close();
   setTimeout(function(){
     f.contentWindow.focus();
     f.contentWindow.print();
@@ -292,7 +317,8 @@ function adminLogin(){
   if(!url()){toast('⚠️ رابط الخادم مفقود — ضعه في config.js','err');return;}
   var btn=$('#loginBtn');btn.disabled=true;btn.textContent='⏳ تحقق...';
   api({action:'adminLogin',key:k},20000).then(function(r){
-    if(!r.ok){toast('❌ '+r.error,'err');return;}    ROLE=r.role;localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);
+    if(!r.ok){toast('❌ '+r.error,'err');return;}
+    ROLE=r.role;localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);
     enterAdmin();
   }).catch(function(){toast('تعذر الاتصال بالخادم','err');})
   .finally(function(){btn.disabled=false;btn.textContent='دخول';});
@@ -315,8 +341,7 @@ function applyRole(){
   var rc=$('#roleCard');
   rc.className='rolecard '+(dev?'dev':'mgr');
   $('#roleDot').textContent=dev?'🛠️':'👔';
-  $('#roleLabel').textContent=dev?'المطور':'المدير';
-  $('#roleSub').textContent=dev?'صلاحيات كاملة':'عرض الدرجات';
+  $('#roleLabel').textContent=dev?'المطور':'المدير';  $('#roleSub').textContent=dev?'صلاحيات كاملة':'عرض الدرجات';
 }
 function logoutAdmin(){confirmDlg('تسجيل الخروج؟',function(){localStorage.removeItem('d_admin');localStorage.removeItem('d_key');ROLE='';go('s-login');$('#keyIn').value='';},'خروج');}
 function refresh(){toast('⏳ تحديث...','');if(Pages.dash&&Pages.dash.enter)Pages.dash.enter();}
