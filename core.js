@@ -44,51 +44,50 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-/* ═══ أنماط الجداول ═══ */
-var TH='border:1px solid #1E40AF;background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:4px 3px;font-size:9px;font-weight:bold;text-align:center';
-var TH1='border:1px solid #1D4ED8;background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:4px 3px;font-size:9px;font-weight:bold;text-align:center';
-var TH2='border:1px solid #0E7490;background:linear-gradient(135deg,#0E7490,#06B6D4);color:#fff;padding:4px 3px;font-size:9px;font-weight:bold;text-align:center';var THC='border:1px solid #B45309;background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:4px 3px;font-size:9px;font-weight:bold;text-align:center';
-var THF='border:1px solid #BE123C;background:linear-gradient(135deg,#BE123C,#E11D48);color:#fff;padding:4px 3px;font-size:9px;font-weight:bold;text-align:center';
-var TD='border:1px solid #CBD5E1;padding:4px 3px;text-align:center;font-size:10px;background:#fff';
-var TDN='border:1px solid #CBD5E1;padding:4px 3px;text-align:right;font-size:10px;font-weight:bold;background:#fff';
+/* ═══ أنماط الجداول (خط أكبر وواضح) ═══ */
+var TH='border:1px solid #1E40AF;background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
+var TH1='border:1px solid #1D4ED8;background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
+var TH2='border:1px solid #0E7490;background:linear-gradient(135deg,#0E7490,#06B6D4);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';var THC='border:1px solid #B45309;background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
+var THF='border:1px solid #BE123C;background:linear-gradient(135deg,#BE123C,#E11D48);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
+var TD='border:1px solid #CBD5E1;padding:6px 4px;text-align:center;font-size:12px;background:#fff';
+var TDN='border:1px solid #CBD5E1;padding:6px 5px;text-align:right;font-size:12px;font-weight:bold;background:#fff';
 
-/* ═══ منطق حساب نتيجة التلميذ ═══ */
+/* ═══ منطق النتيجة: ناجح / مكمل (١-٢ دروس مع ذكر أسمائها) / راسب (٣ فأكثر) ═══ */
 function calcHalfResult(bySub){
-  var graded=[],failed=0;
+  var graded=0,failedNames=[];
   SUBJECTS.forEach(function(s){
-    var r=bySub[s];
-    if(!r)return;
-    var v=r.half!==null&&r.half!==undefined?r.half:(r.a1!==null&&r.a1!==undefined?r.a1:null);
-    if(v===null)return;
-    graded.push(s);
-    if(v<(r.max||100)/2)failed++;
+    var r=bySub[s];if(!r)return;
+    var v=(r.half!=null)?r.half:((r.a1!=null)?r.a1:null);
+    if(v==null)return;
+    graded++;
+    if(v<(r.max||100)/2)failedNames.push(s);
   });
-  if(!graded.length)return{text:'—',cls:'none'};
-  if(failed===0)return{text:'ناجح ✔',cls:'pass'};
-  if(failed<=2)return{text:'مكمل في '+arNum(failed)+' مادة',cls:'warn'};
+  if(!graded)return{text:'—',cls:'none'};
+  if(failedNames.length===0)return{text:'ناجح',cls:'pass'};
+  if(failedNames.length<=2)return{text:'مكمل من '+failedNames.join(' و '),cls:'warn'};
   return{text:'راسب',cls:'fail'};
 }
 function calcFinalResult(bySub){
-  var graded=[],failed=0;
+  var graded=0,failedNames=[];
   SUBJECTS.forEach(function(s){
-    var r=bySub[s];
-    if(!r||r.final===null||r.final===undefined)return;
-    graded.push(s);
-    if(r.final<(r.max||100)/2)failed++;
+    var r=bySub[s];if(!r)return;
+    if(r.final==null)return;
+    graded++;
+    if(r.final<(r.max||100)/2)failedNames.push(s);
   });
-  if(!graded.length)return{text:'—',cls:'none'};
-  if(failed===0)return{text:'ناجح ✔',cls:'pass'};
-  if(failed<=2)return{text:'مكمل في '+arNum(failed)+' مادة',cls:'warn'};
+  if(!graded)return{text:'—',cls:'none'};
+  if(failedNames.length===0)return{text:'ناجح',cls:'pass'};
+  if(failedNames.length<=2)return{text:'مكمل من '+failedNames.join(' و '),cls:'warn'};
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بطاقة النتيجة بحجم A4 مع الهيدر الكامل ═══ */
+/* ═══ بطاقة النتيجة A4 ═══ */
 function resultTable(rows){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
   var finalRes=calcFinalResult(bySub);
-  
-  var schoolName=localStorage.getItem('school_name')||'اسم المدرسة';
+
+  var schoolName=localStorage.getItem('school_name')||'مدرسة المنهل الابتدائية';
   var schoolLogo=localStorage.getItem('school_logo')||'';
   var guideName=localStorage.getItem('guide_name')||'....................';
   var principalName=localStorage.getItem('principal_name')||'....................';
@@ -96,60 +95,57 @@ function resultTable(rows){
   var grade=rows.length?rows[0].grade:'';
   var section=rows.length?rows[0].section:'';
 
-  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:794px;min-height:1123px;padding:20px;background:#fff;margin:0 auto;box-sizing:border-box">';  
-  /* ═══ الهيدر العلوي ═══ */
+  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:794px;padding:18px;background:#fff;margin:0 auto;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact">';
+  /* ═══ الشريط العلوي: يمين (إدارة المدرسة) — وسط (العنوان) — يسار (شعار مربع) ═══ */
   h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double #1E40AF;padding-bottom:12px;margin-bottom:14px">';
-  h+='<div style="flex:1;text-align:right;font-weight:900;font-size:14px;color:#1E40AF;line-height:1.6">الجمهورية الجزائرية الديمقراطية الشعبية<br>وزارة التربية الوطنية<br><span style="font-size:16px">'+esc(schoolName)+'</span></div>';
+  h+='<div style="flex:1;text-align:center;font-weight:900;font-size:15px;color:#1E40AF;line-height:1.7">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
   h+='<div style="flex:1;text-align:center">';
-  h+='<div style="font-size:11px;color:#64748B">السنة الدراسية '+YEAR+'</div>';
-  h+='<div style="font-size:15px;font-weight:900;color:#1E40AF;margin-top:4px">بطاقة درجات</div>';
-  h+='<div style="font-size:12px;font-weight:800;color:#B45309;margin-top:2px">الصف الخامس والسادس</div>';
+  h+='<div style="font-size:16px;font-weight:900;color:#1E40AF">بطاقة درجات</div>';
+  h+='<div style="font-size:13px;font-weight:800;color:#B45309;margin-top:3px">الصف الخامس والسادس الابتدائي</div>';
+  h+='<div style="font-size:12px;font-weight:700;color:#64748B;margin-top:3px">للعام الدراسي '+YEAR+'</div>';
   h+='</div>';
-  h+='<div style="flex:1;text-align:left">';
+  h+='<div style="flex:1;text-align:center">';
   if(schoolLogo){
-    h+='<img src="'+schoolLogo+'" style="max-width:90px;max-height:90px;object-fit:contain">';
+    h+='<img src="'+schoolLogo+'" style="width:90px;height:90px;object-fit:contain;border:2px solid #1E40AF;border-radius:8px">';
   }else{
-    h+='<div style="width:80px;height:80px;border:2px dashed #CBD5E1;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px">شعار<br>المدرسة</div>';
+    h+='<div style="width:90px;height:90px;border:2px dashed #CBD5E1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px;margin:0 auto">شعار<br>المدرسة</div>';
   }
   h+='</div></div>';
-  
-  /* ═══ بيانات التلميذ ═══ */
+
+  /* ═══ شريط بيانات التلميذ ═══ */
   h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:10px 16px;border-radius:10px;margin-bottom:14px;border:1px solid #BFDBFE">';
-  h+='<div style="flex:1;text-align:right;font-size:13px"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A;font-size:14px">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;text-align:center;font-size:13px"><b style="color:#1E40AF">الصف:</b> <span style="font-weight:800;color:#0F172A;font-size:14px">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
-  h+='<div style="flex:1;text-align:left;font-size:13px"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
+  h+='<div style="flex:1;text-align:right;font-size:14px"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A;font-size:15px">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;text-align:center;font-size:14px"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:800;color:#0F172A;font-size:15px">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;text-align:left;font-size:12px"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
-  
-  /* ═══ جدول الدرجات ═══ */
-  h+='<table style="width:100%;border-collapse:collapse;font-size:10px"><thead>';
+
+  /* ═══ جدول الدرجات (١٣ عمودًا) ═══ */
+  h+='<table style="width:100%;border-collapse:collapse"><thead>';
   h+='<tr>'
-    +'<th style="'+TH+';width:24px" rowspan="2">#</th>'
-    +'<th style="'+TH+';width:90px" rowspan="2">الدروس</th>'
+    +'<th style="'+TH+'" rowspan="2">#</th>'
+    +'<th style="'+TH+'" rowspan="2">الدروس</th>'
     +'<th style="'+TH1+'" colspan="3">الفصل الأول</th>'
-    +'<th style="'+THC+';width:45px" rowspan="2">معدل<br>ف١</th>'
-    +'<th style="'+TH+';width:45px" rowspan="2">نصف<br>السنة</th>'
+    +'<th style="'+THC+'" rowspan="2">معدل ف١</th>'
+    +'<th style="'+TH+'" rowspan="2">نصف السنة</th>'
     +'<th style="'+TH2+'" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+THC+';width:45px" rowspan="2">معدل<br>ف٢</th>'
-    +'<th style="'+THC+';width:45px" rowspan="2">السعي<br>السنوي</th>'
-    +'<th style="'+TH+';width:45px" rowspan="2">نهاية<br>السنة</th>'
-    +'<th style="'+THF+';width:50px" rowspan="2">الدرجة<br>النهائية</th>'
+    +'<th style="'+THC+'" rowspan="2">معدل ف٢</th>'
+    +'<th style="'+THC+'" rowspan="2">السعي السنوي</th>'
+    +'<th style="'+TH+'" rowspan="2">نهاية السنة</th>'
+    +'<th style="'+THF+'" rowspan="2">الدرجة النهائية</th>'
     +'</tr>';
   h+='<tr>'
-    +'<th style="'+TH1+';width:35px">ت١</th>'
-    +'<th style="'+TH1+';width:35px">ت٢</th>'
-    +'<th style="'+TH1+';width:35px">ك١</th>'
-    +'<th style="'+TH2+';width:35px">آذار</th>'
-    +'<th style="'+TH2+';width:35px">نيسان</th>'
+    +'<th style="'+TH1+'">ت١</th><th style="'+TH1+'">ت٢</th><th style="'+TH1+'">ك١</th>'
+    +'<th style="'+TH2+'">آذار</th><th style="'+TH2+'">نيسان</th>'
     +'</tr></thead><tbody>';
-  
+
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
-    function td(v){return(v===null||v===undefined||v==='')?'<td style="'+TD+';color:#CBD5E1">—</td>':'<td style="'+TD+'">'+arNum(v)+'</td>';}
-    var fin=r&&r.final!==null&&r.final!==undefined;    var finStyle=TD+(fin?(r.final>=(r.max||100)/2?';color:#047857;font-weight:bold;background:#D1FAE5':';color:#DC2626;font-weight:bold;background:#FEE2E2'):'');
+    function td(v){return(v==null||v==='')?'<td style="'+TD+';color:#CBD5E1">—</td>':'<td style="'+TD+'">'+arNum(v)+'</td>';}
+    var fin=r&&r.final!=null;
+    var finStyle=TD+(fin?(r.final>=(r.max||100)/2?';color:#047857;font-weight:bold;background:#D1FAE5':';color:#DC2626;font-weight:bold;background:#FEE2E2'):'');
     h+='<tr style="'+(i%2===1?'background:#F8FAFC':'')+'">'
       +'<td style="'+TD+'">'+arNum(i+1)+'</td>'
-      +'<td style="'+TDN+';font-size:10px">'+s+'</td>'
-      +td(r?r.m1:null)+td(r?r.m2:null)+td(r?r.m3:null)
+      +'<td style="'+TDN+'">'+s+'</td>'      +td(r?r.m1:null)+td(r?r.m2:null)+td(r?r.m3:null)
       +'<td style="'+TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a1):'—')+'</td>'
       +td(r?r.half:null)+td(r?r.m4:null)+td(r?r.m5:null)
       +'<td style="'+TD+';background:#FEF3C7;font-weight:bold;color:#B45309">'+(r?arNum(r.a2):'—')+'</td>'
@@ -158,43 +154,35 @@ function resultTable(rows){
       +'<td style="'+finStyle+'">'+(r?arNum(r.final):'—')+'</td>'
       +'</tr>';
   });
-  
-  /* ═══ سطر النتيجة النهائية ═══ */
-  var halfColor=halfRes.cls==='pass'?'#047857':halfRes.cls==='fail'?'#DC2626':halfRes.cls==='warn'?'#D97706':'#64748B';
-  var halfBg=halfRes.cls==='pass'?'#D1FAE5':halfRes.cls==='fail'?'#FEE2E2':halfRes.cls==='warn'?'#FEF3C7':'#F1F5F9';
-  var finalColor=finalRes.cls==='pass'?'#047857':finalRes.cls==='fail'?'#DC2626':finalRes.cls==='warn'?'#D97706':'#64748B';
-  var finalBg=finalRes.cls==='pass'?'#D1FAE5':finalRes.cls==='fail'?'#FEE2E2':finalRes.cls==='warn'?'#FEF3C7':'#F1F5F9';
-  
-  h+='<tr style="background:#1E3A8A;color:#fff;font-weight:900;font-size:11px">'
-    +'<td colspan="6" style="border:1px solid #1E3A8A;padding:10px;text-align:center">نتيجة نصف السنة: <span style="background:'+halfBg+';color:'+halfColor+';padding:4px 14px;border-radius:12px;margin-right:8px">'+halfRes.text+'</span></td>'
-    +'<td colspan="6" style="border:1px solid #1E3A8A;padding:10px;text-align:center">نتيجة نهاية السنة: <span style="background:'+finalBg+';color:'+finalColor+';padding:4px 14px;border-radius:12px;margin-right:8px">'+finalRes.text+'</span></td>'
+
+  /* ═══ سطر النتيجة (متساوي مع عرض الجدول: ٦ + ٧ = ١٣) ═══ */
+  function resSpan(res){
+    var color=res.cls==='pass'?'#047857':res.cls==='fail'?'#DC2626':res.cls==='warn'?'#B45309':'#64748B';
+    var bg=res.cls==='pass'?'#D1FAE5':res.cls==='fail'?'#FEE2E2':res.cls==='warn'?'#FEF3C7':'#F1F5F9';
+    return '<span style="background:'+bg+';color:'+color+';padding:4px 14px;border-radius:12px;font-weight:900;margin-right:8px">'+res.text+'</span>';
+  }
+  h+='<tr style="background:#1E3A8A;color:#fff;font-weight:900;font-size:13px">'
+    +'<td colspan="6" style="border:1px solid #1E3A8A;padding:10px;text-align:center">نتيجة نصف السنة: '+resSpan(halfRes)+'</td>'
+    +'<td colspan="7" style="border:1px solid #1E3A8A;padding:10px;text-align:center">نتيجة نهاية السنة: '+resSpan(finalRes)+'</td>'
     +'</tr>';
   h+='</tbody></table>';
-  
-  /* ═══ التوقيعات ═══ */
-  h+='<div style="display:flex;justify-content:space-between;margin-top:30px;padding:0 30px">';
-  h+='<div style="flex:1;text-align:right">';
-  h+='<div style="font-weight:900;color:#1E40AF;font-size:12px;margin-bottom:8px">مرشد الصف</div>';
-  h+='<div style="border-top:2px solid #1E40AF;padding-top:6px;font-weight:800;font-size:13px;min-width:180px;text-align:center">'+esc(guideName)+'</div>';
+
+  /* ═══ التوقيعات: مرشد الصف : الاسم — مدير المدرسة : الاسم ═══ */
+  h+='<div style="display:flex;justify-content:space-between;margin-top:34px;padding:0 20px;font-size:14px;font-weight:800;color:#0F172A">';
+  h+='<div>مرشد الصف : <span style="color:#1E40AF">'+esc(guideName)+'</span></div>';
+  h+='<div>مدير المدرسة : <span style="color:#1E40AF">'+esc(principalName)+'</span></div>';
   h+='</div>';
-  h+='<div style="flex:1;text-align:left">';
-  h+='<div style="font-weight:900;color:#1E40AF;font-size:12px;margin-bottom:8px">مدير المدرسة</div>';
-  h+='<div style="border-top:2px solid #1E40AF;padding-top:6px;font-weight:800;font-size:13px;min-width:180px;text-align:center">'+esc(principalName)+'</div>';
-  h+='</div></div>';
-  
+
   h+='</div>';
   return h;
 }
 
 function resultCard(name,grade,section,rows){
-  var finals=rows.map(function(r){return r.final;}).filter(function(v){return v!==null&&v!==undefined;});
+  var finals=rows.map(function(r){return r.final;}).filter(function(v){return v!=null;});
   var max=rows.length?rows[0].max||100:100;
   var pass=finals.filter(function(v){return v>=max/2;}).length;
   var avg=finals.length?Math.round(finals.reduce(function(a,b){return a+b;},0)/finals.length):null;
   var isPass=avg!==null&&avg>=max/2;
-  var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
-  var halfRes=calcHalfResult(bySub);
-  var finalRes=calcFinalResult(bySub);  
   return '<div class="rescard">'
     +'<div class="rc-top"><div class="t">🎓 بطاقة نتيجة التلميذ</div><div class="y">السنة الدراسية '+YEAR+'</div></div>'
     +'<div class="rc-info"><span>التلميذ: <b>'+esc(name)+'</b></span>'
@@ -203,14 +191,9 @@ function resultCard(name,grade,section,rows){
     +'<span>ناجح في: <b>'+arNum(pass)+'</b> من <b>'+arNum(rows.length)+'</b></span>'
     +(avg!==null?'<span class="verdict '+(isPass?'pass':'fail')+'">'+(isPass?'ناجح ✔':'راسب ✘')+'</span>':'')
     +'</div>'
-    +'<div class="rc-body" style="background:#E2E8F0;padding:20px">'+resultTable(rows)+'</div>'
-    +'<div class="rc-sign">'
-    +'<div style="text-align:right"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">نتيجة نصف السنة</div><b style="color:#1E40AF">'+halfRes.text+'</b></div>'
-    +'<div style="text-align:center"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">نتيجة نهاية السنة</div><b style="color:#1E40AF">'+finalRes.text+'</b></div>'
-    +'<div style="text-align:left"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">الحالة العامة</div><b style="color:'+(isPass?'#059669':'#DC2626')+'">'+(isPass?'ناجح':'راسب')+'</b></div>'
-    +'</div></div>';
+    +'<div class="rc-body" style="background:#E2E8F0;padding:20px;overflow-x:auto">'+resultTable(rows)+'</div>'
+    +'</div>';
 }
-
 function downloadXLS(filename,title,tablesHTML){
   var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl"><head><meta charset="utf-8">'
     +'<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الدرجات</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->'
@@ -221,17 +204,35 @@ function downloadXLS(filename,title,tablesHTML){
   setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
   toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
+
+/* ═══ طباعة عبر إطار مخفي — يفتح حوار الطباعة مباشرة بدون تبويب ظاهر ═══ */
 function printWin(html){
-  var w=window.open('','_blank');
-  w.document.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
+  var old=document.getElementById('printFrame');
+  if(old)old.remove();
+  var f=document.createElement('iframe');
+  f.id='printFrame';
+  f.style.position='fixed';
+  f.style.left='-10000px';
+  f.style.width='0';
+  f.style.height='0';
+  f.style.border='0';
+  document.body.appendChild(f);
+  var doc=f.contentWindow.document;
+  doc.open();
+  doc.write('<html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
     +'<style>'
-    +'@page{size:A4;margin:0}'
-    +'body{font-family:Tajawal,Arial,sans-serif;padding:0;margin:0}'
+    +'@page{size:A4;margin:8mm}'
+    +'*{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'body{font-family:Tajawal,Arial,sans-serif;margin:0}'
     +'</style>'
     +'</head><body>'+html+'</body></html>');
-  w.document.close();
-  setTimeout(function(){try{w.print();}catch(e){}},600);
+  doc.close();
+  setTimeout(function(){
+    f.contentWindow.focus();
+    f.contentWindow.print();
+  },500);
 }
+
 var ICONS={
   summary:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>',
   print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>',
@@ -242,8 +243,8 @@ var ICONS={
   xls:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8"/></svg>',
   bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
-  school:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>'
-};
+  school:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>'};
+
 /* ═══ الدخول والتنقل ═══ */
 function adminLogin(){
   var k=$('#keyIn').value.trim();
