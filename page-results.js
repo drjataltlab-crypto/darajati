@@ -130,7 +130,7 @@ function renderResults(){
     +'</table>'
     +'<div style="margin-top:16px;font-weight:900;color:#7C3AED;font-size:14px;border-top:2px dashed var(--line);padding-top:10px">✍️ التوقيعات</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:6px">'
-    +cfgRow('👨🏫 مرشد الصف','pcGuide',pc.schoolColor,pc.signFont,pc.guideAlign,{noColor:true,minSize:10,maxSize:24})
+    +cfgRow('👨‍🏫 مرشد الصف','pcGuide',pc.schoolColor,pc.signFont,pc.guideAlign,{noColor:true,minSize:10,maxSize:24})
     +cfgRow('🎓 مدير المدرسة','pcPrincipal',pc.schoolColor,pc.signFont,pc.principalAlign,{noColor:true,minSize:10,maxSize:24})
     +'</table>'
     +'<div class="grid2" style="margin-top:14px">'
