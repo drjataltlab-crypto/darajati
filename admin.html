@@ -5,11 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0B3B2E">
 <title>درجاتي — لوحة التحكم</title>
+
+<!-- منع الكاش — لتحديث سريع دائماً -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="admin.css?v=2.0">
 </head>
 <body>
 <div id="errbar"></div>
@@ -38,7 +44,7 @@
       <div class="sfoot"><div class="rolecard" id="roleCard">
         <div class="dot2" id="roleDot">🛠️</div>
         <div style="flex:1"><b id="roleLabel">المطور</b><small id="roleSub">صلاحيات كاملة</small></div>
-        <button class="exit" onclick="logoutAdmin()">⏻</button>
+        <button class="exit" onclick="logoutAdmin()" title="تسجيل الخروج">←</button>
       </div></div>
     </aside>
     <div class="maincol">
@@ -46,8 +52,9 @@
         <div><b id="tbTitle">نظرة عامة</b><small id="admSub">—</small></div>
         <span class="grow"></span>
         <button class="iconbtn" onclick="refresh()" title="تحديث">↻</button>
-        <button class="iconbtn" onclick="logoutAdmin()">⏻</button>
-      </header>      <div class="content">
+        <button class="iconbtn" onclick="logoutAdmin()" title="تسجيل الخروج">←</button>
+      </header>
+      <div class="content">
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>نظرة عامة</div>
           <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
@@ -84,19 +91,16 @@
           <div class="card"><div class="ct">📋 قائمة المعلمين</div><div class="team-list" id="teamList"></div></div>
         </div>
         <div id="tab-entry" hidden>
-          <div class="ptitle"><span class="bar"></span>إدخال درجات الإدارة</div>
-          <p class="psub">نصف السنة • السعي • نهاية السنة • النهائية — تُحفظ فورًا</p>
-          <div class="card"><div class="row2">
-            <select id="enCls"><option value="">اختر الصف...</option></select>
-            <button class="btn sm" onclick="loadEntry()">📋 تحميل</button>
-          </div></div>
-          <div id="entryBox"></div>
+          <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
+          <p class="psub">١) اختر المعلم ← ٢) المادة ← ٣) الصف والشعبة — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
+          <div id="entBox"></div>
         </div>
         <div id="tab-studs" hidden>
           <div class="ptitle"><span class="bar"></span>قوائم التلاميذ</div>
           <div class="card">
             <div class="row2">
-              <select id="stCls"><option>الخامس</option><option>السادس</option></select>              <select id="stSec"><option>أ</option><option>ب</option><option>ج</option></select>
+              <select id="stCls"><option>الخامس</option><option>السادس</option></select>
+              <select id="stSec"><option>أ</option><option>ب</option><option>ج</option></select>
               <button class="btn sm" onclick="loadStudents()">عرض</button>
             </div>
             <div id="stCount" class="hint" style="margin-top:9px"></div>
@@ -145,7 +149,8 @@
     </div>
   </div>
   <nav class="bnav">
-    <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>    <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
+    <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>
+    <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
@@ -189,13 +194,24 @@
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="config.js"></script>
-<script src="core.js"></script>
-<script src="page-dash.js"></script>
-<script src="page-results.js"></script>
-<script src="page-team.js"></script>
-<script src="page-entry.js"></script><script src="page-students.js"></script>
-<script src="page-keys.js"></script>
-<script src="page-settings.js"></script>
+<!-- السكربتات مع رقم إصدار لمنع الكاش -->
+<script src="config.js?v=2.0"></script>
+<script src="core.js?v=2.0"></script>
+<script src="page-dash.js?v=2.0"></script>
+<script src="page-results.js?v=2.0"></script>
+<script src="page-team.js?v=2.0"></script>
+<script src="page-entry.js?v=2.0"></script>
+<script src="page-students.js?v=2.0"></script>
+<script src="page-keys.js?v=2.0"></script>
+<script src="page-settings.js?v=2.0"></script>
+
+<!-- Service Worker للتحميل السريع (اختياري) -->
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
 </body>
 </html>
