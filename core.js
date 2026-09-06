@@ -140,7 +140,7 @@ function buildOneResult(rows,compact){
   /* الصف الأول من الرؤوس — كل عمود إما rowspan=2 أو colspan */
   h+='<tr>'
     +'<th style="'+S.TH+';width:2%" rowspan="2">ت</th>'
-    +'<th style="'+S.TH+';width:16%" rowspan="2">الدروس</th>'
+    +'<th style="'+S.TH+';width:14%" rowspan="2">الدروس</th>'
     +'<th style="'+S.TH1+'" colspan="3">الفصل الأول</th>'
     +'<th style="'+S.THC+';width:7%" rowspan="2">معدل<br>ف١</th>'
     +'<th style="'+S.TH+';width:5%" rowspan="2">نصف<br>السنة</th>'
