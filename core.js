@@ -5,18 +5,18 @@ var SUBJECTS=['التربية الإسلامية','اللغة العربية','�
 var YEAR='٢٠٢٥ - ٢٠٢٦';
 var AR='٠١٢٣٤٥٦٧٨٩';
 
-/* ═══ ثيمات كل صفحة — الأزرق الملكي ═══ */
+/* ═══ ثيمات كل صفحة — ألوان قوية واضحة ═══ */
 var THEMES={
-  dash:['#2563EB','#EFF6FF'],   /* أزرق ملكي */
-  res:['#D97706','#FFFBEB'],    /* ذهبي عنبري */
-  team:['#0D9488','#F0FDFA'],   /* أخضر تركوازي */
-  entry:['#7C3AED','#FAF5FF'],  /* بنفسجي */
-  studs:['#0891B2','#ECFEFF'],  /* سماوي */
-  keys:['#E11D48','#FFF1F2'],   /* وردي */
-  set:['#475569','#F1F5F9']     /* رمادي مزرق */
+  dash:['#1D4ED8','#DBEAFE'],   /* أزرق ملكي قوي */
+  res: ['#B45309','#FDE68A'],   /* ذهبي عنبري دافئ */
+  team:['#047857','#A7F3D0'],   /* أخضر زمردي حي */
+  entry:['#7E22CE','#DDD6FE'],  /* بنفسجي ملكي */
+  studs:['#0E7490','#A5F3FC'],  /* سماوي صافٍ */
+  keys: ['#BE123C','#FECDD3'],  /* وردي فاقع */
+  set:  ['#475569','#E2E8F0']   /* رمادي أردوازي */
 };
 
-var AV=['#2563EB','#7C3AED','#0D9488','#D97706','#DC2626','#0891B2','#DB2777','#65A30D'];
+var AV=['#1D4ED8','#7E22CE','#047857','#B45309','#BE123C','#0E7490','#DB2777','#65A30D'];
 
 var Pages={};
 var ADM={teachers:[],tv:null,res:null};
@@ -46,7 +46,7 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-/* ═══ أنماط الجداول المشتركة (شاشة + Excel) — بالأزرق الملكي ═══ */
+/* ═══ أنماط الجداول المشتركة (شاشة + Excel) ═══ */
 var TH='border:1px solid #1E40AF;background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';var TH1='border:1px solid #1D4ED8;background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
 var TH2='border:1px solid #0E7490;background:linear-gradient(135deg,#0E7490,#06B6D4);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
 var THC='border:1px solid #B45309;background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:8px 6px;font-size:11px;font-weight:bold;text-align:center';
@@ -167,7 +167,6 @@ function adminTab(t){
     $$('[data-tab="'+x+'"]').forEach(function(b){b.classList.toggle('act',x===t);});
   });
   
-  /* تطبيق ثيم الصفحة (لون + خلفية) */
   var th=THEMES[t];
   document.documentElement.style.setProperty('--th',th[0]);
   document.documentElement.style.setProperty('--thb',th[1]);
