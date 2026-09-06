@@ -33,6 +33,12 @@ function searchSecondStudent(){
 
 function removeSecondStudent(){ADM.res.second=null;renderResults();}
 
+function toggleSetPanel(){
+  var open=localStorage.getItem('set_panel_open')==='1';
+  localStorage.setItem('set_panel_open',open?'0':'1');
+  renderResults();
+}
+
 /* ═══ صف تحكم: عنصر / لون / حجم / محاذاة ═══ */
 function cfgRow(label,prefix,curColor,curSize,curAlign,opts){
   opts=opts||{};
@@ -48,33 +54,34 @@ function cfgRow(label,prefix,curColor,curSize,curAlign,opts){
     +'</select></td>';
   return '<tr><td style="padding:8px;border-bottom:1px solid var(--line);font-weight:700;font-size:12px">'+label+'</td>'+cCell+sCell+aCell+'</tr>';
 }
+
 function renderResults(){
   var schoolName=localStorage.getItem('school_name')||'';
   var schoolLogo=localStorage.getItem('school_logo')||'';
   var guideName=localStorage.getItem('guide_name')||'';
   var principalName=localStorage.getItem('principal_name')||'';
   var studyYear=localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';
-  
+
   var g=function(k,d){return localStorage.getItem(k)||d;};
   var pc={
-    schoolColor:g('pc_school_color','#1E40AF'),schoolSize:g('pc_school_size','20'),schoolAlign:g('pc_school_align','center'),
-    titleColor:g('pc_title_color','#1E40AF'),titleSize:g('pc_title_size','24'),
-    subColor:g('pc_sub_color','#B45309'),subSize:g('pc_sub_size','16'),
-    yearColor:g('pc_year_color','#475569'),yearSize:g('pc_year_size','14'),
+    schoolColor:g('pc_school_color','#1E40AF'),schoolSize:g('pc_school_size','22'),schoolAlign:g('pc_school_align','center'),
+    titleColor:g('pc_title_color','#1E40AF'),titleSize:g('pc_title_size','26'),
+    subColor:g('pc_sub_color','#B45309'),subSize:g('pc_sub_size','17'),
+    yearColor:g('pc_year_color','#475569'),yearSize:g('pc_year_size','15'),
     logoSize:g('pc_logo_size','110'),
     studentAlign:g('pc_student_align','right'),
     classAlign:g('pc_class_align','center'),
     dateAlign:g('pc_date_align','left'),
-    tableFont:g('pc_table_font','11'),
-    cellHeight:g('pc_cell_height','28'),
-    cellPad:g('pc_cell_pad','4'),
+    tableFont:g('pc_table_font','13'),
+    cellHeight:g('pc_cell_height','32'),
+    cellPad:g('pc_cell_pad','5'),
     subjectWidth:g('pc_subject_width','140'),
     guideAlign:g('pc_guide_align','right'),
     principalAlign:g('pc_principal_align','left'),
-    signFont:g('pc_sign_font','14')
+    signFont:g('pc_sign_font','15')
   };
 
-  /* ═══ ١. بطاقة بيانات المدرسة ═══ */
+  /* ═══ بطاقة بيانات المدرسة ═══ */
   var settings='<div class="card" style="border-right:5px solid #B45309">'
     +'<div class="ct" style="color:#B45309;font-size:16px">🏫 بيانات المدرسة</div>'
     +'<div class="grid2">'
@@ -92,16 +99,15 @@ function renderResults(){
     +'<button class="btn ok" style="margin-top:10px" onclick="saveSchoolInfo()">💾 حفظ بيانات المدرسة</button>'
     +'</div>';
 
-  /* ═══ ٢. بطاقة التحكم الكامل ═══ */
+  /* ═══ بطاقة التحكم الكامل بالتنسيق ═══ */
   var ctrlCard='<div class="card" style="border-right:5px solid #7C3AED">'
     +'<div class="ct" style="color:#7C3AED;font-size:16px">🎨 التحكم الكامل في التنسيق</div>'
     +'<div class="cs">خصص كل عنصر: اللون، الحجم، والمحاذاة</div>'
-        /* قسم العناوين والشعار */
     +'<div style="margin-top:12px;font-weight:900;color:#7C3AED;font-size:14px;border-top:2px dashed var(--line);padding-top:10px">📌 العناوين والشعار</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:6px">'
     +'<tr style="background:#F8FAFC"><th style="padding:8px;text-align:right;border-bottom:2px solid var(--line);font-size:12px;width:40%">العنصر</th>'
     +'<th style="padding:8px;text-align:center;border-bottom:2px solid var(--line);font-size:12px;width:20%">اللون</th>'
-    +'<th style="padding:8px;text-align:center;border-bottom:2px solid var(--line);font-size:12px;width:20%">الحجم (px)</th>'
+    +'<th style="padding:8px;text-align:center;border-bottom:2px solid var(--line);font-size:12px;width:20%">الحجم</th>'
     +'<th style="padding:8px;text-align:center;border-bottom:2px solid var(--line);font-size:12px;width:20%">المحاذاة</th></tr>'
     +cfgRow('🏫 اسم المدرسة','pcSchool',pc.schoolColor,pc.schoolSize,pc.schoolAlign,{minSize:12,maxSize:36})
     +cfgRow('📜 بطاقة درجات','pcTitle',pc.titleColor,pc.titleSize,'center',{noAlign:true,minSize:14,maxSize:50})
@@ -109,31 +115,24 @@ function renderResults(){
     +cfgRow('📅 العام الدراسي','pcYear',pc.yearColor,pc.yearSize,'center',{noAlign:true,minSize:10,maxSize:24})
     +cfgRow('🖼️ حجم الشعار','pcLogo',pc.schoolColor,pc.logoSize,'center',{noColor:true,noAlign:true,minSize:50,maxSize:200})
     +'</table>'
-    
-    /* قسم شريط بيانات التلميذ */
     +'<div style="margin-top:16px;font-weight:900;color:#7C3AED;font-size:14px;border-top:2px dashed var(--line);padding-top:10px">📋 شريط بيانات التلميذ</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:6px">'
-    +cfgRow('👤 التلميذ','pcStudent',pc.schoolColor,14,pc.studentAlign,{noColor:true,noSize:true})
-    +cfgRow('🏫 الصف والشعبة','pcClass',pc.schoolColor,14,pc.classAlign,{noColor:true,noSize:true})
-    +cfgRow('📅 التاريخ','pcDate',pc.schoolColor,13,pc.dateAlign,{noColor:true,noSize:true})
+    +cfgRow('👤 التلميذ','pcStudent',pc.schoolColor,16,pc.studentAlign,{noColor:true,noSize:true})
+    +cfgRow('🏫 الصف والشعبة','pcClass',pc.schoolColor,16,pc.classAlign,{noColor:true,noSize:true})
+    +cfgRow('📅 التاريخ','pcDate',pc.schoolColor,14,pc.dateAlign,{noColor:true,noSize:true})
     +'</table>'
-    
-    /* قسم الجدول */
     +'<div style="margin-top:16px;font-weight:900;color:#7C3AED;font-size:14px;border-top:2px dashed var(--line);padding-top:10px">📊 جدول الدرجات</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:6px">'
-    +cfgRow('🔤 حجم خط الجدول','pcTableFont','#1E40AF',pc.tableFont,'center',{noColor:true,noAlign:true,minSize:8,maxSize:18})
-    +cfgRow('📏 ارتفاع الخلية','pcCellHeight','#1E40AF',pc.cellHeight,'center',{noColor:true,noAlign:true,minSize:20,maxSize:60})
-    +cfgRow('📐 تباعد الخلية','pcCellPad','#1E40AF',pc.cellPad,'center',{noColor:true,noAlign:true,minSize:2,maxSize:12})
-    +cfgRow('📖 عرض عمود الدروس','pcSubjectWidth','#1E40AF',pc.subjectWidth,'center',{noColor:true,noAlign:true,minSize:80,maxSize:300})
+    +cfgRow('🔤 حجم خط الجدول','pcTableFont','#1E40AF',pc.tableFont,'center',{noColor:true,noAlign:true,minSize:8,maxSize:20})
+    +cfgRow('📏 ارتفاع الخلية','pcCellH','#1E40AF',pc.cellHeight,'center',{noColor:true,noAlign:true,minSize:20,maxSize:60})
+    +cfgRow('📐 تباعد الخلية','pcCellP','#1E40AF',pc.cellPad,'center',{noColor:true,noAlign:true,minSize:2,maxSize:12})
+    +cfgRow('📖 عرض عمود الدروس','pcSubjW','#1E40AF',pc.subjectWidth,'center',{noColor:true,noAlign:true,minSize:80,maxSize:300})
     +'</table>'
-    
-    /* قسم التوقيعات */
     +'<div style="margin-top:16px;font-weight:900;color:#7C3AED;font-size:14px;border-top:2px dashed var(--line);padding-top:10px">✍️ التوقيعات</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:6px">'
-    +cfgRow('👨‍🏫 مرشد الصف','pcGuide',pc.schoolColor,pc.signFont,pc.guideAlign,{noColor:true,minSize:10,maxSize:24})
+    +cfgRow('👨🏫 مرشد الصف','pcGuide',pc.schoolColor,pc.signFont,pc.guideAlign,{noColor:true,minSize:10,maxSize:24})
     +cfgRow('🎓 مدير المدرسة','pcPrincipal',pc.schoolColor,pc.signFont,pc.principalAlign,{noColor:true,minSize:10,maxSize:24})
     +'</table>'
-    
     +'<div class="grid2" style="margin-top:14px">'
     +'<button class="btn ok" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)" onclick="savePrintCfg()">💾 حفظ كل التخصيصات</button>'
     +'<button class="btn ghost" onclick="resetPrintCfg()">🔄 استعادة الافتراضي</button>'
@@ -145,7 +144,8 @@ function renderResults(){
 
   var secondCard='';
   if(hasSecond){
-    secondCard='<div class="card" style="border-right:5px solid #7E22CE;background:linear-gradient(135deg,#FAF5FF,#F5F3FF)">'      +'<div class="ct" style="color:#7E22CE;font-size:16px">👥 تم إضافة تلميذ ثاني للورقة</div>'
+    secondCard='<div class="card" style="border-right:5px solid #7E22CE;background:linear-gradient(135deg,#FAF5FF,#F5F3FF)">'
+      +'<div class="ct" style="color:#7E22CE;font-size:16px">👥 تم إضافة تلميذ ثاني للورقة</div>'
       +'<div class="cs" style="font-size:14px"><b>'+esc(ADM.res.second.name)+'</b> — '+esc(ADM.res.second.grade)+' '+esc(ADM.res.second.section)+'</div>'
       +'<button class="btn danger" style="margin-top:8px" onclick="removeSecondStudent()">🗑 حذف التلميذ الثاني</button>'
       +'</div>';
@@ -168,7 +168,14 @@ function renderResults(){
       +'</div></div>';
   }
 
-  var html=settings+ctrlCard+secondCard+secondForm+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
+  /* ═══ زر الإعدادات الواحد + اللوحة المخفية ═══ */
+  var panelOpen=localStorage.getItem('set_panel_open')==='1';
+  var html='<div class="card" style="border-right:5px solid #0E7490;background:linear-gradient(135deg,#ECFEFF,#CFFAFE)">'
+    +'<button class="btn" style="background:linear-gradient(135deg,#0E7490,#06B6D4);font-size:15px;padding:13px" onclick="toggleSetPanel()">'
+    +(panelOpen?'🔼 إغلاق الإعدادات':'⚙️ الإعدادات — بيانات المدرسة والتنسيق والطباعة')
+    +'</button></div>';
+  html+='<div id="setPanel" style="display:'+(panelOpen?'block':'none')+'">'+settings+ctrlCard+'</div>';
+  html+=secondCard+secondForm+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
 
   html+='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
     +'<div class="ct" style="color:var(--th);font-size:16px">🖨️ خيارات الطباعة</div>'
@@ -181,7 +188,7 @@ function renderResults(){
   }
   html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#059669,#10B981)" onclick="excelResults()">⬇️ تنزيل Excel<br><small style="font-size:11px;opacity:.8">ملف للتعديل</small></button>'
     +'</div></div>';
-  
+
   $('#resBox').innerHTML=html;
   if(showForm){setTimeout(function(){var el=$('#secondName');if(el)el.focus();},100);}
 }
@@ -194,7 +201,8 @@ function pickSchoolLogo(){
     if(f.size>500000){toast('الصورة كبيرة (أقصى ٥٠٠ كيلو)','err');return;}
     var reader=new FileReader();
     reader.onload=function(e){
-      localStorage.setItem('school_logo',e.target.result);      toast('✓ تم حفظ الشعار','ok');
+      localStorage.setItem('school_logo',e.target.result);
+      toast('✓ تم حفظ الشعار','ok');
       renderResults();
     };
     reader.readAsDataURL(f);
@@ -208,11 +216,11 @@ function clearSchoolLogo(){
 }
 function saveSchoolInfo(){
   var n=$('#setName').value.trim();
-  var g=$('#setGuide').value.trim();
+  var gd=$('#setGuide').value.trim();
   var p=$('#setPrincipal').value.trim();
   var y=$('#setYear').value.trim();
   if(n)localStorage.setItem('school_name',n);else localStorage.removeItem('school_name');
-  if(g)localStorage.setItem('guide_name',g);else localStorage.removeItem('guide_name');
+  if(gd)localStorage.setItem('guide_name',gd);else localStorage.removeItem('guide_name');
   if(p)localStorage.setItem('principal_name',p);else localStorage.removeItem('principal_name');
   if(y)localStorage.setItem('study_year',y);else localStorage.removeItem('study_year');
   toast('✓ تم حفظ بيانات المدرسة','ok');
@@ -230,9 +238,9 @@ function savePrintCfg(){
   set('pcClassAlign','pc_class_align');
   set('pcDateAlign','pc_date_align');
   set('pcTableFontSize','pc_table_font');
-  set('pcCellHeight','pc_cell_height');
-  set('pcCellPadding','pc_cell_pad');
-  set('pcSubjectWidth','pc_subject_width');
+  set('pcCellHSize','pc_cell_height');
+  set('pcCellPSize','pc_cell_pad');
+  set('pcSubjWSize','pc_subject_width');
   set('pcGuideAlign','pc_guide_align');set('pcGuideSize','pc_sign_font');
   set('pcPrincipalAlign','pc_principal_align');set('pcPrincipalSize','pc_sign_font');
   toast('✓ تم حفظ كل تخصيصات التنسيق','ok');
@@ -243,7 +251,8 @@ function resetPrintCfg(){
    'pc_sub_color','pc_sub_size','pc_year_color','pc_year_size','pc_logo_size',
    'pc_student_align','pc_class_align','pc_date_align',
    'pc_table_font','pc_cell_height','pc_cell_pad','pc_subject_width',
-   'pc_guide_align','pc_principal_align','pc_sign_font']   .forEach(function(k){localStorage.removeItem(k);});
+   'pc_guide_align','pc_principal_align','pc_sign_font']
+   .forEach(function(k){localStorage.removeItem(k);});
   toast('✓ تم استعادة القيم الافتراضية','ok');
   renderResults();
 }
