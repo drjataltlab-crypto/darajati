@@ -39,11 +39,11 @@ function api(p,ms){
 
 function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';}
 
-/* ═══ أنماط الجدول — أعمدة ثابتة لا تختفي ═══ */
+/* ═══ أنماط الجدول ═══ */
 function getTableStyles(compact){
   var sz=compact?'9px':'11px';
   var szd=compact?'10px':'12px';
-  var p=compact?'3px 2px':'5px 3px';
+  var p=compact?'3px 1px':'5px 2px';
   var pd=compact?'3px 2px':'5px 3px';
   var bord='1px solid #1E293B';
   return {
@@ -52,7 +52,7 @@ function getTableStyles(compact){
     THC:'border:'+bord+';background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
     THF:'border:'+bord+';background:linear-gradient(135deg,#BE123C,#E11D48);color:#fff;padding:'+p+';font-size:'+sz+';font-weight:bold;text-align:center;vertical-align:middle',
     TD:'border:'+bord+';padding:'+pd+';text-align:center;font-size:'+szd+';background:#fff',
-    TDN:'border:'+bord+';padding:'+pd+';text-align:right;font-size:'+szd+';font-weight:bold;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'
+    TDN:'border:'+bord+';padding:'+pd+';text-align:right;font-size:'+szd+';font-weight:bold;background:#fff'
   };
 }
 
@@ -106,9 +106,8 @@ function buildOneResult(rows,compact){
   var logoSize=compact?'65px':'85px';
   var mbInfo=compact?'8px':'12px';
   var mTopSign=compact?'14px':'28px';
-  var marginTop=compact?'8px':'0';
 
-  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:100%;padding:'+pad+';background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin-top:'+marginTop+'">';
+  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:100%;padding:'+pad+';background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact">';
 
   /* ═══ الشريط العلوي ═══ */
   h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double #1E40AF;padding-bottom:8px;margin-bottom:'+mbInfo+'">';
@@ -135,27 +134,29 @@ function buildOneResult(rows,compact){
   h+='<div style="flex:1;min-width:100px;text-align:left;font-size:'+(compact?'10px':'11px')+';white-space:nowrap"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* ═══ جدول الدرجات — عرض ثابت ١٠٠٪ مع أعمدة محددة ═══ */
+  /* ═══ جدول الدرجات — العناوين الصحيحة بالترتيب ═══ */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid #1E293B;table-layout:fixed"><thead>';
+  
   /* الصف الأول من الرؤوس */
   h+='<tr>'
-    +'<th style="'+S.TH+';width:2.5%">ت</th>'
-    +'<th style="'+S.TH+';width:25.5%">الدروس</th>'
+    +'<th style="'+S.TH+';width:2%">ت</th>'
+    +'<th style="'+S.TH+';width:18%">الدروس</th>'
     +'<th style="'+S.TH1+'" colspan="3">الفصل الأول</th>'
-    +'<th style="'+S.THC+';width:6%">معدل ف١</th>'
-    +'<th style="'+S.TH+';width:6%">نصف السنة</th>'
+    +'<th style="'+S.THC+';width:7%">معدل<br>ف١</th>'
+    +'<th style="'+S.TH+';width:7%">نصف<br>السنة</th>'
     +'<th style="'+S.TH2+'" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+S.THC+';width:6%">معدل ف٢</th>'    +'<th style="'+S.THC+';width:8%">السعي السنوي</th>'
-    +'<th style="'+S.TH+';width:7%">نهاية السنة</th>'
-    +'<th style="'+S.THF+';width:8%">النهائية</th>'
+    +'<th style="'+S.THC+';width:7%">معدل<br>ف٢</th>'    +'<th style="'+S.THC+';width:9%">السعي<br>السنوي</th>'
+    +'<th style="'+S.TH+';width:8%">نهاية<br>السنة</th>'
+    +'<th style="'+S.THF+';width:8%">الدرجة<br>النهائية</th>'
     +'</tr>';
+  
   /* الصف الثاني من الرؤوس — ت١ ت٢ ك١ تحت الفصل الأول، آذار نيسان تحت الفصل الثاني */
   h+='<tr>'
-    +'<th style="'+S.TH1+';width:5%">ت١</th>'
-    +'<th style="'+S.TH1+';width:5%">ت٢</th>'
-    +'<th style="'+S.TH1+';width:5%">ك١</th>'
-    +'<th style="'+S.TH2+';width:6%">آذار</th>'
-    +'<th style="'+S.TH2+';width:6%">نيسان</th>'
+    +'<th style="'+S.TH1+'">ت١</th>'
+    +'<th style="'+S.TH1+'">ت٢</th>'
+    +'<th style="'+S.TH1+'">ك١</th>'
+    +'<th style="'+S.TH2+'">آذار</th>'
+    +'<th style="'+S.TH2+'">نيسان</th>'
     +'</tr></thead><tbody>';
 
   SUBJECTS.forEach(function(s,i){
@@ -189,17 +190,17 @@ function buildOneResult(rows,compact){
     +'</tr>';
   h+='</tbody></table>';
 
-  /* ═══ التوقيعات — مع white-space:nowrap لمنع القطع ═══ */
+  /* ═══ التوقيعات ═══ */
   var signFs=compact?'12px':'14px';
   h+='<div style="display:flex;justify-content:space-between;margin-top:'+mTopSign+';padding:0 10px;font-size:'+signFs+';font-weight:800;color:#0F172A">';
   h+='<div style="white-space:nowrap">مرشد الصف : <span style="color:#1E40AF">'+esc(guideName)+'</span></div>';
-  h+='<div style="white-space:nowrap">مدير المدرسة : <span style="color:#1E40AF">'+esc(principalName)+'</span></div>';
-  h+='</div>';
+  h+='<div style="white-space:nowrap">مدير المدرسة : <span style="color:#1E40AF">'+esc(principalName)+'</span></div>';  h+='</div>';
+
   h+='</div>';
   return h;
 }
 
-/* ═══ بطاقة النتيجة العامة (مع تلميذ واحد أو اثنين) ═══ */
+/* ═══ بطاقة النتيجة العامة ═══ */
 function resultTable(rows,opts){
   opts=opts||{};
   var compact=!!opts.compact;
@@ -242,8 +243,8 @@ function downloadXLS(filename,title,tablesHTML){
   var blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel;charset=utf-8;'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.xls';
   document.body.appendChild(a);a.click();a.remove();
-  setTimeout(function(){URL.revokeObjectURL(a.href);},5000);
-  toast('✓ تم التنزيل — افتحه في Excel','ok');}
+  setTimeout(function(){URL.revokeObjectURL(a.href);},5000);  toast('✓ تم التنزيل — افتحه في Excel','ok');
+}
 
 function printWin(html){
   var old=document.getElementById('printFrame');
@@ -291,8 +292,8 @@ function adminLogin(){
   if(!url()){toast('⚠️ رابط الخادم مفقود — ضعه في config.js','err');return;}
   var btn=$('#loginBtn');btn.disabled=true;btn.textContent='⏳ تحقق...';
   api({action:'adminLogin',key:k},20000).then(function(r){
-    if(!r.ok){toast('❌ '+r.error,'err');return;}
-    ROLE=r.role;localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);    enterAdmin();
+    if(!r.ok){toast('❌ '+r.error,'err');return;}    ROLE=r.role;localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);
+    enterAdmin();
   }).catch(function(){toast('تعذر الاتصال بالخادم','err');})
   .finally(function(){btn.disabled=false;btn.textContent='دخول';});
 }
