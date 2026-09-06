@@ -38,46 +38,55 @@ function renderResults(){
   var principalName=localStorage.getItem('principal_name')||'';
   var studyYear=localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';
 
-  var settings='<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct">🏫 بيانات المدرسة (تظهر في بطاقة الطباعة)</div>'
-    +'<div class="cs">هذه البيانات تُحفظ محليًا على جهازك فقط</div>'
+  /* ═══ بطاقة إعدادات المدرسة (بارزة وواضحة) ═══ */
+  var settings='<div class="card" style="border-right:5px solid #B45309">'
+    +'<div class="ct" style="color:#B45309;font-size:16px">🏫 بيانات المدرسة والعام الدراسي</div>'
+    +'<div class="cs">هذه البيانات تظهر في بطاقة الطباعة — تُحفظ محليًا على جهازك</div>'
     +'<div class="grid2">'
-    +'<div><label class="label">اسم المدرسة</label>'
+    +'<div><label class="label">📅 العام الدراسي</label>'
+    +'<input id="setYear" placeholder="مثال: ٢٠٢٥ - ٢٠٢٦" value="'+escA(studyYear)+'" style="border-color:#B45309;font-weight:bold"></div>'
+    +'<div><label class="label">🏫 اسم المدرسة</label>'
     +'<input id="setName" placeholder="مثال: مدرسة المنهل الابتدائية" value="'+escA(schoolName)+'"></div>'
-    +'<div><label class="label">العام الدراسي</label>'
-    +'<input id="setYear" placeholder="مثال: ٢٠٢٥ - ٢٠٢٦" value="'+escA(studyYear)+'"></div>'
-    +'<div><label class="label">شعار المدرسة (صورة)</label>'
-    +'<div style="display:flex;gap:8px;align-items:center">'    +(schoolLogo?'<img src="'+schoolLogo+'" style="width:50px;height:50px;object-fit:contain;border:1px solid var(--line);border-radius:8px">':'<div style="width:50px;height:50px;background:#F1F5F9;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px">لا يوجد</div>')
-    +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر</button>'
+    +'<div><label class="label">🖼️ شعار المدرسة</label>'    +'<div style="display:flex;gap:8px;align-items:center">'
+    +(schoolLogo?'<img src="'+schoolLogo+'" style="width:50px;height:50px;object-fit:contain;border:1px solid var(--line);border-radius:8px">':'<div style="width:50px;height:50px;background:#F1F5F9;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px">لا يوجد</div>')
+    +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر صورة</button>'
     +(schoolLogo?'<button class="btn sm danger" onclick="clearSchoolLogo()">🗑</button>':'')
     +'</div></div>'
-    +'<div><label class="label">اسم مرشد الصف</label>'
+    +'<div><label class="label">👨‍🏫 اسم مرشد الصف</label>'
     +'<input id="setGuide" placeholder="مثال: أحمد حسن" value="'+escA(guideName)+'"></div>'
-    +'<div style="grid-column:span 2"><label class="label">اسم مدير المدرسة</label>'
+    +'<div style="grid-column:span 2"><label class="label">🎓 اسم مدير المدرسة</label>'
     +'<input id="setPrincipal" placeholder="مثال: أحمد حسن" value="'+escA(principalName)+'"></div>'
     +'</div>'
-    +'<button class="btn ok" style="margin-top:10px" onclick="saveSchoolInfo()">💾 حفظ البيانات</button>'
+    +'<button class="btn ok" style="margin-top:12px;font-size:15px;padding:13px" onclick="saveSchoolInfo()">💾 حفظ جميع البيانات</button>'
     +'</div>';
 
   var hasSecond=ADM.res.second&&ADM.res.second.rows&&ADM.res.second.rows.length;
 
+  /* ═══ بطاقة التلميذ الثاني (إن وُجد) ═══ */
   var secondCard='';
   if(hasSecond){
-    secondCard='<div class="card" style="border-right:5px solid #B45309">'
-      +'<div class="ct">👥 تلميذان في ورقة واحدة — التلميذ الثاني</div>'
-      +'<div class="cs">'+esc(ADM.res.second.name)+' — '+esc(ADM.res.second.grade)+' '+esc(ADM.res.second.section)+'</div>'
-      +'<button class="btn danger" onclick="removeSecondStudent()">🗑 حذف التلميذ الثاني</button>'
+    secondCard='<div class="card" style="border-right:5px solid #7E22CE;background:linear-gradient(135deg,#FAF5FF,#F5F3FF)">'
+      +'<div class="ct" style="color:#7E22CE;font-size:16px">👥 تم إضافة تلميذ ثاني للورقة</div>'
+      +'<div class="cs" style="font-size:14px"><b>'+esc(ADM.res.second.name)+'</b> — '+esc(ADM.res.second.grade)+' '+esc(ADM.res.second.section)+'</div>'
+      +'<button class="btn danger" style="margin-top:8px" onclick="removeSecondStudent()">🗑 حذف التلميذ الثاني</button>'
       +'</div>';
   }
 
-  var printOpts=hasSecond?{compact:true,secondRows:ADM.res.second.rows}:{};
   var html=settings+secondCard+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
 
-  html+='<div class="grid3" style="margin-top:12px">'
-    +'<button class="btn" onclick="printSingle()">🖨️ طباعة تلميذ واحد (A4)</button>'
-    +(hasSecond?'<button class="btn ok" onclick="printTwo()">📄 طباعة تلميذين في ورقة</button>':'<button class="btn ghost" onclick="addSecondStudent()">➕ أضف تلميذ ثاني للورقة</button>')
-    +'<button class="btn ok" onclick="excelResults()">⬇️ تنزيل Excel</button>'
-    +'</div>';
+  /* ═══ أزرار الطباعة — بارزة وكبيرة ═══ */
+  html+='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
+    +'<div class="ct" style="color:var(--th);font-size:16px">🖨️ خيارات الطباعة</div>'
+    +'<div class="grid3" style="margin-top:10px">'
+    +'<button class="btn" style="padding:14px;font-size:14px" onclick="printSingle()">📄 طباعة تلميذ واحد<br><small style="font-size:11px;opacity:.8">ورقة A4 كاملة</small></button>';
+  if(hasSecond){
+    html+='<button class="btn ok" style="padding:14px;font-size:14px" onclick="printTwo()">📑 طباعة تلميذين<br><small style="font-size:11px;opacity:.8">في ورقة واحدة</small></button>';
+  }else{
+    html+='<button class="btn ghost" style="padding:14px;font-size:14px" onclick="addSecondStudent()">➕ أضف تلميذ ثاني<br><small style="font-size:11px;opacity:.8">للورقة نفسها</small></button>';
+  }
+  html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#059669,#10B981)" onclick="excelResults()">⬇️ تنزيل Excel<br><small style="font-size:11px;opacity:.8">ملف للتعديل</small></button>'
+    +'</div></div>';
+  
   $('#resBox').innerHTML=html;
 }
 
@@ -87,8 +96,7 @@ function pickSchoolLogo(){
   inp.onchange=function(){
     var f=inp.files[0];if(!f)return;
     if(f.size>500000){toast('الصورة كبيرة (أقصى ٥٠٠ كيلو)','err');return;}
-    var reader=new FileReader();
-    reader.onload=function(e){
+    var reader=new FileReader();    reader.onload=function(e){
       localStorage.setItem('school_logo',e.target.result);
       toast('✓ تم حفظ الشعار','ok');
       renderResults();
@@ -96,7 +104,8 @@ function pickSchoolLogo(){
     reader.readAsDataURL(f);
   };
   inp.click();
-}function clearSchoolLogo(){
+}
+function clearSchoolLogo(){
   localStorage.removeItem('school_logo');
   toast('✓ تم حذف الشعار','ok');
   renderResults();
@@ -110,7 +119,7 @@ function saveSchoolInfo(){
   if(g)localStorage.setItem('guide_name',g);else localStorage.removeItem('guide_name');
   if(p)localStorage.setItem('principal_name',p);else localStorage.removeItem('principal_name');
   if(y)localStorage.setItem('study_year',y);else localStorage.removeItem('study_year');
-  toast('✓ تم حفظ بيانات المدرسة','ok');
+  toast('✓ تم حفظ بيانات المدرسة والعام الدراسي','ok');
   renderResults();
 }
 
