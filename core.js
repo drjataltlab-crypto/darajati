@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٤٥٦٨٩';
+var AR='٠١٢٣٤٥٦٧٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -87,7 +87,7 @@ function calcFinalResult(bySub){
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بناء بطاقة نتيجة واحدة — عرض مرن يدخل في A4 ═══ */
+/* ═══ بناء بطاقة نتيجة واحدة — بعرض 190mm يدخل A4 بالضبط ═══ */
 function buildOneResult(rows,compact){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
@@ -116,8 +116,8 @@ function buildOneResult(rows,compact){
 
   var bord='#0F172A';
 
-  /* ✅ العرض المرن: 100% مع حد أقصى 794px — يدخل في الطباعة والشاشة */
-  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:100%;max-width:794px;padding:18px;background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto">';
+  /* ✅ العرض بالملم: 190mm = عرض A4 (210mm) ناقص الهوامش الداخلية (10mm×2) */
+  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:190mm;box-sizing:border-box;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto">';
 
   /* الشريط العلوي */
   h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double '+C.schoolColor+';padding-bottom:10px;margin-bottom:14px;gap:12px">';
@@ -137,15 +137,15 @@ function buildOneResult(rows,compact){
 
   /* شريط بيانات التلميذ */
   h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:10px 14px;border-radius:8px;margin-bottom:14px;border:1px solid #BFDBFE;flex-wrap:wrap;gap:8px">';
-  h+='<div style="flex:1;min-width:160px;text-align:'+C.studentAlign+';font-size:14px"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;min-width:160px;text-align:'+C.classAlign+';font-size:14px"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:800;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
-  h+='<div style="flex:1;min-width:140px;text-align:'+C.dateAlign+';font-size:13px"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
+  h+='<div style="flex:1;min-width:150px;text-align:'+C.studentAlign+';font-size:14px"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;min-width:150px;text-align:'+C.classAlign+';font-size:14px"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:800;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;min-width:130px;text-align:'+C.dateAlign+';font-size:13px"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
   /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
-  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 3px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';  h+='<thead>';
+  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';  h+='<thead>';
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">الدروس</th>'
@@ -167,8 +167,8 @@ function buildOneResult(rows,compact){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 3px;text-align:center;font-size:'+tableFs+'px;background:#fff;height:'+cellH+'px';
-  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 5px;text-align:right;font-size:'+tableFs+'px;font-weight:bold;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
+  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+tableFs+'px;background:#fff;height:'+cellH+'px';
+  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+tableFs+'px;font-weight:bold;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
 
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
@@ -202,9 +202,9 @@ function buildOneResult(rows,compact){
   h+='</div>';
 
   /* التوقيعات */
-  h+='<div style="display:flex;justify-content:space-between;margin-top:28px;padding:0 10px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:14px">';
-  h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:220px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
-  h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:220px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
+  h+='<div style="display:flex;justify-content:space-between;margin-top:28px;padding:0 6px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:14px">';
+  h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:200px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
+  h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:200px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
   h+='</div>';
 
   h+='</div>';
@@ -255,7 +255,7 @@ function downloadXLS(filename,title,tablesHTML){
   toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
 
-/* ═══ طباعة — بدون عرض ثابت للجسم ═══ */
+/* ═══ طباعة نظيفة: بدون رابط، بدون كلمة طباعة، بدون قص ═══ */
 function printWin(html){
   var old=document.getElementById('printFrame');
   if(old)old.remove();
@@ -269,12 +269,12 @@ function printWin(html){
   document.body.appendChild(f);
   var doc=f.contentWindow.document;
   doc.open();
-  doc.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
+  doc.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title> </title>'
     +'<style>'
-    +'@page{size:A4;margin:8mm}'
+    +'@page{size:A4;margin:0}'
     +'*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;box-sizing:border-box}'
     +'html,body{margin:0;padding:0}'
-    +'body{font-family:Tajawal,Arial,sans-serif}'
+    +'body{font-family:Tajawal,Arial,sans-serif;padding:10mm}'
     +'table{page-break-inside:avoid;width:100%;border-collapse:collapse}'
     +'</style>'
     +'</head><body>'+html+'</body></html>');
