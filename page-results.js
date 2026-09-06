@@ -13,14 +13,8 @@ function searchStudent(){
   }).catch(function(){$('#resBox').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';});
 }
 
-function showSecondForm(){
-  ADM.res.showSecondForm=true;
-  renderResults();
-}
-function hideSecondForm(){
-  ADM.res.showSecondForm=false;
-  renderResults();
-}
+function showSecondForm(){ADM.res.showSecondForm=true;renderResults();}
+function hideSecondForm(){ADM.res.showSecondForm=false;renderResults();}
 
 function searchSecondStudent(){
   var name=$('#secondName').value.trim();
@@ -37,10 +31,7 @@ function searchSecondStudent(){
   }).catch(function(){toast('تعذر الاتصال','err');});
 }
 
-function removeSecondStudent(){
-  ADM.res.second=null;
-  renderResults();
-}
+function removeSecondStudent(){ADM.res.second=null;renderResults();}
 
 function renderResults(){
   var schoolName=localStorage.getItem('school_name')||'';
@@ -48,33 +39,77 @@ function renderResults(){
   var guideName=localStorage.getItem('guide_name')||'';
   var principalName=localStorage.getItem('principal_name')||'';
   var studyYear=localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';
-  /* ═══ بطاقة إعدادات المدرسة ═══ */
+  
+  /* جلب إعدادات العناوين */
+  var hdrSchoolColor=localStorage.getItem('hdr_school_color')||'#1E40AF';
+  var hdrSchoolSize=localStorage.getItem('hdr_school_size')||'18';
+  var hdrTitleColor=localStorage.getItem('hdr_title_color')||'#1E40AF';
+  var hdrTitleSize=localStorage.getItem('hdr_title_size')||'22';
+  var hdrSubColor=localStorage.getItem('hdr_subtitle_color')||'#B45309';
+  var hdrSubSize=localStorage.getItem('hdr_subtitle_size')||'15';
+  var hdrYearColor=localStorage.getItem('hdr_year_color')||'#475569';  var hdrYearSize=localStorage.getItem('hdr_year_size')||'13';
+  var hdrLogoSize=localStorage.getItem('hdr_logo_size')||'105';
+
+  /* ═══ بطاقة بيانات المدرسة ═══ */
   var settings='<div class="card" style="border-right:5px solid #B45309">'
     +'<div class="ct" style="color:#B45309;font-size:16px">🏫 بيانات المدرسة والعام الدراسي</div>'
-    +'<div class="cs">هذه البيانات تظهر في بطاقة الطباعة — تُحفظ محليًا على جهازك</div>'
+    +'<div class="cs">تظهر في بطاقة الطباعة — تُحفظ محليًا</div>'
     +'<div class="grid2">'
     +'<div><label class="label">📅 العام الدراسي</label>'
-    +'<input id="setYear" placeholder="مثال: ٢٠٢٥ - ٢٠٢٦" value="'+escA(studyYear)+'" style="border-color:#B45309;font-weight:bold"></div>'
+    +'<input id="setYear" placeholder="٢٠٢٥ - ٢٠٢٦" value="'+escA(studyYear)+'"></div>'
     +'<div><label class="label">🏫 اسم المدرسة</label>'
-    +'<input id="setName" placeholder="مثال: مدرسة المنهل الابتدائية" value="'+escA(schoolName)+'"></div>'
+    +'<input id="setName" placeholder="مدرسة المنهل الابتدائية" value="'+escA(schoolName)+'"></div>'
     +'<div><label class="label">🖼️ شعار المدرسة</label>'
     +'<div style="display:flex;gap:8px;align-items:center">'
     +(schoolLogo?'<img src="'+schoolLogo+'" style="width:50px;height:50px;object-fit:contain;border:1px solid var(--line);border-radius:8px">':'<div style="width:50px;height:50px;background:#F1F5F9;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px">لا يوجد</div>')
-    +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر صورة</button>'
+    +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر</button>'
     +(schoolLogo?'<button class="btn sm danger" onclick="clearSchoolLogo()">🗑</button>':'')
     +'</div></div>'
-    +'<div><label class="label">👨‍🏫 اسم مرشد الصف</label>'
-    +'<input id="setGuide" placeholder="مثال: أحمد حسن" value="'+escA(guideName)+'"></div>'
-    +'<div style="grid-column:span 2"><label class="label">🎓 اسم مدير المدرسة</label>'
-    +'<input id="setPrincipal" placeholder="مثال: أحمد حسن" value="'+escA(principalName)+'"></div>'
+    +'<div><label class="label">👨‍🏫 مرشد الصف</label>'
+    +'<input id="setGuide" placeholder="أحمد حسن" value="'+escA(guideName)+'"></div>'
+    +'<div style="grid-column:span 2"><label class="label">🎓 مدير المدرسة</label>'
+    +'<input id="setPrincipal" placeholder="أحمد حسن محمد علي" value="'+escA(principalName)+'"></div>'
     +'</div>'
-    +'<button class="btn ok" style="margin-top:12px;font-size:15px;padding:13px" onclick="saveSchoolInfo()">💾 حفظ جميع البيانات</button>'
+    +'<button class="btn ok" style="margin-top:10px" onclick="saveSchoolInfo()">💾 حفظ بيانات المدرسة</button>'
+    +'</div>';
+
+  /* ═══ بطاقة تخصيص العناوين (ميزة جديدة) ═══ */
+  var hdrSettings='<div class="card" style="border-right:5px solid #7C3AED">'
+    +'<div class="ct" style="color:#7C3AED;font-size:16px">🎨 تخصيص العناوين والشعار في أعلى البطاقة</div>'
+    +'<div class="cs">اختر اللون والحجم المناسب لكل عنوان</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:8px">'
+    +'<tr style="background:#F8FAFC"><th style="padding:8px;text-align:right;border-bottom:1px solid var(--line)">العنوان</th><th style="padding:8px;border-bottom:1px solid var(--line)">اللون</th><th style="padding:8px;border-bottom:1px solid var(--line)">الحجم (px)</th></tr>'
+    
+    +'<tr><td style="padding:8px;border-bottom:1px solid var(--line);font-weight:700">🏫 اسم المدرسة</td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="color" id="hSchoolColor" value="'+hdrSchoolColor+'" style="width:60px;height:32px;margin:0;padding:2px"></td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="number" id="hSchoolSize" value="'+hdrSchoolSize+'" min="10" max="40" style="width:80px;margin:0"></td></tr>'
+    
+    +'<tr><td style="padding:8px;border-bottom:1px solid var(--line);font-weight:700">📜 بطاقة درجات</td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="color" id="hTitleColor" value="'+hdrTitleColor+'" style="width:60px;height:32px;margin:0;padding:2px"></td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="number" id="hTitleSize" value="'+hdrTitleSize+'" min="12" max="50" style="width:80px;margin:0"></td></tr>'
+    
+    +'<tr><td style="padding:8px;border-bottom:1px solid var(--line);font-weight:700">📚 الصف الخامس والسادس</td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="color" id="hSubColor" value="'+hdrSubColor+'" style="width:60px;height:32px;margin:0;padding:2px"></td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="number" id="hSubSize" value="'+hdrSubSize+'" min="10" max="30" style="width:80px;margin:0"></td></tr>'
+    
+    +'<tr><td style="padding:8px;border-bottom:1px solid var(--line);font-weight:700">📅 العام الدراسي</td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="color" id="hYearColor" value="'+hdrYearColor+'" style="width:60px;height:32px;margin:0;padding:2px"></td>'
+    +'<td style="padding:8px;border-bottom:1px solid var(--line)"><input type="number" id="hYearSize" value="'+hdrYearSize+'" min="10" max="24" style="width:80px;margin:0"></td></tr>'
+    
+    +'<tr><td style="padding:8px;font-weight:700">🖼️ حجم الشعار</td>'    +'<td style="padding:8px;color:var(--mut);font-size:12px" colspan="2">الحجم بالبكسل (العرض = الارتفاع)</td>'
+    +'</tr>'
+    +'<tr><td></td><td colspan="2" style="padding:4px 8px"><input type="number" id="hLogoSize" value="'+hdrLogoSize+'" min="50" max="200" style="width:100px;margin:0"></td></tr>'
+    
+    +'</table>'
+    +'<div class="grid2" style="margin-top:10px">'
+    +'<button class="btn ok" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)" onclick="saveHeaderCfg()">💾 حفظ التخصيصات</button>'
+    +'<button class="btn ghost" onclick="resetHeaderCfg()">🔄 استعادة الافتراضي</button>'
+    +'</div>'
     +'</div>';
 
   var hasSecond=ADM.res.second&&ADM.res.second.rows&&ADM.res.second.rows.length;
   var showForm=ADM.res.showSecondForm;
 
-  /* ═══ بطاقة التلميذ الثاني (إن وُجد) ═══ */
   var secondCard='';
   if(hasSecond){
     secondCard='<div class="card" style="border-right:5px solid #7E22CE;background:linear-gradient(135deg,#FAF5FF,#F5F3FF)">'
@@ -84,7 +119,6 @@ function renderResults(){
       +'</div>';
   }
 
-  /* ═══ نموذج إضافة التلميذ الثاني ═══ */
   var secondForm='';
   if(!hasSecond&&showForm){
     secondForm='<div class="card" style="border-right:5px solid #7E22CE;background:linear-gradient(135deg,#FAF5FF,#F5F3FF)">'
@@ -96,35 +130,29 @@ function renderResults(){
       +'<div><label class="label">🏫 الصف</label>'
       +'<select id="secondGrade"><option value="">كل الصفوف</option><option>الخامس</option><option>السادس</option></select></div>'
       +'<div><label class="label">👥 الشعبة</label>'
-      +'<select id="secondSec"><option value="">كل الشعب</option><option>أ</option><option>ب</option><option>ج</option></select></div>'      +'</div>'
+      +'<select id="secondSec"><option value="">كل الشعب</option><option>أ</option><option>ب</option><option>ج</option></select></div>'
+      +'</div>'
       +'<div class="grid2" style="margin-top:10px">'
       +'<button class="btn ok" onclick="searchSecondStudent()">🔍 بحث وإضافة</button>'
       +'<button class="btn ghost" onclick="hideSecondForm()">❌ إلغاء</button>'
-      +'</div>'
-      +'</div>';
+      +'</div></div>';
   }
 
-  var html=settings+secondCard+secondForm+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
+  var html=settings+hdrSettings+secondCard+secondForm+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
 
-  /* ═══ أزرار الطباعة ═══ */
   html+='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
     +'<div class="ct" style="color:var(--th);font-size:16px">🖨️ خيارات الطباعة</div>'
     +'<div class="grid3" style="margin-top:10px">'
     +'<button class="btn" style="padding:14px;font-size:14px" onclick="printSingle()">📄 طباعة تلميذ واحد<br><small style="font-size:11px;opacity:.8">ورقة A4 كاملة</small></button>';
   if(hasSecond){
-    html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#7E22CE,#A78BFA)" onclick="printTwo()">📑 طباعة تلميذين<br><small style="font-size:11px;opacity:.8">في ورقة واحدة</small></button>';
-  }else{
+    html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#7E22CE,#A78BFA)" onclick="printTwo()">📑 طباعة تلميذين<br><small style="font-size:11px;opacity:.8">في ورقة واحدة</small></button>';  }else{
     html+='<button class="btn ghost" style="padding:14px;font-size:14px;border:2px solid #7E22CE;color:#7E22CE" onclick="showSecondForm()">➕ أضف تلميذ ثاني<br><small style="font-size:11px;opacity:.8">للورقة نفسها</small></button>';
   }
   html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#059669,#10B981)" onclick="excelResults()">⬇️ تنزيل Excel<br><small style="font-size:11px;opacity:.8">ملف للتعديل</small></button>'
     +'</div></div>';
   
   $('#resBox').innerHTML=html;
-  
-  /* وضع التركيز على حقل اسم التلميذ الثاني عند فتح النموذج */
-  if(showForm){
-    setTimeout(function(){var el=$('#secondName');if(el)el.focus();},100);
-  }
+  if(showForm){setTimeout(function(){var el=$('#secondName');if(el)el.focus();},100);}
 }
 
 function pickSchoolLogo(){
@@ -145,7 +173,8 @@ function pickSchoolLogo(){
 }
 function clearSchoolLogo(){
   localStorage.removeItem('school_logo');
-  toast('✓ تم حذف الشعار','ok');  renderResults();
+  toast('✓ تم حذف الشعار','ok');
+  renderResults();
 }
 function saveSchoolInfo(){
   var n=$('#setName').value.trim();
@@ -156,7 +185,28 @@ function saveSchoolInfo(){
   if(g)localStorage.setItem('guide_name',g);else localStorage.removeItem('guide_name');
   if(p)localStorage.setItem('principal_name',p);else localStorage.removeItem('principal_name');
   if(y)localStorage.setItem('study_year',y);else localStorage.removeItem('study_year');
-  toast('✓ تم حفظ بيانات المدرسة والعام الدراسي','ok');
+  toast('✓ تم حفظ بيانات المدرسة','ok');
+  renderResults();
+}
+
+/* ═══ دوال حفظ/استعادة تخصيصات العناوين ═══ */
+function saveHeaderCfg(){
+  localStorage.setItem('hdr_school_color',$('#hSchoolColor').value);
+  localStorage.setItem('hdr_school_size',$('#hSchoolSize').value);
+  localStorage.setItem('hdr_title_color',$('#hTitleColor').value);
+  localStorage.setItem('hdr_title_size',$('#hTitleSize').value);  localStorage.setItem('hdr_subtitle_color',$('#hSubColor').value);
+  localStorage.setItem('hdr_subtitle_size',$('#hSubSize').value);
+  localStorage.setItem('hdr_year_color',$('#hYearColor').value);
+  localStorage.setItem('hdr_year_size',$('#hYearSize').value);
+  localStorage.setItem('hdr_logo_size',$('#hLogoSize').value);
+  toast('✓ تم حفظ تخصيصات العناوين','ok');
+  renderResults();
+}
+function resetHeaderCfg(){
+  ['hdr_school_color','hdr_school_size','hdr_title_color','hdr_title_size',
+   'hdr_subtitle_color','hdr_subtitle_size','hdr_year_color','hdr_year_size','hdr_logo_size']
+   .forEach(function(k){localStorage.removeItem(k);});
+  toast('✓ تم استعادة القيم الافتراضية','ok');
   renderResults();
 }
 
