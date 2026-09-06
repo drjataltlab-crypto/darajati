@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٣٤٥٦٧٨٩';
+var AR='٠١٢٤٥٦٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -87,7 +87,7 @@ function calcFinalResult(bySub){
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بناء بطاقة نتيجة واحدة — بعرض A4 ثابت ═══ */
+/* ═══ بناء بطاقة نتيجة واحدة — عرض مرن يدخل في A4 ═══ */
 function buildOneResult(rows,compact){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
@@ -116,8 +116,8 @@ function buildOneResult(rows,compact){
 
   var bord='#0F172A';
 
-  /* الحاوية الخارجية بعرض A4 بالضبط */
-  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:794px;padding:18px;background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto">';
+  /* ✅ العرض المرن: 100% مع حد أقصى 794px — يدخل في الطباعة والشاشة */
+  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:100%;max-width:794px;padding:18px;background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto">';
 
   /* الشريط العلوي */
   h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double '+C.schoolColor+';padding-bottom:10px;margin-bottom:14px;gap:12px">';
@@ -142,7 +142,7 @@ function buildOneResult(rows,compact){
   h+='<div style="flex:1;min-width:140px;text-align:'+C.dateAlign+';font-size:13px"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* ═══ جدول الدرجات — بعرض 100% داخل الحاوية الثابتة ═══ */
+  /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
   var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 3px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';  h+='<thead>';
@@ -255,7 +255,7 @@ function downloadXLS(filename,title,tablesHTML){
   toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
 
-/* ═══ طباعة مع ضمان عرض A4 ═══ */
+/* ═══ طباعة — بدون عرض ثابت للجسم ═══ */
 function printWin(html){
   var old=document.getElementById('printFrame');
   if(old)old.remove();
@@ -271,10 +271,10 @@ function printWin(html){
   doc.open();
   doc.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
     +'<style>'
-    +'@page{size:A4;margin:10mm}'
+    +'@page{size:A4;margin:8mm}'
     +'*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;box-sizing:border-box}'
-    +'html,body{margin:0;padding:0;width:210mm}'
-    +'body{font-family:Tajawal,Arial,sans-serif;padding:0}'
+    +'html,body{margin:0;padding:0}'
+    +'body{font-family:Tajawal,Arial,sans-serif}'
     +'table{page-break-inside:avoid;width:100%;border-collapse:collapse}'
     +'</style>'
     +'</head><body>'+html+'</body></html>');
