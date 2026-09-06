@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var ARD=['٠','','٢','٣','٤','٥','٦','٧','٨','٩'];
+var ARD=['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
