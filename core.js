@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٣٤٥٦٧٨٩';
+var ARD=['٠','','٢','٣','٤','٥','٦','٧','٨','٩'];
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -13,7 +13,7 @@ var Pages={};
 var ADM={teachers:[],tv:null,res:null};
 var ROLE='',toastT,_yes=null;
 
-function arNum(x){if(x===null||x===undefined||x==='')return'—';return String(x).replace(/\d/g,function(d){return AR[d];});}
+function arNum(x){if(x===null||x===undefined||x==='')return'—';return String(x).replace(/\d/g,function(d){return ARD[+d];});}
 function $(s){return document.querySelector(s);}
 function $$(s){return document.querySelectorAll(s);}
 function url(){return localStorage.getItem('d_url')||(typeof SERVER_URL!=='undefined'?SERVER_URL:'');}
@@ -42,20 +42,21 @@ function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - �
 function getPrintCfg(){
   var g=function(k,d){return localStorage.getItem(k)||d;};
   return {
-    schoolColor:g('pc_school_color','#1E40AF'),schoolSize:g('pc_school_size','20'),schoolAlign:g('pc_school_align','center'),
-    titleColor:g('pc_title_color','#1E40AF'),titleSize:g('pc_title_size','24'),
-    subColor:g('pc_sub_color','#B45309'),subSize:g('pc_sub_size','16'),
-    yearColor:g('pc_year_color','#475569'),yearSize:g('pc_year_size','14'),
+    schoolColor:g('pc_school_color','#1E40AF'),schoolSize:g('pc_school_size','22'),schoolAlign:g('pc_school_align','center'),
+    titleColor:g('pc_title_color','#1E40AF'),titleSize:g('pc_title_size','26'),
+    subColor:g('pc_sub_color','#B45309'),subSize:g('pc_sub_size','17'),
+    yearColor:g('pc_year_color','#475569'),yearSize:g('pc_year_size','15'),
     logoSize:g('pc_logo_size','110'),
-    studentAlign:g('pc_student_align','right'),    classAlign:g('pc_class_align','center'),
+    studentAlign:g('pc_student_align','right'),
+    classAlign:g('pc_class_align','center'),
     dateAlign:g('pc_date_align','left'),
-    tableFontSize:g('pc_table_font','11'),
-    cellHeight:g('pc_cell_height','28'),
-    cellPad:g('pc_cell_pad','4'),
+    tableFontSize:g('pc_table_font','13'),
+    cellHeight:g('pc_cell_height','32'),
+    cellPad:g('pc_cell_pad','5'),
     subjectWidth:g('pc_subject_width','140'),
     guideAlign:g('pc_guide_align','right'),
     principalAlign:g('pc_principal_align','left'),
-    signFontSize:g('pc_sign_font','14')
+    signFontSize:g('pc_sign_font','15')
   };
 }
 
@@ -87,7 +88,7 @@ function calcFinalResult(bySub){
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بناء بطاقة نتيجة واحدة — بعرض 190mm يدخل A4 بالضبط ═══ */
+/* ═══ بطاقة نتيجة واحدة — عرض 190mm يدخل A4 بالضبط ═══ */
 function buildOneResult(rows,compact){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
@@ -96,7 +97,8 @@ function buildOneResult(rows,compact){
 
   var schoolName=localStorage.getItem('school_name')||'مدرسة المنهل الابتدائية';
   var schoolLogo=localStorage.getItem('school_logo')||'';
-  var guideName=localStorage.getItem('guide_name')||'....................';  var principalName=localStorage.getItem('principal_name')||'....................';
+  var guideName=localStorage.getItem('guide_name')||'....................';
+  var principalName=localStorage.getItem('principal_name')||'....................';
   var studyYear=getStudyYear();
   var name=rows.length?rows[0].name:'';
   var grade=rows.length?rows[0].grade:'';
@@ -116,7 +118,6 @@ function buildOneResult(rows,compact){
 
   var bord='#0F172A';
 
-  /* ✅ العرض بالملم: 190mm = عرض A4 (210mm) ناقص الهوامش الداخلية (10mm×2) */
   var h='<div style="font-family:Tajawal,Arial,sans-serif;width:190mm;box-sizing:border-box;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto">';
 
   /* الشريط العلوي */
@@ -135,17 +136,17 @@ function buildOneResult(rows,compact){
   }
   h+='</div></div>';
 
-  /* شريط بيانات التلميذ */
+  /* شريط بيانات التلميذ — خط كبير واضح */
   h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:10px 14px;border-radius:8px;margin-bottom:14px;border:1px solid #BFDBFE;flex-wrap:wrap;gap:8px">';
-  h+='<div style="flex:1;min-width:150px;text-align:'+C.studentAlign+';font-size:14px"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:800;color:#0F172A">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;min-width:150px;text-align:'+C.classAlign+';font-size:14px"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:800;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
-  h+='<div style="flex:1;min-width:130px;text-align:'+C.dateAlign+';font-size:13px"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
+  h+='<div style="flex:1;min-width:150px;text-align:'+C.studentAlign+';font-size:16px;font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;min-width:150px;text-align:'+C.classAlign+';font-size:16px;font-weight:800"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;min-width:130px;text-align:'+C.dateAlign+';font-size:14px;font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
   /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
-  
-  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';  h+='<thead>';
+  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';
+  h+='<thead>';
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">الدروس</th>'
@@ -158,7 +159,6 @@ function buildOneResult(rows,compact){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نهاية السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#BE123C,#E11D48)" rowspan="2">الدرجة النهائية</th>'
     +'</tr>';
-  
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ت١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ت٢</th>'
@@ -189,12 +189,13 @@ function buildOneResult(rows,compact){
   });
   h+='</tbody></table>';
 
-  /* سطر النتيجة (منفصل) */
+  /* سطر النتيجة — منفصل عن الجدول */
   function resSpan(res){
     var color=res.cls==='pass'?'#047857':res.cls==='fail'?'#DC2626':res.cls==='warn'?'#B45309':'#64748B';
     var bg=res.cls==='pass'?'#D1FAE5':res.cls==='fail'?'#FEE2E2':res.cls==='warn'?'#FEF3C7':'#F1F5F9';
     return '<span style="background:'+bg+';color:'+color+';padding:4px 14px;border-radius:10px;font-weight:900;margin:0 6px;border:2px solid '+color+';font-size:'+Math.round(tableFs*1.1)+'px">'+res.text+'</span>';
-  }  h+='<div style="display:flex;gap:10px;margin-top:14px">';
+  }
+  h+='<div style="display:flex;gap:10px;margin-top:14px">';
   h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.15)+'px;padding:10px;border-radius:8px;text-align:center;border:2px solid #0F172A">';
   h+='نتيجة نصف السنة: '+resSpan(halfRes)+'</div>';
   h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.15)+'px;padding:10px;border-radius:8px;text-align:center;border:2px solid #0F172A">';
@@ -215,7 +216,6 @@ function resultTable(rows,opts){
   opts=opts||{};
   var compact=!!opts.compact;
   var secondRows=opts.secondRows||null;
-  
   if(secondRows&&secondRows.length){
     var h='';
     h+=buildOneResult(rows,true);
@@ -244,6 +244,7 @@ function resultCard(name,grade,section,rows){
     +'<div class="rc-body" style="background:#E2E8F0;padding:20px;overflow-x:auto">'+resultTable(rows)+'</div>'
     +'</div>';
 }
+
 function downloadXLS(filename,title,tablesHTML){
   var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl"><head><meta charset="utf-8">'
     +'<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الدرجات</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->'
@@ -255,7 +256,7 @@ function downloadXLS(filename,title,tablesHTML){
   toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
 
-/* ═══ طباعة نظيفة: بدون رابط، بدون كلمة طباعة، بدون قص ═══ */
+/* ═══ طباعة نظيفة: بدون رابط وبدون عنوان وبلا قص ═══ */
 function printWin(html){
   var old=document.getElementById('printFrame');
   if(old)old.remove();
@@ -292,7 +293,8 @@ var ICONS={
   unlock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>',
   del:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
   xls:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8"/></svg>',
-  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
 };
 
 function adminLogin(){
@@ -342,6 +344,7 @@ function adminTab(t){
   $('#tbTitle').textContent={dash:'نظرة عامة',res:'نتائج التلاميذ',team:'المعلمون',entry:'إدخال إداري',studs:'التلاميذ',keys:'كلمات المرور',set:'الإعدادات'}[t];
   if(Pages[t]&&Pages[t].enter)Pages[t].enter();
 }
+
 (function init(){
   try{
     $('#keyIn').addEventListener('keydown',function(e){if(e.key==='Enter')adminLogin();});
