@@ -136,7 +136,7 @@ function buildOneResult(rows,compact){
   }
   h+='</div></div>';
 
-  /* شريط بيانات التلميذ — خط كبير واضح */
+  /* شريط بيانات التلميذ — خط كبير */
   h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:10px 14px;border-radius:8px;margin-bottom:14px;border:1px solid #BFDBFE;flex-wrap:wrap;gap:8px">';
   h+='<div style="flex:1;min-width:150px;text-align:'+C.studentAlign+';font-size:16px;font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A">'+esc(name)+'</span></div>';
   h+='<div style="flex:1;min-width:150px;text-align:'+C.classAlign+';font-size:16px;font-weight:800"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
@@ -145,7 +145,7 @@ function buildOneResult(rows,compact){
 
   /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
-  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';
+  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+(tableFs+1)+'px;font-weight:bold;text-align:center;vertical-align:middle';
   h+='<thead>';
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
@@ -167,8 +167,9 @@ function buildOneResult(rows,compact){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+tableFs+'px;background:#fff;height:'+cellH+'px';
-  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+tableFs+'px;font-weight:bold;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
+  /* ✅ خط الدرجات أكبر بدرجتين + عريض ، وخط الدروس أكبر بثلاث درجات + عريض جدًا */
+  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+(tableFs+2)+'px;font-weight:bold;background:#fff;height:'+cellH+'px';
+  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
 
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
