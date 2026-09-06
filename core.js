@@ -134,29 +134,29 @@ function buildOneResult(rows,compact){
   h+='<div style="flex:1;min-width:100px;text-align:left;font-size:'+(compact?'10px':'11px')+';white-space:nowrap"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:700">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* ═══ جدول الدرجات — العناوين الصحيحة بالترتيب ═══ */
+  /* ═══ جدول الدرجات — العناوين الصحيحة بالترتيب مع rowspan ═══ */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid #1E293B;table-layout:fixed"><thead>';
   
-  /* الصف الأول من الرؤوس */
+  /* الصف الأول من الرؤوس — كل عمود إما rowspan=2 أو colspan */
   h+='<tr>'
-    +'<th style="'+S.TH+';width:2%">ت</th>'
-    +'<th style="'+S.TH+';width:18%">الدروس</th>'
+    +'<th style="'+S.TH+';width:2%" rowspan="2">ت</th>'
+    +'<th style="'+S.TH+';width:18%" rowspan="2">الدروس</th>'
     +'<th style="'+S.TH1+'" colspan="3">الفصل الأول</th>'
-    +'<th style="'+S.THC+';width:7%">معدل<br>ف١</th>'
-    +'<th style="'+S.TH+';width:7%">نصف<br>السنة</th>'
+    +'<th style="'+S.THC+';width:7%" rowspan="2">معدل<br>ف١</th>'
+    +'<th style="'+S.TH+';width:5%" rowspan="2">نصف<br>السنة</th>'
     +'<th style="'+S.TH2+'" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+S.THC+';width:7%">معدل<br>ف٢</th>'    +'<th style="'+S.THC+';width:9%">السعي<br>السنوي</th>'
-    +'<th style="'+S.TH+';width:8%">نهاية<br>السنة</th>'
-    +'<th style="'+S.THF+';width:8%">الدرجة<br>النهائية</th>'
+    +'<th style="'+S.THC+';width:7%" rowspan="2">معدل<br>ف٢</th>'    +'<th style="'+S.THC+';width:7%" rowspan="2">السعي<br>السنوي</th>'
+    +'<th style="'+S.TH+';width:6%" rowspan="2">نهاية<br>السنة</th>'
+    +'<th style="'+S.THF+';width:8%" rowspan="2">الدرجة<br>النهائية</th>'
     +'</tr>';
   
-  /* الصف الثاني من الرؤوس — ت١ ت٢ ك١ تحت الفصل الأول، آذار نيسان تحت الفصل الثاني */
+  /* الصف الثاني من الرؤوس — فقط تحت الفصل الأول والفصل الثاني */
   h+='<tr>'
-    +'<th style="'+S.TH1+'">ت١</th>'
-    +'<th style="'+S.TH1+'">ت٢</th>'
-    +'<th style="'+S.TH1+'">ك١</th>'
-    +'<th style="'+S.TH2+'">آذار</th>'
-    +'<th style="'+S.TH2+'">نيسان</th>'
+    +'<th style="'+S.TH1+';width:6%">ت١</th>'
+    +'<th style="'+S.TH1+';width:6%">ت٢</th>'
+    +'<th style="'+S.TH1+';width:6%">ك١</th>'
+    +'<th style="'+S.TH2+';width:7%">آذار</th>'
+    +'<th style="'+S.TH2+';width:7%">نيسان</th>'
     +'</tr></thead><tbody>';
 
   SUBJECTS.forEach(function(s,i){
