@@ -5,6 +5,33 @@ var ENT={teacher:null,subject:null,cls:null,names:[],rows:[]};
 function rnd(x){return Math.round(x);}
 function pnum(v){if(v===null||v===undefined||v==='')return null;var n=+v;return isNaN(n)?null:n;}
 
+/* ═══ تحليل صفوف المعلم من نص أو مصفوفة ═══ */
+function entParseOne(p){
+  p=String(p||'').trim();if(!p)return null;
+  var g='';
+  if(p.indexOf('الخامس')>-1)g='الخامس';
+  else if(p.indexOf('السادس')>-1)g='السادس';
+  if(!g)return null;
+  var m=p.match(/[أبج]/);
+  return {grade:g,section:m?m[0]:''};
+}
+function entParseClasses(t){
+  var out=[];
+  if(!t)return out;
+  if(Array.isArray(t.classes)){
+    t.classes.forEach(function(c){
+      if(typeof c==='string'){var o=entParseOne(c);if(o)out.push(o);}
+      else if(c&&c.grade){out.push({grade:c.grade,section:c.section||''});}
+    });
+    return out;
+  }
+  String(t.classes||'').split(/[,،\n]+/).forEach(function(p){
+    var o=entParseOne(p);if(o)out.push(o);
+  });
+  return out;
+}
+
+/* ═══ الحساب الإلكتروني: معدل ف١، ف٢، السعي، النهائية ═══ */
 function entCalc(r){
   var n1=[r.m1,r.m2,r.m3].filter(function(v){return v!=null;});
   r.a1=n1.length?rnd(n1.reduce(function(a,b){return a+b;},0)/n1.length):null;
@@ -40,7 +67,7 @@ function entRenderTeachers(){
   $('#entBox').innerHTML=h;
 }
 
-/* ═══ ٢) مواد المعلم وصفوفه ═══ */
+/* ═══ ٢) مواد المعلم ═══ */
 function entSelectTeacher(code){
   ENT.teacher=null;
   for(var i=0;i<ADM.teachers.length;i++){if(ADM.teachers[i].code===code){ENT.teacher=ADM.teachers[i];break;}}
@@ -48,7 +75,6 @@ function entSelectTeacher(code){
   ENT.subject=null;ENT.cls=null;ENT.names=[];ENT.rows=[];
   var subs=[];
   if(ENT.teacher.subject)subs.push(ENT.teacher.subject);
-  (ENT.teacher.classes||[]).forEach(function(c){});
   var h='<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">١) المعلم: '+esc(ENT.teacher.name)+'</div>'
     +'<button class="btn ghost sm" style="margin-top:6px" onclick="entRenderTeachers()">↩ تغيير المعلم</button>'
@@ -65,13 +91,14 @@ function entSelectTeacher(code){
   $('#entBox').innerHTML=h;
 }
 
+/* ═══ ٣) صفوف المعلم وشعبه ═══ */
 function entSelectSubject(s){
   ENT.subject=s;
   ENT.cls=null;ENT.names=[];ENT.rows=[];
   var h='<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">٣) اختر الصف والشعبة</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
-  var cls=(ENT.teacher.classes||[]);
+  var cls=entParseClasses(ENT.teacher);
   if(!cls.length){h+='<div class="hint">لا توجد صفوف مسجلة لهذا المعلم — أضفها من صفحة المعلمين</div>';}
   cls.forEach(function(c){
     var label=(c.grade||'')+' '+(c.section||'');
@@ -84,6 +111,7 @@ function entSelectSubject(s){
   $('#entTableCard').innerHTML='';
 }
 
+/* ═══ ٤) تحميل التلاميذ والدرجات ═══ */
 function entSelectClass(g,s){
   ENT.cls={grade:g,section:s};
   $('#entTableCard').innerHTML='<div class="empty">⏳ تحميل التلاميذ والدرجات...</div>';
@@ -115,13 +143,13 @@ function entSelectClass(g,s){
   }).catch(function(){$('#entTableCard').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';});
 }
 
-/* ═══ ٤) جدول الدرجات ═══ */
+/* ═══ ٥) جدول الدرجات ═══ */
 function entCell(v){return v==null?'—':arNum(v);}
 function entRenderTable(){
   var inp='style="width:52px;border:1.5px solid #93C5FD;border-radius:7px;padding:6px 2px;text-align:center;font-weight:700;background:#EFF6FF;color:#1E40AF;margin:0"';
   var h='<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">📊 '+esc(ENT.subject)+' — '+esc(ENT.cls.grade)+' '+esc(ENT.cls.section)+'</div>'
-    +'<div class="cs">الأعمدة الزرقاء تُحسب تلقائيًا — اكتب الدرجات البيضاء فقط</div>'
+    +'<div class="cs">الأعمدة الذهبية تُحسب تلقائيًا — اكتب الدرجات في الخانات الزرقاء فقط</div>'
     +'<div class="tbl"><table class="pt"><thead><tr>'
     +'<th>ت</th><th>التلميذ</th><th class="enter">ت١</th><th class="enter">ت٢</th><th class="enter">ك١</th>'
     +'<th class="calc">معدل ف١</th><th class="enter">نصف السنة</th><th class="enter">آذار</th><th class="enter">نيسان</th>'
@@ -178,7 +206,7 @@ function entSave(){
   }).catch(function(){toast('تعذر الاتصال','err');});
 }
 
-/* ═══ جدول الطباعة/Excel بنفس التصميم ═══ */
+/* ═══ كشف الطباعة/Excel بنفس التصميم ═══ */
 function entPrintHTML(){
   var B='1px solid #0F172A';
   var th='border:'+B+';background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
