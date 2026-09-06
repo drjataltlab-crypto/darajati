@@ -8,19 +8,30 @@ function searchStudent(){
   api({action:'searchStudent',key:key(),name:name,grade:grade,section:section}).then(function(r){
     if(!r.ok){toast(r.error,'err');$('#resBox').innerHTML='';return;}
     if(!r.rows.length){$('#resBox').innerHTML='<div class="empty">لا توجد درجات مسجلة لهذا التلميذ بعد</div>';return;}
-    ADM.res={name:r.rows[0].name,grade:r.rows[0].grade,section:r.rows[0].section,rows:r.rows,second:null};
+    ADM.res={name:r.rows[0].name,grade:r.rows[0].grade,section:r.rows[0].section,rows:r.rows,second:null,showSecondForm:false};
     renderResults();
   }).catch(function(){$('#resBox').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';});
 }
 
-function addSecondStudent(){
-  var name=prompt('اكتب اسم التلميذ الثاني الذي تريد طباعته معه في ورقة واحدة:');
-  if(!name||!name.trim())return;
-  var grade=$('#rsGrade').value,section=$('#rsSec').value;
+function showSecondForm(){
+  ADM.res.showSecondForm=true;
+  renderResults();
+}
+function hideSecondForm(){
+  ADM.res.showSecondForm=false;
+  renderResults();
+}
+
+function searchSecondStudent(){
+  var name=$('#secondName').value.trim();
+  if(!name){toast('اكتب اسم التلميذ الثاني','err');return;}
+  var grade=$('#secondGrade').value,section=$('#secondSec').value;
   toast('⏳ بحث عن التلميذ الثاني...','');
-  api({action:'searchStudent',key:key(),name:name.trim(),grade:grade,section:section}).then(function(r){
-    if(!r.ok||!r.rows.length){toast('❌ لم يُعثر على التلميذ الثاني','err');return;}
+  api({action:'searchStudent',key:key(),name:name,grade:grade,section:section}).then(function(r){
+    if(!r.ok){toast('❌ '+r.error,'err');return;}
+    if(!r.rows.length){toast('❌ لم يُعثر على التلميذ الثاني','err');return;}
     ADM.res.second={name:r.rows[0].name,grade:r.rows[0].grade,section:r.rows[0].section,rows:r.rows};
+    ADM.res.showSecondForm=false;
     toast('✓ تم إضافة التلميذ الثاني','ok');
     renderResults();
   }).catch(function(){toast('تعذر الاتصال','err');});
@@ -37,8 +48,7 @@ function renderResults(){
   var guideName=localStorage.getItem('guide_name')||'';
   var principalName=localStorage.getItem('principal_name')||'';
   var studyYear=localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';
-
-  /* ═══ بطاقة إعدادات المدرسة (بارزة وواضحة) ═══ */
+  /* ═══ بطاقة إعدادات المدرسة ═══ */
   var settings='<div class="card" style="border-right:5px solid #B45309">'
     +'<div class="ct" style="color:#B45309;font-size:16px">🏫 بيانات المدرسة والعام الدراسي</div>'
     +'<div class="cs">هذه البيانات تظهر في بطاقة الطباعة — تُحفظ محليًا على جهازك</div>'
@@ -47,7 +57,8 @@ function renderResults(){
     +'<input id="setYear" placeholder="مثال: ٢٠٢٥ - ٢٠٢٦" value="'+escA(studyYear)+'" style="border-color:#B45309;font-weight:bold"></div>'
     +'<div><label class="label">🏫 اسم المدرسة</label>'
     +'<input id="setName" placeholder="مثال: مدرسة المنهل الابتدائية" value="'+escA(schoolName)+'"></div>'
-    +'<div><label class="label">🖼️ شعار المدرسة</label>'    +'<div style="display:flex;gap:8px;align-items:center">'
+    +'<div><label class="label">🖼️ شعار المدرسة</label>'
+    +'<div style="display:flex;gap:8px;align-items:center">'
     +(schoolLogo?'<img src="'+schoolLogo+'" style="width:50px;height:50px;object-fit:contain;border:1px solid var(--line);border-radius:8px">':'<div style="width:50px;height:50px;background:#F1F5F9;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px">لا يوجد</div>')
     +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر صورة</button>'
     +(schoolLogo?'<button class="btn sm danger" onclick="clearSchoolLogo()">🗑</button>':'')
@@ -61,6 +72,7 @@ function renderResults(){
     +'</div>';
 
   var hasSecond=ADM.res.second&&ADM.res.second.rows&&ADM.res.second.rows.length;
+  var showForm=ADM.res.showSecondForm;
 
   /* ═══ بطاقة التلميذ الثاني (إن وُجد) ═══ */
   var secondCard='';
@@ -72,22 +84,47 @@ function renderResults(){
       +'</div>';
   }
 
-  var html=settings+secondCard+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
+  /* ═══ نموذج إضافة التلميذ الثاني ═══ */
+  var secondForm='';
+  if(!hasSecond&&showForm){
+    secondForm='<div class="card" style="border-right:5px solid #7E22CE;background:linear-gradient(135deg,#FAF5FF,#F5F3FF)">'
+      +'<div class="ct" style="color:#7E22CE;font-size:16px">➕ إضافة تلميذ ثاني للورقة</div>'
+      +'<div class="cs">ابحث عن التلميذ الثاني لإضافته إلى نفس ورقة الطباعة</div>'
+      +'<div class="grid3" style="margin-top:8px">'
+      +'<div><label class="label">📝 اسم التلميذ</label>'
+      +'<input id="secondName" placeholder="اكتب الاسم الكامل" autofocus></div>'
+      +'<div><label class="label">🏫 الصف</label>'
+      +'<select id="secondGrade"><option value="">كل الصفوف</option><option>الخامس</option><option>السادس</option></select></div>'
+      +'<div><label class="label">👥 الشعبة</label>'
+      +'<select id="secondSec"><option value="">كل الشعب</option><option>أ</option><option>ب</option><option>ج</option></select></div>'      +'</div>'
+      +'<div class="grid2" style="margin-top:10px">'
+      +'<button class="btn ok" onclick="searchSecondStudent()">🔍 بحث وإضافة</button>'
+      +'<button class="btn ghost" onclick="hideSecondForm()">❌ إلغاء</button>'
+      +'</div>'
+      +'</div>';
+  }
 
-  /* ═══ أزرار الطباعة — بارزة وكبيرة ═══ */
+  var html=settings+secondCard+secondForm+resultCard(ADM.res.name,ADM.res.grade,ADM.res.section,ADM.res.rows);
+
+  /* ═══ أزرار الطباعة ═══ */
   html+='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
     +'<div class="ct" style="color:var(--th);font-size:16px">🖨️ خيارات الطباعة</div>'
     +'<div class="grid3" style="margin-top:10px">'
     +'<button class="btn" style="padding:14px;font-size:14px" onclick="printSingle()">📄 طباعة تلميذ واحد<br><small style="font-size:11px;opacity:.8">ورقة A4 كاملة</small></button>';
   if(hasSecond){
-    html+='<button class="btn ok" style="padding:14px;font-size:14px" onclick="printTwo()">📑 طباعة تلميذين<br><small style="font-size:11px;opacity:.8">في ورقة واحدة</small></button>';
+    html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#7E22CE,#A78BFA)" onclick="printTwo()">📑 طباعة تلميذين<br><small style="font-size:11px;opacity:.8">في ورقة واحدة</small></button>';
   }else{
-    html+='<button class="btn ghost" style="padding:14px;font-size:14px" onclick="addSecondStudent()">➕ أضف تلميذ ثاني<br><small style="font-size:11px;opacity:.8">للورقة نفسها</small></button>';
+    html+='<button class="btn ghost" style="padding:14px;font-size:14px;border:2px solid #7E22CE;color:#7E22CE" onclick="showSecondForm()">➕ أضف تلميذ ثاني<br><small style="font-size:11px;opacity:.8">للورقة نفسها</small></button>';
   }
   html+='<button class="btn ok" style="padding:14px;font-size:14px;background:linear-gradient(135deg,#059669,#10B981)" onclick="excelResults()">⬇️ تنزيل Excel<br><small style="font-size:11px;opacity:.8">ملف للتعديل</small></button>'
     +'</div></div>';
   
   $('#resBox').innerHTML=html;
+  
+  /* وضع التركيز على حقل اسم التلميذ الثاني عند فتح النموذج */
+  if(showForm){
+    setTimeout(function(){var el=$('#secondName');if(el)el.focus();},100);
+  }
 }
 
 function pickSchoolLogo(){
@@ -96,7 +133,8 @@ function pickSchoolLogo(){
   inp.onchange=function(){
     var f=inp.files[0];if(!f)return;
     if(f.size>500000){toast('الصورة كبيرة (أقصى ٥٠٠ كيلو)','err');return;}
-    var reader=new FileReader();    reader.onload=function(e){
+    var reader=new FileReader();
+    reader.onload=function(e){
       localStorage.setItem('school_logo',e.target.result);
       toast('✓ تم حفظ الشعار','ok');
       renderResults();
@@ -107,8 +145,7 @@ function pickSchoolLogo(){
 }
 function clearSchoolLogo(){
   localStorage.removeItem('school_logo');
-  toast('✓ تم حذف الشعار','ok');
-  renderResults();
+  toast('✓ تم حذف الشعار','ok');  renderResults();
 }
 function saveSchoolInfo(){
   var n=$('#setName').value.trim();
