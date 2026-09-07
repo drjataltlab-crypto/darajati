@@ -1,9 +1,22 @@
-/* ═══ page-entry.js — الإدخال اليدوي بالأزرار والحساب الإلكتروني ═══ */
+/* ══ page-entry.js — الإدخال اليدوي بالأزرار والحساب الإلكتروني (محدّث) ═══ */
 
 var ENT={teacher:null,subject:null,cls:null,names:[],rows:[]};
 
 function rnd(x){return Math.round(x);}
 function pnum(v){if(v===null||v===undefined||v==='')return null;var n=+v;return isNaN(n)?null:n;}
+
+/* ═══ حمولة متعددة الصيغ (توافق مع الخادم) ═══ */
+function entPayload(extra){
+  var p={key:key()};
+  if(ENT.cls){
+    p.grade=ENT.cls.grade;
+    p.section=ENT.cls.section;
+    p.cls={grade:ENT.cls.grade,section:ENT.cls.section};
+    p.clsStr=ENT.cls.grade+' '+ENT.cls.section;
+  }
+  if(extra){for(var k in extra){p[k]=extra[k];}}
+  return p;
+}
 
 /* ═══ تحليل صفوف المعلم من نص أو مصفوفة ═══ */
 function entParseOne(p){
@@ -31,7 +44,7 @@ function entParseClasses(t){
   return out;
 }
 
-/* ═══ الحساب الإلكتروني: معدل ف١، ف٢، السعي، النهائية ═══ */
+/* ═══ الحساب الإلكتروني ═══ */
 function entCalc(r){
   var n1=[r.m1,r.m2,r.m3].filter(function(v){return v!=null;});
   r.a1=n1.length?rnd(n1.reduce(function(a,b){return a+b;},0)/n1.length):null;
@@ -41,12 +54,20 @@ function entCalc(r){
   r.final=(r.annual!=null&&r.exam!=null)?rnd((r.annual+r.exam)/2):null;
 }
 
-/* ═══ حالة الصف: أرسل المعلم أم لا ═══ */
+/* ═══ حالة الصف ══ */
 function entStatus(r){
   var vals=[r.m1,r.m2,r.m3,r.m4,r.m5,r.half,r.exam];
   var has=false;
   for(var i=0;i<vals.length;i++){if(vals[i]!=null){has=true;break;}}
   return has?'<span class="chip g">✔ درجات مُرسلة</span>':'<span class="chip">⏳ بانتظار المعلم</span>';
+}
+
+/* ═══ قراءة المسودة المحلية (من صفحة التلاميذ) ═══ */
+function entLoadLocalDraft(g,s){
+  try{
+    var d=localStorage.getItem('st_draft_'+g+'_'+s);
+    return d?JSON.parse(d):null;
+  }catch(e){return null;}
 }
 
 registerPage('entry',{
@@ -75,7 +96,7 @@ function entRenderTeachers(){
   $('#entBox').innerHTML=h;
 }
 
-/* ═══ ) مواد المعلم ══ */
+/* ═══ ) مواد المعلم ═══ */
 function entSelectTeacher(code){
   ENT.teacher=null;
   for(var i=0;i<ADM.teachers.length;i++){if(ADM.teachers[i].code===code){ENT.teacher=ADM.teachers[i];break;}}
@@ -88,7 +109,7 @@ function entSelectTeacher(code){
     +'<button class="btn ghost sm" style="margin-top:6px" onclick="entRenderTeachers()">↩ تغيير المعلم</button>'
     +'</div>';
   h+='<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct" style="color:var(--th)">٢) اختر المادة</div>'
+    +'<div class="ct" style="color:var(--th)">) اختر المادة</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
   subs.forEach(function(s){
     h+='<button class="btn ok" style="width:auto;flex:1;min-width:140px" onclick="entSelectSubject(\''+escA(s)+'\')">📘 '+esc(s)+'</button>';
@@ -99,12 +120,12 @@ function entSelectTeacher(code){
   $('#entBox').innerHTML=h;
 }
 
-/* ═══ ٣) صفوف المعلم وشعبه ═══ */
+/* ═══ ٣) صفوف المعلم ═══ */
 function entSelectSubject(s){
   ENT.subject=s;
   ENT.cls=null;ENT.names=[];ENT.rows=[];
   var h='<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct" style="color:var(--th)">٣) اختر الصف والشعبة</div>'
+    +'<div class="ct" style="color:var(--th)">) اختر الصف والشعبة</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
   var cls=entParseClasses(ENT.teacher);
   if(!cls.length){h+='<div class="hint">لا توجد صفوف مسجلة لهذا المعلم — أضفها من صفحة المعلمين</div>';}
@@ -117,24 +138,35 @@ function entSelectSubject(s){
   card.style.display='block';
   card.innerHTML=h;
   $('#entTableCard').innerHTML='';
-  /* إذا كان للمعلم صف واحد فقط → يفتح جدوله تلقائيًا */
   if(cls.length===1){entSelectClass(cls[0].grade,cls[0].section);}
 }
 
-/* ═══ ٤) تحميل التلاميذ والدرجات ═══ */
+/* ═══ ٤) تحميل التلاميذ والدرجات — حمولة متعددة الصيغ ═══ */
 function entSelectClass(g,s){
   ENT.cls={grade:g,section:s};
   $('#entTableCard').innerHTML='<div class="empty">⏳ تحميل التلاميذ والدرجات...</div>';
+  
   Promise.all([
-    api({action:'getStudents',key:key(),cls:ENT.cls}),
+    api(entPayload({action:'getStudents'})),
     api({action:'allGrades',key:key()})
   ]).then(function(rs){
     var names=(rs[0]&&rs[0].names)?rs[0].names:[];
+    
+    /* fallback: قراءة المسودة المحلية من صفحة التلاميذ */
+    if(!names.length){
+      var draft=entLoadLocalDraft(g,s);
+      if(draft&&draft.length){
+        names=draft;
+        toast('⚠️ الأسماء من المسودة المحلية (لم تُحفظ بعد في الخادم)','');
+      }
+    }
+    
     var all=(rs[1]&&rs[1].rows)?rs[1].rows:[];
     var byName={};
     all.forEach(function(r){
       if(r.subject===ENT.subject&&r.grade===g&&r.section===s){byName[r.name]=r;}
     });
+    
     ENT.names=names;
     ENT.rows=names.map(function(n){
       var r=byName[n]||{};
@@ -150,10 +182,22 @@ function entSelectClass(g,s){
       return o;
     });
     entRenderTable();
-  }).catch(function(){$('#entTableCard').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';});
+  }).catch(function(){
+    var draft=entLoadLocalDraft(g,s);
+    if(draft&&draft.length){
+      ENT.names=draft;
+      ENT.rows=draft.map(function(n){
+        return {name:n,m1:null,m2:null,m3:null,half:null,m4:null,m5:null,exam:null,max:100,a1:null,a2:null,annual:null,final:null};
+      });
+      entRenderTable();
+      toast('️ عرض من المسودة المحلية فقط','');
+    }else{
+      $('#entTableCard').innerHTML='<div class="empty">️ لا توجد أسماء — أضفها من صفحة التلاميذ أولًا</div>';
+    }
+  });
 }
 
-/* ═══ ٥) جدول الدرجات مع عمود الحالة ═══ */
+/* ═══ ٥) جدول الدرجات ═══ */
 function entCell(v){return v==null?'—':arNum(v);}
 function entRenderTable(){
   var inp='style="width:52px;border:1.5px solid #93C5FD;border-radius:7px;padding:6px 2px;text-align:center;font-weight:700;background:#EFF6FF;color:#1E40AF;margin:0"';
@@ -201,7 +245,7 @@ function entUpd(i,f,v){
   $('#e_fin_'+i).textContent=entCell(r.final);
 }
 
-/* ═══ حفظ ═══ */
+/* ══ حفظ — حمولة متعددة الصيغ ═══ */
 function entSave(){
   if(!ENT.cls||!ENT.subject){toast('اختر المادة والصف أولًا','err');return;}
   var rows=ENT.rows.map(function(r){
@@ -209,14 +253,14 @@ function entSave(){
       m1:r.m1,m2:r.m2,m3:r.m3,half:r.half,m4:r.m4,m5:r.m5,
       a1:r.a1,a2:r.a2,annual:r.annual,exam:r.exam,final:r.final,max:r.max||100};
   });
-  toast('⏳ حفظ...','');
-  api({action:'adminSubmit',key:key(),cls:ENT.cls,rows:rows}).then(function(r){
+  toast(' حفظ...','');
+  api(entPayload({action:'adminSubmit',rows:rows})).then(function(r){
     if(r.ok){toast('✓ تم حفظ درجات '+ENT.subject,'ok');}
     else{toast('❌ '+r.error,'err');}
   }).catch(function(){toast('تعذر الاتصال','err');});
 }
 
-/* ═══ كشف الطباعة/Excel بنفس التصميم ═══ */
+/* ═══ كشف الطباعة/Excel ═══ */
 function entPrintHTML(){
   var B='1px solid #0F172A';
   var th='border:'+B+';background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
