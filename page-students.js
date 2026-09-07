@@ -1,4 +1,4 @@
-/* ═══ page-students.js — قوائم التلاميذ — الإصدار v4 ═══ */
+/* ═══ page-students.js — قوائم التلاميذ — الإصدار v5 ═══ */
 
 var ST={grade:'',section:'',names:[]};
 
@@ -30,7 +30,7 @@ function stRenderSelect(){
   var ls=localStorage.getItem('st_last_section')||'';
   box.innerHTML=
     '<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة <span class="chip g">v4</span></div>'
+    +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة <span class="chip g">v5</span></div>'
     +'<div class="cs">بعد الاختيار تُفتح إدارة القائمة تلقائيًا</div>'
     +'<div class="grid2" style="margin-top:10px">'
     +'<select id="stGrade" onchange="stTryLoad()"><option value="">— الصف —</option><option'+(lg==='الخامس'?' selected':'')+'>الخامس</option><option'+(lg==='السادس'?' selected':'')+'>السادس</option></select>'
@@ -47,7 +47,7 @@ function stTryLoad(){
   stLoad();
 }
 
-/* ═══ تحميل القائمة من الخادم + المسودة ═══ */
+/* ═══ تحميل القائمة ═══ */
 function stLoad(){
   var box=$('#studsBox');
   if(box)box.innerHTML='<div class="empty">⏳ تحميل القائمة...</div>';
@@ -65,12 +65,14 @@ function stLoad(){
   });
 }
 
-/* ═══ الشاشة الرئيسية — الاختيار ظاهر دائمًا ═══ */
+/* ═══ الشاشة الرئيسية ═══ */
 function stRenderMain(){
   var box=$('#studsBox');
   if(!box)return;
   var h='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
-    +'<div class="ct" style="color:var(--th)">🏫 إدارة القائمة <span class="chip g">v4</span> — '+arNum(ST.names.length)+' تلميذ</div>'
+    +'<input type="hidden" id="stCurG" value="'+escA(ST.grade)+'">'
+    +'<input type="hidden" id="stCurS" value="'+escA(ST.section)+'">'
+    +'<div class="ct" style="color:var(--th)">🏫 إدارة القائمة <span class="chip g">v5</span> — '+arNum(ST.names.length)+' تلميذ</div>'
     +'<div class="grid2" style="margin:10px 0">'
     +'<select id="stGrade2" onchange="stSwitch()"><option value="">— الصف —</option><option'+(ST.grade==='الخامس'?' selected':'')+'>الخامس</option><option'+(ST.grade==='السادس'?' selected':'')+'>السادس</option></select>'
     +'<select id="stSection2" onchange="stSwitch()"><option value="">— الشعبة —</option><option'+(ST.section==='أ'?' selected':'')+'>أ</option><option'+(ST.section==='ب'?' selected':'')+'>ب</option><option'+(ST.section==='ج'?' selected':'')+'>ج</option></select>'
@@ -82,7 +84,6 @@ function stRenderMain(){
     +'<button class="btn sm ok" onclick="stSave()">💾 حفظ القائمة</button>'
     +'</div></div>';
 
-  /* لوحة اللصق */
   h+='<div class="card" id="stPasteCard" style="display:none;border-right:5px solid #7C3AED">'
     +'<div class="ct" style="color:#7C3AED">📥 لصق الأسماء — كل اسم في سطر</div>'
     +'<textarea id="stPasteBox" rows="6" placeholder="أحمد محمد&#10;علي حسن"></textarea>'
@@ -91,7 +92,6 @@ function stRenderMain(){
     +'<button class="btn ghost" onclick="stApplyPaste(false)">🔄 استبدال القائمة</button>'
     +'</div></div>';
 
-  /* جدول الأسماء */
   h+='<div class="card"><div class="ct">📋 قائمة التلاميذ — '+esc(ST.grade)+' '+esc(ST.section)+'</div>'
     +'<div class="tbl"><table class="pt"><thead><tr>'
     +'<th style="width:40px"><input type="checkbox" onclick="stToggleAll(this.checked)" style="width:auto;margin:0"></th>'
@@ -121,7 +121,7 @@ function stRenderMain(){
   box.innerHTML=h;
 }
 
-/* ═══ تبديل الصف/الشعبة من داخل القائمة ═══ */
+/* ═══ تبديل الصف/الشعبة ═══ */
 function stSwitch(){
   var gEl=$('#stGrade2'),sEl=$('#stSection2');
   if(!gEl||!sEl)return;
@@ -268,21 +268,33 @@ function stAddNames(arr){
   toast('✓ تم استيراد '+arNum(lines.length)+' اسمًا — اضغط 💾 حفظ','ok');
 }
 
-/* ═══ الحفظ — يقرأ الصف والشعبة من الشاشة مباشرة ═══ */
+/* ═══ الحفظ — ٤ مصادر احتياطية + تشخيص ═══ */
 function stSave(){
-  var gEl=$('#stGrade2'),sEl=$('#stSection2');
-  var g=(gEl?gEl.value:'')||ST.grade||'';
-  var s=(sEl?sEl.value:'')||ST.section||'';
-  if(!g||!s){toast('اختر الصف والشعبة من القائمتين بالأعلى','err');return;}
-  ST.grade=g;ST.section=s;
-  if(!ST.names.length){toast('القائمة فارغة — أضف أسماء أولًا','err');return;}
-  toast('⏳ حفظ...','');
-  api({action:'setStudents',key:key(),cls:{grade:g,section:s},names:ST.names}).then(function(r){
-    if(r.ok){
-      stClearDraft();
-      toast('✓ تم حفظ '+arNum(ST.names.length)+' تلميذ في '+g+' '+s,'ok');
-      stRenderMain();
+  try{
+    var hG=$('#stCurG'),hS=$('#stCurS');
+    var gEl=$('#stGrade2'),sEl=$('#stSection2');
+    var g=(hG?hG.value:'')||(gEl?gEl.value:'')||ST.grade||localStorage.getItem('st_last_grade')||'';
+    var s=(hS?hS.value:'')||(sEl?sEl.value:'')||ST.section||localStorage.getItem('st_last_section')||'';
+    if(!g||!s){
+      toast('⚠️ لم أعرف الصف/الشعبة — g=['+g+'] s=['+s+']','err');
+      return;
     }
-    else{toast('❌ '+r.error,'err');}
-  }).catch(function(){toast('تعذر الاتصال — القائمة محفوظة كمسودة','err');});
+    ST.grade=g;ST.section=s;
+    if(!ST.names.length){
+      var draft=stLoadDraft();
+      if(draft&&draft.length){ST.names=draft;}
+    }
+    if(!ST.names.length){toast('القائمة فارغة — أضف أسماء أولًا','err');return;}
+    toast('⏳ حفظ...','');
+    api({action:'setStudents',key:key(),cls:{grade:g,section:s},names:ST.names}).then(function(r){
+      if(r.ok){
+        stClearDraft();
+        toast('✓ تم حفظ '+arNum(ST.names.length)+' تلميذ في '+g+' '+s,'ok');
+        stRenderMain();
+      }
+      else{toast('❌ '+r.error,'err');}
+    }).catch(function(){toast('تعذر الاتصال — القائمة محفوظة كمسودة','err');});
+  }catch(e){
+    toast('خطأ بالحفظ: '+e.message,'err');
+  }
 }
