@@ -1,13 +1,6 @@
-/* ═══ page-students.js — قوائم التلاميذ — الإصدار v7 ═══ */
+/* ═══ page-students.js — قوائم التلاميذ — الإصدار v8 ═══ */
 
 var ST={grade:'',section:'',names:[]};
-
-/* ═══ بناء حمولة يفهمها الخادم بأي صيغة ═══ */
-function stPayload(g,s,extra){
-  var p={key:key(),grade:g,section:s,cls:{grade:g,section:s},clsStr:g+' '+s};
-  if(extra){for(var k in extra){p[k]=extra[k];}}
-  return p;
-}
 
 registerPage('studs',{
   enter:function(){
@@ -16,20 +9,33 @@ registerPage('studs',{
   }
 });
 
-/* ═══ المسودة التلقائية ═══ */
-function stKey(){return 'st_draft_'+ST.grade+'_'+ST.section;}
-function stSaveDraft(){
+/* ═══ المفاتيح المحلية ═══ */
+function stDraftKey(){return 'st_draft_'+ST.grade+'_'+ST.section;}
+function stSavedKey(){return 'st_saved_'+ST.grade+'_'+ST.section;}
+
+/* ═══ الحفظ المحلي الدائم (لا يُحذف إلا بالحذف الصريح) ═══ */
+function stSaveLocal(){
   if(!ST.grade||!ST.section)return;
-  localStorage.setItem(stKey(),JSON.stringify(ST.names));
+  localStorage.setItem(stDraftKey(),JSON.stringify(ST.names));
+  localStorage.setItem(stSavedKey(),JSON.stringify(ST.names));
   localStorage.setItem('st_last_grade',ST.grade);
   localStorage.setItem('st_last_section',ST.section);
 }
-function stLoadDraft(){
-  try{var d=localStorage.getItem(stKey());return d?JSON.parse(d):null;}catch(e){return null;}
-}
-function stClearDraft(){localStorage.removeItem(stKey());}
 
-/* ═══ شاشة الاختيار الأولى ═══ */
+/* ═══ قراءة المسودة (مؤقتة) ═══ */
+function stLoadDraft(){
+  try{var d=localStorage.getItem(stDraftKey());return d?JSON.parse(d):null;}catch(e){return null;}
+}
+
+/* ═══ قراءة الحفظ الدائم ═══ */
+function stLoadSaved(){
+  try{var d=localStorage.getItem(stSavedKey());return d?JSON.parse(d):null;}catch(e){return null;}
+}
+
+/* ═══ مسح المسودة فقط (عند نجاح الحفظ في الخادم) ═══ */
+function stClearDraft(){localStorage.removeItem(stDraftKey());}
+
+/* ═══ شاشة الاختيار — زر الصف يبدأ فارغًا ═══ */
 function stRenderSelect(){
   var box=$('#studsBox');
   if(!box)return;
@@ -37,7 +43,7 @@ function stRenderSelect(){
   var ls=localStorage.getItem('st_last_section')||'';
   box.innerHTML=
     '<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة <span class="chip g">v7</span></div>'
+    +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة <span class="chip g">v8</span></div>'
     +'<div class="cs">بعد الاختيار تُفتح إدارة القائمة تلقائيًا</div>'
     +'<div class="grid2" style="margin-top:10px">'
     +'<select id="stGrade" onchange="stTryLoad()"><option value="">— الصف —</option><option'+(lg==='الخامس'?' selected':'')+'>الخامس</option><option'+(lg==='السادس'?' selected':'')+'>السادس</option></select>'
@@ -54,20 +60,39 @@ function stTryLoad(){
   stLoad();
 }
 
-/* ═══ تحميل القائمة — حمولة متعددة الصيغ ═══ */
+/* ═══ تحميل القائمة: الخادم ← الحفظ المحلي ← المسودة ═══ */
 function stLoad(){
   var box=$('#studsBox');
   if(box)box.innerHTML='<div class="empty">⏳ تحميل القائمة...</div>';
-  api(stPayload(ST.grade,ST.section,{action:'getStudents'})).then(function(r){
-    ST.names=(r&&r.names)?r.names.slice():[];
-    var draft=stLoadDraft();
-    if(draft&&draft.length&&JSON.stringify(draft)!==JSON.stringify(ST.names)){
-      ST.names=draft;
-      toast('⚠️ وجدت قائمة غير محفوظة — اضغط 💾 حفظ لاعتمادها','');
+  
+  api({action:'getStudents',key:key(),cls:{grade:ST.grade,section:ST.section},grade:ST.grade,section:ST.section,clsStr:ST.grade+' '+ST.section}).then(function(r){
+    var serverNames=(r&&r.names)?r.names.slice():[];
+    
+    if(serverNames.length){
+      ST.names=serverNames;
+      stSaveLocal();
+      toast('✓ تم تحميل '+arNum(ST.names.length)+' تلميذ من الخادم','ok');
+    }else{
+      var saved=stLoadSaved();
+      var draft=stLoadDraft();
+      if(saved&&saved.length){
+        ST.names=saved;
+        toast('️ الخادم فارغ — عرض من الحفظ المحلي ('+arNum(ST.names.length)+' تلميذ)','');
+      }else if(draft&&draft.length){
+        ST.names=draft;
+        toast('⚠️ عرض من المسودة المؤقتة ('+arNum(ST.names.length)+' تلميذ)','');
+      }else{
+        ST.names=[];
+      }
     }
     stRenderMain();
   }).catch(function(){
-    ST.names=stLoadDraft()||[];
+    var saved=stLoadSaved();
+    var draft=stLoadDraft();
+    ST.names=saved||draft||[];
+    if(ST.names.length){
+      toast('⚠️ تعذر الاتصال — عرض من الحفظ المحلي ('+arNum(ST.names.length)+' تلميذ)','');
+    }
     stRenderMain();
   });
 }
@@ -77,7 +102,7 @@ function stRenderMain(){
   var box=$('#studsBox');
   if(!box)return;
   var h='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
-    +'<div class="ct" style="color:var(--th)">🏫 إدارة القائمة <span class="chip g">v7</span> — '+arNum(ST.names.length)+' تلميذ</div>'
+    +'<div class="ct" style="color:var(--th)">🏫 إدارة القائمة <span class="chip g">v8</span> — '+arNum(ST.names.length)+' تلميذ</div>'
     +'<div class="grid2" style="margin:10px 0">'
     +'<select id="stGrade2" onchange="stSwitch()"><option value="">— الصف —</option><option'+(ST.grade==='الخامس'?' selected':'')+'>الخامس</option><option'+(ST.grade==='السادس'?' selected':'')+'>السادس</option></select>'
     +'<select id="stSection2" onchange="stSwitch()"><option value="">— الشعبة —</option><option'+(ST.section==='أ'?' selected':'')+'>أ</option><option'+(ST.section==='ب'?' selected':'')+'>ب</option><option'+(ST.section==='ج'?' selected':'')+'>ج</option></select>'
@@ -119,14 +144,14 @@ function stRenderMain(){
   });
   h+='</tbody></table></div>'
     +'<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">'
-    +'<span class="chip" id="stSelCount">المحدد: ٠</span>'
+    +'<span class="chip" id="stSelCount">المحدد: </span>'
     +'<button class="btn sm danger" onclick="stDelSelected()">🗑 مسح المحدد</button>'
     +'</div></div>';
 
   box.innerHTML=h;
 }
 
-/* ═══ الحفظ — حمولة متعددة الصيغ ═══ */
+/* ═══ الحفظ — محلي + خادم ═══ */
 function stSaveWith(g,s){
   try{
     g=g||ST.grade||localStorage.getItem('st_last_grade')||'';
@@ -134,19 +159,29 @@ function stSaveWith(g,s){
     if(!g||!s){toast('⚠️ الصف/الشعبة غير محددين','err');return;}
     ST.grade=g;ST.section=s;
     if(!ST.names.length){
+      var saved=stLoadSaved();
       var draft=stLoadDraft();
-      if(draft&&draft.length){ST.names=draft;}
+      if(saved&&saved.length){ST.names=saved;}
+      else if(draft&&draft.length){ST.names=draft;}
     }
     if(!ST.names.length){toast('القائمة فارغة — أضف أسماء أولًا','err');return;}
+    
+    /* حفظ محلي دائم أولاً */
+    stSaveLocal();
+    
     toast('⏳ حفظ...','');
-    api(stPayload(g,s,{action:'setStudents',names:ST.names})).then(function(r){
+    api({action:'setStudents',key:key(),cls:{grade:g,section:s},grade:g,section:s,clsStr:g+' '+s,names:ST.names}).then(function(r){
       if(r.ok){
         stClearDraft();
         toast('✓ تم حفظ '+arNum(ST.names.length)+' تلميذ في '+g+' '+s,'ok');
-        stRenderMain();
+      }else{
+        toast('⚠️ الحفظ المحلي تم ✓ — الخادم: '+r.error,'');
       }
-      else{toast('❌ الخادم: '+r.error,'err');}
-    }).catch(function(){toast('تعذر الاتصال — القائمة محفوظة كمسودة','err');});
+      stRenderMain();
+    }).catch(function(){
+      toast('⚠️ الحفظ المحلي تم ✓ — تعذر الاتصال بالخادم','');
+      stRenderMain();
+    });
   }catch(e){
     toast('خطأ بالحفظ: '+e.message,'err');
   }
@@ -156,14 +191,14 @@ function stSave(){
   stSaveWith(gEl?gEl.value:'',sEl?sEl.value:'');
 }
 
-/* ═══ تبديل الصف/الشعبة ═══ */
+/* ═══ تبديل الصف/الشعبة ══ */
 function stSwitch(){
   var gEl=$('#stGrade2'),sEl=$('#stSection2');
   if(!gEl||!sEl)return;
   var g=gEl.value,s=sEl.value;
   if(!g||!s){toast('اختر الصف والشعبة','err');return;}
   if(g===ST.grade&&s===ST.section)return;
-  stSaveDraft();
+  stSaveLocal();
   ST.grade=g;ST.section=s;
   stLoad();
 }
@@ -184,9 +219,9 @@ function stToggleAll(v){
 function stSort(){
   if(!ST.names.length){toast('لا توجد أسماء للترتيب','err');return;}
   ST.names.sort(function(a,b){return a.localeCompare(b,'ar');});
-  stSaveDraft();
+  stSaveLocal();
   stRenderMain();
-  toast('✓ تم الترتيب أبجديًا — اضغط 💾 حفظ','ok');
+  toast('✓ تم الترتيب أبجديًا — تم الحفظ تلقائيًا','ok');
 }
 
 /* ═══ تعديل / حذف ═══ */
@@ -203,16 +238,16 @@ function stEditSave(i){
   var v=el?el.value.trim():'';
   if(!v){toast('الاسم فارغ','err');return;}
   ST.names[i]=v;
-  stSaveDraft();
+  stSaveLocal();
   stRenderMain();
-  toast('✓ تم التعديل — اضغط 💾 حفظ','ok');
+  toast('✓ تم التعديل والحفظ تلقائيًا','ok');
 }
 function stDel(i){
   confirmDlg('حذف الاسم: '+ST.names[i]+' ؟',function(){
     ST.names.splice(i,1);
-    stSaveDraft();
+    stSaveLocal();
     stRenderMain();
-    toast('✓ تم الحذف — اضغط 💾 حفظ','ok');
+    toast('✓ تم الحذف والحفظ تلقائيًا','ok');
   },'تأكيد');
 }
 function stDelSelected(){
@@ -222,13 +257,13 @@ function stDelSelected(){
   confirmDlg('حذف '+arNum(idx.length)+' اسمًا محددًا؟',function(){
     idx.sort(function(a,b){return b-a;});
     idx.forEach(function(i){ST.names.splice(i,1);});
-    stSaveDraft();
+    stSaveLocal();
     stRenderMain();
-    toast('✓ تم حذف المحدد — اضغط 💾 حفظ','ok');
+    toast('✓ تم حذف المحدد والحفظ تلقائيًا','ok');
   },'تأكيد');
 }
 
-/* ═══ اللصق ═══ */
+/* ═══ اللصق — مع حفظ تلقائي ═══ */
 function stTogglePaste(){
   var c=$('#stPasteCard');
   if(c)c.style.display=(c.style.display==='none')?'block':'none';
@@ -239,12 +274,12 @@ function stApplyPaste(add){
   lines=lines.map(function(s){return s.trim();}).filter(Boolean);
   if(!lines.length){toast('لا توجد أسماء في الصندوق','err');return;}
   if(add){ST.names=ST.names.concat(lines);}else{ST.names=lines;}
-  stSaveDraft();
+  stSaveLocal();
   stRenderMain();
-  toast('✓ '+arNum(lines.length)+' اسمًا — اضغط 💾 حفظ','ok');
+  toast('✓ تم لصق '+arNum(lines.length)+' اسمًا وحفظها تلقائيًا','ok');
 }
 
-/* ═══ استيراد Excel / CSV / TXT ═══ */
+/* ═══ استيراد Excel / CSV / TXT — مع حفظ تلقائي ═══ */
 function stEnsureXLSX(cb){
   if(window.XLSX){cb();return;}
   var s=document.createElement('script');
@@ -285,7 +320,7 @@ function stImportFile(){
             names.push(v);
           });
           stAddNames(names);
-        }catch(err){toast('❌ ملف غير صالح','err');}
+        }catch(err){toast(' ملف غير صالح','err');}
       };
       rb.readAsArrayBuffer(f);
     });
@@ -298,7 +333,7 @@ function stAddNames(arr){
     .filter(Boolean);
   if(!lines.length){toast('لا توجد أسماء في الملف','err');return;}
   ST.names=ST.names.concat(lines);
-  stSaveDraft();
+  stSaveLocal();
   stRenderMain();
-  toast('✓ تم استيراد '+arNum(lines.length)+' اسمًا — اضغط 💾 حفظ','ok');
+  toast('✓ تم استيراد '+arNum(lines.length)+' اسمًا وحفظها تلقائيًا','ok');
 }
