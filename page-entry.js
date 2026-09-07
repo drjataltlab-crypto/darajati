@@ -41,6 +41,14 @@ function entCalc(r){
   r.final=(r.annual!=null&&r.exam!=null)?rnd((r.annual+r.exam)/2):null;
 }
 
+/* ═══ حالة الصف: أرسل المعلم أم لا ═══ */
+function entStatus(r){
+  var vals=[r.m1,r.m2,r.m3,r.m4,r.m5,r.half,r.exam];
+  var has=false;
+  for(var i=0;i<vals.length;i++){if(vals[i]!=null){has=true;break;}}
+  return has?'<span class="chip g">✔ درجات مُرسلة</span>':'<span class="chip">⏳ بانتظار المعلم</span>';
+}
+
 registerPage('entry',{
   enter:function(){
     ENT={teacher:null,subject:null,cls:null,names:[],rows:[]};
@@ -67,7 +75,7 @@ function entRenderTeachers(){
   $('#entBox').innerHTML=h;
 }
 
-/* ═══ ٢) مواد المعلم ═══ */
+/* ═══ ) مواد المعلم ══ */
 function entSelectTeacher(code){
   ENT.teacher=null;
   for(var i=0;i<ADM.teachers.length;i++){if(ADM.teachers[i].code===code){ENT.teacher=ADM.teachers[i];break;}}
@@ -109,6 +117,8 @@ function entSelectSubject(s){
   card.style.display='block';
   card.innerHTML=h;
   $('#entTableCard').innerHTML='';
+  /* إذا كان للمعلم صف واحد فقط → يفتح جدوله تلقائيًا */
+  if(cls.length===1){entSelectClass(cls[0].grade,cls[0].section);}
 }
 
 /* ═══ ٤) تحميل التلاميذ والدرجات ═══ */
@@ -143,7 +153,7 @@ function entSelectClass(g,s){
   }).catch(function(){$('#entTableCard').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';});
 }
 
-/* ═══ ٥) جدول الدرجات ═══ */
+/* ═══ ٥) جدول الدرجات مع عمود الحالة ═══ */
 function entCell(v){return v==null?'—':arNum(v);}
 function entRenderTable(){
   var inp='style="width:52px;border:1.5px solid #93C5FD;border-radius:7px;padding:6px 2px;text-align:center;font-weight:700;background:#EFF6FF;color:#1E40AF;margin:0"';
@@ -151,14 +161,14 @@ function entRenderTable(){
     +'<div class="ct" style="color:var(--th)">📊 '+esc(ENT.subject)+' — '+esc(ENT.cls.grade)+' '+esc(ENT.cls.section)+'</div>'
     +'<div class="cs">الأعمدة الذهبية تُحسب تلقائيًا — اكتب الدرجات في الخانات الزرقاء فقط</div>'
     +'<div class="tbl"><table class="pt"><thead><tr>'
-    +'<th>ت</th><th>التلميذ</th><th class="enter">ت١</th><th class="enter">ت٢</th><th class="enter">ك١</th>'
+    +'<th>ت</th><th>التلميذ</th><th>الحالة</th><th class="enter">ت١</th><th class="enter">ت٢</th><th class="enter">ك١</th>'
     +'<th class="calc">معدل ف١</th><th class="enter">نصف السنة</th><th class="enter">آذار</th><th class="enter">نيسان</th>'
     +'<th class="calc">معدل ف٢</th><th class="calc">السعي السنوي</th><th class="enter">نهاية السنة</th><th class="fin">النهائية</th>'
     +'</tr></thead><tbody>';
   ENT.rows.forEach(function(r,i){
     h+='<tr>'
       +'<td>'+arNum(i+1)+'</td>'
-      +'<td class="nm">'+esc(r.name)+'</td>'
+      +'<td class="nm">'+esc(r.name)+'</td><td>'+entStatus(r)+'</td>'
       +'<td><input type="number" '+inp+' id="e_m1_'+i+'" value="'+(r.m1==null?'':r.m1)+'" oninput="entUpd('+i+',\'m1\',this.value)"></td>'
       +'<td><input type="number" '+inp+' id="e_m2_'+i+'" value="'+(r.m2==null?'':r.m2)+'" oninput="entUpd('+i+',\'m2\',this.value)"></td>'
       +'<td><input type="number" '+inp+' id="e_m3_'+i+'" value="'+(r.m3==null?'':r.m3)+'" oninput="entUpd('+i+',\'m3\',this.value)"></td>'
