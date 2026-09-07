@@ -11,7 +11,9 @@ registerPage('studs',{
 
 /* ═══ الخطوة ١: اختيار الصف والشعبة فقط ═══ */
 function stRenderSelect(){
-  $('#studsBox').innerHTML=
+  var box=$('#studsBox');
+  if(!box)return;
+  box.innerHTML=
     '<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة</div>'
     +'<div class="cs">بعد الاختيار تُفتح إدارة القائمة تلقائيًا</div>'
@@ -20,24 +22,32 @@ function stRenderSelect(){
     +'<select id="stSection" onchange="stTryLoad()"><option value="">— الشعبة —</option><option>أ</option><option>ب</option><option>ج</option></select>'
     +'</div></div>';
 }
+
 function stTryLoad(){
-  var g=$('#stGrade').value,s=$('#stSection').value;
+  var gEl=$('#stGrade'),sEl=$('#stSection');
+  if(!gEl||!sEl)return;
+  var g=gEl.value,s=sEl.value;
   if(!g||!s)return;
   ST.grade=g;ST.section=s;
   stLoad();
 }
+
 function stLoad(){
-  $('#studsBox').innerHTML='<div class="empty">⏳ تحميل القائمة...</div>';
+  var box=$('#studsBox');
+  if(box)box.innerHTML='<div class="empty">⏳ تحميل القائمة...</div>';
   api({action:'getStudents',key:key(),cls:{grade:ST.grade,section:ST.section}}).then(function(r){
     ST.names=(r&&r.names)?r.names.slice():[];
     stRenderMain();
   }).catch(function(){
-    $('#studsBox').innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';
+    var b=$('#studsBox');
+    if(b)b.innerHTML='<div class="empty">⚠️ تعذر الاتصال</div>';
   });
 }
 
 /* ═══ الصفحة الرئيسية للقائمة ═══ */
 function stRenderMain(){
+  var box=$('#studsBox');
+  if(!box)return;
   var h='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
     +'<div class="ct" style="color:var(--th)">🏫 '+esc(ST.grade)+' '+esc(ST.section)+' — '+arNum(ST.names.length)+' تلميذ</div>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
@@ -83,7 +93,7 @@ function stRenderMain(){
     +'<button class="btn sm danger" onclick="stDelSelected()">🗑 مسح المحدد</button>'
     +'</div></div>';
 
-  $('#studsBox').innerHTML=h;
+  box.innerHTML=h;
 }
 
 /* ═══ التحديد ═══ */
@@ -142,8 +152,8 @@ function stTogglePaste(){
   if(c)c.style.display=(c.style.display==='none')?'block':'none';
 }
 function stApplyPaste(add){
-  var box=$('#stPasteBox');
-  var lines=box?box.value.split(/\r?\n/):[];
+  var boxEl=$('#stPasteBox');
+  var lines=boxEl?boxEl.value.split(/\r?\n/):[];
   lines=lines.map(function(s){return s.trim();}).filter(Boolean);
   if(!lines.length){toast('لا توجد أسماء في الصندوق','err');return;}
   if(add){ST.names=ST.names.concat(lines);}else{ST.names=lines;}
