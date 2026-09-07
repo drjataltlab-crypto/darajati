@@ -1,6 +1,13 @@
-/* ═══ page-students.js — قوائم التلاميذ — الإصدار v6 ═══ */
+/* ═══ page-students.js — قوائم التلاميذ — الإصدار v7 ═══ */
 
 var ST={grade:'',section:'',names:[]};
+
+/* ═══ بناء حمولة يفهمها الخادم بأي صيغة ═══ */
+function stPayload(g,s,extra){
+  var p={key:key(),grade:g,section:s,cls:{grade:g,section:s},clsStr:g+' '+s};
+  if(extra){for(var k in extra){p[k]=extra[k];}}
+  return p;
+}
 
 registerPage('studs',{
   enter:function(){
@@ -30,7 +37,7 @@ function stRenderSelect(){
   var ls=localStorage.getItem('st_last_section')||'';
   box.innerHTML=
     '<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة <span class="chip g">v6</span></div>'
+    +'<div class="ct" style="color:var(--th)">🎓 اختر الصف والشعبة <span class="chip g">v7</span></div>'
     +'<div class="cs">بعد الاختيار تُفتح إدارة القائمة تلقائيًا</div>'
     +'<div class="grid2" style="margin-top:10px">'
     +'<select id="stGrade" onchange="stTryLoad()"><option value="">— الصف —</option><option'+(lg==='الخامس'?' selected':'')+'>الخامس</option><option'+(lg==='السادس'?' selected':'')+'>السادس</option></select>'
@@ -47,11 +54,11 @@ function stTryLoad(){
   stLoad();
 }
 
-/* ═══ تحميل القائمة ═══ */
+/* ═══ تحميل القائمة — حمولة متعددة الصيغ ═══ */
 function stLoad(){
   var box=$('#studsBox');
   if(box)box.innerHTML='<div class="empty">⏳ تحميل القائمة...</div>';
-  api({action:'getStudents',key:key(),cls:{grade:ST.grade,section:ST.section}}).then(function(r){
+  api(stPayload(ST.grade,ST.section,{action:'getStudents'})).then(function(r){
     ST.names=(r&&r.names)?r.names.slice():[];
     var draft=stLoadDraft();
     if(draft&&draft.length&&JSON.stringify(draft)!==JSON.stringify(ST.names)){
@@ -65,12 +72,12 @@ function stLoad(){
   });
 }
 
-/* ═══ الشاشة الرئيسية — زر الحفظ يحمل الصف والشعبة داخله ═══ */
+/* ═══ الشاشة الرئيسية ═══ */
 function stRenderMain(){
   var box=$('#studsBox');
   if(!box)return;
   var h='<div class="card" style="border-right:5px solid var(--th);background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">'
-    +'<div class="ct" style="color:var(--th)">🏫 إدارة القائمة <span class="chip g">v6</span> — '+arNum(ST.names.length)+' تلميذ</div>'
+    +'<div class="ct" style="color:var(--th)">🏫 إدارة القائمة <span class="chip g">v7</span> — '+arNum(ST.names.length)+' تلميذ</div>'
     +'<div class="grid2" style="margin:10px 0">'
     +'<select id="stGrade2" onchange="stSwitch()"><option value="">— الصف —</option><option'+(ST.grade==='الخامس'?' selected':'')+'>الخامس</option><option'+(ST.grade==='السادس'?' selected':'')+'>السادس</option></select>'
     +'<select id="stSection2" onchange="stSwitch()"><option value="">— الشعبة —</option><option'+(ST.section==='أ'?' selected':'')+'>أ</option><option'+(ST.section==='ب'?' selected':'')+'>ب</option><option'+(ST.section==='ج'?' selected':'')+'>ج</option></select>'
@@ -119,14 +126,12 @@ function stRenderMain(){
   box.innerHTML=h;
 }
 
-/* ═══ الحفظ المباشر — القيم تأتي من الزر نفسه ═══ */
+/* ═══ الحفظ — حمولة متعددة الصيغ ═══ */
 function stSaveWith(g,s){
   try{
-    if(!g||!s){
-      g=g||ST.grade||localStorage.getItem('st_last_grade')||'';
-      s=s||ST.section||localStorage.getItem('st_last_section')||'';
-    }
-    if(!g||!s){toast('⚠️ الصف/الشعبة غير محددين: g=['+g+'] s=['+s+']','err');return;}
+    g=g||ST.grade||localStorage.getItem('st_last_grade')||'';
+    s=s||ST.section||localStorage.getItem('st_last_section')||'';
+    if(!g||!s){toast('⚠️ الصف/الشعبة غير محددين','err');return;}
     ST.grade=g;ST.section=s;
     if(!ST.names.length){
       var draft=stLoadDraft();
@@ -134,20 +139,18 @@ function stSaveWith(g,s){
     }
     if(!ST.names.length){toast('القائمة فارغة — أضف أسماء أولًا','err');return;}
     toast('⏳ حفظ...','');
-    api({action:'setStudents',key:key(),cls:{grade:g,section:s},names:ST.names}).then(function(r){
+    api(stPayload(g,s,{action:'setStudents',names:ST.names})).then(function(r){
       if(r.ok){
         stClearDraft();
         toast('✓ تم حفظ '+arNum(ST.names.length)+' تلميذ في '+g+' '+s,'ok');
         stRenderMain();
       }
-      else{toast('❌ '+r.error,'err');}
+      else{toast('❌ الخادم: '+r.error,'err');}
     }).catch(function(){toast('تعذر الاتصال — القائمة محفوظة كمسودة','err');});
   }catch(e){
     toast('خطأ بالحفظ: '+e.message,'err');
   }
 }
-
-/* للتوافق */
 function stSave(){
   var gEl=$('#stGrade2'),sEl=$('#stSection2');
   stSaveWith(gEl?gEl.value:'',sEl?sEl.value:'');
