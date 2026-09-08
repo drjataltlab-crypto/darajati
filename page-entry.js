@@ -1,4 +1,4 @@
-/* ═══ page-entry.js — الإدخال اليدوي (محدّث نهائي) ═══ */
+/* ═══ page-entry.js — الإدخال اليدوي (محدّث) ═══ */
 
 var ENT={teacher:null,subject:null,cls:null,names:[],rows:[]};
 
@@ -55,7 +55,7 @@ function entStatus(r){
   var vals=[r.m1,r.m2,r.m3,r.m4,r.m5,r.half,r.exam];
   var has=false;
   for(var i=0;i<vals.length;i++){if(vals[i]!=null){has=true;break;}}
-  return has?'<span class="chip g">✔ درجات مُرسلة</span>':'<span class="chip">⏳ بانتظار المعلم</span>';
+  return has?'<span class="chip g">✔ درجات مُرسلة</span>':'<span class="chip"> بانتظار المعلم</span>';
 }
 
 function entLoadLocalDraft(g,s){
@@ -65,18 +65,36 @@ function entLoadLocalSaved(g,s){
   try{var d=localStorage.getItem('st_saved_'+g+'_'+s);return d?JSON.parse(d):null;}catch(e){return null;}
 }
 
-/* ═══ كشف الجنس من الاسم ═══ */
+/* ═══ كشف الجنس — محسّن ═══ */
 function entIsFemale(name){
   name=String(name||'').trim();
   if(!name)return false;
-  if(name.charAt(name.length-1)==='ة')return true;
-  if(name.length>=2 && name.slice(-2)==='اء')return true;
-  if(name.indexOf('أم ')===0)return true;
-  if(name.indexOf('بنت ')>-1)return true;
-  var femaleNames=['مريم','زينب','خديجة','عائشة','فاطمة','نور','هدى','سمر','لينا','دانا','رنا','مها','سلمى','ياسمين','جنى','تالا','ليان','جود','رؤى','أسماء','إسراء','ملاك','رحمة','بركة','نعمة','حياة','أمل','إيمان','سعاد','هناء','وفاء','نجلاء','سميرة','كوثر','ملك','تقوى','هداية','رشا','غادة','نادية','سامية','فادية','هالة','لطيفة','ظريفة','جميلة','حليمة','كريمة','عزيزة','منيرة','بديعة','فريدة','وحيدة','نادرة','ثريا','زهرة','وردة','ياسمينة','ريحانة','بانة','غصن','قمر','شمس','نجم','نجمة','درة','لؤلؤة','مرجان','عقيق','فيروز','جواهر'];
+  
+  /* تنظيف الاسم من الألقاب */
+  name=name.replace(/^(الأستاذ|الأستاذة|أ\.|أ|السيد|السيدة|د\.|د)\s*/i,'').trim();
+  
+  /* الاسم الأول فقط */
+  var firstName=name.split(/\s+/)[0];
+  
+  /* ينتهي بـ ة */
+  if(firstName.charAt(firstName.length-1)==='ة')return true;
+  
+  /* ينتهي بـ اء */
+  if(firstName.length>=2 && firstName.slice(-2)==='اء')return true;
+  
+  /* يبدأ بـ أم */
+  if(firstName.indexOf('أم')===0)return true;
+  
+  /* يحتوي على بنت */
+  if(name.indexOf('بنت')>-1)return true;
+  
+  /* أسماء أنثوية شائعة */
+  var femaleNames=['مريم','زينب','خديجة','عائشة','فاطمة','نور','هدى','سمر','لينا','دانا','رنا','مها','سلمى','ياسمين','جنى','تالا','ليان','جود','رؤى','أسماء','إسراء','ملاك','رحمة','بركة','نعمة','حياة','أمل','إيمان','سعاد','هناء','وفاء','نجلاء','سميرة','كوثر','ملك','تقوى','هداية','رشا','غادة','نادية','سامية','فادية','هالة','لطيفة','جميلة','حليمة','كريمة','عزيزة','منيرة','بديعة','فريدة','وحيدة','نادرة','ثريا','زهرة','وردة','ياسمينة','ريحانة','بانة','غصن','قمر','شمس','نجم','نجمة','درة','لؤلؤة','مرجان','عقيق','فيروز','جواهر','سارة','ميرنا','دينا','هنا','جنى','تالة','ليان','جود','رؤى','أسيل','غدير','شوق','أروى','لمى','لجين','تقوى','إسراء','ملاك','رحمة','بركة','نعمة','حياة','أمل','إيمان','سعاد','هناء','وفاء','نجلاء','سميرة','كوثر','ملك','هداية','رشا','غادة','نادية','سامية','فادية','هالة','لطيفة','جميلة','حليمة','كريمة','عزيزة','منيرة','بديعة','فريدة','وحيدة','نادرة','ثريا','زهرة','وردة','ياسمينة','ريحانة','بانة','غصن','قمر','شمس','نجم','نجمة','درة','لؤلؤة','مرجان','عقيق','فيروز','جواهر'];
+  
   for(var i=0;i<femaleNames.length;i++){
-    if(name===femaleNames[i])return true;
+    if(firstName===femaleNames[i])return true;
   }
+  
   return false;
 }
 
@@ -99,7 +117,7 @@ function entRenderTeachers(){
     +'<div class="ct" style="color:var(--th)">١) اختر المعلم</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
   ADM.teachers.forEach(function(t){
-    h+='<button class="btn ghost" style="width:auto;flex:1;min-width:160px" onclick="entSelectTeacher(\''+escA(t.code)+'\')">👨‍🏫 '+esc(t.name)+'</button>';
+    h+='<button class="btn ghost" style="width:auto;flex:1;min-width:160px" onclick="entSelectTeacher(\''+escA(t.code)+'\')">👨‍ '+esc(t.name)+'</button>';
   });
   h+='</div></div>';
   $('#entBox').innerHTML=h;
@@ -117,7 +135,7 @@ function entSelectTeacher(code){
     +'<button class="btn ghost sm" style="margin-top:6px" onclick="entRenderTeachers()">↩ تغيير المعلم</button>'
     +'</div>';
   h+='<div class="card" style="border-right:5px solid var(--th)">'
-    +'<div class="ct" style="color:var(--th)">٢) اختر المادة</div>'
+    +'<div class="ct" style="color:var(--th)">) اختر المادة</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
   subs.forEach(function(s){
     h+='<button class="btn ok" style="width:auto;flex:1;min-width:140px" onclick="entSelectSubject(\''+escA(s)+'\')">📘 '+esc(s)+'</button>';
@@ -150,7 +168,7 @@ function entSelectSubject(s){
 
 function entSelectClass(g,s){
   ENT.cls={grade:g,section:s};
-  $('#entTableCard').innerHTML='<div class="empty"> تحميل التلاميذ والدرجات...</div>';
+  $('#entTableCard').innerHTML='<div class="empty">⏳ تحميل التلاميذ والدرجات...</div>';
   
   Promise.all([
     api(entPayload({action:'getStudents'})),
@@ -160,8 +178,8 @@ function entSelectClass(g,s){
     if(!names.length){
       var saved=entLoadLocalSaved(g,s);
       var draft=entLoadLocalDraft(g,s);
-      if(saved&&saved.length){names=saved;toast('️ الأسماء من الحفظ المحلي','');}
-      else if(draft&&draft.length){names=draft;toast('⚠️ الأسماء من المسودة','');}
+      if(saved&&saved.length){names=saved;toast('⚠️ الأسماء من الحفظ المحلي','');}
+      else if(draft&&draft.length){names=draft;toast('️ الأسماء من المسودة','');}
     }
     var all=(rs[1]&&rs[1].rows)?rs[1].rows:[];
     var byName={};
@@ -201,33 +219,51 @@ function entSelectClass(g,s){
 }
 
 function entCell(v){return v==null?'—':arNum(v);}
+
+/* ═══ رسم الجدول مع العناوين الثابتة ═══ */
 function entRenderTable(){
   var inp='style="width:52px;border:1.5px solid #93C5FD;border-radius:7px;padding:6px 2px;text-align:center;font-weight:700;background:#EFF6FF;color:#1E40AF;margin:0"';
+  
+  /* ✅ العناوين الثابتة */
+  var thead='<thead><tr>'
+    +'<th>ت</th><th>التلميذ</th><th>الحالة</th>'
+    +'<th class="enter" style="min-width:50px">ت١</th><th class="enter" style="min-width:50px">ت٢</th><th class="enter" style="min-width:50px">ك</th>'
+    +'<th class="calc">معدل ف١</th>'
+    +'<th class="enter">نصف السنة</th>'
+    +'<th class="enter" style="min-width:50px">آذار</th><th class="enter" style="min-width:50px">نيسان</th>'
+    +'<th class="calc">معدل ف٢</th>'
+    +'<th class="calc">السعي السنوي</th>'
+    +'<th class="enter">نهاية السنة</th>'
+    +'<th class="fin">النهائية</th>'
+    +'</tr></thead>';
+  
   var h='<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">📊 '+esc(ENT.subject)+' — '+esc(ENT.cls.grade)+' '+esc(ENT.cls.section)+'</div>'
     +'<div class="cs">الأعمدة الذهبية تُحسب تلقائيًا</div>'
-    +'<div class="tbl"><table class="pt"><thead><tr>'
-    +'<th>ت</th><th>التلميذ</th><th>الحالة</th><th class="enter">ت١</th><th class="enter">ت٢</th><th class="enter">ك١</th>'
-    +'<th class="calc">معدل ف١</th><th class="enter">نصف السنة</th><th class="enter">آذار</th><th class="enter">نيسان</th>'
-    +'<th class="calc">معدل ف٢</th><th class="calc">السعي السنوي</th><th class="enter">نهاية السنة</th><th class="fin">النهائية</th>'
-    +'</tr></thead><tbody>';
-  ENT.rows.forEach(function(r,i){
-    h+='<tr>'
-      +'<td>'+arNum(i+1)+'</td>'
-      +'<td class="nm">'+esc(r.name)+'</td><td>'+entStatus(r)+'</td>'
-      +'<td><input type="number" '+inp+' id="e_m1_'+i+'" value="'+(r.m1==null?'':r.m1)+'" oninput="entUpd('+i+',\'m1\',this.value)"></td>'
-      +'<td><input type="number" '+inp+' id="e_m2_'+i+'" value="'+(r.m2==null?'':r.m2)+'" oninput="entUpd('+i+',\'m2\',this.value)"></td>'
-      +'<td><input type="number" '+inp+' id="e_m3_'+i+'" value="'+(r.m3==null?'':r.m3)+'" oninput="entUpd('+i+',\'m3\',this.value)"></td>'
-      +'<td class="pass" id="e_a1_'+i+'">'+entCell(r.a1)+'</td>'
-      +'<td><input type="number" '+inp+' id="e_half_'+i+'" value="'+(r.half==null?'':r.half)+'" oninput="entUpd('+i+',\'half\',this.value)"></td>'
-      +'<td><input type="number" '+inp+' id="e_m4_'+i+'" value="'+(r.m4==null?'':r.m4)+'" oninput="entUpd('+i+',\'m4\',this.value)"></td>'
-      +'<td><input type="number" '+inp+' id="e_m5_'+i+'" value="'+(r.m5==null?'':r.m5)+'" oninput="entUpd('+i+',\'m5\',this.value)"></td>'
-      +'<td class="pass" id="e_a2_'+i+'">'+entCell(r.a2)+'</td>'
-      +'<td class="pass" id="e_an_'+i+'">'+entCell(r.annual)+'</td>'
-      +'<td><input type="number" '+inp+' id="e_exam_'+i+'" value="'+(r.exam==null?'':r.exam)+'" oninput="entUpd('+i+',\'exam\',this.value)"></td>'
-      +'<td class="pass" id="e_fin_'+i+'">'+entCell(r.final)+'</td>'
-      +'</tr>';
-  });
+    +'<div class="tbl"><table class="pt">'+thead+'<tbody>';
+  
+  if(!ENT.rows.length){
+    h+='<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--mut)">لا توجد أسماء</td></tr>';
+  }else{
+    ENT.rows.forEach(function(r,i){
+      h+='<tr>'
+        +'<td>'+arNum(i+1)+'</td>'
+        +'<td class="nm">'+esc(r.name)+'</td><td>'+entStatus(r)+'</td>'
+        +'<td><input type="number" '+inp+' id="e_m1_'+i+'" value="'+(r.m1==null?'':r.m1)+'" oninput="entUpd('+i+',\'m1\',this.value)"></td>'
+        +'<td><input type="number" '+inp+' id="e_m2_'+i+'" value="'+(r.m2==null?'':r.m2)+'" oninput="entUpd('+i+',\'m2\',this.value)"></td>'
+        +'<td><input type="number" '+inp+' id="e_m3_'+i+'" value="'+(r.m3==null?'':r.m3)+'" oninput="entUpd('+i+',\'m3\',this.value)"></td>'
+        +'<td class="pass" id="e_a1_'+i+'">'+entCell(r.a1)+'</td>'
+        +'<td><input type="number" '+inp+' id="e_half_'+i+'" value="'+(r.half==null?'':r.half)+'" oninput="entUpd('+i+',\'half\',this.value)"></td>'
+        +'<td><input type="number" '+inp+' id="e_m4_'+i+'" value="'+(r.m4==null?'':r.m4)+'" oninput="entUpd('+i+',\'m4\',this.value)"></td>'
+        +'<td><input type="number" '+inp+' id="e_m5_'+i+'" value="'+(r.m5==null?'':r.m5)+'" oninput="entUpd('+i+',\'m5\',this.value)"></td>'
+        +'<td class="pass" id="e_a2_'+i+'">'+entCell(r.a2)+'</td>'
+        +'<td class="pass" id="e_an_'+i+'">'+entCell(r.annual)+'</td>'
+        +'<td><input type="number" '+inp+' id="e_exam_'+i+'" value="'+(r.exam==null?'':r.exam)+'" oninput="entUpd('+i+',\'exam\',this.value)"></td>'
+        +'<td class="pass" id="e_fin_'+i+'">'+entCell(r.final)+'</td>'
+        +'</tr>';
+    });
+  }
+  
   h+='</tbody></table></div>'
     +'<div class="grid3" style="margin-top:12px">'
     +'<button class="btn ok" onclick="entSave()">💾 حفظ الدرجات</button>'
@@ -261,26 +297,25 @@ function entSave(){
   }).catch(function(){toast('تعذر الاتصال','err');});
 }
 
-/* ═══ كشف الطباعة — 30 تلميذ/صفحة + حدود كاملة + هيدر أسود ═══ */
+/* ═══ كشف الطباعة — أعمدة الأشهر موسّعة ═══ */
 function entPrintHTML(){
   var B='1px solid #0F172A';
   var th='border:'+B+';background:linear-gradient(135deg,#1E40AF,#2563EB);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
   var thC='border:'+B+';background:linear-gradient(135deg,#B45309,#D97706);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
   var thF='border:'+B+';background:linear-gradient(135deg,#BE123C,#E11D48);color:#fff;padding:6px 4px;font-size:11px;font-weight:bold;text-align:center';
   
-  /* ✅ كل الخلايا لها حدود */
   var td='border:'+B+';padding:6px 4px;text-align:center;font-size:12px;background:#fff';
   var tdName='border:'+B+';padding:6px 6px;text-align:right;font-size:12px;font-weight:bold;background:#fff';
+  /* ✅ أعمدة الأشهر موسّعة */
+  var tdMonth='border:'+B+';padding:6px 4px;text-align:center;font-size:12px;background:#fff;width:50px';
   
   var schoolName=localStorage.getItem('school_name')||'مدرسة المنهل الابتدائية';
   var teacherName=ENT.teacher?ENT.teacher.name:'';
   var studyYear=getStudyYear();
   
-  /* كشف الجنس — يُستخدم فقط في نهاية الصفحة */
   var isFemale=entIsFemale(teacherName);
   var teacherTitle=isFemale?'المعلمة':'المعلم';
   
-  /* تقسيم إلى صفحات من 30 تلميذ */
   var PAGE_SIZE=30;
   var pages=[];
   for(var i=0;i<ENT.rows.length;i+=PAGE_SIZE){
@@ -293,33 +328,24 @@ function entPrintHTML(){
   pages.forEach(function(pageRows,pageIdx){
     if(pageIdx>0) h+='<div style="page-break-before:always"></div>';
     
-    /* ═══ الهيدر — كل العناوين بالأسود ══ */
     h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double #000;padding-bottom:10px;margin-bottom:12px">';
-    
-    /* يمين: إدارة المدرسة — أسود */
     h+='<div style="flex:1;text-align:center;font-weight:900;font-size:16px;color:#000;line-height:1.5">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
-    
-    /* وسط: العنوان الرئيسي — أسود — ثابت "سجل درجات المعلم" */
     h+='<div style="flex:1;text-align:center">';
     h+='<div style="font-size:18px;font-weight:900;color:#000">سجل درجات المعلم</div>';
     h+='<div style="font-size:13px;font-weight:700;color:#000;margin-top:3px">للعام الدراسي '+esc(studyYear)+'</div>';
     h+='</div>';
-    
-    /* يسار: الصف والمادة — أسود */
     h+='<div style="flex:1;text-align:center;font-size:13px;font-weight:700;color:#000;line-height:1.7">';
     h+='<div>الصف والشعبة: <b>'+esc(ENT.cls.grade)+' '+esc(ENT.cls.section)+'</b></div>';
     h+='<div>المادة: <b>'+esc(ENT.subject)+'</b></div>';
     h+='</div>';
-    
     h+='</div>';
     
-    /* ═══ الجدول ═══ */
     h+='<table style="width:100%;border-collapse:collapse;border:2px solid #0F172A"><thead><tr>';
     h+='<th style="'+th+'">ت</th><th style="'+th+'">التلميذ</th>';
-    h+='<th style="'+th+'">ت</th><th style="'+th+'">ت٢</th><th style="'+th+'">ك١</th>';
+    h+='<th style="'+th+';width:50px">ت١</th><th style="'+th+';width:50px">ت٢</th><th style="'+th+';width:50px">ك١</th>';
     h+='<th style="'+thC+'">معدل ف١</th>';
     h+='<th style="'+th+'">نصف السنة</th>';
-    h+='<th style="'+th+'">آذار</th><th style="'+th+'">نيسان</th>';
+    h+='<th style="'+th+';width:50px">آذار</th><th style="'+th+';width:50px">نيسان</th>';
     h+='<th style="'+thC+'">معدل ف٢</th>';
     h+='<th style="'+thC+'">السعي السنوي</th>';
     h+='<th style="'+th+'">نهاية السنة</th>';
@@ -329,24 +355,24 @@ function entPrintHTML(){
     pageRows.forEach(function(r,i){
       var globalIdx=ENT.rows.indexOf(r);
       
-      /* ✅ خلية ذكية: فارغة = خلية فارغة بدون شارحة */
-      function cell(v,extra){
+      function cell(v,extra,style){
+        var cellStyle=style||td;
         if(v==null||v===''){
-          return '<td style="'+td+(extra||'')+'"></td>';
+          return '<td style="'+cellStyle+(extra||'')+'"></td>';
         }
-        return '<td style="'+td+(extra||'')+'">'+arNum(v)+'</td>';
+        return '<td style="'+cellStyle+(extra||'')+'">'+arNum(v)+'</td>';
       }
       
       h+='<tr>';
       h+='<td style="'+td+'">'+arNum(globalIdx+1)+'</td>';
       h+='<td style="'+tdName+'">'+esc(r.name)+'</td>';
-      h+=cell(r.m1);
-      h+=cell(r.m2);
-      h+=cell(r.m3);
+      h+=cell(r.m1,'',tdMonth);
+      h+=cell(r.m2,'',tdMonth);
+      h+=cell(r.m3,'',tdMonth);
       h+=cell(r.a1,';background:#FEF3C7;font-weight:bold');
       h+=cell(r.half);
-      h+=cell(r.m4);
-      h+=cell(r.m5);
+      h+=cell(r.m4,'',tdMonth);
+      h+=cell(r.m5,'',tdMonth);
       h+=cell(r.a2,';background:#FEF3C7;font-weight:bold');
       h+=cell(r.annual,';background:#FEF3C7;font-weight:bold');
       h+=cell(r.exam);
@@ -356,7 +382,6 @@ function entPrintHTML(){
     
     h+='</tbody></table>';
     
-    /* ═══ المعلم/المعلمة في نهاية كل صفحة — حجم 14px ═══ */
     h+='<div style="margin-top:20px;text-align:left;font-size:14px;font-weight:800;color:#000;padding:0 10px">';
     h+=teacherTitle+': <span style="font-weight:900">'+esc(teacherName)+'</span>';
     h+='</div>';
