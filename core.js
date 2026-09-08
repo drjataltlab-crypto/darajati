@@ -217,14 +217,17 @@ function resultTable(rows,opts){
   opts=opts||{};
   var compact=!!opts.compact;
   var secondRows=opts.secondRows||null;
+  
   if(secondRows&&secondRows.length){
-    var h='';
-    h+=buildOneResult(rows,true);
-    h+='<div style="border-top:2px dashed #94A3B8;margin:14px 0;page-break-after:always"></div>';
-    h+=buildOneResult(secondRows,true);
+    var h='<div style="width:100%;max-width:794px;margin:0 auto">';
+    h+=buildOneResult(rows,true); // النتيجة الأولى بحجم مصغر
+    // ✅ تم إزالة page-break-after:always لتظهر النتيجتان في نفس الورقة
+    h+='<div style="border-top:2px dashed #94A3B8;margin:14px 0;page-break-after:avoid"></div>';
+    h+=buildOneResult(secondRows,true); // النتيجة الثانية بحجم مصغر
+    h+='</div>';
     return h;
   }else{
-    return buildOneResult(rows,false);
+    return '<div style="width:100%;max-width:794px;margin:0 auto">'+buildOneResult(rows,false)+'</div>';
   }
 }
 
