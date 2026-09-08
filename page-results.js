@@ -422,4 +422,8 @@ function excelResults(){
   downloadXLS('نتيجة-'+ADM.res.name,'بطاقة نتيجة: '+ADM.res.name+' — السنة '+getStudyYear(),resultTable(ADM.res.rows));
 }
 
-registerPage('res',{enter:function(){}});
+registerPage('res',{
+  enter:function(){
+    renderResults();
+  }
+});
