@@ -1,4 +1,4 @@
-/* ═══ page-entry.js — الإدخال اليدوي (محدّث) ═══ */
+/* ═══ page-entry.js — الإدخال اليدوي (محدّث نهائي) ═══ */
 
 var ENT={teacher:null,subject:null,cls:null,names:[],rows:[]};
 
@@ -100,7 +100,7 @@ function entRenderTeachers(){
     +'<div class="ct" style="color:var(--th)">١) اختر المعلم</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
   ADM.teachers.forEach(function(t){
-    h+='<button class="btn ghost" style="width:auto;flex:1;min-width:160px" onclick="entSelectTeacher(\''+escA(t.code)+'\')">👨🏫 '+esc(t.name)+'</button>';
+    h+='<button class="btn ghost" style="width:auto;flex:1;min-width:160px" onclick="entSelectTeacher(\''+escA(t.code)+'\')">‍🏫 '+esc(t.name)+'</button>';
   });
   h+='</div></div>';
   $('#entBox').innerHTML=h;
@@ -115,13 +115,13 @@ function entSelectTeacher(code){
   if(ENT.teacher.subject)subs.push(ENT.teacher.subject);
   var h='<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">١) المعلم: '+esc(ENT.teacher.name)+'</div>'
-    +'<button class="btn ghost sm" style="margin-top:6px" onclick="entRenderTeachers()">↩ تغيير المعلم</button>'
+    +'<button class="btn ghost sm" style="margin-top:6px" onclick="entRenderTeachers()"> تغيير المعلم</button>'
     +'</div>';
   h+='<div class="card" style="border-right:5px solid var(--th)">'
     +'<div class="ct" style="color:var(--th)">٢) اختر المادة</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
   subs.forEach(function(s){
-    h+='<button class="btn ok" style="width:auto;flex:1;min-width:140px" onclick="entSelectSubject(\''+escA(s)+'\')"> '+esc(s)+'</button>';
+    h+='<button class="btn ok" style="width:auto;flex:1;min-width:140px" onclick="entSelectSubject(\''+escA(s)+'\')">📘 '+esc(s)+'</button>';
   });
   h+='</div></div>';
   h+='<div id="entClsCard" style="display:none"></div>';
@@ -139,7 +139,7 @@ function entSelectSubject(s){
   if(!cls.length){h+='<div class="hint">لا توجد صفوف مسجلة لهذا المعلم</div>';}
   cls.forEach(function(c){
     var label=(c.grade||'')+' '+(c.section||'');
-    h+='<button class="btn" style="width:auto;flex:1;min-width:120px" onclick="entSelectClass(\''+escA(c.grade||'')+'\',\''+escA(c.section||'')+'\')">🏫 '+esc(label)+'</button>';
+    h+='<button class="btn" style="width:auto;flex:1;min-width:120px" onclick="entSelectClass(\''+escA(c.grade||'')+'\',\''+escA(c.section||'')+'\')"> '+esc(label)+'</button>';
   });
   h+='</div></div>';
   var card=$('#entClsCard');
@@ -162,7 +162,7 @@ function entSelectClass(g,s){
       var saved=entLoadLocalSaved(g,s);
       var draft=entLoadLocalDraft(g,s);
       if(saved&&saved.length){names=saved;toast('⚠️ الأسماء من الحفظ المحلي','');}
-      else if(draft&&draft.length){names=draft;toast('⚠️ الأسماء من المسودة','');}
+      else if(draft&&draft.length){names=draft;toast('️ الأسماء من المسودة','');}
     }
     var all=(rs[1]&&rs[1].rows)?rs[1].rows:[];
     var byName={};
@@ -203,11 +203,9 @@ function entSelectClass(g,s){
 
 function entCell(v){return v==null?'—':arNum(v);}
 
-/* ═══ رسم الجدول مع العناوين الثابتة (sticky) ══ */
 function entRenderTable(){
   var inp='style="width:52px;border:1.5px solid #93C5FD;border-radius:7px;padding:6px 2px;text-align:center;font-weight:700;background:#EFF6FF;color:#1E40AF;margin:0"';
   
-  /* ✅ العناوين الثابتة — ك١ صحيح + sticky */
   var thead='<thead><tr>'
     +'<th style="position:sticky;top:0;z-index:10;background:#1E40AF;color:#fff">ت</th>'
     +'<th style="position:sticky;top:0;z-index:10;background:#1E40AF;color:#fff">التلميذ</th>'
@@ -300,6 +298,9 @@ function entPrintHTML(){
   var teacherName=ENT.teacher?ENT.teacher.name:'';
   var studyYear=getStudyYear();
   
+  /* ✅ تحويل العام الدراسي إلى أرقام عربية */
+  var studyYearAr=String(studyYear).replace(/\d/g,function(d){return ARD[+d];});
+  
   var isFemale=entIsFemale(teacherName);
   var teacherTitle=isFemale?'المعلمة':'المعلم';
   
@@ -319,7 +320,7 @@ function entPrintHTML(){
     h+='<div style="flex:1;text-align:center;font-weight:900;font-size:16px;color:#000;line-height:1.5">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
     h+='<div style="flex:1;text-align:center">';
     h+='<div style="font-size:18px;font-weight:900;color:#000">سجل درجات المعلم</div>';
-    h+='<div style="font-size:13px;font-weight:700;color:#000;margin-top:3px">للعام الدراسي '+esc(studyYear)+'</div>';
+    h+='<div style="font-size:13px;font-weight:700;color:#000;margin-top:3px">للعام الدراسي '+esc(studyYearAr)+'</div>';
     h+='</div>';
     h+='<div style="flex:1;text-align:center;font-size:13px;font-weight:700;color:#000;line-height:1.7">';
     h+='<div>الصف والشعبة: <b>'+esc(ENT.cls.grade)+' '+esc(ENT.cls.section)+'</b></div>';
