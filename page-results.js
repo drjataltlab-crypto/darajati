@@ -4,7 +4,7 @@ var ADM = {teachers:[], tv:null, res:null};
 window._classData = [];
 window._selectedForDual = [];
 
-/* ═══ دوال الطباعة الأساسية ══ */
+/* ═══ دوال الطباعة الأساسية ═══ */
 function printSingle(){
   if(!ADM.res || !ADM.res.rows){toast('لا توجد نتيجة للطباعة','err');return;}
   var html = resultTable(ADM.res.rows, {compact:false});
@@ -17,7 +17,7 @@ function printTwo(){
   printWin(html);
 }
 
-/* ═══ دالة طباعة كل التلاميذ المحددين ═══ */
+/* ═══ دالة طباعة كل التلاميذ المحددين ══ */
 function printAllSelected(){
   var selected = window._selectedForDual;
   if(!selected.length){toast('لم يتم تحديد أي تلميذ','err');return;}
@@ -93,7 +93,7 @@ function renderSpecificStudent(){
   if(!ADM.res || !ADM.res.name) return;
   
   var h = '<div class="card" style="border-right:5px solid var(--th);margin-top:12px">';
-  h += '<div class="ct" style="color:var(--th)">🎓 نتيجة التلميذ: '+esc(ADM.res.name)+'</div>';
+  h += '<div class="ct" style="color:var(--th)"> نتيجة التلميذ: '+esc(ADM.res.name)+'</div>';
   h += '<div class="cs">الصف: '+esc(ADM.res.grade)+' '+esc(ADM.res.section)+'</div>';
   h += resultCard(ADM.res.name, ADM.res.grade, ADM.res.section, ADM.res.rows);
   
@@ -110,11 +110,11 @@ function showSecondFormForCurrent(){
   h += '<div class="ct" style="color:#7E22CE;font-size:16px">➕ إضافة تلميذ ثاني</div>';
   h += '<div class="grid3" style="margin-top:8px">';
   h += '<div><label class="label">📝 اسم التلميذ الثاني</label><input id="secondName" placeholder="اكتب الاسم الكامل" autofocus></div>';
-  h += '<div><label class="label"> الصف</label><select id="secondGrade"><option value="">كل الصفوف</option><option>الخامس</option><option>السادس</option></select></div>';
+  h += '<div><label class="label">🏫 الصف</label><select id="secondGrade"><option value="">كل الصفوف</option><option>الخامس</option><option>السادس</option></select></div>';
   h += '<div><label class="label">👥 الشعبة</label><select id="secondSec"><option value="">كل الشعب</option><option>أ</option><option>ب</option><option>ج</option></select></div>';
   h += '</div>';
   h += '<div class="grid2" style="margin-top:10px">';
-  h += '<button class="btn ok" onclick="searchSecondStudent()"> بحث وإضافة</button>';
+  h += '<button class="btn ok" onclick="searchSecondStudent()">🔍 بحث وإضافة</button>';
   h += '<button class="btn ghost" onclick="hideSecondForm()">❌ إلغاء</button>';
   h += '</div></div>';
   
@@ -151,9 +151,9 @@ function hideSecondForm(){
   renderSpecificStudent();
 }
 
-/* ══ دوال قائمة الصف الكامل ═══ */
+/* ═══ دوال قائمة الصف الكامل ═══ */
 function loadClassResults(g, s){
-  $('#dynamicResultsArea').innerHTML = '<div class="empty"> جاري تحميل بيانات الصف...</div>';
+  $('#dynamicResultsArea').innerHTML = '<div class="empty">⏳ جاري تحميل بيانات الصف...</div>';
   window._selectedForDual = [];
   
   Promise.all([
@@ -202,7 +202,7 @@ function renderClassList(){
     h += '<td class="nm">'+esc(student.name) + (hasGrades?'':' <span class="hint">(لا توجد درجات)</span>')+'</td>';
     h += '<td style="text-align:center;white-space:nowrap">';
     if(hasGrades){
-      h += '<button class="btn sm" onclick="printSingleClassStudent(\''+escA(student.name)+'\')">🖨️ طباعة</button>';
+      h += '<button class="btn sm" onclick="printSingleClassStudent(\''+escA(student.name)+'\')">️ طباعة</button>';
     } else {
       h += '<button class="btn sm ghost" disabled>لا توجد بيانات</button>';
     }
@@ -270,7 +270,7 @@ function printSingleClassStudent(name){
   printSingle();
 }
 
-/* ═══ الدالة الرئيسية لبناء الواجهة ══ */
+/* ═══ الدالة الرئيسية لبناء الواجهة ═══ */
 function renderResults(){
   var schoolName=localStorage.getItem('school_name')||'';
   var schoolLogo=localStorage.getItem('school_logo')||'';
@@ -301,7 +301,7 @@ function renderResults(){
     +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر</button>'
     +(schoolLogo?'<button class="btn sm danger" onclick="clearSchoolLogo()">🗑</button>':'')
     +'</div></div>'
-    +'<div><label class="label">👨‍🏫 مرشد الصف</label><input id="setGuide" value="'+escA(guideName)+'"></div>'
+    +'<div><label class="label">‍🏫 مرشد الصف</label><input id="setGuide" value="'+escA(guideName)+'"></div>'
     +'<div style="grid-column:span 2"><label class="label">🎓 مدير المدرسة</label><input id="setPrincipal" value="'+escA(principalName)+'"></div>'
     +'</div>'
     +'<button class="btn ok" style="margin-top:10px" onclick="saveSchoolInfo()"> حفظ بيانات المدرسة</button></div>';
@@ -315,7 +315,7 @@ function renderResults(){
     +'<th style="padding:8px;text-align:center;border-bottom:2px solid var(--line);font-size:12px;width:20%">المحاذاة</th></tr>'
     +cfgRow('🏫 اسم المدرسة','pcSchool',pc.schoolColor,pc.schoolSize,pc.schoolAlign,{minSize:12,maxSize:36})
     +cfgRow('📜 بطاقة درجات','pcTitle',pc.titleColor,pc.titleSize,'center',{noAlign:true,minSize:14,maxSize:50})
-    +cfgRow('📚 الصف الخامس والسادس','pcSub',pc.subColor,pc.subSize,'center',{noAlign:true,minSize:10,maxSize:30})
+    +cfgRow(' الصف الخامس والسادس','pcSub',pc.subColor,pc.subSize,'center',{noAlign:true,minSize:10,maxSize:30})
     +cfgRow('📅 العام الدراسي','pcYear',pc.yearColor,pc.yearSize,'center',{noAlign:true,minSize:10,maxSize:24})
     +cfgRow('️ حجم الشعار','pcLogo',pc.schoolColor,pc.logoSize,'center',{noColor:true,noAlign:true,minSize:50,maxSize:200})
     +'</table>'
@@ -327,13 +327,13 @@ function renderResults(){
   var panelOpen = localStorage.getItem('set_panel_open')==='1';
   var html = '<div class="card" style="border-right:5px solid #0E7490;background:linear-gradient(135deg,#ECFEFF,#CFFAFE)">'
     +'<button class="btn" style="background:linear-gradient(135deg,#0E7490,#06B6D4);font-size:15px;padding:13px;width:100%" onclick="toggleSetPanel()">'
-    +(panelOpen?'🔼 إغلاق الإعدادات':'⚙️ الإعدادات — بيانات المدرسة والتنسيق')
+    +(panelOpen?' إغلاق الإعدادات':'⚙️ الإعدادات — بيانات المدرسة والتنسيق')
     +'</button></div>';
     
   html += '<div id="setPanel" style="display:'+(panelOpen?'block':'none')+'">'+settings+ctrlCard+'</div>';
   
   html += '<div class="card" style="border-right:5px solid var(--th);margin-top:12px">'
-    +'<div class="ct" style="color:var(--th)">🔍 البحث وعرض النتائج</div>'
+    +'<div class="ct" style="color:var(--th)"> البحث وعرض النتائج</div>'
     +'<div class="cs">اكتب اسم التلميذ للبحث الفردي، أو اختر الصف والشعبة فقط لعرض القائمة الكاملة</div>'
     +'<div class="grid3" style="margin-top:10px">'
     +'<input id="uniSearchName" placeholder="اسم التلميذ (اختياري)">'
@@ -347,7 +347,7 @@ function renderResults(){
   $('#resBox').innerHTML = html;
 }
 
-/* ═══ دوال مساعدة ═══ */
+/* ═══ دوال مساعدة ══ */
 function toggleSetPanel(){
   localStorage.setItem('set_panel_open', localStorage.getItem('set_panel_open')==='1'?'0':'1');
   renderResults();
