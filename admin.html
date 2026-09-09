@@ -12,7 +12,47 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.0">
+<link rel="stylesheet" href="admin.css?v=3.1">
+
+<style>
+/* ═══ تنسيق زر الخروج الاحترافي ═══ */
+.exit, .iconbtn.exit-btn {
+  background: linear-gradient(135deg, #DC2626, #991B1B);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+.exit {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+.exit:hover, .iconbtn.exit-btn:hover {
+  background: linear-gradient(135deg, #EF4444, #B91C1C);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
+}
+.iconbtn.exit-btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+}
+.exit svg, .iconbtn.exit-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+</style>
 </head>
 <body>
 <div id="errbar"></div>
@@ -31,10 +71,10 @@
       <div class="brand"><img src="icon.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">📊</span>نظرة عامة</button>
-        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico"></span>نتائج التلاميذ</button>
-        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico"></span>المعلمون</button>
+        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
+        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
-        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico"></span>التلاميذ</button>
+        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
@@ -58,7 +98,7 @@
       <div class="content">
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>نظرة عامة</div>
-          <p class="psub">🟢 فتح حسابه •  لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
           <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
@@ -70,7 +110,7 @@
         <div id="tab-team" hidden>
           <div class="ptitle"><span class="bar"></span>المعلمون</div>
           <div class="card">
-            <div class="ct"> إضافة معلم</div>
+            <div class="ct">➕ إضافة معلم</div>
             <div class="grid3">
               <input id="ntName" placeholder="الاسم">
               <select id="ntSub"></select>
@@ -83,7 +123,7 @@
         </div>
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة ← ) الصف والشعبة — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
+          <p class="psub">١) اختر المعلم ← ٢) المادة ← ٣) الصف والشعبة — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
           <div id="entBox"></div>
         </div>
         <div id="tab-studs" hidden>
@@ -109,7 +149,7 @@
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi"></div><h3>قالب Excel فارغ</h3>
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر — يفتح في Excel مباشرة.</p>
               <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
             </div>
@@ -117,7 +157,7 @@
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
               <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
             </div>
-            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi"></div><h3>رابط الخادم</h3>
+            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
               <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
               <div id="connRes"></div>
@@ -154,7 +194,7 @@
 </div></div>
 
 <div class="ovl" id="editModal"><div class="modal">
-  <h3>️ تعديل معلم</h3>
+  <h3>✏️ تعديل معلم</h3>
   <label class="label">الاسم</label><input id="edName">
   <label class="label">المادة</label><select id="edSub"></select>
   <label class="label">الصفوف</label><input id="edCls">
@@ -173,15 +213,15 @@
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=3.0"></script>
-<script src="core.js?v=3.0"></script>
-<script src="page-dash.js?v=3.0"></script>
-<script src="page-results.js?v=3.0"></script>
-<script src="page-team.js?v=3.0"></script>
-<script src="page-entry.js?v=3.0"></script>
-<script src="page-students.js?v=3.0"></script>
-<script src="page-keys.js?v=3.0"></script>
-<script src="page-settings.js?v=3.0"></script>
+<script src="config.js?v=3.1"></script>
+<script src="core.js?v=3.1"></script>
+<script src="page-dash.js?v=3.1"></script>
+<script src="page-results.js?v=3.1"></script>
+<script src="page-team.js?v=3.1"></script>
+<script src="page-entry.js?v=3.1"></script>
+<script src="page-students.js?v=3.1"></script>
+<script src="page-keys.js?v=3.1"></script>
+<script src="page-settings.js?v=3.1"></script>
 
 <script>
 if('serviceWorker' in navigator){
