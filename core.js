@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٣٤٥٦٧٨٩';
+var AR='٠١٢٤٥٦٧٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -29,7 +29,7 @@ function escA(s){return esc(s).replace(/"/g,'&quot;');}
 function ago(ms){if(!ms)return'';var s=Math.floor((Date.now()-ms)/1000);if(s<60)return'الآن';var m=Math.floor(s/60);if(m<60)return'قبل '+arNum(m)+' د';var h=Math.floor(m/60);if(h<24)return'قبل '+arNum(h)+' س';var d=Math.floor(h/24);return d<30?'قبل '+arNum(d)+' يوم':new Date(ms).toLocaleDateString('ar');}
 function fmtDate(ms){return new Date(ms).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'});}
 function copyText(s){if(navigator.clipboard){navigator.clipboard.writeText(s).then(function(){toast('✓ تم النسخ','ok');});}else{var ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('✓ تم النسخ','ok');}}
-function shareWa(code,name){window.open('https://wa.me/?text='+encodeURIComponent('مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.'),'_blank');}
+function shareWa(code,name){window.open('https://wa.me/?text='+encodeURIComponent('مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.'),'_blank');}
 function api(p,ms){
   if(!url())return Promise.reject(new Error('no-url'));
   var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||30000);
@@ -37,7 +37,7 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';}
+function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٥ - ٢٠٢٦';}
 
 function getPrintCfg(){
   var g=function(k,d){return localStorage.getItem(k)||d;};
@@ -88,7 +88,7 @@ function calcFinalResult(bySub){
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بناء بطاقة نتيجة واحدة ═══ */
+/* ═══ بناء بطاقة نتيجة واحدة ══ */
 function buildOneResult(rows,compact,hideSignatures){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
@@ -142,11 +142,11 @@ function buildOneResult(rows,compact,hideSignatures){
   }
   h+='</div></div>';
 
-  /* شريط بيانات التلميذ - ✅ تكبير الخط هنا فقط */
+  /* شريط بيانات التلميذ */
   var infoMargin = compact ? '8px' : '10px';
   var infoPad = compact ? '6px 10px' : '8px 12px';
-  var infoFs = compact ? '14px' : '16px'; // تم التكبير
-  var nameGradeFs = compact ? '16px' : '18px'; // تم تكبير اسم التلميذ والصف بشكل منفصل ليكون أوضح
+  var infoFs = compact ? '14px' : '16px';
+  var nameGradeFs = compact ? '16px' : '18px';
   
   h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:'+infoPad+';border-radius:6px;margin-bottom:'+infoMargin+';border:1px solid #BFDBFE;flex-wrap:wrap;gap:6px">';
   h+='<div style="flex:1;min-width:140px;text-align:'+C.studentAlign+';font-size:'+infoFs+';font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A;font-size:'+nameGradeFs+'">'+esc(name)+'</span></div>';
@@ -154,7 +154,7 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='<div style="flex:1;min-width:120px;text-align:'+C.dateAlign+';font-size:12px;font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* جدول الدرجات - ✅ تكبير خط الدرجات */
+  /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
   var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+(tableFs)+'px;font-weight:bold;text-align:center;vertical-align:middle';
@@ -180,7 +180,6 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  /* ✅ تكبير حجم خط الدرجات (tableFs+3 و tableFs+4) واستخدام min-height لمنع القص */
   var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;min-height:'+cellH+'px';
   var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+(tableFs+4)+'px;font-weight:900;background:#fff;width:'+subjW+'px;min-height:'+cellH+'px';
 
@@ -220,12 +219,15 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='نتيجة نهاية السنة: '+resSpan(finalRes)+'</div>';
   h+='</div>';
 
-  /* التوقيعات - ✅ تظهر فقط عندما تكون hideSignatures = false */
+  /* ✅ التوقيعات - تظهر في كلا النتيجتين في الطباعة الثنائية */
   if(!hideSignatures){
-    var sigMargin = compact ? '15px' : '20px';
-    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:0 6px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:10px">';
-    h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:180px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
-    h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:180px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
+    /* ✅ في الطباعة الثنائية: هوامش أقل وحجم أصغر قليلاً */
+    var sigMargin = compact ? '8px' : '20px';
+    var sigFs = compact ? '10px' : signFs; /* تصغير الحجم في الثنائي */
+    var sigPad = compact ? '0 4px' : '0 8px';
+    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:'+sigPad+';font-size:'+sigFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:8px">';
+    h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:160px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
+    h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:160px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
     h+='</div>';
   }
 
@@ -233,7 +235,7 @@ function buildOneResult(rows,compact,hideSignatures){
   return h;
 }
 
-/* ═══ بناء جدول النتائج ═══ */
+/* ═══ بناء جدول النتائج ══ */
 function resultTable(rows,opts){
   opts=opts||{};
   var compact=!!opts.compact;
@@ -242,16 +244,16 @@ function resultTable(rows,opts){
   if(secondRows&&secondRows.length){
     /* ✅ عرض ثابت بدون هوامش إضافية للطباعة الثنائية */
     var h='<div style="width:185mm;margin:0 auto">';
-    /* ✅ النتيجة الأولى: compact=true, hideSignatures=true (بدون توقيعات) */
-    h+=buildOneResult(rows,true,true);
+    /* ✅ النتيجة الأولى: مع التوقيعات (hideSignatures=false) */
+    h+=buildOneResult(rows,true,false);
     /* ✅ خط فاصل رفيع بدون خصائص كسر الصفحة */
-    h+='<div style="border-top:1.5px dashed #94A3B8;margin:8px 0"></div>';
-    /* ✅ النتيجة الثانية: compact=true, hideSignatures=false (مع التوقيعات) */
+    h+='<div style="border-top:1.5px dashed #94A3B8;margin:6px 0"></div>';
+    /* ✅ النتيجة الثانية: مع التوقيعات أيضاً (hideSignatures=false) */
     h+=buildOneResult(secondRows,true,false);
     h+='</div>';
     return h;
   }else{
-    /* ✅ الحفاظ على تصميم النتيجة الفردية كما هو تماماً مع التوقيعات */
+    /* ✅ الحفاظ على تصميم النتيجة الفردية كما هو تماماً */
     return '<div style="width:190mm;margin:0 auto">'+buildOneResult(rows,false,false)+'</div>';
   }
 }
