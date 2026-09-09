@@ -1,8 +1,8 @@
-/* ═══ core.js — الأساس المشترك ══ */
+/* ═══ core.js — الأساس المشترك ═══ */
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٣٤٥٦٧٨٩';
+var AR='٠١٣٤٥٦٧٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -29,7 +29,7 @@ function escA(s){return esc(s).replace(/"/g,'&quot;');}
 function ago(ms){if(!ms)return'';var s=Math.floor((Date.now()-ms)/1000);if(s<60)return'الآن';var m=Math.floor(s/60);if(m<60)return'قبل '+arNum(m)+' د';var h=Math.floor(m/60);if(h<24)return'قبل '+arNum(h)+' س';var d=Math.floor(h/24);return d<30?'قبل '+arNum(d)+' يوم':new Date(ms).toLocaleDateString('ar');}
 function fmtDate(ms){return new Date(ms).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'});}
 function copyText(s){if(navigator.clipboard){navigator.clipboard.writeText(s).then(function(){toast('✓ تم النسخ','ok');});}else{var ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('✓ تم النسخ','ok');}}
-function shareWa(code,name){window.open('https://wa.me/?text='+encodeURIComponent('مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.'),'_blank');}
+function shareWa(code,name){window.open('https://wa.me/?text='+encodeURIComponent('مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.'),'_blank');}
 function api(p,ms){
   if(!url())return Promise.reject(new Error('no-url'));
   var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||30000);
@@ -37,7 +37,7 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';}
+function getStudyYear(){return localStorage.getItem('study_year')||'٢٢٥ - ٢٠٢٦';}
 
 function getPrintCfg(){
   var g=function(k,d){return localStorage.getItem(k)||d;};
@@ -88,7 +88,7 @@ function calcFinalResult(bySub){
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بناء بطاقة نتيجة واحدة ══ */
+/* ═══ بناء بطاقة نتيجة واحدة ═══ */
 function buildOneResult(rows,compact,hideSignatures){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
@@ -176,7 +176,7 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ت١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ت٢</th>'
-    +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ك١</th>'
+    +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ك</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">آذار</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
@@ -223,7 +223,6 @@ function buildOneResult(rows,compact,hideSignatures){
 
   /* ✅ التوقيعات - تظهر فقط في النتيجة الثانية (عندما hideSignatures=false) */
   if(!hideSignatures){
-    /* ✅ هوامش صغيرة جداً للتوقيعات في الطباعة الثنائية */
     var sigMargin = compact ? '6px' : '20px';
     var sigFs = compact ? '10px' : signFs;
     var sigPad = compact ? '0 2px' : '0 8px';
@@ -273,7 +272,7 @@ function resultCard(name,grade,section,rows){
     +(grade?'<span>الصف: <b>'+esc(grade)+' '+esc(section||'')+'</b></span>':'')
     +'<span>المعدل العام: <b>'+(avg!==null?arNum(avg):'—')+'</b></span>'
     +'<span>ناجح في: <b>'+arNum(pass)+'</b> من <b>'+arNum(rows.length)+'</b></span>'
-    +(avg!==null?'<span class="verdict '+(isPass?'pass':'fail')+'">'+(isPass?'ناجح ✔':'راسب ')+'</span>':'')
+    +(avg!==null?'<span class="verdict '+(isPass?'pass':'fail')+'">'+(isPass?'ناجح ✔':'راسب ✘')+'</span>':'')
     +'</div>'
     +'<div class="rc-body" style="background:#E2E8F0;padding:20px;overflow-x:auto">'+resultTable(rows)+'</div>'
     +'</div>';
@@ -361,7 +360,7 @@ function applyRole(){
   $$('[data-dev]').forEach(function(el){el.style.display=dev?'':'none';});
   var rc=$('#roleCard');
   rc.className='rolecard '+(dev?'dev':'mgr');
-  $('#roleDot').textContent=dev?'️':'👔';
+  $('#roleDot').textContent=dev?'🛠️':'👔';
   $('#roleLabel').textContent=dev?'المطور':'المدير';
   $('#roleSub').textContent=dev?'صلاحيات كاملة':'عرض الدرجات';
 }
