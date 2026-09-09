@@ -1,4 +1,4 @@
-/* ═══ core.js — الأساس المشترك ═══ */
+/* ═══ core.js — الأساس المشترك ══ */
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
@@ -88,7 +88,7 @@ function calcFinalResult(bySub){
   return{text:'راسب',cls:'fail'};
 }
 
-/* ═══ بناء بطاقة نتيجة واحدة ═══ */
+/* ═══ بناء بطاقة نتيجة واحدة ══ */
 function buildOneResult(rows,compact,hideSignatures){
   var bySub={};rows.forEach(function(r){bySub[r.subject]=r;});
   var halfRes=calcHalfResult(bySub);
@@ -104,8 +104,8 @@ function buildOneResult(rows,compact,hideSignatures){
   var grade=rows.length?rows[0].grade:'';
   var section=rows.length?rows[0].section:'';
 
-  /* ✅ مقياس مناسب للطباعة الثنائية */
-  var scale=compact?0.88:1;
+  /* ✅ مقياس أصغر للطباعة الثنائية لضمان بقاء النتيجتين في ورقة واحدة */
+  var scale=compact?0.82:1;
   var schoolSz=Math.round(parseInt(C.schoolSize)*scale);
   var titleSz=Math.round(parseInt(C.titleSize)*scale);
   var subSz=Math.round(parseInt(C.subSize)*scale);
@@ -119,16 +119,16 @@ function buildOneResult(rows,compact,hideSignatures){
 
   var bord='#0F172A';
 
-  /* ✅ عرض ثابت 185mm للثنائي، 190mm للفردي مع هوامش صغيرة */
-  var printWidth = compact ? '185mm' : '190mm';
-  var printPadding = compact ? '3mm' : '5mm';
+  /* ✅ عرض ثابت وهوامش أصغر للطباعة الثنائية */
+  var printWidth = compact ? '180mm' : '190mm';
+  var printPadding = compact ? '2mm' : '5mm';
   var h='<div style="font-family:Tajawal,Arial,sans-serif;width:'+printWidth+';box-sizing:border-box;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto;padding:'+printPadding+'">';
 
-  /* الشريط العلوي */
-  var headMargin = compact ? '8px' : '10px';
-  var headPad = compact ? '6px' : '8px';
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px double '+C.schoolColor+';padding-bottom:'+headPad+';margin-bottom:'+headMargin+';gap:10px">';
-  h+='<div style="flex:1;text-align:'+C.schoolAlign+';font-weight:900;font-size:'+schoolSz+'px;color:'+C.schoolColor+';line-height:1.4;word-break:break-word">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
+  /* الشريط العلوي - هوامش أقل */
+  var headMargin = compact ? '5px' : '10px';
+  var headPad = compact ? '4px' : '8px';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px double '+C.schoolColor+';padding-bottom:'+headPad+';margin-bottom:'+headMargin+';gap:8px">';
+  h+='<div style="flex:1;text-align:'+C.schoolAlign+';font-weight:900;font-size:'+schoolSz+'px;color:'+C.schoolColor+';line-height:1.3;word-break:break-word">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
   h+='<div style="flex:1;text-align:center">';
   h+='<div style="font-size:'+titleSz+'px;font-weight:900;color:'+C.titleColor+'">بطاقة درجات</div>';
   h+='<div style="font-size:'+subSz+'px;font-weight:800;color:'+C.subColor+';margin-top:2px">الصف الخامس والسادس الابتدائي</div>';
@@ -138,26 +138,27 @@ function buildOneResult(rows,compact,hideSignatures){
   if(schoolLogo){
     h+='<img src="'+schoolLogo+'" style="width:'+logoSz+'px;height:'+logoSz+'px;object-fit:contain;border:2px solid '+C.schoolColor+';border-radius:8px">';
   }else{
-    h+='<div style="width:'+logoSz+'px;height:'+logoSz+'px;border:2px dashed #CBD5E1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px;margin:0 auto">شعار<br>المدرسة</div>';
+    h+='<div style="width:'+logoSz+'px;height:'+logoSz+'px;border:2px dashed #CBD5E1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:9px;margin:0 auto">شعار<br>المدرسة</div>';
   }
   h+='</div></div>';
 
-  /* شريط بيانات التلميذ - ✅ تكبير الخط */
-  var infoMargin = compact ? '8px' : '10px';
-  var infoPad = compact ? '6px 10px' : '8px 12px';
-  /* ✅ تكبير حجم خط اسم التلميذ والصف والشعبة */
-  var infoFs = compact ? '15px' : '16px'; /* كان 13px و 14px */
-  var dateFs = compact ? '13px' : '14px'; /* كان 12px و 13px */
-  h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:'+infoPad+';border-radius:6px;margin-bottom:'+infoMargin+';border:1px solid #BFDBFE;flex-wrap:wrap;gap:6px">';
-  h+='<div style="flex:1;min-width:140px;text-align:'+C.studentAlign+';font-size:'+infoFs+';font-weight:900"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A;font-size:'+(compact?'16px':'17px')+'">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;min-width:140px;text-align:'+C.classAlign+';font-size:'+infoFs+';font-weight:900"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A;font-size:'+(compact?'16px':'17px')+'">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
-  h+='<div style="flex:1;min-width:120px;text-align:'+C.dateAlign+';font-size:'+dateFs+';font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
+  /* شريط بيانات التلميذ - هوامش أقل */
+  var infoMargin = compact ? '5px' : '10px';
+  var infoPad = compact ? '4px 8px' : '8px 12px';
+  var infoFs = compact ? '13px' : '16px';
+  var nameFs = compact ? '14px' : '17px';
+  var dateFs = compact ? '11px' : '14px';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:'+infoPad+';border-radius:6px;margin-bottom:'+infoMargin+';border:1px solid #BFDBFE;flex-wrap:wrap;gap:5px">';
+  h+='<div style="flex:1;min-width:130px;text-align:'+C.studentAlign+';font-size:'+infoFs+';font-weight:900"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A;font-size:'+nameFs+'">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;min-width:130px;text-align:'+C.classAlign+';font-size:'+infoFs+';font-weight:900"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A;font-size:'+nameFs+'">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;min-width:110px;text-align:'+C.dateAlign+';font-size:'+dateFs+';font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* جدول الدرجات - ✅ تكبير حجم الخط */
+  /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
-  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+(tableFs)+'px;font-weight:bold;text-align:center;vertical-align:middle';
+  var thPad = compact ? '2px 1px' : cellPd+'px 2px';
+  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+thPad+';font-size:'+(tableFs)+'px;font-weight:bold;text-align:center;vertical-align:middle';
   h+='<thead>';
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
@@ -180,9 +181,10 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  /* ✅ تكبير حجم خط الدرجات */
-  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;height:'+cellH+'px'; /* كان +1 و +2 */
-  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+(tableFs+4)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px'; /* كان +2 و +3 */
+  /* ✅ تكبير حجم خط الدرجات مع الحفاظ على المساحة */
+  var tdPad = compact ? '2px 1px' : cellPd+'px 2px';
+  var tdStyle='border:1px solid '+bord+';padding:'+tdPad+';text-align:center;font-size:'+(tableFs+2)+'px;font-weight:900;background:#fff;height:'+cellH+'px';
+  var tdnStyle='border:1px solid '+bord+';padding:'+tdPad+';text-align:right;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
 
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
@@ -207,25 +209,26 @@ function buildOneResult(rows,compact,hideSignatures){
   function resSpan(res){
     var color=res.cls==='pass'?'#047857':res.cls==='fail'?'#DC2626':res.cls==='warn'?'#B45309':'#64748B';
     var bg=res.cls==='pass'?'#D1FAE5':res.cls==='fail'?'#FEE2E2':res.cls==='warn'?'#FEF3C7':'#F1F5F9';
-    var rPad = compact ? '2px 8px' : '3px 10px';
-    var rFs = compact ? Math.round(tableFs*1.1) : Math.round(tableFs*1.15); /* تكبير بسيط */
-    return '<span style="background:'+bg+';color:'+color+';padding:'+rPad+';border-radius:8px;font-weight:900;margin:0 3px;border:2px solid '+color+';font-size:'+rFs+'px">'+res.text+'</span>';
+    var rPad = compact ? '2px 6px' : '3px 10px';
+    var rFs = compact ? Math.round(tableFs*1.05) : Math.round(tableFs*1.15);
+    return '<span style="background:'+bg+';color:'+color+';padding:'+rPad+';border-radius:8px;font-weight:900;margin:0 2px;border:2px solid '+color+';font-size:'+rFs+'px">'+res.text+'</span>';
   }
-  var resMargin = compact ? '8px' : '10px';
-  var resPad = compact ? '6px' : '8px';
-  h+='<div style="display:flex;gap:6px;margin-top:'+resMargin+'">';
-  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.15)+'px;padding:'+resPad+';border-radius:6px;text-align:center;border:2px solid #0F172A">';
+  var resMargin = compact ? '5px' : '10px';
+  var resPad = compact ? '4px' : '8px';
+  h+='<div style="display:flex;gap:5px;margin-top:'+resMargin+'">';
+  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.1)+'px;padding:'+resPad+';border-radius:6px;text-align:center;border:2px solid #0F172A">';
   h+='نتيجة نصف السنة: '+resSpan(halfRes)+'</div>';
-  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.15)+'px;padding:'+resPad+';border-radius:6px;text-align:center;border:2px solid #0F172A">';
+  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.1)+'px;padding:'+resPad+';border-radius:6px;text-align:center;border:2px solid #0F172A">';
   h+='نتيجة نهاية السنة: '+resSpan(finalRes)+'</div>';
   h+='</div>';
 
-  /* التوقيعات */
+  /* التوقيعات - هوامش أقل */
   if(!hideSignatures){
-    var sigMargin = compact ? '15px' : '20px';
-    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:0 6px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:10px">';
-    h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:180px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
-    h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:180px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
+    var sigMargin = compact ? '8px' : '20px';
+    var sigFs = compact ? '11px' : signFs;
+    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:0 4px;font-size:'+sigFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:8px">';
+    h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:160px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
+    h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:160px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
     h+='</div>';
   }
 
@@ -242,10 +245,10 @@ function resultTable(rows,opts){
   
   if(secondRows&&secondRows.length){
     /* ✅ عرض ثابت بدون هوامش إضافية للطباعة الثنائية */
-    var h='<div style="width:185mm;margin:0 auto">';
+    var h='<div style="width:180mm;margin:0 auto">';
     h+=buildOneResult(rows,true,hideFirstSignatures);
-    /* ✅ خط فاصل رفيع بدون خصائص كسر الصفحة */
-    h+='<div style="border-top:1.5px dashed #94A3B8;margin:8px 0"></div>';
+    /* ✅ خط فاصل رفيع جداً بدون خصائص كسر الصفحة */
+    h+='<div style="border-top:1px dashed #94A3B8;margin:5px 0"></div>';
     h+=buildOneResult(secondRows,true,false);
     h+='</div>';
     return h;
@@ -267,7 +270,7 @@ function resultCard(name,grade,section,rows){
     +(grade?'<span>الصف: <b>'+esc(grade)+' '+esc(section||'')+'</b></span>':'')
     +'<span>المعدل العام: <b>'+(avg!==null?arNum(avg):'—')+'</b></span>'
     +'<span>ناجح في: <b>'+arNum(pass)+'</b> من <b>'+arNum(rows.length)+'</b></span>'
-    +(avg!==null?'<span class="verdict '+(isPass?'pass':'fail')+'">'+(isPass?'ناجح ✔':'راسب ✘')+'</span>':'')
+    +(avg!==null?'<span class="verdict '+(isPass?'pass':'fail')+'">'+(isPass?'ناجح ✔':'راسب ')+'</span>':'')
     +'</div>'
     +'<div class="rc-body" style="background:#E2E8F0;padding:20px;overflow-x:auto">'+resultTable(rows)+'</div>'
     +'</div>';
@@ -300,7 +303,7 @@ function printWin(html){
   doc.open();
   doc.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
     +'<style>'
-    +'@page{size:A4;margin:5mm}'
+    +'@page{size:A4;margin:3mm}'
     +'*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;box-sizing:border-box}'
     +'html,body{margin:0;padding:0}'
     +'body{font-family:Tajawal,Arial,sans-serif}'
@@ -355,7 +358,7 @@ function applyRole(){
   $$('[data-dev]').forEach(function(el){el.style.display=dev?'':'none';});
   var rc=$('#roleCard');
   rc.className='rolecard '+(dev?'dev':'mgr');
-  $('#roleDot').textContent=dev?'🛠️':'👔';
+  $('#roleDot').textContent=dev?'️':'👔';
   $('#roleLabel').textContent=dev?'المطور':'المدير';
   $('#roleSub').textContent=dev?'صلاحيات كاملة':'عرض الدرجات';
 }
