@@ -104,7 +104,7 @@ function buildOneResult(rows,compact,hideSignatures){
   var grade=rows.length?rows[0].grade:'';
   var section=rows.length?rows[0].section:'';
 
-  /* ✅ مقياس أصغر للطباعة الثنائية لضمان بقاء النتيجتين في ورقة واحدة */
+  /* ✅ مقياس أصغر للطباعة الثنائية */
   var scale=compact?0.82:1;
   var schoolSz=Math.round(parseInt(C.schoolSize)*scale);
   var titleSz=Math.round(parseInt(C.titleSize)*scale);
@@ -124,7 +124,7 @@ function buildOneResult(rows,compact,hideSignatures){
   var printPadding = compact ? '2mm' : '5mm';
   var h='<div style="font-family:Tajawal,Arial,sans-serif;width:'+printWidth+';box-sizing:border-box;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto;padding:'+printPadding+'">';
 
-  /* الشريط العلوي - هوامش أقل */
+  /* الشريط العلوي */
   var headMargin = compact ? '5px' : '10px';
   var headPad = compact ? '4px' : '8px';
   h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px double '+C.schoolColor+';padding-bottom:'+headPad+';margin-bottom:'+headMargin+';gap:8px">';
@@ -142,7 +142,7 @@ function buildOneResult(rows,compact,hideSignatures){
   }
   h+='</div></div>';
 
-  /* شريط بيانات التلميذ - هوامش أقل */
+  /* شريط بيانات التلميذ */
   var infoMargin = compact ? '5px' : '10px';
   var infoPad = compact ? '4px 8px' : '8px 12px';
   var infoFs = compact ? '13px' : '16px';
@@ -181,7 +181,6 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  /* ✅ تكبير حجم خط الدرجات مع الحفاظ على المساحة */
   var tdPad = compact ? '2px 1px' : cellPd+'px 2px';
   var tdStyle='border:1px solid '+bord+';padding:'+tdPad+';text-align:center;font-size:'+(tableFs+2)+'px;font-weight:900;background:#fff;height:'+cellH+'px';
   var tdnStyle='border:1px solid '+bord+';padding:'+tdPad+';text-align:right;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
@@ -222,13 +221,15 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='نتيجة نهاية السنة: '+resSpan(finalRes)+'</div>';
   h+='</div>';
 
-  /* التوقيعات - هوامش أقل */
+  /* ✅ التوقيعات - تظهر فقط في النتيجة الثانية (عندما hideSignatures=false) */
   if(!hideSignatures){
-    var sigMargin = compact ? '8px' : '20px';
-    var sigFs = compact ? '11px' : signFs;
-    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:0 4px;font-size:'+sigFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:8px">';
-    h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:160px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
-    h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:160px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
+    /* ✅ هوامش صغيرة جداً للتوقيعات في الطباعة الثنائية */
+    var sigMargin = compact ? '6px' : '20px';
+    var sigFs = compact ? '10px' : signFs;
+    var sigPad = compact ? '0 2px' : '0 8px';
+    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:'+sigPad+';font-size:'+sigFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:6px">';
+    h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:150px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
+    h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:150px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
     h+='</div>';
   }
 
@@ -244,16 +245,18 @@ function resultTable(rows,opts){
   var hideFirstSignatures=!!opts.hideFirstSignatures;
   
   if(secondRows&&secondRows.length){
-    /* ✅ عرض ثابت بدون هوامش إضافية للطباعة الثنائية */
+    /* ✅ عرض ثابت للطباعة الثنائية */
     var h='<div style="width:180mm;margin:0 auto">';
-    h+=buildOneResult(rows,true,hideFirstSignatures);
-    /* ✅ خط فاصل رفيع جداً بدون خصائص كسر الصفحة */
-    h+='<div style="border-top:1px dashed #94A3B8;margin:5px 0"></div>';
+    /* ✅ النتيجة الأولى بدون توقيعات */
+    h+=buildOneResult(rows,true,true);
+    /* ✅ خط فاصل رفيع */
+    h+='<div style="border-top:1px dashed #94A3B8;margin:4px 0"></div>';
+    /* ✅ النتيجة الثانية مع التوقيعات */
     h+=buildOneResult(secondRows,true,false);
     h+='</div>';
     return h;
   }else{
-    /* ✅ الحفاظ على تصميم النتيجة الفردية كما هو تماماً */
+    /* ✅ النتيجة الأحادية كاملة مع التوقيعات */
     return '<div style="width:190mm;margin:0 auto">'+buildOneResult(rows,false,false)+'</div>';
   }
 }
