@@ -142,17 +142,19 @@ function buildOneResult(rows,compact,hideSignatures){
   }
   h+='</div></div>';
 
-  /* شريط بيانات التلميذ */
+  /* شريط بيانات التلميذ - ✅ تكبير الخط هنا فقط */
   var infoMargin = compact ? '8px' : '10px';
   var infoPad = compact ? '6px 10px' : '8px 12px';
-  var infoFs = compact ? '13px' : '14px';
+  var infoFs = compact ? '14px' : '16px'; // تم التكبير
+  var nameGradeFs = compact ? '16px' : '18px'; // تم تكبير اسم التلميذ والصف بشكل منفصل ليكون أوضح
+  
   h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:'+infoPad+';border-radius:6px;margin-bottom:'+infoMargin+';border:1px solid #BFDBFE;flex-wrap:wrap;gap:6px">';
-  h+='<div style="flex:1;min-width:140px;text-align:'+C.studentAlign+';font-size:'+infoFs+';font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;min-width:140px;text-align:'+C.classAlign+';font-size:'+infoFs+';font-weight:800"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;min-width:140px;text-align:'+C.studentAlign+';font-size:'+infoFs+';font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A;font-size:'+nameGradeFs+'">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;min-width:140px;text-align:'+C.classAlign+';font-size:'+infoFs+';font-weight:800"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A;font-size:'+nameGradeFs+'">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
   h+='<div style="flex:1;min-width:120px;text-align:'+C.dateAlign+';font-size:12px;font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
-  /* جدول الدرجات */
+  /* جدول الدرجات - ✅ تكبير خط الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
   var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+(tableFs)+'px;font-weight:bold;text-align:center;vertical-align:middle';
@@ -178,8 +180,9 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+(tableFs+1)+'px;font-weight:bold;background:#fff;height:'+cellH+'px';
-  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+(tableFs+2)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
+  /* ✅ تكبير حجم خط الدرجات (tableFs+3 و tableFs+4) واستخدام min-height لمنع القص */
+  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;min-height:'+cellH+'px';
+  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+(tableFs+4)+'px;font-weight:900;background:#fff;width:'+subjW+'px;min-height:'+cellH+'px';
 
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
@@ -217,7 +220,7 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='نتيجة نهاية السنة: '+resSpan(finalRes)+'</div>';
   h+='</div>';
 
-  /* التوقيعات */
+  /* التوقيعات - ✅ تظهر فقط عندما تكون hideSignatures = false */
   if(!hideSignatures){
     var sigMargin = compact ? '15px' : '20px';
     h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:0 6px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:10px">';
@@ -235,19 +238,20 @@ function resultTable(rows,opts){
   opts=opts||{};
   var compact=!!opts.compact;
   var secondRows=opts.secondRows||null;
-  var hideFirstSignatures=!!opts.hideFirstSignatures;
   
   if(secondRows&&secondRows.length){
     /* ✅ عرض ثابت بدون هوامش إضافية للطباعة الثنائية */
     var h='<div style="width:185mm;margin:0 auto">';
-    h+=buildOneResult(rows,true,hideFirstSignatures);
+    /* ✅ النتيجة الأولى: compact=true, hideSignatures=true (بدون توقيعات) */
+    h+=buildOneResult(rows,true,true);
     /* ✅ خط فاصل رفيع بدون خصائص كسر الصفحة */
     h+='<div style="border-top:1.5px dashed #94A3B8;margin:8px 0"></div>';
+    /* ✅ النتيجة الثانية: compact=true, hideSignatures=false (مع التوقيعات) */
     h+=buildOneResult(secondRows,true,false);
     h+='</div>';
     return h;
   }else{
-    /* ✅ الحفاظ على تصميم النتيجة الفردية كما هو تماماً */
+    /* ✅ الحفاظ على تصميم النتيجة الفردية كما هو تماماً مع التوقيعات */
     return '<div style="width:190mm;margin:0 auto">'+buildOneResult(rows,false,false)+'</div>';
   }
 }
