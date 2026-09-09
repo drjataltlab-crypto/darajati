@@ -37,7 +37,7 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-function getStudyYear(){return localStorage.getItem('study_year')||'٢٢٥ - ٢٠٢٦';}
+function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٥ - ٢٠٢٦';}
 
 function getPrintCfg(){
   var g=function(k,d){return localStorage.getItem(k)||d;};
@@ -164,7 +164,7 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">الدروس</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)" colspan="3">الفصل الأول</th>'
-    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف١</th>'
+    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نصف السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)" colspan="2">الفصل الثاني</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف٢</th>'
@@ -176,7 +176,7 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ت١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ت٢</th>'
-    +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ك</th>'
+    +'<th style="'+thStyle+';background:linear-gradient(135deg,#1D4ED8,#3B82F6)">ك١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">آذار</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
@@ -221,12 +221,13 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='نتيجة نهاية السنة: '+resSpan(finalRes)+'</div>';
   h+='</div>';
 
-  /* ✅ التوقيعات - تظهر فقط في النتيجة الثانية (عندما hideSignatures=false) */
+  /* ✅ التوقيعات - تظهر فقط عندما hideSignatures=false */
   if(!hideSignatures){
-    var sigMargin = compact ? '6px' : '20px';
-    var sigFs = compact ? '10px' : signFs;
-    var sigPad = compact ? '0 2px' : '0 8px';
-    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:'+sigPad+';font-size:'+sigFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:6px">';
+    /* ✅ حجم أكبر للتوقيعات في الطباعة الثنائية */
+    var sigMargin = compact ? '8px' : '20px';
+    var sigFs = compact ? '12px' : signFs;
+    var sigPad = compact ? '0 4px' : '0 8px';
+    h+='<div style="display:flex;justify-content:space-between;margin-top:'+sigMargin+';padding:'+sigPad+';font-size:'+sigFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:8px">';
     h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:150px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
     h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:150px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
     h+='</div>';
@@ -289,7 +290,7 @@ function downloadXLS(filename,title,tablesHTML){
   toast('✓ تم التنزيل — افتحه في Excel','ok');
 }
 
-/* ═══ طباعة ═══ */
+/* ═══ طباعة ══ */
 function printWin(html){
   var old=document.getElementById('printFrame');
   if(old)old.remove();
@@ -310,7 +311,6 @@ function printWin(html){
     +'html,body{margin:0;padding:0}'
     +'body{font-family:Tajawal,Arial,sans-serif}'
     +'table{page-break-inside:avoid;width:100%;border-collapse:collapse}'
-    +'div{page-break-inside:avoid}'
     +'</style>'
     +'</head><body>'+html+'</body></html>');
   doc.close();
