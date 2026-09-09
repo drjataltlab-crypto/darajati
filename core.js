@@ -1,8 +1,8 @@
-/* ═══ core.js — الأساس المشترك ═══ */
+/* ══ core.js — الأساس المشترك ═══ */
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='١٢٣٤٥٦٧٨٩';
+var AR='٠١٢٣٤٥٦٧٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -29,7 +29,7 @@ function escA(s){return esc(s).replace(/"/g,'&quot;');}
 function ago(ms){if(!ms)return'';var s=Math.floor((Date.now()-ms)/1000);if(s<60)return'الآن';var m=Math.floor(s/60);if(m<60)return'قبل '+arNum(m)+' د';var h=Math.floor(m/60);if(h<24)return'قبل '+arNum(h)+' س';var d=Math.floor(h/24);return d<30?'قبل '+arNum(d)+' يوم':new Date(ms).toLocaleDateString('ar');}
 function fmtDate(ms){return new Date(ms).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'});}
 function copyText(s){if(navigator.clipboard){navigator.clipboard.writeText(s).then(function(){toast('✓ تم النسخ','ok');});}else{var ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('✓ تم النسخ','ok');}}
-function shareWa(code,name){window.open('https://wa.me/?text='+encodeURIComponent('مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.'),'_blank');}
+function shareWa(code,name){window.open('https://wa.me/?text='+encodeURIComponent('مرحباً '+(name||'أستاذي')+' 👋\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.'),'_blank');}
 function api(p,ms){
   if(!url())return Promise.reject(new Error('no-url'));
   var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||30000);
@@ -104,7 +104,8 @@ function buildOneResult(rows,compact,hideSignatures){
   var grade=rows.length?rows[0].grade:'';
   var section=rows.length?rows[0].section:'';
 
-  var scale=compact?0.85:1;
+  /* ✅ مقياس أكبر للطباعة الثنائية */
+  var scale=compact?0.92:1;
   var schoolSz=Math.round(parseInt(C.schoolSize)*scale);
   var titleSz=Math.round(parseInt(C.titleSize)*scale);
   var subSz=Math.round(parseInt(C.subSize)*scale);
@@ -118,10 +119,11 @@ function buildOneResult(rows,compact,hideSignatures){
 
   var bord='#0F172A';
 
-  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:100%;max-width:794px;padding:18px;background:#fff;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto">';
+  /* ✅ عرض ثابت 190mm بدون padding كبير */
+  var h='<div style="font-family:Tajawal,Arial,sans-serif;width:190mm;box-sizing:border-box;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin:0 auto;padding:5mm">';
 
   /* الشريط العلوي */
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double '+C.schoolColor+';padding-bottom:10px;margin-bottom:14px;gap:12px">';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px double '+C.schoolColor+';padding-bottom:8px;margin-bottom:10px;gap:12px">';
   h+='<div style="flex:1;text-align:'+C.schoolAlign+';font-weight:900;font-size:'+schoolSz+'px;color:'+C.schoolColor+';line-height:1.5;word-break:break-word">ادارة<br>'+esc(schoolName)+'<br>للبنين</div>';
   h+='<div style="flex:1;text-align:center">';
   h+='<div style="font-size:'+titleSz+'px;font-weight:900;color:'+C.titleColor+'">بطاقة درجات</div>';
@@ -137,16 +139,16 @@ function buildOneResult(rows,compact,hideSignatures){
   h+='</div></div>';
 
   /* شريط بيانات التلميذ */
-  h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:10px 14px;border-radius:8px;margin-bottom:14px;border:1px solid #BFDBFE;flex-wrap:wrap;gap:8px">';
-  h+='<div style="flex:1;min-width:150px;text-align:'+C.studentAlign+';font-size:16px;font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A">'+esc(name)+'</span></div>';
-  h+='<div style="flex:1;min-width:150px;text-align:'+C.classAlign+';font-size:16px;font-weight:800"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
-  h+='<div style="flex:1;min-width:130px;text-align:'+C.dateAlign+';font-size:14px;font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);padding:8px 12px;border-radius:8px;margin-bottom:10px;border:1px solid #BFDBFE;flex-wrap:wrap;gap:8px">';
+  h+='<div style="flex:1;min-width:150px;text-align:'+C.studentAlign+';font-size:14px;font-weight:800"><b style="color:#1E40AF">التلميذ:</b> <span style="font-weight:900;color:#0F172A">'+esc(name)+'</span></div>';
+  h+='<div style="flex:1;min-width:150px;text-align:'+C.classAlign+';font-size:14px;font-weight:800"><b style="color:#1E40AF">الصف والشعبة:</b> <span style="font-weight:900;color:#0F172A">'+esc(grade||'—')+' '+esc(section||'')+'</span></div>';
+  h+='<div style="flex:1;min-width:130px;text-align:'+C.dateAlign+';font-size:13px;font-weight:700"><b style="color:#1E40AF">التاريخ:</b> <span style="font-weight:800">'+new Date().toLocaleDateString('ar')+'</span></div>';
   h+='</div>';
 
   /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
-  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 3px;font-size:'+(tableFs+1)+'px;font-weight:bold;text-align:center;vertical-align:middle';
+  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 2px;font-size:'+(tableFs+1)+'px;font-weight:bold;text-align:center;vertical-align:middle';
   h+='<thead>';
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
@@ -155,7 +157,7 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نصف السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف</th>'
+    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف٢</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">السعي السنوي</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نهاية السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#BE123C,#E11D48)" rowspan="2">الدرجة النهائية</th>'
@@ -169,8 +171,8 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 3px;text-align:center;font-size:'+(tableFs+2)+'px;font-weight:bold;background:#fff;height:'+cellH+'px';
-  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 5px;text-align:right;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
+  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 2px;text-align:center;font-size:'+(tableFs+2)+'px;font-weight:bold;background:#fff;height:'+cellH+'px';
+  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 4px;text-align:right;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
 
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
@@ -191,22 +193,22 @@ function buildOneResult(rows,compact,hideSignatures){
   });
   h+='</tbody></table>';
 
-  /* سطر النتيجة (منفصل) */
+  /* سطر النتيجة */
   function resSpan(res){
     var color=res.cls==='pass'?'#047857':res.cls==='fail'?'#DC2626':res.cls==='warn'?'#B45309':'#64748B';
     var bg=res.cls==='pass'?'#D1FAE5':res.cls==='fail'?'#FEE2E2':res.cls==='warn'?'#FEF3C7':'#F1F5F9';
-    return '<span style="background:'+bg+';color:'+color+';padding:4px 14px;border-radius:10px;font-weight:900;margin:0 6px;border:2px solid '+color+';font-size:'+Math.round(tableFs*1.1)+'px">'+res.text+'</span>';
+    return '<span style="background:'+bg+';color:'+color+';padding:3px 10px;border-radius:10px;font-weight:900;margin:0 4px;border:2px solid '+color+';font-size:'+Math.round(tableFs*1.05)+'px">'+res.text+'</span>';
   }
-  h+='<div style="display:flex;gap:10px;margin-top:14px">';
-  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.15)+'px;padding:10px;border-radius:8px;text-align:center;border:2px solid #0F172A">';
+  h+='<div style="display:flex;gap:8px;margin-top:10px">';
+  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.1)+'px;padding:8px;border-radius:8px;text-align:center;border:2px solid #0F172A">';
   h+='نتيجة نصف السنة: '+resSpan(halfRes)+'</div>';
-  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.15)+'px;padding:10px;border-radius:8px;text-align:center;border:2px solid #0F172A">';
+  h+='<div style="flex:1;background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#fff;font-weight:900;font-size:'+Math.round(tableFs*1.1)+'px;padding:8px;border-radius:8px;text-align:center;border:2px solid #0F172A">';
   h+='نتيجة نهاية السنة: '+resSpan(finalRes)+'</div>';
   h+='</div>';
 
-  /* ✅ التوقيعات - تظهر فقط إذا لم تكن مخفية */
+  /* التوقيعات */
   if(!hideSignatures){
-    h+='<div style="display:flex;justify-content:space-between;margin-top:28px;padding:0 10px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:14px">';
+    h+='<div style="display:flex;justify-content:space-between;margin-top:20px;padding:0 8px;font-size:'+signFs+'px;font-weight:800;color:#0F172A;flex-wrap:wrap;gap:14px">';
     h+='<div style="flex:1;text-align:'+C.guideAlign+';min-width:200px;word-break:break-word">مرشد الصف : <span style="color:#1E40AF;font-weight:900">'+esc(guideName)+'</span></div>';
     h+='<div style="flex:1;text-align:'+C.principalAlign+';min-width:200px;word-break:break-word">مدير المدرسة : <span style="color:#1E40AF;font-weight:900">'+esc(principalName)+'</span></div>';
     h+='</div>';
@@ -224,14 +226,14 @@ function resultTable(rows,opts){
   var hideFirstSignatures=!!opts.hideFirstSignatures;
   
   if(secondRows&&secondRows.length){
-    var h='<div style="width:100%;max-width:794px;margin:0 auto">';
+    var h='<div style="width:190mm;margin:0 auto">';
     h+=buildOneResult(rows,true,hideFirstSignatures);
-    h+='<div style="border-top:2px dashed #94A3B8;margin:14px 0;page-break-after:avoid"></div>';
+    h+='<div style="border-top:2px dashed #94A3B8;margin:10px 0;page-break-after:avoid"></div>';
     h+=buildOneResult(secondRows,true,false);
     h+='</div>';
     return h;
   }else{
-    return '<div style="width:100%;max-width:794px;margin:0 auto">'+buildOneResult(rows,false,false)+'</div>';
+    return '<div style="width:190mm;margin:0 auto">'+buildOneResult(rows,false,false)+'</div>';
   }
 }
 
@@ -280,10 +282,10 @@ function printWin(html){
   doc.open();
   doc.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طباعة</title>'
     +'<style>'
-    +'@page{size:A4;margin:8mm}'
+    +'@page{size:A4;margin:0}'
     +'*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;box-sizing:border-box}'
     +'html,body{margin:0;padding:0}'
-    +'body{font-family:Tajawal,Arial,sans-serif;padding:10mm}'
+    +'body{font-family:Tajawal,Arial,sans-serif}'
     +'table{page-break-inside:avoid;width:100%;border-collapse:collapse}'
     +'</style>'
     +'</head><body>'+html+'</body></html>');
