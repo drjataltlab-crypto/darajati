@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٣٤٥٦٧٨٩';
+var AR='١٢٣٤٥٦٧٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -37,7 +37,7 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';}
+function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٥ - ٢٠٢٦';}
 
 function getPrintCfg(){
   var g=function(k,d){return localStorage.getItem(k)||d;};
@@ -104,7 +104,7 @@ function buildOneResult(rows,compact,hideSignatures){
   var grade=rows.length?rows[0].grade:'';
   var section=rows.length?rows[0].section:'';
 
-  var scale=compact?0.78:1;
+  var scale=compact?0.85:1;
   var schoolSz=Math.round(parseInt(C.schoolSize)*scale);
   var titleSz=Math.round(parseInt(C.titleSize)*scale);
   var subSz=Math.round(parseInt(C.subSize)*scale);
@@ -146,7 +146,7 @@ function buildOneResult(rows,compact,hideSignatures){
   /* جدول الدرجات */
   h+='<table style="width:100%;border-collapse:collapse;border:2px solid '+bord+';font-size:'+tableFs+'px;box-sizing:border-box">';
   
-  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 3px;font-size:'+tableFs+'px;font-weight:bold;text-align:center;vertical-align:middle';
+  var thStyle='border:1px solid '+bord+';color:#fff;padding:'+cellPd+'px 3px;font-size:'+(tableFs+1)+'px;font-weight:bold;text-align:center;vertical-align:middle';
   h+='<thead>';
   h+='<tr>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
@@ -155,7 +155,7 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نصف السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف٢</th>'
+    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">السعي السنوي</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نهاية السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#BE123C,#E11D48)" rowspan="2">الدرجة النهائية</th>'
@@ -169,8 +169,8 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)">نيسان</th>'
     +'</tr></thead><tbody>';
 
-  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 3px;text-align:center;font-size:'+tableFs+'px;background:#fff;height:'+cellH+'px';
-  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 5px;text-align:right;font-size:'+tableFs+'px;font-weight:bold;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
+  var tdStyle='border:1px solid '+bord+';padding:'+cellPd+'px 3px;text-align:center;font-size:'+(tableFs+2)+'px;font-weight:bold;background:#fff;height:'+cellH+'px';
+  var tdnStyle='border:1px solid '+bord+';padding:'+cellPd+'px 5px;text-align:right;font-size:'+(tableFs+3)+'px;font-weight:900;background:#fff;width:'+subjW+'px;height:'+cellH+'px';
 
   SUBJECTS.forEach(function(s,i){
     var r=bySub[s];
@@ -309,7 +309,7 @@ function adminLogin(){
   var k=$('#keyIn').value.trim();
   if(!k){toast('أدخل كلمة المرور','err');return;}
   if(!url()){toast('⚠️ رابط الخادم مفقود — ضعه في config.js','err');return;}
-  var btn=$('#loginBtn');btn.disabled=true;btn.textContent=' تحقق...';
+  var btn=$('#loginBtn');btn.disabled=true;btn.textContent='⏳ تحقق...';
   api({action:'adminLogin',key:k},20000).then(function(r){
     if(!r.ok){toast('❌ '+r.error,'err');return;}
     ROLE=r.role;localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);
