@@ -1,4 +1,4 @@
-/* ═══ page-results.js — صفحة نتائج التلاميذ (مصحح نهائي) ═══ */
+/* ═══ page-results.js — صفحة نتائج التلاميذ ═══ */
 
 var ADM = {teachers:[], tv:null, res:null};
 window._classData = [];
@@ -17,16 +17,16 @@ function printTwo(){
   printWin(html);
 }
 
-/* ═══ دالة طباعة كل التلاميذ المحددين ══ */
+/* ═══ طباعة كل التلاميذ المحددين ═══ */
 function printAllSelected(){
   var selected = window._selectedForDual;
   if(!selected.length){toast('لم يتم تحديد أي تلميذ','err');return;}
   
   var printMode = $('#printModeSelect').value;
+  var allHtml = '<div style="width:190mm;margin:0 auto">';
   
   if(printMode === 'single'){
     // طباعة كل تلميذ في ورقة منفصلة
-    var allHtml = '<div style="width:100%;max-width:794px;margin:0 auto">';
     selected.forEach(function(name, i){
       var student = window._classData.find(function(s){return s.name === name;});
       if(student && student.rows.length){
@@ -34,11 +34,8 @@ function printAllSelected(){
         allHtml += buildOneResult(student.rows, false, false);
       }
     });
-    allHtml += '</div>';
-    printWin(allHtml);
   } else {
     // طباعة كل تلميذين في ورقة واحدة
-    var allHtml = '<div style="width:100%;max-width:794px;margin:0 auto">';
     for(var i = 0; i < selected.length; i += 2){
       if(i > 0) allHtml += '<div style="page-break-after:always"></div>';
       
@@ -48,19 +45,19 @@ function printAllSelected(){
       if(s1 && s1.rows.length){
         if(s2 && s2.rows.length){
           allHtml += buildOneResult(s1.rows, true, true);
-          allHtml += '<div style="border-top:2px dashed #94A3B8;margin:14px 0;page-break-after:avoid"></div>';
+          allHtml += '<div style="border-top:2px dashed #94A3B8;margin:10px 0;page-break-after:avoid"></div>';
           allHtml += buildOneResult(s2.rows, true, false);
         } else {
           allHtml += buildOneResult(s1.rows, false, false);
         }
       }
     }
-    allHtml += '</div>';
-    printWin(allHtml);
   }
+  allHtml += '</div>';
+  printWin(allHtml);
 }
 
-/* ═══ دالة البحث الموحّدة (زر واحد) ═══ */
+/* ═══ دالة البحث الموحّدة ═══ */
 function performUnifiedSearch(){
   var name = $('#uniSearchName').value.trim();
   var grade = $('#uniSearchGrade').value;
@@ -88,12 +85,11 @@ function searchStudent(){
   performUnifiedSearch();
 }
 
-/* ═══ رسم نتيجة التلميذ المحدد ═══ */
 function renderSpecificStudent(){
   if(!ADM.res || !ADM.res.name) return;
   
   var h = '<div class="card" style="border-right:5px solid var(--th);margin-top:12px">';
-  h += '<div class="ct" style="color:var(--th)"> نتيجة التلميذ: '+esc(ADM.res.name)+'</div>';
+  h += '<div class="ct" style="color:var(--th)">🎓 نتيجة التلميذ: '+esc(ADM.res.name)+'</div>';
   h += '<div class="cs">الصف: '+esc(ADM.res.grade)+' '+esc(ADM.res.section)+'</div>';
   h += resultCard(ADM.res.name, ADM.res.grade, ADM.res.section, ADM.res.rows);
   
@@ -151,7 +147,6 @@ function hideSecondForm(){
   renderSpecificStudent();
 }
 
-/* ═══ دوال قائمة الصف الكامل ═══ */
 function loadClassResults(g, s){
   $('#dynamicResultsArea').innerHTML = '<div class="empty">⏳ جاري تحميل بيانات الصف...</div>';
   window._selectedForDual = [];
@@ -171,7 +166,7 @@ function loadClassResults(g, s){
     });
     renderClassList();
   }).catch(function(){
-    $('#dynamicResultsArea').innerHTML = '<div class="empty">⚠️ تعذر الاتصال بالخادم</div>';
+    $('#dynamicResultsArea').innerHTML = '<div class="empty">️ تعذر الاتصال بالخادم</div>';
   });
 }
 
@@ -194,15 +189,14 @@ function renderClassList(){
   data.forEach(function(student, i){
     var isChecked = window._selectedForDual.includes(student.name) ? 'checked' : '';
     var hasGrades = student.rows && student.rows.length > 0;
-    var isDisabled = (window._selectedForDual.length >= 2 && !isChecked) ? 'disabled' : '';
     
     h += '<tr>';
-    h += '<td style="text-align:center"><input type="checkbox" class="dual-check" data-name="'+escA(student.name)+'" '+isChecked+' '+isDisabled+' onchange="toggleDualSelect(this)"></td>';
+    h += '<td style="text-align:center"><input type="checkbox" class="dual-check" data-name="'+escA(student.name)+'" '+isChecked+' onchange="toggleDualSelect(this)"></td>';
     h += '<td style="text-align:center;font-weight:800">'+arNum(i+1)+'</td>';
     h += '<td class="nm">'+esc(student.name) + (hasGrades?'':' <span class="hint">(لا توجد درجات)</span>')+'</td>';
     h += '<td style="text-align:center;white-space:nowrap">';
     if(hasGrades){
-      h += '<button class="btn sm" onclick="printSingleClassStudent(\''+escA(student.name)+'\')">️ طباعة</button>';
+      h += '<button class="btn sm" onclick="printSingleClassStudent(\''+escA(student.name)+'\')">🖨️ طباعة</button>';
     } else {
       h += '<button class="btn sm ghost" disabled>لا توجد بيانات</button>';
     }
@@ -235,11 +229,9 @@ function toggleSelectAll(checkbox){
   $$('.dual-check').forEach(function(cb){
     if(isChecked){
       cb.checked = true;
-      cb.disabled = false;
       window._selectedForDual.push(cb.getAttribute('data-name'));
     } else {
       cb.checked = false;
-      cb.disabled = false;
     }
   });
   updateDualPrintUI();
@@ -270,13 +262,12 @@ function printSingleClassStudent(name){
   printSingle();
 }
 
-/* ═══ الدالة الرئيسية لبناء الواجهة ═══ */
 function renderResults(){
   var schoolName=localStorage.getItem('school_name')||'';
   var schoolLogo=localStorage.getItem('school_logo')||'';
   var guideName=localStorage.getItem('guide_name')||'';
   var principalName=localStorage.getItem('principal_name')||'';
-  var studyYear=localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';
+  var studyYear=localStorage.getItem('study_year')||'٢٠٢ - ٢٠٢٦';
 
   var g=function(k,d){return localStorage.getItem(k)||d;};
   var pc={
@@ -301,10 +292,10 @@ function renderResults(){
     +'<button class="btn sm" onclick="pickSchoolLogo()">📷 اختر</button>'
     +(schoolLogo?'<button class="btn sm danger" onclick="clearSchoolLogo()">🗑</button>':'')
     +'</div></div>'
-    +'<div><label class="label">‍🏫 مرشد الصف</label><input id="setGuide" value="'+escA(guideName)+'"></div>'
+    +'<div><label class="label">👨‍ مرشد الصف</label><input id="setGuide" value="'+escA(guideName)+'"></div>'
     +'<div style="grid-column:span 2"><label class="label">🎓 مدير المدرسة</label><input id="setPrincipal" value="'+escA(principalName)+'"></div>'
     +'</div>'
-    +'<button class="btn ok" style="margin-top:10px" onclick="saveSchoolInfo()"> حفظ بيانات المدرسة</button></div>';
+    +'<button class="btn ok" style="margin-top:10px" onclick="saveSchoolInfo()">💾 حفظ بيانات المدرسة</button></div>';
 
   var ctrlCard='<div class="card" style="border-right:5px solid #7C3AED">'
     +'<div class="ct" style="color:#7C3AED;font-size:16px">🎨 التحكم في التنسيق</div>'
@@ -315,25 +306,25 @@ function renderResults(){
     +'<th style="padding:8px;text-align:center;border-bottom:2px solid var(--line);font-size:12px;width:20%">المحاذاة</th></tr>'
     +cfgRow('🏫 اسم المدرسة','pcSchool',pc.schoolColor,pc.schoolSize,pc.schoolAlign,{minSize:12,maxSize:36})
     +cfgRow('📜 بطاقة درجات','pcTitle',pc.titleColor,pc.titleSize,'center',{noAlign:true,minSize:14,maxSize:50})
-    +cfgRow(' الصف الخامس والسادس','pcSub',pc.subColor,pc.subSize,'center',{noAlign:true,minSize:10,maxSize:30})
+    +cfgRow('📚 الصف الخامس والسادس','pcSub',pc.subColor,pc.subSize,'center',{noAlign:true,minSize:10,maxSize:30})
     +cfgRow('📅 العام الدراسي','pcYear',pc.yearColor,pc.yearSize,'center',{noAlign:true,minSize:10,maxSize:24})
-    +cfgRow('️ حجم الشعار','pcLogo',pc.schoolColor,pc.logoSize,'center',{noColor:true,noAlign:true,minSize:50,maxSize:200})
+    +cfgRow('🖼️ حجم الشعار','pcLogo',pc.schoolColor,pc.logoSize,'center',{noColor:true,noAlign:true,minSize:50,maxSize:200})
     +'</table>'
     +'<div class="grid2" style="margin-top:14px">'
-    +'<button class="btn ok" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)" onclick="savePrintCfg()">💾 حفظ التخصيصات</button>'
+    +'<button class="btn ok" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)" onclick="savePrintCfg()"> حفظ التخصيصات</button>'
     +'<button class="btn ghost" onclick="resetPrintCfg()">🔄 استعادة الافتراضي</button>'
     +'</div></div>';
 
   var panelOpen = localStorage.getItem('set_panel_open')==='1';
   var html = '<div class="card" style="border-right:5px solid #0E7490;background:linear-gradient(135deg,#ECFEFF,#CFFAFE)">'
     +'<button class="btn" style="background:linear-gradient(135deg,#0E7490,#06B6D4);font-size:15px;padding:13px;width:100%" onclick="toggleSetPanel()">'
-    +(panelOpen?' إغلاق الإعدادات':'⚙️ الإعدادات — بيانات المدرسة والتنسيق')
+    +(panelOpen?'🔼 إغلاق الإعدادات':'⚙️ الإعدادات — بيانات المدرسة والتنسيق')
     +'</button></div>';
     
   html += '<div id="setPanel" style="display:'+(panelOpen?'block':'none')+'">'+settings+ctrlCard+'</div>';
   
   html += '<div class="card" style="border-right:5px solid var(--th);margin-top:12px">'
-    +'<div class="ct" style="color:var(--th)"> البحث وعرض النتائج</div>'
+    +'<div class="ct" style="color:var(--th)">🔍 البحث وعرض النتائج</div>'
     +'<div class="cs">اكتب اسم التلميذ للبحث الفردي، أو اختر الصف والشعبة فقط لعرض القائمة الكاملة</div>'
     +'<div class="grid3" style="margin-top:10px">'
     +'<input id="uniSearchName" placeholder="اسم التلميذ (اختياري)">'
@@ -347,7 +338,6 @@ function renderResults(){
   $('#resBox').innerHTML = html;
 }
 
-/* ═══ دوال مساعدة ══ */
 function toggleSetPanel(){
   localStorage.setItem('set_panel_open', localStorage.getItem('set_panel_open')==='1'?'0':'1');
   renderResults();
