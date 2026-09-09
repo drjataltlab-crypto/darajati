@@ -2,7 +2,7 @@
 window.addEventListener('error',function(e){var d=document.getElementById('errbar');if(d){d.style.display='block';d.textContent='ERROR line '+e.lineno+': '+e.message;}});
 
 var SUBJECTS=['التربية الإسلامية','اللغة العربية','اللغة الانكليزية','الرياضيات','الاجتماعيات','العلوم','الفنية','الرياضة'];
-var AR='٠١٢٤٥٦٧٨٩';
+var AR='٠١٢٣٤٥٦٧٨٩';
 
 var THEMES={
   dash:['#1D4ED8','#DBEAFE'],res:['#B45309','#FDE68A'],team:['#047857','#A7F3D0'],
@@ -37,7 +37,7 @@ function api(p,ms){
     .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
-function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٥ - ٢٠٢٦';}
+function getStudyYear(){return localStorage.getItem('study_year')||'٢٠٢٥ - ٢٠٢٦';}
 
 function getPrintCfg(){
   var g=function(k,d){return localStorage.getItem(k)||d;};
@@ -166,7 +166,7 @@ function buildOneResult(rows,compact,hideSignatures){
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف١</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نصف السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#0E7490,#06B6D4)" colspan="2">الفصل الثاني</th>'
-    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف٢</th>'
+    +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">السعي السنوي</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نهاية السنة</th>'
     +'<th style="'+thStyle+';background:linear-gradient(135deg,#BE123C,#E11D48)" rowspan="2">الدرجة النهائية</th>'
@@ -335,7 +335,7 @@ function adminLogin(){
   if(!url()){toast('⚠️ رابط الخادم مفقود — ضعه في config.js','err');return;}
   var btn=$('#loginBtn');btn.disabled=true;btn.textContent='⏳ تحقق...';
   api({action:'adminLogin',key:k},20000).then(function(r){
-    if(!r.ok){toast('❌ '+r.error,'err');return;}
+    if(!r.ok){toast(' '+r.error,'err');return;}
     ROLE=r.role;localStorage.setItem('d_key',k);localStorage.setItem('d_admin',ROLE);
     enterAdmin();
   }).catch(function(){toast('تعذر الاتصال بالخادم','err');})
@@ -358,7 +358,7 @@ function applyRole(){
   $$('[data-dev]').forEach(function(el){el.style.display=dev?'':'none';});
   var rc=$('#roleCard');
   rc.className='rolecard '+(dev?'dev':'mgr');
-  $('#roleDot').textContent=dev?'🛠️':'👔';
+  $('#roleDot').textContent=dev?'🛠️':'';
   $('#roleLabel').textContent=dev?'المطور':'المدير';
   $('#roleSub').textContent=dev?'صلاحيات كاملة':'عرض الدرجات';
 }
