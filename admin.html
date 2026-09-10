@@ -28,44 +28,107 @@
   justify-content: center;
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
-.exit {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-}
+.exit { width: 40px; height: 40px; padding: 0; }
 .exit:hover, .iconbtn.exit-btn:hover {
   background: linear-gradient(135deg, #EF4444, #B91C1C);
   transform: translateY(-2px);
   box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
 }
-.iconbtn.exit-btn {
-  width: 42px;
-  height: 42px;
-  padding: 0;
-}
+.iconbtn.exit-btn { width: 42px; height: 42px; padding: 0; }
 .exit svg, .iconbtn.exit-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
+  width: 20px; height: 20px;
+  stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round; fill: none;
 }
 
-/* ═══ تنسيقات إضافية لنماذج المعلمين ═══ */
+/* ═══ تنسيقات نماذج المعلمين ══ */
 .form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+.form-group label {
+  display: block; font-size: 13px; font-weight: 700;
+  color: #475569; margin-bottom: 6px;
+}
 .form-group input, .form-group textarea, .form-group select {
-  width: 100%; padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px;
+  width: 100%; padding: 10px;
+  border: 1.5px solid #E2E8F0; border-radius: 10px;
   font-family: inherit; font-size: 14px; transition: 0.15s;
 }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-  outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  outline: none; border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 .form-group textarea { resize: vertical; min-height: 80px; }
 .form-hint { font-size: 11.5px; color: #64748B; margin-top: 4px; line-height: 1.6; }
-.form-hint code { background: #F1F5F9; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; }
+.form-hint code {
+  background: #F1F5F9; padding: 2px 6px;
+  border-radius: 4px; font-size: 11px; font-family: monospace;
+}
+
+/* ═══ بطاقة المعلم ═══ */
+.teacher-card {
+  background: #fff; border-radius: 14px; padding: 16px;
+  margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #E2E8F0; transition: all 0.2s ease;
+}
+.teacher-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+}
+.teacher-card-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;
+}
+.teacher-name { font-size: 18px; font-weight: 900; color: #0F172A; margin-bottom: 4px; }
+.teacher-code-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.chip.code { background: #F1F5F9; color: #475569; font-family: monospace; direction: ltr; }
+.chip.locked { background: #FEE2E2; color: #DC2626; }
+.chip.unlocked { background: #D1FAE5; color: #047857; }
+.subjects-container {
+  margin: 10px 0; padding: 10px;
+  background: #F8FAFC; border-radius: 10px;
+  border: 1px solid #E2E8F0;
+}
+.subject-block {
+  margin-bottom: 8px; padding-bottom: 8px;
+  border-bottom: 1px dashed #E2E8F0;
+}
+.subject-block:last-child {
+  margin-bottom: 0; padding-bottom: 0; border-bottom: none;
+}
+.subject-name {
+  font-weight: 800; font-size: 13px; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.classes-list { display: flex; gap: 4px; flex-wrap: wrap; padding-right: 10px; }
+.class-chip {
+  background: #EFF6FF; color: #1E40AF;
+  border-radius: 8px; padding: 3px 8px;
+  font-size: 11px; font-weight: 700; border: 1px solid #BFDBFE;
+}
+.teacher-stats {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding-top: 10px; border-top: 1px solid #E2E8F0;
+  font-size: 12px; color: #64748B;
+}
+.teacher-stats span { display: flex; align-items: center; gap: 4px; }
+.teacher-stats b { color: #0F172A; font-weight: 800; }
+.teacher-actions {
+  display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+}
+.teacher-actions .btn.sm { flex: 1; min-width: 100px; }
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25D366, #128C7E) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(37,211,102,0.3) !important;
+}
+.btn-copy {
+  background: #F1F5F9 !important; color: #475569 !important;
+  border: 1.5px solid #E2E8F0 !important;
+}
 </style>
 </head>
 <body>
@@ -74,7 +137,7 @@
 <section class="screen active" id="s-login">
   <div class="login"><div class="lcard">
     <div class="hero"><img src="icon.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
-    <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
+    <input id="keyIn" dir="ltr" type="password" placeholder=" كلمة المرور" style="text-align:center;font-weight:700">
     <button class="btn" id="loginBtn" onclick="adminLogin()">دخول</button>
   </div></div>
 </section>
@@ -86,7 +149,7 @@
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">📊</span>نظرة عامة</button>
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
-        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
+        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico"></span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
@@ -116,19 +179,17 @@
           <div class="kpi" id="dashKpi"></div>
           <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
-        
         <div id="tab-res" hidden>
           <div class="ptitle"><span class="bar"></span>نتائج التلاميذ</div>
           <p class="psub">بطاقة نتيجة احترافية لكل تلميذ</p>
           <div id="resBox"></div>
         </div>
         
-        <!-- ═══ صفحة المعلمين المحدّثة ═══ -->
+        <!-- ═══ صفحة المعلمين المحدّثة ══ -->
         <div id="tab-team" hidden>
           <div class="ptitle"><span class="bar"></span>المعلمون</div>
           
-          <!-- أدوات التحكم والبحث -->
-          <div class="card team-tools">
+          <div class="card">
             <div class="ct" style="margin-bottom:10px">🔍 البحث والتصفية</div>
             <div class="grid3" style="margin-bottom:10px">
               <input id="teamSearch" placeholder="🔍 ابحث بالاسم أو الكود..." oninput="onSearchChange()">
@@ -143,12 +204,11 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="showAddTeacherForm()">➕ إضافة معلم</button>
-              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
           </div>
           
-          <!-- قائمة المعلمين -->
           <div id="teamList"></div>
         </div>
         
@@ -157,17 +217,15 @@
           <p class="psub">١) اختر المعلم ← ٢) المادة ← ٣) الصف والشعبة — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
           <div id="entBox"></div>
         </div>
-        
         <div id="tab-studs" hidden>
           <div class="ptitle"><span class="bar"></span>قوائم التلاميذ</div>
           <p class="psub">اختر الصف والشعبة ثم أدر القائمة: لصق، استيراد Excel، تعديل، حذف</p>
           <div id="studsBox"></div>
         </div>
-        
         <div id="tab-keys" hidden>
           <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">🛠️</div><h3>كلمة المطور</h3>
+            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">️</div><h3>كلمة المطور</h3>
               <label class="label">الحالية</label><input id="kDevCur" dir="ltr" readonly style="background:#F8FAFC">
               <label class="label">الجديدة</label><input id="kDevNew" dir="ltr" type="password">
               <button class="btn" style="background:#B45309" onclick="doChangeKey('DEV')">🔐 تغيير</button>
@@ -179,7 +237,6 @@
             </div>
           </div>
         </div>
-        
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
@@ -189,7 +246,7 @@
             </div>
             <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi">📤</div><h3>قالب معبأ بالدرجات</h3>
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
-              <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
+              <button class="btn ok" onclick="downloadTemplate(true)"> تنزيل معبأ</button>
             </div>
             <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
@@ -201,12 +258,11 @@
       </div>
     </div>
   </div>
-  
   <nav class="bnav">
     <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
-    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
+    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">️</span><small>إدخال</small></button>
     <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
   </nav>
 </section>
@@ -229,11 +285,11 @@
   <div class="modal" style="max-width:600px">
     <h3>➕ إضافة معلم جديد</h3>
     <div class="form-group">
-      <label class="label">اسم المعلم</label>
+      <label>اسم المعلم</label>
       <input id="ntName" placeholder="مثال: أحمد محمد">
     </div>
     <div class="form-group">
-      <label class="label">المواد والصفوف</label>
+      <label>المواد والصفوف</label>
       <div class="form-hint">الصيغة: <code>المادة:الصف1،الصف2 | المادة2:الصف3</code><br>مثال: <code>الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب</code></div>
       <textarea id="ntSubjectsData" rows="4" placeholder="الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب"></textarea>
     </div>
@@ -247,17 +303,17 @@
 <!-- نموذج تعديل معلم -->
 <div class="ovl" id="editModal">
   <div class="modal" style="max-width:600px">
-    <h3>✏️ تعديل معلم</h3>
+    <h3>️ تعديل معلم</h3>
     <div class="form-group">
-      <label class="label">الكود</label>
+      <label>الكود</label>
       <input id="edCode" readonly style="background:#F1F5F9; font-family:monospace; direction:ltr; text-align:center;">
     </div>
     <div class="form-group">
-      <label class="label">اسم المعلم</label>
+      <label>اسم المعلم</label>
       <input id="edName" placeholder="مثال: أحمد محمد">
     </div>
     <div class="form-group">
-      <label class="label">المواد والصفوف</label>
+      <label>المواد والصفوف</label>
       <div class="form-hint">الصيغة: <code>المادة:الصف1،الصف2 | المادة2:الصف3</code><br>مثال: <code>الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب</code></div>
       <textarea id="edSubjectsData" rows="4" placeholder="الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب"></textarea>
     </div>
