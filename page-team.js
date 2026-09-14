@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية ومصححة تماماً) ═══ */
+/* ══ page-team.js — صفحة المعلمين (نسخة نهائية ومصححة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 
@@ -89,7 +89,7 @@ function renderTeachers(){
       h += '<span class="chip" style="background:#FEE2E2;color:#DC2626">🔒 مقفل</span>';
       h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')">🔑 فتح</button>';
     }else{
-      h += '<span class="chip" style="background:#D1FAE5;color:#047857">🔓 مفتوح</span>';
+      h += '<span class="chip" style="background:#D1FAE5;color:#047857"> مفتوح</span>';
       h += '<button class="btn sm danger" onclick="toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
     }
     h += '</div></div>';
@@ -114,7 +114,7 @@ function renderTeachers(){
     h += '<div style="display:flex;gap:12px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #E2E8F0;font-size:12px;color:#64748B">';
     h += '<span>📊 آخر دخول: <b>'+last+'</b></span>';
     h += '<span>📝 درجات مرسلة: <b>'+arNum(t.sentCount||0)+'</b></span>';
-    h += '<span>🏫 عدد الصفوف: <b>'+arNum(cnt)+'</b></span>';
+    h += '<span> عدد الصفوف: <b>'+arNum(cnt)+'</b></span>';
     h += '<span>📘 عدد المواد: <b>'+arNum(t.subjects?t.subjects.length:0)+'</b></span>';
     h += '</div>';
     
@@ -200,59 +200,76 @@ function delT(code){
   },'حذف نهائي');
 }
 
-/* ═══ إضافة معلم جديد (النسخة النهائية المحسّنة) ═══ */
-function addNewTeacher(){
-  // 1. جلب العناصر مباشرة من الصفحة (تطابق HTML تماماً)
-  var n = $('#ntName');
-  var sub = $('#ntSubject');
-  var cls = $('#ntCls');
-  
-  if(!n || !sub || !cls){
-    toast('خطأ في تحميل عناصر الصفحة، يرجى عمل تحديث (F5)', 'err'); 
+/* ═══ إضافة معلم جديد (نسخة نهائية مضادة للأخطاء) ═══ */
+function addNewTeacher() {
+  // 1. جلب العناصر مباشرة من الصفحة
+  var nameEl = document.getElementById('ntName');
+  var subjectEl = document.getElementById('ntSubject');
+  var clsEl = document.getElementById('ntCls');
+
+  if (!nameEl || !subjectEl || !clsEl) {
+    alert('خطأ برمجي: لم يتم العثور على حقول الإدخال. يرجى تحديث الصفحة بالضغط على Ctrl + F5');
     return;
   }
+
+  // 2. استخراج القيم بطريقة ذكية
+  var name = String(nameEl.value || '').trim();
   
-  // 2. استخراج القيم وتنظيفها
-  var name = String(n.value || '').trim();
-  var subject = String(sub.value || '').trim();
-  var clsVal = String(cls.value || '').trim();
+  var subject = String(subjectEl.value || '').trim();
+  if (!subject && subjectEl.selectedIndex > 0) {
+    subject = String(subjectEl.options[subjectEl.selectedIndex].text || '').trim();
+  }
   
-  // 3. التحقق الدقيق مع توجيه المستخدم للحقل الناقص
-  if(!name){
+  var clsVal = String(clsEl.value || '').trim();
+  if (!clsVal && clsEl.selectedIndex > 0) {
+    clsVal = String(clsEl.options[clsEl.selectedIndex].text || '').trim();
+  }
+
+  // 3. طباعة القيم في Console للتشخيص
+  console.log('✅ القيم التي سيتم إرسالها:', { name: name, subject: subject, cls: clsVal });
+
+  // 4. التحقق الدقيق
+  if (!name) {
     toast('⚠️ يرجى كتابة اسم المعلم', 'err');
-    n.focus();
+    nameEl.focus();
     return;
   }
-  if(!subject || subject === 'اختر المادة'){
+  if (!subject || subject === 'اختر المادة') {
     toast('⚠️ يرجى اختيار المادة من القائمة', 'err');
-    sub.focus();
+    subjectEl.focus();
     return;
   }
-  if(!clsVal || clsVal === 'اختر الصف والشعبة'){
+  if (!clsVal || clsVal === 'اختر الصف والشعبة') {
     toast('⚠️ يرجى اختيار الصف والشعبة من القائمة', 'err');
-    cls.focus();
+    clsEl.focus();
     return;
   }
-  
-  // 4. إرسال الطلب
+
+  // 5. إرسال الطلب للخادم
   toast('⏳ جاري المعالجة...', '');
   
-  api({action:'addTeacher', key:key(), name:name, subject:subject, cls:clsVal}).then(function(r){
-    if(r.ok){
-      toast('✓ ' + (r.message || 'تمت الإضافة بنجاح، الكود: '+r.code), 'ok');
+  api({
+    action: 'addTeacher',
+    key: key(),
+    name: name,
+    subject: subject,
+    cls: clsVal
+  }).then(function(r) {
+    if (r.ok) {
+      toast('✓ ' + (r.message || 'تمت الإضافة بنجاح، الكود: ' + r.code), 'ok');
       
-      // ✅ السحر هنا: نمسح المادة والصف فقط، ونبقي الاسم مكتوباً
-      sub.value = '';
-      cls.value = '';
-      
-      // ✅ تحسين تجربة المستخدم: نضع المؤشر على حقل المادة لإضافة مادة أخرى فوراً
-      sub.focus();
+      // ✅ مسح المادة والصف فقط، والاحتفاظ بالاسم
+      subjectEl.value = '';
+      clsEl.value = '';
+      subjectEl.focus();
       
       loadTeachers();
     } else {
-      toast('❌ '+r.error,'err');
+      toast('❌ ' + (r.error || 'حدث خطأ من الخادم'), 'err');
+      console.error('❌ خطأ من الخادم:', r.error);
     }
-  }).catch(function(){
+  }).catch(function(e) {
+    console.error('❌ فشل الاتصال:', e);
     toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
