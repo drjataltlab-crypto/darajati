@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (محدث ومتوافق مع النماذج الجديدة) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (محدث ومصحح لإضافة متعددة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 
@@ -144,7 +144,6 @@ function toggleLock(code){
   },act);
 }
 
-/* ═══ تعديل معلم (محدث ليتوافق مع IDs الجديدة في HTML) ═══ */
 function editT(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -162,11 +161,11 @@ function editT(code){
   if(n) n.value = t.name;
   if(s) s.value = data;
   
-  var m = $('#editTeacherModal'); // تم تحديث الـ ID هنا
+  var m = $('#editTeacherModal');
   if(m) m.classList.add('show');
 }
 
-function saveEditedTeacher(){ // تم تحديث اسم الدالة ليتطابق مع onclick في HTML
+function saveEditedTeacher(){
   var c = $('#editTCode');
   var n = $('#editTName');
   var s = $('#editTSubjects');
@@ -201,7 +200,7 @@ function delT(code){
   },'حذف نهائي');
 }
 
-/* ═══ إضافة معلم جديد (محدث ليقرأ من الحقول الثلاثة المنفصلة) ═══ */
+/* ═══ إضافة معلم جديد (محدّث ومصحح) ═══ */
 function showAddTeacherForm(){
   var n = $('#ntName');
   var sub = $('#ntSubject');
@@ -215,30 +214,52 @@ function showAddTeacherForm(){
   if(m) m.classList.add('show');
 }
 
-function addNewTeacher(){ // تم تحديث اسم الدالة ليتطابق مع onclick في HTML
+function addNewTeacher(){
   var n = $('#ntName');
   var sub = $('#ntSubject');
   var cls = $('#ntCls');
   
-  if(!n || !sub || !cls){toast('خطأ في العناصر','err'); return;}
-  
-  var name = n.value.trim();
-  var subject = sub.value;
-  var clsVal = cls.value;
-  
-  if(!name || !subject || !clsVal){
-    toast('يرجى ملء جميع الحقول (الاسم، المادة، الصف والشعبة)','err');
+  if(!n || !sub || !cls){
+    toast('خطأ في العثور على حقول الإدخال', 'err'); 
     return;
   }
+  
+  var name = String(n.value || '').trim();
+  var subject = String(sub.value || '').trim();
+  var clsVal = String(cls.value || '').trim();
+  
+  // التحقق الدقيق من كل حقل على حدة
+  if(!name){
+    toast('يرجى كتابة اسم المعلم', 'err');
+    return;
+  }
+  if(!subject || subject === 'اختر المادة'){
+    toast('يرجى اختيار المادة من القائمة المنسدلة', 'err');
+    return;
+  }
+  if(!clsVal || clsVal === 'اختر الصف والشعبة'){
+    toast('يرجى اختيار الصف والشعبة من القائمة المنسدلة', 'err');
+    return;
+  }
+  
+  toast('⏳ جاري المعالجة...', '');
   
   api({action:'addTeacher', key:key(), name:name, subject:subject, cls:clsVal}).then(function(r){
     if(r.ok){
       toast('✓ ' + (r.message || 'تمت الإضافة بنجاح، الكود: '+r.code), 'ok');
-      hideModal('addTeacherModal');
+      
+      // ✅ تسهيل إضافة مواد أخرى لنفس المعلم: نمسح المادة والصف فقط ونبقي الاسم
+      sub.value = '';
+      cls.value = '';
+      
+      // لا نغلق النافذة تلقائياً لتمكين المستخدم من إضافة مادة أخرى فوراً
+      // إذا أراد الإغلاق، يمكنه النقر على "إلغاء" أو خارج النافذة
       loadTeachers();
     } else {
       toast('❌ '+r.error,'err');
     }
+  }).catch(function(){
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
 
