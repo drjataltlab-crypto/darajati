@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.3">
+<link rel="stylesheet" href="admin.css?v=3.4">
 
 <style>
 /* ═══ تنسيق زر الخروج الاحترافي ═══ */
@@ -123,15 +123,16 @@
           <div id="resBox"></div>
         </div>
 
-        <!-- ═══ المعلمون ═══ -->
+        <!-- ═══ المعلمون (مصحح تماماً) ═══ -->
         <div id="tab-team" hidden>
           <div class="ptitle"><span class="bar"></span>المعلمون</div>
 
           <div class="card">
             <div class="ct" style="margin-bottom:10px">➕ إضافة معلم أو مادة جديدة</div>
             <div class="grid3" style="margin-bottom:10px">
-              <input id="newTName" placeholder="اسم المعلم">
-              <select id="newTSubject">
+              <!-- ✅ تم توحيد الـ IDs هنا لتطابق الجافاسكربت تماماً -->
+              <input id="ntName" placeholder="اسم المعلم">
+              <select id="ntSubject">
                 <option value="">اختر المادة</option>
                 <option>التربية الإسلامية</option>
                 <option>اللغة العربية</option>
@@ -140,7 +141,7 @@
                 <option>العلوم</option>
                 <option>الاجتماعيات</option>
               </select>
-              <select id="newTCls">
+              <select id="ntCls">
                 <option value="">اختر الصف والشعبة</option>
                 <option>الخامس أ</option><option>الخامس ب</option><option>الخامس ج</option>
                 <option>السادس أ</option><option>السادس ب</option><option>السادس ج</option>
@@ -151,7 +152,7 @@
               <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
-            <div class="form-hint" style="margin-top:8px">💡 ملاحظة: إذا كان المعلم موجوداً مسبقاً، سيتم إضافة هذه المادة والصف إلى سجله تلقائياً. (مادتا الفنية والرياضة تُدخلان يدوياً من الإدارة فقط).</div>
+            <div class="form-hint" style="margin-top:8px">💡 ملاحظة: إذا كان المعلم موجوداً مسبقاً، سيتم إضافة هذه المادة والصف إلى سجله تلقائياً. اكتب الاسم مرة واحدة وأضف المواد تباعاً.</div>
           </div>
 
           <div id="teamList"></div>
@@ -231,42 +232,6 @@
   <div class="content" id="tvBox"></div>
 </section>
 
-<!-- ═══ نافذة إضافة معلم (محدثة بـ 3 حقول) ═══ -->
-<div class="ovl" id="addTeacherModal">
-  <div class="modal" style="max-width:500px">
-    <h3>➕ إضافة معلم أو مادة جديدة</h3>
-    <div class="form-group">
-      <label>اسم المعلم</label>
-      <input id="ntName" placeholder="مثال: أحمد محمد">
-    </div>
-    <div class="form-group">
-      <label>المادة</label>
-      <select id="ntSubject">
-        <option value="">اختر المادة</option>
-        <option>التربية الإسلامية</option>
-        <option>اللغة العربية</option>
-        <option>اللغة الانكليزية</option>
-        <option>الرياضيات</option>
-        <option>العلوم</option>
-        <option>الاجتماعيات</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>الصف والشعبة</label>
-      <select id="ntCls">
-        <option value="">اختر الصف والشعبة</option>
-        <option>الخامس أ</option><option>الخامس ب</option><option>الخامس ج</option>
-        <option>السادس أ</option><option>السادس ب</option><option>السادس ج</option>
-      </select>
-    </div>
-    <div class="form-hint" style="margin-bottom:16px">💡 إذا كان المعلم موجوداً، ستُضاف هذه المادة والصف إلى سجله تلقائياً.</div>
-    <div class="mrow">
-      <button class="btn ghost" style="margin:0" onclick="hideModal('addTeacherModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="saveNewTeacher()">➕ إضافة / تحديث</button>
-    </div>
-  </div>
-</div>
-
 <!-- ═══ نافذة تعديل معلم (للتعديل الشامل) ═══ -->
 <div class="ovl" id="editTeacherModal">
   <div class="modal" style="max-width:600px">
@@ -314,15 +279,16 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=3.3"></script>
-<script src="core.js?v=3.3"></script>
-<script src="page-dash.js?v=3.3"></script>
-<script src="page-results.js?v=3.3"></script>
-<script src="page-team.js?v=3.3"></script>
-<script src="page-entry.js?v=3.3"></script>
-<script src="page-students.js?v=3.3"></script>
-<script src="page-keys.js?v=3.3"></script>
-<script src="page-settings.js?v=3.3"></script>
+<!-- ✅ تم رفع الإصدار إلى 3.4 لضمان مسح الكاش -->
+<script src="config.js?v=3.4"></script>
+<script src="core.js?v=3.4"></script>
+<script src="page-dash.js?v=3.4"></script>
+<script src="page-results.js?v=3.4"></script>
+<script src="page-team.js?v=3.4"></script>
+<script src="page-entry.js?v=3.4"></script>
+<script src="page-students.js?v=3.4"></script>
+<script src="page-keys.js?v=3.4"></script>
+<script src="page-settings.js?v=3.4"></script>
 
 <script>
 if('serviceWorker' in navigator){
