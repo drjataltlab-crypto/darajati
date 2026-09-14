@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.2">
+<link rel="stylesheet" href="admin.css?v=3.3">
 
 <style>
-/* ══ تنسيق زر الخروج الاحترافي ═══ */
+/* ═══ تنسيق زر الخروج الاحترافي ═══ */
 .exit, .iconbtn.exit-btn {
   background: linear-gradient(135deg, #DC2626, #991B1B);
   color: #fff;
@@ -51,6 +51,7 @@
   width: 100%; padding: 10px;
   border: 1.5px solid #E2E8F0; border-radius: 10px;
   font-family: inherit; font-size: 14px; transition: 0.15s;
+  background: #fff;
 }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
   outline: none; border-color: #2563EB;
@@ -85,11 +86,11 @@
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
-        <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico"></span>كلمات المرور</button>
+        <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
       <div class="sfoot"><div class="rolecard" id="roleCard">
-        <div class="dot2" id="roleDot">️</div>
+        <div class="dot2" id="roleDot">🛠️</div>
         <div style="flex:1"><b id="roleLabel">المطور</b><small id="roleSub">صلاحيات كاملة</small></div>
         <button class="exit" onclick="logoutAdmin()" title="تسجيل الخروج">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -107,10 +108,10 @@
       </header>
       <div class="content">
 
-        <!-- ═══ نظرة عامة ══ -->
+        <!-- ═══ نظرة عامة ═══ -->
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>نظرة عامة</div>
-          <p class="psub"> فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
           <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
@@ -127,23 +128,30 @@
           <div class="ptitle"><span class="bar"></span>المعلمون</div>
 
           <div class="card">
-            <div class="ct" style="margin-bottom:10px">🔍 البحث والتصفية</div>
+            <div class="ct" style="margin-bottom:10px">➕ إضافة معلم أو مادة جديدة</div>
             <div class="grid3" style="margin-bottom:10px">
-              <input id="teamSearch" placeholder="🔍 ابحث بالاسم أو الكود..." oninput="onSearchChange()">
-              <select id="filterSubject" onchange="onFilterSubjectChange()">
-                <option value="">كل المواد</option>
+              <input id="newTName" placeholder="اسم المعلم">
+              <select id="newTSubject">
+                <option value="">اختر المادة</option>
+                <option>التربية الإسلامية</option>
+                <option>اللغة العربية</option>
+                <option>اللغة الانكليزية</option>
+                <option>الرياضيات</option>
+                <option>العلوم</option>
+                <option>الاجتماعيات</option>
               </select>
-              <select id="filterClass" onchange="onFilterClassChange()">
-                <option value="">كل الصفوف</option>
+              <select id="newTCls">
+                <option value="">اختر الصف والشعبة</option>
                 <option>الخامس أ</option><option>الخامس ب</option><option>الخامس ج</option>
                 <option>السادس أ</option><option>السادس ب</option><option>السادس ج</option>
               </select>
             </div>
             <div class="grid3">
-              <button class="btn ok" onclick="showAddTeacherForm()">➕ إضافة معلم</button>
+              <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
               <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
+            <div class="form-hint" style="margin-top:8px">💡 ملاحظة: إذا كان المعلم موجوداً مسبقاً، سيتم إضافة هذه المادة والصف إلى سجله تلقائياً. (مادتا الفنية والرياضة تُدخلان يدوياً من الإدارة فقط).</div>
           </div>
 
           <div id="teamList"></div>
@@ -152,7 +160,7 @@
         <!-- ═══ إدخال إداري ═══ -->
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة ← ٣) الصف والشعبة — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
+          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
           <div id="entBox"></div>
         </div>
 
@@ -163,7 +171,7 @@
           <div id="studsBox"></div>
         </div>
 
-        <!-- ═══ كلمات المرور ══ -->
+        <!-- ═══ كلمات المرور ═══ -->
         <div id="tab-keys" hidden>
           <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
           <div class="setgrid">
@@ -207,7 +215,7 @@
     <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
-    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">️</span><small>إدخال</small></button>
+    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
   </nav>
 </section>
@@ -223,46 +231,62 @@
   <div class="content" id="tvBox"></div>
 </section>
 
-<!-- ═══ نافذة إضافة معلم ══ -->
+<!-- ═══ نافذة إضافة معلم (محدثة بـ 3 حقول) ═══ -->
 <div class="ovl" id="addTeacherModal">
-  <div class="modal" style="max-width:600px">
-    <h3>➕ إضافة معلم جديد</h3>
+  <div class="modal" style="max-width:500px">
+    <h3>➕ إضافة معلم أو مادة جديدة</h3>
     <div class="form-group">
       <label>اسم المعلم</label>
       <input id="ntName" placeholder="مثال: أحمد محمد">
     </div>
     <div class="form-group">
-      <label>المواد والصفوف</label>
-      <div class="form-hint">الصيغة: <code>المادة:الصف1،الصف2 | المادة2:الصف3</code><br>مثال: <code>الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب</code></div>
-      <textarea id="ntSubjectsData" rows="4" placeholder="الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب"></textarea>
+      <label>المادة</label>
+      <select id="ntSubject">
+        <option value="">اختر المادة</option>
+        <option>التربية الإسلامية</option>
+        <option>اللغة العربية</option>
+        <option>اللغة الانكليزية</option>
+        <option>الرياضيات</option>
+        <option>العلوم</option>
+        <option>الاجتماعيات</option>
+      </select>
     </div>
-    <div class="mrow" style="margin-top:16px">
+    <div class="form-group">
+      <label>الصف والشعبة</label>
+      <select id="ntCls">
+        <option value="">اختر الصف والشعبة</option>
+        <option>الخامس أ</option><option>الخامس ب</option><option>الخامس ج</option>
+        <option>السادس أ</option><option>السادس ب</option><option>السادس ج</option>
+      </select>
+    </div>
+    <div class="form-hint" style="margin-bottom:16px">💡 إذا كان المعلم موجوداً، ستُضاف هذه المادة والصف إلى سجله تلقائياً.</div>
+    <div class="mrow">
       <button class="btn ghost" style="margin:0" onclick="hideModal('addTeacherModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="saveNewTeacher()">✨ إضافة المعلم</button>
+      <button class="btn ok" style="margin:0" onclick="saveNewTeacher()">➕ إضافة / تحديث</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ نافذة تعديل معلم ═══ -->
-<div class="ovl" id="editModal">
+<!-- ═══ نافذة تعديل معلم (للتعديل الشامل) ═══ -->
+<div class="ovl" id="editTeacherModal">
   <div class="modal" style="max-width:600px">
-    <h3>✏️ تعديل معلم</h3>
+    <h3>✏️ تعديل بيانات المعلم الشاملة</h3>
     <div class="form-group">
       <label>الكود</label>
-      <input id="edCode" readonly style="background:#F1F5F9; font-family:monospace; direction:ltr; text-align:center;">
+      <input id="editTCode" readonly style="background:#F1F5F9; font-family:monospace; direction:ltr; text-align:center;">
     </div>
     <div class="form-group">
       <label>اسم المعلم</label>
-      <input id="edName" placeholder="مثال: أحمد محمد">
+      <input id="editTName" placeholder="مثال: أحمد محمد">
     </div>
     <div class="form-group">
-      <label>المواد والصفوف</label>
-      <div class="form-hint">الصيغة: <code>المادة:الصف1،الصف2 | المادة2:الصف3</code><br>مثال: <code>الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب</code></div>
-      <textarea id="edSubjectsData" rows="4" placeholder="الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب"></textarea>
+      <label>المواد والصفوف (افصل بينها بـ | )</label>
+      <div class="form-hint">مثال: <code>الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب</code></div>
+      <textarea id="editTSubjects" rows="4" placeholder="الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب"></textarea>
     </div>
     <div class="mrow" style="margin-top:16px">
-      <button class="btn ghost" style="margin:0" onclick="hideModal('editModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="saveEditTeacher()">💾 حفظ التعديلات</button>
+      <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
+      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
     </div>
   </div>
 </div>
@@ -290,15 +314,15 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=3.2"></script>
-<script src="core.js?v=3.2"></script>
-<script src="page-dash.js?v=3.2"></script>
-<script src="page-results.js?v=3.2"></script>
-<script src="page-team.js?v=3.2"></script>
-<script src="page-entry.js?v=3.2"></script>
-<script src="page-students.js?v=3.2"></script>
-<script src="page-keys.js?v=3.2"></script>
-<script src="page-settings.js?v=3.2"></script>
+<script src="config.js?v=3.3"></script>
+<script src="core.js?v=3.3"></script>
+<script src="page-dash.js?v=3.3"></script>
+<script src="page-results.js?v=3.3"></script>
+<script src="page-team.js?v=3.3"></script>
+<script src="page-entry.js?v=3.3"></script>
+<script src="page-students.js?v=3.3"></script>
+<script src="page-keys.js?v=3.3"></script>
+<script src="page-settings.js?v=3.3"></script>
 
 <script>
 if('serviceWorker' in navigator){
