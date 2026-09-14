@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (محدث ومصحح لإضافة متعددة) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية ومصححة تماماً) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 
@@ -200,60 +200,54 @@ function delT(code){
   },'حذف نهائي');
 }
 
-/* ═══ إضافة معلم جديد (محدّث ومصحح) ═══ */
-function showAddTeacherForm(){
-  var n = $('#ntName');
-  var sub = $('#ntSubject');
-  var cls = $('#ntCls');
-  
-  if(n) n.value = '';
-  if(sub) sub.value = '';
-  if(cls) cls.value = '';
-  
-  var m = $('#addTeacherModal');
-  if(m) m.classList.add('show');
-}
-
+/* ═══ إضافة معلم جديد (النسخة النهائية المحسّنة) ═══ */
 function addNewTeacher(){
+  // 1. جلب العناصر مباشرة من الصفحة (تطابق HTML تماماً)
   var n = $('#ntName');
   var sub = $('#ntSubject');
   var cls = $('#ntCls');
   
   if(!n || !sub || !cls){
-    toast('خطأ في العثور على حقول الإدخال', 'err'); 
+    toast('خطأ في تحميل عناصر الصفحة، يرجى عمل تحديث (F5)', 'err'); 
     return;
   }
   
+  // 2. استخراج القيم وتنظيفها
   var name = String(n.value || '').trim();
   var subject = String(sub.value || '').trim();
   var clsVal = String(cls.value || '').trim();
   
-  // التحقق الدقيق من كل حقل على حدة
+  // 3. التحقق الدقيق مع توجيه المستخدم للحقل الناقص
   if(!name){
-    toast('يرجى كتابة اسم المعلم', 'err');
+    toast('⚠️ يرجى كتابة اسم المعلم', 'err');
+    n.focus();
     return;
   }
   if(!subject || subject === 'اختر المادة'){
-    toast('يرجى اختيار المادة من القائمة المنسدلة', 'err');
+    toast('⚠️ يرجى اختيار المادة من القائمة', 'err');
+    sub.focus();
     return;
   }
   if(!clsVal || clsVal === 'اختر الصف والشعبة'){
-    toast('يرجى اختيار الصف والشعبة من القائمة المنسدلة', 'err');
+    toast('⚠️ يرجى اختيار الصف والشعبة من القائمة', 'err');
+    cls.focus();
     return;
   }
   
+  // 4. إرسال الطلب
   toast('⏳ جاري المعالجة...', '');
   
   api({action:'addTeacher', key:key(), name:name, subject:subject, cls:clsVal}).then(function(r){
     if(r.ok){
       toast('✓ ' + (r.message || 'تمت الإضافة بنجاح، الكود: '+r.code), 'ok');
       
-      // ✅ تسهيل إضافة مواد أخرى لنفس المعلم: نمسح المادة والصف فقط ونبقي الاسم
+      // ✅ السحر هنا: نمسح المادة والصف فقط، ونبقي الاسم مكتوباً
       sub.value = '';
       cls.value = '';
       
-      // لا نغلق النافذة تلقائياً لتمكين المستخدم من إضافة مادة أخرى فوراً
-      // إذا أراد الإغلاق، يمكنه النقر على "إلغاء" أو خارج النافذة
+      // ✅ تحسين تجربة المستخدم: نضع المؤشر على حقل المادة لإضافة مادة أخرى فوراً
+      sub.focus();
+      
       loadTeachers();
     } else {
       toast('❌ '+r.error,'err');
