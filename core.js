@@ -137,15 +137,24 @@ function shareWa(code, name) {
 function api(p, ms) {
   var serverUrl = url();
   if (!serverUrl) return Promise.reject(new Error('no-url'));
+  
   var c = new AbortController();
   var t = setTimeout(function() { c.abort(); }, ms || 30000);
+  
   return fetch(serverUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    headers: { 
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
     body: JSON.stringify(p),
-    signal: c.signal
-  }).then(function(r) { return r.json(); })
-    .finally(function() { clearTimeout(t); });
+    signal: c.signal,
+    redirect: 'follow',  // ✅ إضافة مهمة للتعامل مع redirect
+    mode: 'cors'         // ✅ إضافة مهمة
+  }).then(function(r) { 
+    return r.json(); 
+  }).finally(function() { 
+    clearTimeout(t); 
+  });
 }
 
 function getStudyYear() {
