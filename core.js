@@ -1,4 +1,4 @@
-/* ═══ core.js — الأساس المشترك (نسخة نهائية مضمونة) ═══ */
+/* ═══ core.js — الأساس المشترك (نسخة نهائية مصححة) ═══ */
 
 window.addEventListener('error', function(e) {
   var d = document.getElementById('errbar');
@@ -9,8 +9,9 @@ window.addEventListener('error', function(e) {
 });
 
 // ═══ المتغيرات العامة ═══
+// ✅ تم إصلاح نقص الرقم ٣ هنا
 var SUBJECTS = ['التربية الإسلامية', 'اللغة العربية', 'اللغة الانكليزية', 'الرياضيات', 'الاجتماعيات', 'العلوم', 'الفنية', 'الرياضة'];
-var AR = '٠١٢٤٥٦٧٨٩';
+var AR = '٠١٢٣٤٥٦٧٨٩'; 
 
 var THEMES = {
   dash: ['#1D4ED8', '#DBEAFE'],
@@ -134,10 +135,11 @@ function shareWa(code, name) {
 }
 
 function api(p, ms) {
-  if (!url()) return Promise.reject(new Error('no-url'));
+  var serverUrl = url();
+  if (!serverUrl) return Promise.reject(new Error('no-url'));
   var c = new AbortController();
   var t = setTimeout(function() { c.abort(); }, ms || 30000);
-  return fetch(url(), {
+  return fetch(serverUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(p),
@@ -432,19 +434,30 @@ function printWin(html) {
 function adminLogin() {
   var k = $('#keyIn').value.trim();
   if (!k) { toast('أدخل كلمة المرور', 'err'); return; }
-  if (!url()) { toast('⚠️ رابط الخادم مفقود', 'err'); return; }
+  
+  var serverUrl = url();
+  if (!serverUrl) { toast('⚠️ رابط الخادم مفقود في config.js', 'err'); return; }
+  
   var btn = $('#loginBtn');
-  if (btn) { btn.disabled = true; btn.textContent = ' تحقق...'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ تحقق...'; }
+  
   api({ action: 'adminLogin', key: k }, 20000).then(function(r) {
     if (!r.ok) { toast('❌ ' + r.error, 'err'); return; }
     ROLE = r.role;
     localStorage.setItem('d_key', k);
     localStorage.setItem('d_admin', ROLE);
     enterAdmin();
-  }).catch(function() { toast('تعذر الاتصال بالخادم', 'err'); })
-    .finally(function() {
-      if (btn) { btn.disabled = false; btn.textContent = 'دخول'; }
-    });
+  }).catch(function(err) { 
+    // ✅ تم تحسين رسالة الخطأ لتظهر السبب الحقيقي
+    console.error('❌ فشل الاتصال بالخادم:', err); 
+    var msg = 'تعذر الاتصال بالخادم';
+    if (err.message === 'no-url') msg = 'رابط الخادم غير موجود في config.js';
+    else if (err.name === 'AbortError') msg = 'انتهت مهلة الاتصال (الخادم بطيء)';
+    else if (err.message.includes('Failed to fetch')) msg = 'فشل الاتصال: تحقق من الإنترنت أو أن المتصفح يحظر الطلب';
+    toast(msg, 'err'); 
+  }).finally(function() {
+    if (btn) { btn.disabled = false; btn.textContent = 'دخول'; }
+  });
 }
 
 function enterAdmin() {
@@ -474,7 +487,7 @@ function applyRole() {
   var rc = $('#roleCard');
   if (rc) {
     rc.className = 'rolecard ' + (dev ? 'dev' : 'mgr');
-    var dot = $('#roleDot'); if (dot) dot.textContent = dev ? '️' : '👔';
+    var dot = $('#roleDot'); if (dot) dot.textContent = dev ? '🛠️' : '👔';
     var lbl = $('#roleLabel'); if (lbl) lbl.textContent = dev ? 'المطور' : 'المدير';
     var sub = $('#roleSub'); if (sub) sub.textContent = dev ? 'صلاحيات كاملة' : 'عرض الدرجات';
   }
