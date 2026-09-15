@@ -3,4 +3,4 @@
    هذا الملف الوحيد الذي يحتوي الرابط،
    ولا تحتاج لمسه عند أي تحديث مستقبلًا.
 */
-var SERVER_URL = "https://script.google.com/macros/s/AKfycbxnbM-zPleuOiNNAuHSz5PWhJbUEJsl44KRCheqt_OF3oJ8yMx6rZsFuGYAJzQpsYii/exec";
+var SERVER_URL = "https://script.google.com/macros/s/AKfycbyIWcNHzf8Cb7HOUoZcSp3799mrsjFmvqvt0NWkcxxus6Y426ukgynD8VfPtyJqX6wToQ/exec";
