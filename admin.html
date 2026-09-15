@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.4">
+<link rel="stylesheet" href="admin.css?v=3.5">
 
 <style>
-/* ═ تنسيق زر الخروج الاحترافي ═ */
+/* ═══ تنسيق زر الخروج الاحترافي ═══ */
 .exit, .iconbtn.exit-btn {
   background: linear-gradient(135deg, #DC2626, #991B1B);
   color: #fff;
@@ -121,7 +121,7 @@
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
-        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico"></span>التلاميذ</button>
+        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
@@ -149,7 +149,7 @@
           <div class="ptitle"><span class="bar"></span>نظرة عامة</div>
           <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
-          <div class="card"><div class="ct"> كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
+          <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
 
         <!-- ═══ نتائج التلاميذ ═══ -->
@@ -159,10 +159,9 @@
           <div id="resBox"></div>
         </div>
 
-        <!-- ══ المعلمون ═══ -->
+        <!-- ═══ المعلمون ═══ -->
         <div id="tab-team" hidden>
           <div class="ptitle"><span class="bar"></span>المعلمون</div>
-
           <div class="card">
             <div class="ct" style="margin-bottom:10px">➕ إضافة معلم أو مادة جديدة</div>
             <div class="grid3" style="margin-bottom:10px">
@@ -187,16 +186,15 @@
               <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
-            <div class="form-hint" style="margin-top:8px">💡 ملاحظة: إذا كان المعلم موجوداً مسبقاً، سيتم إضافة هذه المادة والصف إلى سجله تلقائياً. اكتب الاسم مرة واحدة وأضف المواد تباعاً.</div>
+            <div class="form-hint" style="margin-top:8px">💡 ملاحظة: إذا كان المعلم موجوداً مسبقاً، سيتم إضافة هذه المادة والصف إلى سجله تلقائياً.</div>
           </div>
-
           <div id="teamList"></div>
         </div>
 
         <!-- ═══ إدخال إداري ═══ -->
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ) المادة والصف ← ٣) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
+          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
           <div id="entBox"></div>
         </div>
 
@@ -262,27 +260,24 @@
     <div><b id="tvName"></b><small id="tvSub"></small></div>
     <span class="grow"></span>
     <button class="iconbtn" onclick="showSummary(ADM.tv.code)">📊</button>
-    <button class="iconbtn" onclick="printTView()">️</button>
+    <button class="iconbtn" onclick="printTView()">🖨️</button>
   </header>
   <div class="content" id="tvBox"></div>
 </section>
 
-<!-- ═══ نافذة تعديل معلم (محدّثة - قوائم منسدلة ديناميكية) ══ -->
+<!-- ═══ نافذة تعديل معلم (محدّثة - قوائم منسدلة ديناميكية) ═══ -->
 <div class="ovl" id="editTeacherModal">
   <div class="modal" style="max-width:700px">
     <h3>✏️ تعديل بيانات المعلم</h3>
-    
     <div class="form-group">
       <label>اسم المعلم</label>
       <input id="editTName" placeholder="مثال: أحمد محمد">
     </div>
-    
     <div class="form-group">
       <label>رمز الدخول (الكود)</label>
       <input id="editTCode" style="font-family:monospace; direction:ltr; text-align:center; font-weight:700; letter-spacing:2px;">
       <div class="form-hint">⚠️ يمكن تعديل الكود - تأكد من عدم استخدامه من قبل معلم آخر</div>
     </div>
-    
     <div class="form-group">
       <label>المواد والصفوف</label>
       <div id="editSubjectsContainer" style="background:#F8FAFC; padding:12px; border-radius:10px; border:1px solid #E2E8F0;">
@@ -291,11 +286,49 @@
       <button class="btn" style="margin-top:10px; width:100%; background:#0891B2;" onclick="addEditSubjectRow()">➕ إضافة مادة وصف آخر</button>
       <div class="form-hint" style="margin-top:6px">💡 يمكنك إضافة أكثر من مادة وصف. كل صف يحتوي على مادة وصف واحد.</div>
     </div>
-    
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
       <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
     </div>
+  </div>
+</div>
+
+<!-- ═══ نافذة كشف المعلم التفاعلي ═══ -->
+<div class="ovl" id="teacherRecordModal">
+  <div class="modal" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
+      <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
+      <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:5px 10px;">✕ إغلاق</button>
+    </div>
+    <div id="trSubjectsList" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
+    <div id="trTableContainer" style="display:none;">
+      <h4 id="trSubjectTitle" style="color:#047857; margin-bottom:10px;"></h4>
+      <div style="overflow-x:auto;">
+        <table class="pt" style="width:100%; border-collapse:collapse; border:2px solid #0F172A;">
+          <thead>
+            <tr style="background:#1E40AF; color:#fff;">
+              <th style="padding:8px; border:1px solid #0F172A;">الصف والشعبة</th>
+              <th style="padding:8px; border:1px solid #0F172A;">ت</th>
+              <th style="padding:8px; border:1px solid #0F172A;">اسم التلميذ</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">ك١</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#0E7490;">آذار</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#0E7490;">نيسان</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">نصف السنة</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">السعي السنوي</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#1E40AF;">نهاية السنة</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
+            </tr>
+          </thead>
+          <tbody id="trTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="trLoading" class="empty" style="display:none;">⏳ جاري تحميل البيانات...</div>
+    <div id="trEmpty" class="empty" style="display:none;">لا توجد مواد مسجلة لهذا المعلم.</div>
   </div>
 </div>
 
@@ -311,7 +344,7 @@
   </div>
 </div>
 
-<!-- ══ نافذة ملخص النتائج ═══ -->
+<!-- ═══ نافذة ملخص النتائج ═══ -->
 <div class="ovl" id="sumModal">
   <div class="modal">
     <h3>📊 ملخص النتائج</h3>
@@ -322,16 +355,15 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ✅ تم رفع الإصدار إلى 3.4 لضمان مسح الكاش -->
-<script src="config.js?v=3.4"></script>
-<script src="core.js?v=3.4"></script>
-<script src="page-dash.js?v=3.4"></script>
-<script src="page-results.js?v=3.4"></script>
-<script src="page-team.js?v=3.4"></script>
-<script src="page-entry.js?v=3.4"></script>
-<script src="page-students.js?v=3.4"></script>
-<script src="page-keys.js?v=3.4"></script>
-<script src="page-settings.js?v=3.4"></script>
+<script src="config.js?v=3.5"></script>
+<script src="core.js?v=3.5"></script>
+<script src="page-dash.js?v=3.5"></script>
+<script src="page-results.js?v=3.5"></script>
+<script src="page-team.js?v=3.5"></script>
+<script src="page-entry.js?v=3.5"></script>
+<script src="page-students.js?v=3.5"></script>
+<script src="page-keys.js?v=3.5"></script>
+<script src="page-settings.js?v=3.5"></script>
 
 <script>
 if('serviceWorker' in navigator){
