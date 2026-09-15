@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="admin.css?v=3.4">
 
 <style>
-/* ══ تنسيق زر الخروج الاحترافي ══ */
+/* ═══ تنسيق زر الخروج الاحترافي ═══ */
 .exit, .iconbtn.exit-btn {
   background: linear-gradient(135deg, #DC2626, #991B1B);
   color: #fff;
@@ -82,7 +82,7 @@
       <div class="brand"><img src="icon.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">📊</span>نظرة عامة</button>
-        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico"></span>نتائج التلاميذ</button>
+        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
@@ -90,7 +90,7 @@
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
       <div class="sfoot"><div class="rolecard" id="roleCard">
-        <div class="dot2" id="roleDot">️</div>
+        <div class="dot2" id="roleDot">🛠️</div>
         <div style="flex:1"><b id="roleLabel">المطور</b><small id="roleSub">صلاحيات كاملة</small></div>
         <button class="exit" onclick="logoutAdmin()" title="تسجيل الخروج">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -149,8 +149,8 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
-              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()"> تصدير Excel</button>
+              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
             <div class="form-hint" style="margin-top:8px">💡 ملاحظة: إذا كان المعلم موجوداً مسبقاً، سيتم إضافة هذه المادة والصف إلى سجله تلقائياً. اكتب الاسم مرة واحدة وأضف المواد تباعاً.</div>
           </div>
@@ -161,7 +161,7 @@
         <!-- ═══ إدخال إداري ═══ -->
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
+          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
           <div id="entBox"></div>
         </div>
 
@@ -172,11 +172,11 @@
           <div id="studsBox"></div>
         </div>
 
-        <!-- ═══ كلمات المرور ══ -->
+        <!-- ═══ كلمات المرور ═══ -->
         <div id="tab-keys" hidden>
           <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">️</div><h3>كلمة المطور</h3>
+            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">🛠️</div><h3>كلمة المطور</h3>
               <label class="label">الحالية</label><input id="kDevCur" dir="ltr" readonly style="background:#F8FAFC">
               <label class="label">الجديدة</label><input id="kDevNew" dir="ltr" type="password">
               <button class="btn" style="background:#B45309" onclick="doChangeKey('DEV')">🔐 تغيير</button>
@@ -203,7 +203,7 @@
             </div>
             <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
-              <button class="btn" style="background:#475569" onclick="saveSettings()"> حفظ واختبار</button>
+              <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
               <div id="connRes"></div>
             </div>
           </div>
@@ -214,7 +214,7 @@
   </div>
   <nav class="bnav">
     <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>
-    <button data-tab="res" onclick="adminTab('res')"><span class="ico"></span><small>النتائج</small></button>
+    <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
