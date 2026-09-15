@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="admin.css?v=3.4">
 
 <style>
-/* ═══ تنسيق زر الخروج الاحترافي ═══ */
+/* ═ تنسيق زر الخروج الاحترافي ═ */
 .exit, .iconbtn.exit-btn {
   background: linear-gradient(135deg, #DC2626, #991B1B);
   color: #fff;
@@ -63,6 +63,42 @@
   background: #F1F5F9; padding: 2px 6px;
   border-radius: 4px; font-size: 11px; font-family: monospace;
 }
+
+/* ═══ تنسيق صفوف المواد في نافذة التعديل ═══ */
+.edit-subject-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+.edit-subject-row .row-num {
+  font-weight: 700;
+  color: #475569;
+  min-width: 25px;
+}
+.edit-subject-row select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-family: inherit;
+}
+.edit-subject-row .remove-btn {
+  width: auto;
+  padding: 6px 10px;
+  background: #DC2626;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.edit-subject-row .remove-btn:hover {
+  background: #B91C1C;
+}
 </style>
 </head>
 <body>
@@ -85,7 +121,7 @@
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
-        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
+        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico"></span>التلاميذ</button>
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
@@ -113,7 +149,7 @@
           <div class="ptitle"><span class="bar"></span>نظرة عامة</div>
           <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
-          <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
+          <div class="card"><div class="ct"> كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
 
         <!-- ═══ نتائج التلاميذ ═══ -->
@@ -123,14 +159,13 @@
           <div id="resBox"></div>
         </div>
 
-        <!-- ═══ المعلمون (مصحح تماماً) ═══ -->
+        <!-- ══ المعلمون ═══ -->
         <div id="tab-team" hidden>
           <div class="ptitle"><span class="bar"></span>المعلمون</div>
 
           <div class="card">
             <div class="ct" style="margin-bottom:10px">➕ إضافة معلم أو مادة جديدة</div>
             <div class="grid3" style="margin-bottom:10px">
-              <!-- ✅ تم توحيد الـ IDs هنا لتطابق الجافاسكربت تماماً -->
               <input id="ntName" placeholder="اسم المعلم">
               <select id="ntSubject">
                 <option value="">اختر المادة</option>
@@ -161,7 +196,7 @@
         <!-- ═══ إدخال إداري ═══ -->
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
+          <p class="psub">١) اختر المعلم ← ) المادة والصف ← ٣) أدخل الدرجات — المعدلات والسعي والنهاية تُحسب تلقائيًا</p>
           <div id="entBox"></div>
         </div>
 
@@ -227,28 +262,36 @@
     <div><b id="tvName"></b><small id="tvSub"></small></div>
     <span class="grow"></span>
     <button class="iconbtn" onclick="showSummary(ADM.tv.code)">📊</button>
-    <button class="iconbtn" onclick="printTView()">🖨️</button>
+    <button class="iconbtn" onclick="printTView()">️</button>
   </header>
   <div class="content" id="tvBox"></div>
 </section>
 
-<!-- ═══ نافذة تعديل معلم (للتعديل الشامل) ═══ -->
+<!-- ═══ نافذة تعديل معلم (محدّثة - قوائم منسدلة ديناميكية) ══ -->
 <div class="ovl" id="editTeacherModal">
-  <div class="modal" style="max-width:600px">
-    <h3>✏️ تعديل بيانات المعلم الشاملة</h3>
-    <div class="form-group">
-      <label>الكود</label>
-      <input id="editTCode" readonly style="background:#F1F5F9; font-family:monospace; direction:ltr; text-align:center;">
-    </div>
+  <div class="modal" style="max-width:700px">
+    <h3>✏️ تعديل بيانات المعلم</h3>
+    
     <div class="form-group">
       <label>اسم المعلم</label>
       <input id="editTName" placeholder="مثال: أحمد محمد">
     </div>
+    
     <div class="form-group">
-      <label>المواد والصفوف (افصل بينها بـ | )</label>
-      <div class="form-hint">مثال: <code>الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب</code></div>
-      <textarea id="editTSubjects" rows="4" placeholder="الرياضيات:الخامس أ،السادس ب | العلوم:الخامس ب"></textarea>
+      <label>رمز الدخول (الكود)</label>
+      <input id="editTCode" style="font-family:monospace; direction:ltr; text-align:center; font-weight:700; letter-spacing:2px;">
+      <div class="form-hint">⚠️ يمكن تعديل الكود - تأكد من عدم استخدامه من قبل معلم آخر</div>
     </div>
+    
+    <div class="form-group">
+      <label>المواد والصفوف</label>
+      <div id="editSubjectsContainer" style="background:#F8FAFC; padding:12px; border-radius:10px; border:1px solid #E2E8F0;">
+        <!-- سيتم إضافة الصفوف هنا ديناميكياً -->
+      </div>
+      <button class="btn" style="margin-top:10px; width:100%; background:#0891B2;" onclick="addEditSubjectRow()">➕ إضافة مادة وصف آخر</button>
+      <div class="form-hint" style="margin-top:6px">💡 يمكنك إضافة أكثر من مادة وصف. كل صف يحتوي على مادة وصف واحد.</div>
+    </div>
+    
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
       <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
@@ -268,7 +311,7 @@
   </div>
 </div>
 
-<!-- ═══ نافذة ملخص النتائج ═══ -->
+<!-- ══ نافذة ملخص النتائج ═══ -->
 <div class="ovl" id="sumModal">
   <div class="modal">
     <h3>📊 ملخص النتائج</h3>
