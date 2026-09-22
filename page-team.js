@@ -1,4 +1,4 @@
-/* ══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة ومصححة) ══ */
+/* ══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -14,7 +14,7 @@ registerPage('team', {
 function loadTeachers() {
   var el = $('#teamList');
   if (!el) return;
-  el.innerHTML = '<div class="empty">⏳ جاري تحميل بيانات المعلمين...</div>';
+  el.innerHTML = '<div class="empty"> جاري تحميل بيانات المعلمين...</div>';
   
   api({action:'adminData', key:key()}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
@@ -57,14 +57,14 @@ function renderTeachers(){
     h += '<div style="flex:1">';
     h += '<div style="font-size:18px;font-weight:900;color:#0F172A;margin-bottom:4px">'+esc(t.name)+'</div>';
     h += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-    h += '<span class="chip" style="background:#F1F5F9;color:#475569;font-weight:700;font-family:monospace">🔑 '+esc(t.code)+'</span>';
-    h += '<button class="btn sm" onclick="copyText(\''+escA(t.code)+'\')">📋 نسخ</button>';
+    h += '<span class="chip" style="background:#F1F5F9;color:#475569;font-weight:700;font-family:monospace"> '+esc(t.code)+'</span>';
+    h += '<button class="btn sm" onclick="copyText(\''+escA(t.code)+'\')"> نسخ</button>';
     h += '<button class="btn sm" style="background:#25D366;color:#fff" onclick="sendWA(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 واتساب</button>';
     h += '</div></div>';
     h += '<div style="display:flex;gap:6px;align-items:center">';
     if(t.locked){
       h += '<span class="chip" style="background:#FEE2E2;color:#DC2626">🔒 مقفل</span>';
-      h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')"> فتح</button>';
+      h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
     }else{
       h += '<span class="chip" style="background:#D1FAE5;color:#047857">🔓 مفتوح</span>';
       h += '<button class="btn sm danger" onclick="toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
@@ -80,7 +80,7 @@ function renderTeachers(){
           h += '<div style="display:flex;gap:6px;flex-wrap:wrap;padding-right:10px;">';
           s.classes.forEach(function(c){
             h += '<div style="display:flex;align-items:center;gap:4px;background:#EFF6FF;color:#1E40AF;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;border:1px solid #BFDBFE;">';
-            h += '<span>🏫 '+esc(c)+'</span>';
+            h += '<span> '+esc(c)+'</span>';
             h += '<button class="btn sm danger" style="width:auto;padding:2px 6px;font-size:10px;margin-left:4px;" onclick="removeSpecificClass(\''+escA(t.code)+'\',\''+escA(s.name)+'\',\''+escA(c)+'\')" title="حذف هذه الشعبة فقط">✕</button>';
             h += '</div>';
           });
@@ -109,7 +109,7 @@ function renderTeachers(){
 }
 
 function sendWA(code,name){
-  var msg='مرحباً '+name+' 👋\n\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.';
+  var msg='مرحباً '+name+' \n\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
@@ -129,7 +129,7 @@ function removeSpecificClass(code, subject, cls){
   confirmDlg('حذف الشعبة "'+cls+'" من مادة "'+subject+'" فقط؟', function(){
     api({action:'removeTeacherClass', key:key(), code:code, subject:subject, cls:cls}).then(function(r){
       if(r.ok){ toast('✓ '+r.message, 'ok'); loadTeachers(); }
-      else{ toast(' '+r.error, 'err'); }
+      else{ toast('❌ '+r.error, 'err'); }
     });
   }, 'حذف الشعبة');
 }
@@ -294,7 +294,7 @@ function addNewTeacher(){
   var subject = String(subjectEl.value || '').trim();
   var clsVal = String(clsEl.value || '').trim();
   
-  if(!name){ toast('⚠️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
+  if(!name){ toast('️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
   if(!subject){ toast('⚠️ اختر المادة', 'err'); subjectEl.focus(); return; }
   if(!clsVal){ toast('⚠️ اختر الصف', 'err'); clsEl.focus(); return; }
   
@@ -316,7 +316,7 @@ function addNewTeacher(){
   });
 }
 
-/* ══ كشف المعلم التفاعلي (مصحح مع إضافة code) ═══ */
+/* ═══ كشف المعلم التفاعلي (مصحح مع إضافة code) ═══ */
 function openTeacherRecord(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -364,11 +364,10 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
     }
     
     var allGrades = r.rows || [];
-    console.log('📊 Total grades loaded:', allGrades.length);
+    console.log(' Total grades loaded:', allGrades.length);
     
-    // تصفية الدرجات لهذه المادة فقط
     var subjectGrades = allGrades.filter(function(g){ return g.subject === subjectName; });
-    console.log(' Subject grades:', subjectGrades.length);
+    console.log('📊 Subject grades:', subjectGrades.length);
     
     if(!classes || classes.length === 0){
       $('#trLoading').style.display = 'none';
@@ -377,17 +376,18 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
       return;
     }
     
-    // 2. جمع بيانات التلاميذ - مع إضافة code المعلم
     var allStudentData = [];
     var completedRequests = 0;
+    var totalFetched = 0;
     
     classes.forEach(function(cls){
-      console.log('📚 Fetching students for class:', cls);
+      console.log(' Fetching students for class:', cls);
       
-      // ✅ التعديل المهم: إضافة code المعلم في الطلب
       api({action:'getStudents', key:key(), code:code, cls:cls}).then(function(sr){
         completedRequests++;
-        console.log('✅ Got students for', cls, ':', sr.names ? sr.names.length : 0);
+        var count = sr.names ? sr.names.length : 0;
+        totalFetched += count;
+        console.log('✅ Got students for', cls, ':', count);
         console.log('📋 Response:', sr);
         
         if(sr.ok && sr.names && sr.names.length > 0){
@@ -395,7 +395,6 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
           var section = sr.section || cls.split(' ')[1] || '';
           
           sr.names.forEach(function(studentName){
-            // البحث عن درجات هذا التلميذ
             var gradeRow = subjectGrades.find(function(g){
               return g.name === studentName && 
                      String(g.grade) === String(grade) && 
@@ -411,16 +410,40 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
           });
         }
         
-        // إذا انتهت جميع الطلبات، اعرض الجدول
         if(completedRequests === classes.length){
-          console.log('✅ All requests completed. Total students:', allStudentData.length);
-          renderTeacherRecordTable(subjectName, allStudentData);
+          console.log('✅ All requests completed. Total students:', totalFetched);
+          
+          if(totalFetched === 0){
+            // عرض رسالة واضحة مع توجيه المستخدم
+            $('#trLoading').style.display = 'none';
+            $('#trTableContainer').style.display = 'block';
+            $('#trTableBody').innerHTML = 
+              '<tr><td colspan="14" style="text-align:center;padding:30px;">' +
+              '<div style="font-size:48px;margin-bottom:10px;">📭</div>' +
+              '<div style="font-size:16px;font-weight:800;color:#DC2626;margin-bottom:8px;">لا توجد أسماء تلاميذ مسجلة</div>' +
+              '<div style="font-size:13px;color:#64748B;margin-bottom:15px;">لم يتم العثور على تلاميذ في ورقة "التلاميذ" أو "الدرجات" لهذه الصفوف.</div>' +
+              '<div style="font-size:13px;color:#1E40AF;background:#EFF6FF;padding:12px;border-radius:8px;border:1px solid #BFDBFE;">' +
+              '<b>💡 الحل:</b> اذهب إلى صفحة <b>"التلاميذ"</b> وأضف أسماء التلاميذ للصفوف المطلوبة، ثم عد إلى هنا.' +
+              '</div></td></tr>';
+          } else {
+            renderTeacherRecordTable(subjectName, allStudentData);
+          }
         }
       }).catch(function(err){
         console.error('❌ Error fetching students for', cls, ':', err);
         completedRequests++;
         if(completedRequests === classes.length){
-          renderTeacherRecordTable(subjectName, allStudentData);
+          if(totalFetched === 0){
+            $('#trLoading').style.display = 'none';
+            $('#trTableContainer').style.display = 'block';
+            $('#trTableBody').innerHTML = 
+              '<tr><td colspan="14" style="text-align:center;padding:30px;">' +
+              '<div style="font-size:48px;margin-bottom:10px;">⚠️</div>' +
+              '<div style="font-size:16px;font-weight:800;color:#DC2626;margin-bottom:8px;">حدث خطأ في جلب البيانات</div>' +
+              '<div style="font-size:13px;color:#64748B;">' + err.message + '</div></td></tr>';
+          } else {
+            renderTeacherRecordTable(subjectName, allStudentData);
+          }
         }
       });
     });
@@ -436,14 +459,13 @@ function renderTeacherRecordTable(subjectName, studentData){
   $('#trLoading').style.display = 'none';
   $('#trTableContainer').style.display = 'block';
   
-  console.log(' Rendering table with', studentData.length, 'students');
+  console.log('🎨 Rendering table with', studentData.length, 'students');
   
   if(studentData.length === 0){
     $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;color:#64748B;">📭 لا توجد بيانات تلاميذ.</td></tr>';
     return;
   }
   
-  // تجميع حسب الصف والشعبة
   var byClass = {};
   studentData.forEach(function(s){
     var clsKey = (s.grade || '') + ' ' + (s.section || '');
@@ -558,7 +580,7 @@ function exportTeacherExcel(code){
     
   }).catch(function(err){
     console.error('Export error:', err);
-    toast('️ تعذر تجهيز الملف', 'err');
+    toast('⚠️ تعذر تجهيز الملف', 'err');
   });
 }
 
@@ -576,7 +598,7 @@ function printTeachersList(){
     h+='<tr><td style="padding:8px;border:1px solid #0F172A;text-align:center">'+esc(t.code)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A">'+esc(t.name)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A;font-size:11px">'+esc(sub)+'</td>';
-    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':'🔓 مفتوح')+'</td></tr>';
+    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':' مفتوح')+'</td></tr>';
   });
   h+='</tbody></table></div>';
   printWin(h);
