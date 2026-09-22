@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة) ══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -20,9 +20,10 @@ function loadTeachers() {
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
     TEAM.teachers = r.teachers || [];
     applyFilters();
-  }).catch(function(){
+  }).catch(function(err){
+    console.error('Load teachers error:', err);
     toast('تعذر الاتصال', 'err');
-    el.innerHTML = '<div class="empty">⚠️ تعذر الاتصال بالخادم</div>';
+    if(el) el.innerHTML = '<div class="empty">⚠️ تعذر الاتصال بالخادم</div>';
   });
 }
 
@@ -30,7 +31,7 @@ function applyFilters(){
   TEAM.filtered = TEAM.teachers.filter(function(t){
     var s1 = !TEAM.search || t.name.indexOf(TEAM.search)!==-1 || t.code.indexOf(TEAM.search)!==-1;
     var s2 = !TEAM.filterSubject || (t.subjects && t.subjects.some(function(x){return x.name===TEAM.filterSubject;}));
-    var s3 = !TEAM.filterClass || (t.subjects && t.subjects.some(function(x){return x.classes.indexOf(TEAM.filterClass)!==-1;}));
+    var s3 = !TEAM.filterClass || (t.subjects && t.subjects.some(function(x){return x.classes && x.classes.indexOf(TEAM.filterClass)!==-1;}));
     return s1 && s2 && s3;
   });
   renderTeachers();
@@ -65,7 +66,7 @@ function renderTeachers(){
       h += '<span class="chip" style="background:#FEE2E2;color:#DC2626">🔒 مقفل</span>';
       h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
     }else{
-      h += '<span class="chip" style="background:#D1FAE5;color:#047857"> مفتوح</span>';
+      h += '<span class="chip" style="background:#D1FAE5;color:#047857">🔓 مفتوح</span>';
       h += '<button class="btn sm danger" onclick="toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
     }
     h += '</div></div>';
@@ -92,7 +93,7 @@ function renderTeachers(){
     
     h += '<div style="display:flex;gap:12px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #E2E8F0;font-size:12px;color:#64748B">';
     h += '<span>📊 آخر دخول: <b>'+last+'</b></span>';
-    h += '<span> درجات مرسلة: <b>'+arNum(t.sentCount||0)+'</b></span>';
+    h += '<span>📝 درجات مرسلة: <b>'+arNum(t.sentCount||0)+'</b></span>';
     h += '<span>🏫 عدد الشعب: <b>'+arNum(cnt)+'</b></span>';
     h += '<span>📘 عدد المواد: <b>'+arNum(t.subjects?t.subjects.length:0)+'</b></span>';
     h += '</div>';
@@ -100,7 +101,7 @@ function renderTeachers(){
     h += '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">';
     h += '<button class="btn sm" style="background:#7C3AED;color:#fff" onclick="editT(\''+escA(t.code)+'\')">✏️ تعديل شامل</button>';
     h += '<button class="btn sm" style="background:#0891B2;color:#fff" onclick="openTeacherRecord(\''+escA(t.code)+'\')">📊 كشف المعلم</button>';
-    h += '<button class="btn sm" style="background:#059669;color:#fff" onclick="exportTeacherExcel(\''+escA(t.code)+'\')">📥 Excel</button>';
+    h += '<button class="btn sm" style="background:#059669;color:#fff" onclick="exportTeacherExcel(\''+escA(t.code)+'\')"> Excel</button>';
     h += '<button class="btn sm danger" onclick="delT(\''+escA(t.code)+'\')">🗑 حذف المعلم</button>';
     h += '</div></div>';
   });
@@ -242,11 +243,15 @@ function saveEditedTeacher(){
   
   toast('⏳ جاري الحفظ...', '');
   
+  var oldCode = '';
+  var existingTeacher = TEAM.teachers.find(function(t){ return t.name === name; });
+  if(existingTeacher) oldCode = existingTeacher.code;
+  
   api({
     action: 'updateTeacherFull',
     key: key(),
     code: newCode,
-    oldCode: TEAM.teachers.find(function(t){ return t.name === name; }) ? TEAM.teachers.find(function(t){ return t.name === name; }).code : '',
+    oldCode: oldCode,
     name: name,
     subjectsData: subjectsData
   }).then(function(r){
@@ -257,8 +262,9 @@ function saveEditedTeacher(){
     } else {
       toast('❌ '+r.error, 'err');
     }
-  }).catch(function(){
-    toast('️ تعذر الاتصال', 'err');
+  }).catch(function(err){
+    console.error('Save error:', err);
+    toast('⚠️ تعذر الاتصال', 'err');
   });
 }
 
@@ -273,7 +279,7 @@ function delT(code){
   },'حذف نهائي');
 }
 
-/* ═══ إضافة معلم جديد ═══ */
+/* ══ إضافة معلم جديد ═══ */
 function addNewTeacher(){
   var nameEl = document.getElementById('ntName');
   var subjectEl = document.getElementById('ntSubject');
@@ -304,12 +310,13 @@ function addNewTeacher(){
     } else {
       toast('❌ '+(r.error||'خطأ'), 'err');
     }
-  }).catch(function(){
+  }).catch(function(err){
+    console.error('Add teacher error:', err);
     toast('⚠️ تعذر الاتصال', 'err');
   });
 }
 
-/* ═══ كشف المعلم التفاعلي ═══ */
+/* ═══ كشف المعلم التفاعلي (مصحح) ══ */
 function openTeacherRecord(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -317,20 +324,21 @@ function openTeacherRecord(code){
   $('#trTeacherName').textContent = t.name;
   $('#trTableContainer').style.display = 'none';
   $('#trEmpty').style.display = 'none';
-  
-  var listEl = $('#trSubjectsList');
-  listEl.innerHTML = '';
+  $('#trSubjectsList').innerHTML = '';
   
   if(!t.subjects || t.subjects.length === 0){
     $('#trEmpty').style.display = 'block';
+    $('#trEmpty').textContent = 'لا توجد مواد مسجلة لهذا المعلم.';
   } else {
     t.subjects.forEach(function(s){
       var btn = document.createElement('button');
       btn.className = 'btn';
       btn.style.cssText = 'width:auto; flex:1; min-width:120px; background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE;';
       btn.textContent = '📘 ' + s.name;
-      btn.onclick = function(){ showSubjectRecord(code, s.name, t.name, s.classes); };
-      listEl.appendChild(btn);
+      btn.onclick = function(){ 
+        showSubjectRecord(code, s.name, t.name, s.classes || []); 
+      };
+      $('#trSubjectsList').appendChild(btn);
     });
   }
   
@@ -341,65 +349,83 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
   $('#trTableContainer').style.display = 'none';
   $('#trLoading').style.display = 'block';
   $('#trSubjectTitle').textContent = '📘 ' + subjectName;
+  $('#trTableBody').innerHTML = '';
+  
+  console.log('📊 Loading subject:', subjectName, 'Classes:', classes);
   
   // جلب درجات المعلم
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
     if(!r.ok){
       $('#trLoading').style.display = 'none';
       toast('❌ '+r.error, 'err');
+      console.error('Error loading grades:', r.error);
       return;
     }
     
-    CURRENT_TEACHER_GRADES = r.rows || [];
+    var allGrades = r.rows || [];
+    console.log('📊 Total grades loaded:', allGrades.length);
     
-    // جلب أسماء التلاميذ لكل صف/شعبة
-    var allStudentData = [];
-    var pendingRequests = 0;
-    var completedRequests = 0;
+    // تصفية الدرجات لهذه المادة فقط
+    var subjectGrades = allGrades.filter(function(g){ return g.subject === subjectName; });
+    console.log('📊 Subject grades:', subjectGrades.length);
     
-    if(classes && classes.length > 0){
-      pendingRequests = classes.length;
-      
-      classes.forEach(function(cls){
-        api({action:'getStudents', key:key(), code:code, cls:cls}).then(function(sr){
-          completedRequests++;
-          if(sr.ok && sr.names && sr.names.length > 0){
-            var grade = sr.grade || '';
-            var section = sr.section || '';
-            sr.names.forEach(function(studentName){
-              // البحث عن درجات هذا التلميذ في المادة
-              var gradeRow = CURRENT_TEACHER_GRADES.find(function(g){
-                return g.name === studentName && g.subject === subjectName && g.grade === grade && g.section === section;
-              });
-              
-              allStudentData.push({
-                grade: grade,
-                section: section,
-                name: studentName,
-                grades: gradeRow || null
-              });
-            });
-          }
-          
-          if(completedRequests === pendingRequests){
-            renderTeacherRecordTable(subjectName, allStudentData);
-          }
-        }).catch(function(){
-          completedRequests++;
-          if(completedRequests === pendingRequests){
-            renderTeacherRecordTable(subjectName, allStudentData);
-          }
-        });
-      });
-    } else {
+    if(!classes || classes.length === 0){
       $('#trLoading').style.display = 'none';
       $('#trTableContainer').style.display = 'block';
-      $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;color:#64748B;">لا توجد صفوف مسجلة لهذه المادة.</td></tr>';
+      $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;color:#64748B;">📭 لا توجد صفوف مسجلة لهذه المادة.</td></tr>';
+      return;
     }
     
-  }).catch(function(){
+    // جمع كل البيانات
+    var allStudentData = [];
+    var completedRequests = 0;
+    
+    classes.forEach(function(cls, clsIndex){
+      console.log('📚 Fetching students for class:', cls);
+      
+      api({action:'getStudents', key:key(), code:code, cls:cls}).then(function(sr){
+        completedRequests++;
+        console.log('✅ Got students for', cls, ':', sr.names ? sr.names.length : 0);
+        
+        if(sr.ok && sr.names && sr.names.length > 0){
+          var grade = sr.grade || cls.split(' ')[0] || '';
+          var section = sr.section || cls.split(' ')[1] || '';
+          
+          sr.names.forEach(function(studentName){
+            // البحث عن درجات هذا التلميذ
+            var gradeRow = subjectGrades.find(function(g){
+              return g.name === studentName && 
+                     g.grade === grade && 
+                     g.section === section;
+            });
+            
+            allStudentData.push({
+              grade: grade,
+              section: section,
+              name: studentName,
+              grades: gradeRow || null
+            });
+          });
+        }
+        
+        // إذا انتهت جميع الطلبات، اعرض الجدول
+        if(completedRequests === classes.length){
+          console.log('✅ All requests completed. Total students:', allStudentData.length);
+          renderTeacherRecordTable(subjectName, allStudentData);
+        }
+      }).catch(function(err){
+        console.error('❌ Error fetching students for', cls, ':', err);
+        completedRequests++;
+        if(completedRequests === classes.length){
+          renderTeacherRecordTable(subjectName, allStudentData);
+        }
+      });
+    });
+    
+  }).catch(function(err){
     $('#trLoading').style.display = 'none';
     toast('⚠️ تعذر تحميل البيانات', 'err');
+    console.error('❌ Error loading teacher grades:', err);
   });
 }
 
@@ -407,23 +433,30 @@ function renderTeacherRecordTable(subjectName, studentData){
   $('#trLoading').style.display = 'none';
   $('#trTableContainer').style.display = 'block';
   
+  console.log('🎨 Rendering table with', studentData.length, 'students');
+  
   if(studentData.length === 0){
-    $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;color:#64748B;">لا توجد بيانات.</td></tr>';
+    $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;color:#64748B;">📭 لا توجد بيانات تلاميذ.</td></tr>';
     return;
   }
   
   // تجميع حسب الصف والشعبة
   var byClass = {};
   studentData.forEach(function(s){
-    var clsKey = s.grade + ' ' + s.section;
+    var clsKey = (s.grade || '') + ' ' + (s.section || '');
+    clsKey = clsKey.trim();
     if(!byClass[clsKey]) byClass[clsKey] = [];
     byClass[clsKey].push(s);
   });
   
+  console.log('📊 Classes:', Object.keys(byClass));
+  
   var html = '';
+  var globalIndex = 1;
+  
   Object.keys(byClass).sort().forEach(function(clsKey){
     var rows = byClass[clsKey];
-    html += '<tr style="background:#F1F5F9;"><td colspan="14" style="padding:8px;font-weight:900;color:#0F172A;text-align:right;border:1px solid #0F172A;">🏫 ' + esc(clsKey) + '</td></tr>';
+    html += '<tr style="background:#F1F5F9;"><td colspan="14" style="padding:8px;font-weight:900;color:#0F172A;text-align:right;border:1px solid #0F172A;">🏫 ' + esc(clsKey || 'غير محدد') + '</td></tr>';
     
     rows.forEach(function(s, idx){
       var g = s.grades;
@@ -431,8 +464,7 @@ function renderTeacherRecordTable(subjectName, studentData){
       var bg = hasGrades ? '#fff' : '#F8FAFC';
       
       html += '<tr style="background:'+bg+';">';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-size:12px;">-</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-weight:bold;">'+arNum(idx+1)+'</td>';
+      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-size:12px;">'+arNum(globalIndex)+'</td>';
       html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:right;font-weight:bold;">'+esc(s.name)+'</td>';
       html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;">'+(g&&g.m1!=null?arNum(g.m1):'—')+'</td>';
       html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;">'+(g&&g.m2!=null?arNum(g.m2):'—')+'</td>';
@@ -448,10 +480,13 @@ function renderTeacherRecordTable(subjectName, studentData){
       var finColor = (g && g.final != null && g.final >= (g.max||100)/2) ? '#D1FAE5;color:#047857' : (g && g.final != null ? '#FEE2E2;color:#DC2626' : '');
       html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-weight:900;'+finColor+';">'+(g&&g.final!=null?arNum(g.final):'—')+'</td>';
       html += '</tr>';
+      
+      globalIndex++;
     });
   });
   
   $('#trTableBody').innerHTML = html;
+  console.log('✅ Table rendered successfully');
 }
 
 /* ═══ تصدير Excel للمعلم ═══ */
@@ -459,7 +494,7 @@ function exportTeacherExcel(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
   
-  toast(' جاري تجهيز ملف Excel...', '');
+  toast('⏳ جاري تجهيز ملف Excel...', '');
   
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
     var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl"><head><meta charset="utf-8"><style>table{border-collapse:collapse;width:100%;} th,td{border:1px solid #000;padding:6px;text-align:center;font-family:Arial;} th{background:#1E40AF;color:#fff;}</style></head><body>';
@@ -476,10 +511,10 @@ function exportTeacherExcel(code){
       });
       
       Object.keys(bySubject).forEach(function(subj){
-        h += '<h3 style="color:#047857;border-bottom:2px solid #047857;">📘 ' + esc(subj) + '</h3>';
+        h += '<h3 style="color:#047857;border-bottom:2px solid #047857;"> ' + esc(subj) + '</h3>';
         Object.keys(bySubject[subj]).sort().forEach(function(clsKey){
           h += '<h4 style="margin-top:15px;">🏫 ' + esc(clsKey) + '</h4>';
-          h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
+          h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
           
           var rows = bySubject[subj][clsKey];
           rows.forEach(function(row, idx){
@@ -518,7 +553,8 @@ function exportTeacherExcel(code){
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
     toast('✓ تم تصدير ملف Excel بنجاح', 'ok');
     
-  }).catch(function(){
+  }).catch(function(err){
+    console.error('Export error:', err);
     toast('⚠️ تعذر تجهيز الملف', 'err');
   });
 }
@@ -537,7 +573,7 @@ function printTeachersList(){
     h+='<tr><td style="padding:8px;border:1px solid #0F172A;text-align:center">'+esc(t.code)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A">'+esc(t.name)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A;font-size:11px">'+esc(sub)+'</td>';
-    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':'🔓 مفتوح')+'</td></tr>';
+    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':' مفتوح')+'</td></tr>';
   });
   h+='</tbody></table></div>';
   printWin(h);
@@ -556,3 +592,7 @@ function exportTeachersExcel(){
   h+='</tbody></table>';
   downloadXLS('قائمة_المعلمين', 'قائمة المعلمين — ' + getStudyYear(), h);
 }
+
+function onSearchChange(){var e=$('#teamSearch');TEAM.search=e?e.value.trim():'';applyFilters();}
+function onFilterSubjectChange(){var e=$('#filterSubject');TEAM.filterSubject=e?e.value:'';applyFilters();}
+function onFilterClassChange(){var e=$('#filterClass');TEAM.filterClass=e?e.value:'';applyFilters();}
