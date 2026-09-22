@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة ومصححة) ═══ */
+/* ══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة ومصححة) ══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -64,7 +64,7 @@ function renderTeachers(){
     h += '<div style="display:flex;gap:6px;align-items:center">';
     if(t.locked){
       h += '<span class="chip" style="background:#FEE2E2;color:#DC2626">🔒 مقفل</span>';
-      h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
+      h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')"> فتح</button>';
     }else{
       h += '<span class="chip" style="background:#D1FAE5;color:#047857">🔓 مفتوح</span>';
       h += '<button class="btn sm danger" onclick="toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
@@ -129,7 +129,7 @@ function removeSpecificClass(code, subject, cls){
   confirmDlg('حذف الشعبة "'+cls+'" من مادة "'+subject+'" فقط؟', function(){
     api({action:'removeTeacherClass', key:key(), code:code, subject:subject, cls:cls}).then(function(r){
       if(r.ok){ toast('✓ '+r.message, 'ok'); loadTeachers(); }
-      else{ toast('❌ '+r.error, 'err'); }
+      else{ toast(' '+r.error, 'err'); }
     });
   }, 'حذف الشعبة');
 }
@@ -316,7 +316,7 @@ function addNewTeacher(){
   });
 }
 
-/* ═══ كشف المعلم التفاعلي (مصحح لجلب الأسماء دائماً) ═══ */
+/* ══ كشف المعلم التفاعلي (مصحح مع إضافة code) ═══ */
 function openTeacherRecord(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -352,6 +352,7 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
   $('#trTableBody').innerHTML = '';
   
   console.log('📊 Loading subject:', subjectName, 'Classes:', classes);
+  console.log(' Teacher code:', code);
   
   // 1. جلب درجات المعلم
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
@@ -367,7 +368,7 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
     
     // تصفية الدرجات لهذه المادة فقط
     var subjectGrades = allGrades.filter(function(g){ return g.subject === subjectName; });
-    console.log('📊 Subject grades:', subjectGrades.length);
+    console.log(' Subject grades:', subjectGrades.length);
     
     if(!classes || classes.length === 0){
       $('#trLoading').style.display = 'none';
@@ -376,24 +377,25 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
       return;
     }
     
-    // 2. جمع بيانات التلاميذ (الأسماء أولاً، ثم دمج الدرجات)
+    // 2. جمع بيانات التلاميذ - مع إضافة code المعلم
     var allStudentData = [];
     var completedRequests = 0;
     
     classes.forEach(function(cls){
       console.log('📚 Fetching students for class:', cls);
       
-      // نمرر cls فقط، ودالة getStudents في الخادم ستقوم بتحليلها
-      api({action:'getStudents', key:key(), cls:cls}).then(function(sr){
+      // ✅ التعديل المهم: إضافة code المعلم في الطلب
+      api({action:'getStudents', key:key(), code:code, cls:cls}).then(function(sr){
         completedRequests++;
         console.log('✅ Got students for', cls, ':', sr.names ? sr.names.length : 0);
+        console.log('📋 Response:', sr);
         
         if(sr.ok && sr.names && sr.names.length > 0){
           var grade = sr.grade || cls.split(' ')[0] || '';
           var section = sr.section || cls.split(' ')[1] || '';
           
           sr.names.forEach(function(studentName){
-            // البحث عن درجات هذا التلميذ في هذه المادة والصف
+            // البحث عن درجات هذا التلميذ
             var gradeRow = subjectGrades.find(function(g){
               return g.name === studentName && 
                      String(g.grade) === String(grade) && 
@@ -434,7 +436,7 @@ function renderTeacherRecordTable(subjectName, studentData){
   $('#trLoading').style.display = 'none';
   $('#trTableContainer').style.display = 'block';
   
-  console.log('🎨 Rendering table with', studentData.length, 'students');
+  console.log(' Rendering table with', studentData.length, 'students');
   
   if(studentData.length === 0){
     $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;color:#64748B;">📭 لا توجد بيانات تلاميذ.</td></tr>';
@@ -515,7 +517,7 @@ function exportTeacherExcel(code){
         h += '<h3 style="color:#047857;border-bottom:2px solid #047857;">📘 ' + esc(subj) + '</h3>';
         Object.keys(bySubject[subj]).sort().forEach(function(clsKey){
           h += '<h4 style="margin-top:15px;">🏫 ' + esc(clsKey) + '</h4>';
-          h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
+          h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
           
           var rows = bySubject[subj][clsKey];
           rows.forEach(function(row, idx){
@@ -556,7 +558,7 @@ function exportTeacherExcel(code){
     
   }).catch(function(err){
     console.error('Export error:', err);
-    toast('⚠️ تعذر تجهيز الملف', 'err');
+    toast('️ تعذر تجهيز الملف', 'err');
   });
 }
 
