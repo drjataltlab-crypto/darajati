@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة) ══ */
+/* ═══ page-team.js — صفحة المعلمين (نسخة نهائية شاملة ومصححة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -101,7 +101,7 @@ function renderTeachers(){
     h += '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">';
     h += '<button class="btn sm" style="background:#7C3AED;color:#fff" onclick="editT(\''+escA(t.code)+'\')">✏️ تعديل شامل</button>';
     h += '<button class="btn sm" style="background:#0891B2;color:#fff" onclick="openTeacherRecord(\''+escA(t.code)+'\')">📊 كشف المعلم</button>';
-    h += '<button class="btn sm" style="background:#059669;color:#fff" onclick="exportTeacherExcel(\''+escA(t.code)+'\')"> Excel</button>';
+    h += '<button class="btn sm" style="background:#059669;color:#fff" onclick="exportTeacherExcel(\''+escA(t.code)+'\')">📥 Excel</button>';
     h += '<button class="btn sm danger" onclick="delT(\''+escA(t.code)+'\')">🗑 حذف المعلم</button>';
     h += '</div></div>';
   });
@@ -279,7 +279,7 @@ function delT(code){
   },'حذف نهائي');
 }
 
-/* ══ إضافة معلم جديد ═══ */
+/* ═══ إضافة معلم جديد ═══ */
 function addNewTeacher(){
   var nameEl = document.getElementById('ntName');
   var subjectEl = document.getElementById('ntSubject');
@@ -316,7 +316,7 @@ function addNewTeacher(){
   });
 }
 
-/* ═══ كشف المعلم التفاعلي (مصحح) ══ */
+/* ═══ كشف المعلم التفاعلي (مصحح لجلب الأسماء دائماً) ═══ */
 function openTeacherRecord(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -353,7 +353,7 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
   
   console.log('📊 Loading subject:', subjectName, 'Classes:', classes);
   
-  // جلب درجات المعلم
+  // 1. جلب درجات المعلم
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
     if(!r.ok){
       $('#trLoading').style.display = 'none';
@@ -376,14 +376,15 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
       return;
     }
     
-    // جمع كل البيانات
+    // 2. جمع بيانات التلاميذ (الأسماء أولاً، ثم دمج الدرجات)
     var allStudentData = [];
     var completedRequests = 0;
     
-    classes.forEach(function(cls, clsIndex){
+    classes.forEach(function(cls){
       console.log('📚 Fetching students for class:', cls);
       
-      api({action:'getStudents', key:key(), code:code, cls:cls}).then(function(sr){
+      // نمرر cls فقط، ودالة getStudents في الخادم ستقوم بتحليلها
+      api({action:'getStudents', key:key(), cls:cls}).then(function(sr){
         completedRequests++;
         console.log('✅ Got students for', cls, ':', sr.names ? sr.names.length : 0);
         
@@ -392,11 +393,11 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
           var section = sr.section || cls.split(' ')[1] || '';
           
           sr.names.forEach(function(studentName){
-            // البحث عن درجات هذا التلميذ
+            // البحث عن درجات هذا التلميذ في هذه المادة والصف
             var gradeRow = subjectGrades.find(function(g){
               return g.name === studentName && 
-                     g.grade === grade && 
-                     g.section === section;
+                     String(g.grade) === String(grade) && 
+                     String(g.section) === String(section);
             });
             
             allStudentData.push({
@@ -511,7 +512,7 @@ function exportTeacherExcel(code){
       });
       
       Object.keys(bySubject).forEach(function(subj){
-        h += '<h3 style="color:#047857;border-bottom:2px solid #047857;"> ' + esc(subj) + '</h3>';
+        h += '<h3 style="color:#047857;border-bottom:2px solid #047857;">📘 ' + esc(subj) + '</h3>';
         Object.keys(bySubject[subj]).sort().forEach(function(clsKey){
           h += '<h4 style="margin-top:15px;">🏫 ' + esc(clsKey) + '</h4>';
           h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
@@ -573,7 +574,7 @@ function printTeachersList(){
     h+='<tr><td style="padding:8px;border:1px solid #0F172A;text-align:center">'+esc(t.code)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A">'+esc(t.name)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A;font-size:11px">'+esc(sub)+'</td>';
-    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':' مفتوح')+'</td></tr>';
+    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':'🔓 مفتوح')+'</td></tr>';
   });
   h+='</tbody></table></div>';
   printWin(h);
