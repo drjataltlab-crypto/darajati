@@ -1,4 +1,4 @@
-/* ══ page-team.js — صفحة المعلمين (نسخة كاملة مع الطباعة والشعب) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (نسخة كاملة محدثة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -20,7 +20,7 @@ registerPage('team', {
 function loadTeachers() {
   var el = $('#teamList');
   if (!el) return;
-  el.innerHTML = '<div class="empty"> جاري تحميل بيانات المعلمين...</div>';
+  el.innerHTML = '<div class="empty">⏳ جاري تحميل بيانات المعلمين...</div>';
   
   api({action:'adminData', key:key()}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
@@ -72,7 +72,7 @@ function renderTeachers(){
       h += '<span class="chip" style="background:#FEE2E2;color:#DC2626">🔒 مقفل</span>';
       h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
     }else{
-      h += '<span class="chip" style="background:#D1FAE5;color:#047857"> مفتوح</span>';
+      h += '<span class="chip" style="background:#D1FAE5;color:#047857">🔓 مفتوح</span>';
       h += '<button class="btn sm danger" onclick="toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
     }
     h += '</div></div>';
@@ -100,7 +100,7 @@ function renderTeachers(){
     h += '<div style="display:flex;gap:12px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #E2E8F0;font-size:12px;color:#64748B">';
     h += '<span>📊 آخر دخول: <b>'+last+'</b></span>';
     h += '<span>📝 درجات مرسلة: <b>'+arNum(t.sentCount||0)+'</b></span>';
-    h += '<span>🏫 عدد الشعب: <b>'+arNum(cnt)+'</b></span>';
+    h += '<span> عدد الشعب: <b>'+arNum(cnt)+'</b></span>';
     h += '<span>📘 عدد المواد: <b>'+arNum(t.subjects?t.subjects.length:0)+'</b></span>';
     h += '</div>';
     
@@ -193,7 +193,7 @@ function renderEditSubjects(){
       html += '<option value="'+esc(c)+'"'+(item.cls===c?' selected':'')+'>'+esc(c)+'</option>';
     });
     html += '</select>';
-    html += '<button class="remove-btn" onclick="removeEditSubject('+idx+')">🗑</button>';
+    html += '<button class="remove-btn" onclick="removeEditSubject('+idx+')"></button>';
     html += '</div>';
   });
   
@@ -269,7 +269,7 @@ function saveEditedTeacher(){
     }
   }).catch(function(err){
     console.error('Save error:', err);
-    toast('⚠️ تعذر الاتصال', 'err');
+    toast('️ تعذر الاتصال', 'err');
   });
 }
 
@@ -298,7 +298,7 @@ function addNewTeacher(){
   var subject = String(subjectEl.value || '').trim();
   var clsVal = String(clsEl.value || '').trim();
   
-  if(!name){ toast('️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
+  if(!name){ toast('⚠️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
   if(!subject){ toast('⚠️ اختر المادة', 'err'); subjectEl.focus(); return; }
   if(!clsVal){ toast('⚠️ اختر الصف', 'err'); clsEl.focus(); return; }
   
@@ -350,7 +350,6 @@ function openTeacherRecord(code){
   $('#teacherRecordModal').classList.add('show');
 }
 
-// ✅ عرض الشعب أولاً إذا كانت أكثر من شعبة
 function showSubjectClasses(code, subjectName, teacherName, classes){
   console.log('📚 showSubjectClasses called with:', {code, subjectName, classes});
   
@@ -491,7 +490,7 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
     
   }).catch(function(err){
     $('#trLoading').style.display = 'none';
-    toast('️ تعذر تحميل البيانات', 'err');
+    toast('⚠️ تعذر تحميل البيانات', 'err');
   });
 }
 
@@ -556,7 +555,7 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
   };
 }
 
-/* ═══ الطباعة ══ */
+/* ═══ الطباعة ═══ */
 function openPrintSettings(){
   console.log('🖨️ openPrintSettings called');
   if(!CURRENT_PRINT_DATA){
@@ -573,7 +572,7 @@ function openPrintSettings(){
 
 function savePrintSettingsAndPrint(){
   PRINT_SETTINGS.schoolName = $('#printSchoolName').value.trim() || 'مدرسة المنهل الابتدائية';
-  PRINT_SETTINGS.schoolYear = $('#printSchoolYear').value.trim() || '٢٠٢٥ - ٢٠٢٦';
+  PRINT_SETTINGS.schoolYear = $('#printSchoolYear').value.trim() || '٠٢٥ - ٢٠٢٦';
   PRINT_SETTINGS.schoolType = $('#printSchoolType').value.trim() || 'للبنين';
   
   localStorage.setItem('print_school_name', PRINT_SETTINGS.schoolName);
@@ -750,6 +749,7 @@ function printSubjectRecord(){
   
   printWin(h);
 }
+
 function exportTeacherExcel(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -774,7 +774,7 @@ function exportTeacherExcel(code){
         h += '<h3 style="color:#047857;border-bottom:2px solid #047857;">📘 ' + esc(subj) + '</h3>';
         Object.keys(bySubject[subj]).sort().forEach(function(clsKey){
           h += '<h4 style="margin-top:15px;">🏫 ' + esc(clsKey) + '</h4>';
-          h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
+          h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
           
           var rows = bySubject[subj][clsKey];
           rows.forEach(function(row, idx){
