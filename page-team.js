@@ -597,43 +597,53 @@ function printSubjectRecord(){
   
   var h = '';
   
-  // CSS خاص بالطباعة
+  // CSS مدمج داخل HTML للطباعة
+  h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8">';
+  h += '<title>سجل درجات - ' + esc(subjectName) + '</title>';
   h += '<style>';
-  h += '@page { size: A4; margin: 10mm; }';
-  h += 'body { font-family: "Tajawal", Arial, sans-serif; margin: 0; padding: 0; }';
-  h += '.print-page { width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; position: relative; }';
-  h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 3px double #1E40AF; }';
-  h += '.print-header-right, .print-header-center, .print-header-left { flex: 1; text-align: center; }';
-  h += '.print-header-right { text-align: right; }';
-  h += '.print-header-left { text-align: left; }';
-  h += '.print-school-name { font-size: 16px; font-weight: 900; color: #1E40AF; line-height: 1.8; }';
-  h += '.print-title { font-size: 24px; font-weight: 900; color: #1E40AF; margin-bottom: 5px; }';
-  h += '.print-year { font-size: 15px; color: #64748B; font-weight: 700; }';
-  h += '.print-info-box { text-align: left; font-size: 13px; line-height: 2; color: #0F172A; }';
-  h += '.print-info-row { margin-bottom: 3px; }';
+  h += '@page { size: A4 portrait; margin: 12mm 10mm; }';
+  h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
+  h += 'body { font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.print-page { width: 100%; padding: 5mm 0; }';
+  
+  // الترويسة الأفقية
+  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #1E40AF; }';
+  h += '.print-header-right { flex: 1; text-align: right; }';
+  h += '.print-header-center { flex: 1.5; text-align: center; }';
+  h += '.print-header-left { flex: 1; text-align: left; }';
+  h += '.print-school-name { font-size: 13px; font-weight: 900; color: #1E40AF; line-height: 1.4; }';
+  h += '.print-title { font-size: 20px; font-weight: 900; color: #1E40AF; margin-bottom: 3px; }';
+  h += '.print-year { font-size: 13px; color: #64748B; font-weight: 700; }';
+  h += '.print-info-box { font-size: 12px; line-height: 1.7; color: #0F172A; }';
+  h += '.print-info-row { margin-bottom: 2px; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 800; }';
-  h += '.print-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 11px; }';
-  h += '.print-table th, .print-table td { border: 1px solid #0F172A; padding: 6px 4px; text-align: center; }';
-  h += '.print-table th { color: #fff; font-weight: 800; font-size: 10px; }';
-  h += '.th-f1 { background-color: #1D4ED8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-f2 { background-color: #0E7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-avg { background-color: #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-half { background-color: #7C3AED !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-annual { background-color: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-exam { background-color: #DC2626 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-final { background-color: #BE123C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-seq { width: 40px; }';
-  h += '.th-name { width: 180px; text-align: right; }';
-  h += '.td-name { text-align: right; font-weight: 700; padding-right: 8px; }';
-  h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; }';
-  h += '.print-signature { text-align: center; width: 150px; }';
-  h += '.print-signature div:first-child { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 35px; }';
+  
+  // الجدول
+  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 15px; }';
+  h += '.print-table th, .print-table td { border: 1px solid #0F172A; padding: 4px 3px; text-align: center; }';
+  h += '.print-table th { color: #fff; font-weight: 800; font-size: 9px; }';
+  h += '.th-f1 { background-color: #1D4ED8 !important; }';
+  h += '.th-f2 { background-color: #0E7490 !important; }';
+  h += '.th-avg { background-color: #B45309 !important; }';
+  h += '.th-half { background-color: #7C3AED !important; }';
+  h += '.th-annual { background-color: #059669 !important; }';
+  h += '.th-exam { background-color: #DC2626 !important; }';
+  h += '.th-final { background-color: #BE123C !important; }';
+  h += '.th-seq { width: 35px; }';
+  h += '.th-name { width: 160px; }';
+  h += '.td-name { text-align: right; font-weight: 700; padding-right: 6px; }';
+  h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; }';
+  h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; }';
+  
+  // التذييل
+  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 20px; }';
+  h += '.print-signature { text-align: center; width: 140px; }';
+  h += '.print-signature div:first-child { font-size: 12px; font-weight: 700; color: #0F172A; margin-bottom: 25px; }';
   h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
+  
+  // فاصل الصفحات
   h += '.page-break { page-break-after: always; }';
-  h += '@media print { body * { visibility: hidden; } .print-page, .print-page * { visibility: visible; } .print-page { position: absolute; left: 0; top: 0; margin: 0; box-shadow: none; } }';
-  h += '</style>';
+  h += '</style></head><body>';
   
   classKeys.forEach(function(clsKey, clsIndex){
     var rows = byClass[clsKey];
@@ -644,10 +654,10 @@ function printSubjectRecord(){
     
     h += '<div class="print-page">';
     
-    // الترويسة
+    // الترويسة الأفقية
     h += '<div class="print-header">';
     h += '<div class="print-header-right">';
-    h += '<div class="print-school-name">إدارة<br>' + esc(PRINT_SETTINGS.schoolName) + '<br>' + esc(PRINT_SETTINGS.schoolType) + '</div>';
+    h += '<div class="print-school-name">إدارة ' + esc(PRINT_SETTINGS.schoolName) + ' - ' + esc(PRINT_SETTINGS.schoolType) + '</div>';
     h += '</div>';
     
     h += '<div class="print-header-center">';
@@ -735,6 +745,8 @@ function printSubjectRecord(){
       h += '<div class="page-break"></div>';
     }
   });
+  
+  h += '</body></html>';
   
   printWin(h);
 }
