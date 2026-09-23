@@ -596,31 +596,32 @@ function printSubjectRecord(){
   
   var h = '';
   
-  // CSS مدمج داخل HTML للطباعة
+  // HTML كامل مع CSS مدمج
   h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8">';
   h += '<title>سجل درجات - ' + esc(subjectName) + '</title>';
   h += '<style>';
-  h += '@page { size: A4 portrait; margin: 12mm 10mm; }';
+  h += '@page { size: A4 landscape; margin: 8mm; }';
   h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
   h += 'body { font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.print-page { width: 100%; padding: 5mm 0; }';
+  h += '.print-page { width: 100%; padding: 3mm 0; page-break-after: always; }';
+  h += '.print-page:last-child { page-break-after: auto; }';
   
-  // الترويسة الأفقية
-  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #1E40AF; }';
+  // الترويسة
+  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8mm; padding-bottom: 3mm; border-bottom: 2px solid #1E40AF; }';
   h += '.print-header-right { flex: 1; text-align: right; }';
   h += '.print-header-center { flex: 1.5; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: left; }';
-  h += '.print-school-name { font-size: 13px; font-weight: 900; color: #1E40AF; line-height: 1.4; }';
-  h += '.print-title { font-size: 20px; font-weight: 900; color: #1E40AF; margin-bottom: 3px; }';
-  h += '.print-year { font-size: 13px; color: #64748B; font-weight: 700; }';
-  h += '.print-info-box { font-size: 12px; line-height: 1.7; color: #0F172A; }';
-  h += '.print-info-row { margin-bottom: 2px; }';
+  h += '.print-school-name { font-size: 11pt; font-weight: 900; color: #1E40AF; line-height: 1.3; }';
+  h += '.print-title { font-size: 16pt; font-weight: 900; color: #1E40AF; margin-bottom: 2mm; }';
+  h += '.print-year { font-size: 10pt; color: #64748B; font-weight: 700; }';
+  h += '.print-info-box { font-size: 9pt; line-height: 1.6; color: #0F172A; }';
+  h += '.print-info-row { margin-bottom: 1mm; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 800; }';
   
   // الجدول
-  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 15px; }';
-  h += '.print-table th, .print-table td { border: 1px solid #0F172A; padding: 4px 3px; text-align: center; }';
-  h += '.print-table th { color: #fff; font-weight: 800; font-size: 9px; }';
+  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin-bottom: 5mm; }';
+  h += '.print-table th, .print-table td { border: 1px solid #0F172A; padding: 2mm 1mm; text-align: center; vertical-align: middle; }';
+  h += '.print-table th { color: #fff; font-weight: 800; font-size: 7.5pt; }';
   h += '.th-f1 { background-color: #1D4ED8 !important; }';
   h += '.th-f2 { background-color: #0E7490 !important; }';
   h += '.th-avg { background-color: #B45309 !important; }';
@@ -628,20 +629,18 @@ function printSubjectRecord(){
   h += '.th-annual { background-color: #059669 !important; }';
   h += '.th-exam { background-color: #DC2626 !important; }';
   h += '.th-final { background-color: #BE123C !important; }';
-  h += '.th-seq { width: 35px; }';
-  h += '.th-name { width: 160px; }';
-  h += '.td-name { text-align: right; font-weight: 700; padding-right: 6px; }';
+  h += '.th-seq { width: 8mm; }';
+  h += '.th-name { width: 45mm; text-align: right; }';
+  h += '.td-name { text-align: right; font-weight: 700; padding-right: 2mm; }';
   h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; }';
   h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; }';
   
   // التذييل
-  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 20px; }';
-  h += '.print-signature { text-align: center; width: 140px; }';
-  h += '.print-signature div:first-child { font-size: 12px; font-weight: 700; color: #0F172A; margin-bottom: 25px; }';
+  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 10mm; }';
+  h += '.print-signature { text-align: center; width: 40mm; }';
+  h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 8mm; }';
   h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
   
-  // فاصل الصفحات
-  h += '.page-break { page-break-after: always; }';
   h += '</style></head><body>';
   
   classKeys.forEach(function(clsKey, clsIndex){
@@ -653,7 +652,7 @@ function printSubjectRecord(){
     
     h += '<div class="print-page">';
     
-    // الترويسة الأفقية
+    // الترويسة
     h += '<div class="print-header">';
     h += '<div class="print-header-right">';
     h += '<div class="print-school-name">إدارة ' + esc(PRINT_SETTINGS.schoolName) + ' - ' + esc(PRINT_SETTINGS.schoolType) + '</div>';
@@ -674,25 +673,25 @@ function printSubjectRecord(){
     h += '</div>';
     h += '</div>';
     
-    // الجدول
+    // الجدول مع العناوين الجديدة
     h += '<table class="print-table">';
     h += '<thead>';
     h += '<tr>';
-    h += '<th rowspan="2" class="th-seq">التسلسل</th>';
+    h += '<th rowspan="2" class="th-seq">ت</th>';
     h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
     h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
-    h += '<th rowspan="2" class="th-avg">معدل<br>الفصل الأول</th>';
+    h += '<th rowspan="2" class="th-avg">معدل<br>ف١</th>';
     h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
     h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
-    h += '<th rowspan="2" class="th-avg">معدل<br>الفصل الثاني</th>';
+    h += '<th rowspan="2" class="th-avg">معدل<br>ف٢</th>';
     h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
     h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
     h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
     h += '</tr>';
     h += '<tr>';
-    h += '<th class="th-month">تشرين الأول</th>';
-    h += '<th class="th-month">تشرين الثاني</th>';
-    h += '<th class="th-month">كانون الأول</th>';
+    h += '<th class="th-month">ت١</th>';
+    h += '<th class="th-month">ت٢</th>';
+    h += '<th class="th-month">ك١</th>';
     h += '<th class="th-month">آذار</th>';
     h += '<th class="th-month">نيسان</th>';
     h += '</tr>';
@@ -738,18 +737,21 @@ function printSubjectRecord(){
     h += '</div>';
     h += '</div>';
     
-    h += '</div>'; // end print-page
-    
-    if(clsIndex < classKeys.length - 1){
-      h += '<div class="page-break"></div>';
-    }
+    h += '</div>';
   });
   
   h += '</body></html>';
   
-  printWin(h);
+  // طباعة مباشرة بدون استخدام printWin
+  var printWindow = window.open('', '_blank');
+  printWindow.document.write(h);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(function() {
+    printWindow.print();
+    printWindow.close();
+  }, 500);
 }
-
 function exportTeacherExcel(code){
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
