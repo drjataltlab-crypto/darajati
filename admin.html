@@ -295,10 +295,13 @@
 
 <!-- ═══ نافذة كشف المعلم التفاعلي ═══ -->
 <div class="ovl" id="teacherRecordModal">
-  <div class="modal" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+  <div class="modal" style="max-width:950px; max-height:92vh; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
       <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
-      <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:5px 10px;">✕ إغلاق</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">️ طباعة</button>
+        <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
+      </div>
     </div>
     <div id="trSubjectsList" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
     <div id="trTableContainer" style="display:none;">
@@ -307,20 +310,31 @@
         <table class="pt" style="width:100%; border-collapse:collapse; border:2px solid #0F172A;">
           <thead>
             <tr style="background:#1E40AF; color:#fff;">
-              <th style="padding:8px; border:1px solid #0F172A;">الصف والشعبة</th>
               <th style="padding:8px; border:1px solid #0F172A;">ت</th>
               <th style="padding:8px; border:1px solid #0F172A;">اسم التلميذ</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">ك١</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#0E7490;">آذار</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#0E7490;">نيسان</th>
+              <th colspan="3" style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">الفصل الأول</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">نصف السنة</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
+              <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">السعي السنوي</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#1E40AF;">نهاية السنة</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
+            </tr>
+            <tr style="background:#1E40AF; color:#fff;">
+              <th style="padding:6px; border:1px solid #0F172A;"></th>
+              <th style="padding:6px; border:1px solid #0F172A;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك١</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#7C3AED;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#0E7490;">آذار</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#0E7490;">نيسان</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#059669;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#DC2626;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#BE123C;"></th>
             </tr>
           </thead>
           <tbody id="trTableBody"></tbody>
@@ -332,6 +346,29 @@
   </div>
 </div>
 
+<!-- ═══ نافذة إعدادات الطباعة ═══ -->
+<div class="ovl" id="printSettingsModal">
+  <div class="modal" style="max-width:500px">
+    <h3>⚙️ إعدادات الطباعة</h3>
+    <div class="form-group">
+      <label>اسم المدرسة</label>
+      <input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية">
+    </div>
+    <div class="form-group">
+      <label>العام الدراسي</label>
+      <input id="printSchoolYear" placeholder="٢٠٢٥ - ٢٠٢٦">
+    </div>
+    <div class="form-group">
+      <label>النوع</label>
+      <input id="printSchoolType" placeholder="للبنين" value="للبنين">
+    </div>
+    <div class="mrow" style="margin-top:16px">
+      <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
+      <button class="btn ok" style="margin:0" onclick="savePrintSettingsAndPrint()">💾 حفظ وطباعة</button>
+    </div>
+  </div>
+</div>
+  
 <!-- ═══ نافذة التأكيد ═══ -->
 <div class="ovl" id="confirmOvl">
   <div class="modal">
