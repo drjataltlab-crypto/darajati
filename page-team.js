@@ -713,7 +713,7 @@ function printSubjectRecord(){
       h += '<tr>';
       h += '<th class="th-sub">ت١</th>';
       h += '<th class="th-sub">ت٢</th>';
-      h += '<th class="th-sub">ك</th>';
+      h += '<th class="th-sub">ك١</th>';
       h += '<th class="th-sub">آذار</th>';
       h += '<th class="th-sub">نيسان</th>';
       h += '</tr>';
