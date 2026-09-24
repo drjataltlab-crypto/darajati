@@ -574,7 +574,7 @@ function savePrintSettingsAndPrint(){
 
 function printSubjectRecord(){
   if(!CURRENT_PRINT_DATA){
-    toast('️ لا توجد بيانات', 'err');
+    toast('⚠️ لا توجد بيانات', 'err');
     return;
   }
   
@@ -589,34 +589,34 @@ function printSubjectRecord(){
   h += '<title>سجل درجات - ' + esc(subjectName) + '</title>';
   h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
   h += '<style>';
-  h += '@page { size: A4 portrait; margin: 15mm 12mm; }';
+  h += '@page { size: A4 portrait; margin: 8mm 8mm; }';
   h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
   h += 'body { font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.print-page { width: 100%; padding: 3mm 0; page-break-after: always; }';
+  h += '.print-page { width: 100%; padding: 2mm 0; page-break-after: always; }';
   h += '.print-page:last-child { page-break-after: auto; }';
   
-  // الترويسة
-  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8mm; padding-bottom: 4mm; border-bottom: 3px double #1E40AF; }';
+  // الترويسة - مضغوطة
+  h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
   h += '.print-header-right { flex: 1; text-align: center; }';
   h += '.print-header-center { flex: 1.5; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: right; }';
   
-  h += '.print-school-name { font-size: 13pt; font-weight: 900; color: #1E40AF; line-height: 1.6; }';
-  h += '.print-school-name .line1 { display: block; font-size: 11pt; }';
-  h += '.print-school-name .line2 { display: block; font-size: 14pt; }';
-  h += '.print-school-name .line3 { display: block; font-size: 11pt; }';
+  h += '.print-school-name { font-size: 11pt; font-weight: 900; color: #1E40AF; line-height: 1.4; }';
+  h += '.print-school-name .line1 { display: block; font-size: 10pt; }';
+  h += '.print-school-name .line2 { display: block; font-size: 12pt; }';
+  h += '.print-school-name .line3 { display: block; font-size: 10pt; }';
   
-  h += '.print-title { font-size: 18pt; font-weight: 900; color: #1E40AF; margin-bottom: 2mm; }';
-  h += '.print-year { font-size: 11pt; color: #64748B; font-weight: 700; }';
+  h += '.print-title { font-size: 15pt; font-weight: 900; color: #1E40AF; margin-bottom: 1mm; }';
+  h += '.print-year { font-size: 10pt; color: #64748B; font-weight: 700; }';
   
-  h += '.print-info-box { font-size: 10pt; line-height: 1.8; color: #0F172A; }';
-  h += '.print-info-row { margin-bottom: 1mm; font-weight: 700; }';
+  h += '.print-info-box { font-size: 9pt; line-height: 1.6; color: #0F172A; }';
+  h += '.print-info-row { margin-bottom: 0.5mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
-  // الجدول الجديد
-  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-bottom: 8mm; }';
-  h += '.print-table th, .print-table td { border: 1px solid #0F172A; padding: 2mm 1mm; text-align: center; vertical-align: middle; }';
-  h += '.print-table th { color: #fff; font-weight: 800; font-size: 8pt; }';
+  // الجدول - مضغوط جداً
+  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 7pt; margin-bottom: 5mm; }';
+  h += '.print-table th, .print-table td { border: 1px solid #0F172A; padding: 1.5mm 0.5mm; text-align: center; vertical-align: middle; }';
+  h += '.print-table th { color: #fff; font-weight: 800; font-size: 7pt; }';
   h += '.th-f1 { background-color: #1D4ED8 !important; }';
   h += '.th-f2 { background-color: #0E7490 !important; }';
   h += '.th-avg1 { background-color: #B45309 !important; }';
@@ -625,16 +625,16 @@ function printSubjectRecord(){
   h += '.th-annual { background-color: #059669 !important; }';
   h += '.th-exam { background-color: #DC2626 !important; }';
   h += '.th-final { background-color: #BE123C !important; }';
-  h += '.th-seq { width: 10mm; }';
-  h += '.th-name { width: 45mm; }';
-  h += '.td-name { text-align: right; font-weight: 700; padding-right: 2mm; }';
+  h += '.th-seq { width: 8mm; }';
+  h += '.th-name { width: 38mm; }';
+  h += '.td-name { text-align: right; font-weight: 700; padding-right: 1mm; font-size: 7pt; }';
   h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; }';
   h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; }';
   
   // التذييل
-  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 15mm; }';
-  h += '.print-signature { text-align: center; width: 45mm; }';
-  h += '.print-signature div:first-child { font-size: 10pt; font-weight: 700; color: #0F172A; margin-bottom: 10mm; }';
+  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 8mm; }';
+  h += '.print-signature { text-align: center; width: 40mm; }';
+  h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 8mm; }';
   h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
   
   h += '</style></head><body>';
@@ -670,7 +670,7 @@ function printSubjectRecord(){
     h += '</div>';
     h += '</div>';
     
-    // الجدول بالتصميم الجديد
+    // الجدول
     h += '<table class="print-table">';
     h += '<thead>';
     h += '<tr>';
@@ -686,11 +686,11 @@ function printSubjectRecord(){
     h += '<th rowspan="2" class="th-final">النهائية</th>';
     h += '</tr>';
     h += '<tr>';
-    h += '<th class="th-month">ت١</th>';
-    h += '<th class="th-month">ت٢</th>';
-    h += '<th class="th-month">ك١</th>';
-    h += '<th class="th-month">آذار</th>';
-    h += '<th class="th-month">نيسان</th>';
+    h += '<th>ت١</th>';
+    h += '<th>ت٢</th>';
+    h += '<th>ك١</th>';
+    h += '<th>آذار</th>';
+    h += '<th>نيسان</th>';
     h += '</tr>';
     h += '</thead>';
     h += '<tbody>';
@@ -739,7 +739,7 @@ function printSubjectRecord(){
   
   h += '</body></html>';
   
-  // ✅ الطباعة داخل البرنامج (iframe مخفي) بدلاً من نافذة جديدة
+  // الطباعة داخل البرنامج (iframe مخفي)
   var oldFrame = document.getElementById('printFrame');
   if (oldFrame) oldFrame.remove();
   
