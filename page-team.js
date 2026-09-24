@@ -591,7 +591,7 @@ function printSubjectRecord(){
   h += '<style>';
   h += '@page { size: A4 portrait; margin: 8mm 8mm; }';
   h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
-  h += 'body { font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }';
+  h += 'body { font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; }';
   h += '.print-page { width: 100%; padding: 2mm 0; page-break-after: always; }';
   h += '.print-page:last-child { page-break-after: auto; }';
   
@@ -613,29 +613,39 @@ function printSubjectRecord(){
   h += '.print-info-row { margin-bottom: 0.5mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
-  // الجدول
+  // الجدول - نص داكن على خلفيات فاتحة لضمان الطباعة
   h += '.print-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin-bottom: 5mm; }';
-  h += '.print-table th, .print-table td { border: 1px solid #000 !important; padding: 1.5mm 1mm; text-align: center; vertical-align: middle; }';
-  h += '.print-table th { color: #fff !important; font-weight: 900; font-size: 8pt; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }';
-  h += '.th-f1 { background-color: #1D4ED8 !important; }';
-  h += '.th-f2 { background-color: #0E7490 !important; }';
-  h += '.th-avg1 { background-color: #B45309 !important; }';
-  h += '.th-half { background-color: #7C3AED !important; }';
-  h += '.th-avg2 { background-color: #B45309 !important; }';
-  h += '.th-annual { background-color: #059669 !important; }';
-  h += '.th-exam { background-color: #DC2626 !important; }';
-  h += '.th-final { background-color: #BE123C !important; }';
+  h += '.print-table th, .print-table td { border: 1px solid #000; padding: 1.2mm 0.5mm; text-align: center; vertical-align: middle; }';
+  
+  // عناوين رئيسية (الفصل الأول، الثاني، إلخ) - نص أبيض على خلفية داكنة
+  h += '.print-table th { font-weight: 900; font-size: 8pt; color: #fff; }';
+  h += '.th-f1 { background-color: #1D4ED8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-f2 { background-color: #0E7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-avg1 { background-color: #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-half { background-color: #7C3AED !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-avg2 { background-color: #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-annual { background-color: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-exam { background-color: #DC2626 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-final { background-color: #BE123C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  
+  // عناوين فرعية (أشهر) - نص داكن على خلفية فاتحة لضمان الظهور
+  h += '.th-sub { background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900; font-size: 8pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  
   h += '.th-seq { width: 8mm; }';
   h += '.th-name { width: 40mm; }';
   h += '.td-name { text-align: right; font-weight: 700; padding-right: 1mm; font-size: 8pt; }';
-  h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; }';
-  h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; }';
+  h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   
   // التذييل
   h += '.print-footer { display: flex; justify-content: space-between; margin-top: 8mm; }';
   h += '.print-signature { text-align: center; width: 40mm; }';
   h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 8mm; }';
   h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
+  
+  // تكرار العناوين في كل صفحة
+  h += 'thead { display: table-header-group; }';
+  h += 'tfoot { display: table-footer-group; }';
   
   h += '</style></head><body>';
   
@@ -644,97 +654,130 @@ function printSubjectRecord(){
     var parts = clsKey.split(' ');
     var grade = parts[0] || '';
     var section = parts[1] || '';
+    var totalStudents = rows.length;
     
-    h += '<div class="print-page">';
+    // تقسيم التلاميذ إلى صفحات (30 تلميذ لكل صفحة)
+    var CHUNK_SIZE = 30;
+    var totalPages = Math.ceil(totalStudents / CHUNK_SIZE);
     
-    // الترويسة
-    h += '<div class="print-header">';
-    h += '<div class="print-header-right">';
-    h += '<div class="print-school-name">';
-    h += '<span class="line1">إدارة</span>';
-    h += '<span class="line2">' + esc(PRINT_SETTINGS.schoolName) + '</span>';
-    h += '<span class="line3">' + esc(PRINT_SETTINGS.schoolType) + '</span>';
-    h += '</div>';
-    h += '</div>';
-    
-    h += '<div class="print-header-center">';
-    h += '<div class="print-title">سجل درجات المعلم</div>';
-    h += '<div class="print-year">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</div>';
-    h += '</div>';
-    
-    h += '<div class="print-header-left">';
-    h += '<div class="print-info-box">';
-    h += '<div class="print-info-row"><b>الصف والشعبة:</b> ' + esc(grade) + ' ' + esc(section) + '</div>';
-    h += '<div class="print-info-row"><b>المادة:</b> ' + esc(subjectName) + '</div>';
-    h += '</div>';
-    h += '</div>';
-    h += '</div>';
-    
-    // الجدول مع العناوين الواضحة
-    h += '<table class="print-table">';
-    h += '<thead>';
-    h += '<tr>';
-    h += '<th rowspan="2" class="th-seq">ت</th>';
-    h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
-    h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
-    h += '<th rowspan="2" class="th-avg1">معدل<br>ف١</th>';
-    h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
-    h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
-    h += '<th rowspan="2" class="th-avg2">معدل<br>ف٢</th>';
-    h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
-    h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
-    h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
-    h += '</tr>';
-    h += '<tr>';
-    h += '<th>ت١</th>';
-    h += '<th>ت٢</th>';
-    h += '<th>ك١</th>';
-    h += '<th>آذار</th>';
-    h += '<th>نيسان</th>';
-    h += '</tr>';
-    h += '</thead>';
-    h += '<tbody>';
-    
-    rows.forEach(function(s, idx){
-      var g = s.grades;
-      h += '<tr>';
-      h += '<td>' + arNum(idx+1) + '</td>';
-      h += '<td class="td-name">' + esc(s.name) + '</td>';
-      h += '<td>' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
-      h += '<td>' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
-      h += '<td>' + (g&&g.m3!=null?arNum(g.m3):'') + '</td>';
-      h += '<td style="font-weight:bold;">' + (g&&g.a1!=null?arNum(g.a1):'') + '</td>';
-      h += '<td>' + (g&&g.half!=null?arNum(g.half):'') + '</td>';
-      h += '<td>' + (g&&g.m4!=null?arNum(g.m4):'') + '</td>';
-      h += '<td>' + (g&&g.m5!=null?arNum(g.m5):'') + '</td>';
-      h += '<td style="font-weight:bold;">' + (g&&g.a2!=null?arNum(g.a2):'') + '</td>';
-      h += '<td>' + (g&&g.annual!=null?arNum(g.annual):'') + '</td>';
-      h += '<td>' + (g&&g.exam!=null?arNum(g.exam):'') + '</td>';
+    for(var pageIdx = 0; pageIdx < totalPages; pageIdx++){
+      var startIdx = pageIdx * CHUNK_SIZE;
+      var endIdx = Math.min(startIdx + CHUNK_SIZE, totalStudents);
+      var pageRows = rows.slice(startIdx, endIdx);
+      var pageNumber = pageIdx + 1;
       
-      var finalClass = '';
-      if(g && g.final != null){
-        finalClass = g.final >= (g.max||100)/2 ? 'td-final-pass' : 'td-final-fail';
+      h += '<div class="print-page">';
+      
+      // الترويسة (تتكرر في كل صفحة)
+      h += '<div class="print-header">';
+      h += '<div class="print-header-right">';
+      h += '<div class="print-school-name">';
+      h += '<span class="line1">إدارة</span>';
+      h += '<span class="line2">' + esc(PRINT_SETTINGS.schoolName) + '</span>';
+      h += '<span class="line3">' + esc(PRINT_SETTINGS.schoolType) + '</span>';
+      h += '</div>';
+      h += '</div>';
+      
+      h += '<div class="print-header-center">';
+      h += '<div class="print-title">سجل درجات المعلم</div>';
+      h += '<div class="print-year">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</div>';
+      if(totalPages > 1){
+        h += '<div style="font-size:9pt;color:#64748B;margin-top:1mm;">صفحة ' + pageNumber + ' من ' + totalPages + '</div>';
       }
-      h += '<td class="' + finalClass + '">' + (g&&g.final!=null?arNum(g.final):'') + '</td>';
+      h += '</div>';
+      
+      h += '<div class="print-header-left">';
+      h += '<div class="print-info-box">';
+      h += '<div class="print-info-row"><b>الصف والشعبة:</b> ' + esc(grade) + ' ' + esc(section) + '</div>';
+      h += '<div class="print-info-row"><b>المادة:</b> ' + esc(subjectName) + '</div>';
+      h += '<div class="print-info-row"><b>العدد:</b> ' + arNum(totalStudents) + ' تلميذ</div>';
+      h += '</div>';
+      h += '</div>';
+      h += '</div>';
+      
+      // الجدول
+      h += '<table class="print-table">';
+      h += '<thead>';
+      h += '<tr>';
+      h += '<th rowspan="2" class="th-seq">ت</th>';
+      h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
+      h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
+      h += '<th rowspan="2" class="th-avg1">معدل<br>ف١</th>';
+      h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
+      h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
+      h += '<th rowspan="2" class="th-avg2">معدل<br>ف٢</th>';
+      h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
+      h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
+      h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
       h += '</tr>';
-    });
-    
-    h += '</tbody>';
-    h += '</table>';
-    
-    // التذييل
-    h += '<div class="print-footer">';
-    h += '<div class="print-signature">';
-    h += '<div>توقيع المعلم</div>';
-    h += '<div class="signature-line"></div>';
-    h += '</div>';
-    h += '<div class="print-signature">';
-    h += '<div>توقيع المدير</div>';
-    h += '<div class="signature-line"></div>';
-    h += '</div>';
-    h += '</div>';
-    
-    h += '</div>';
+      h += '<tr>';
+      h += '<th class="th-sub">ت١</th>';
+      h += '<th class="th-sub">ت٢</th>';
+      h += '<th class="th-sub">ك</th>';
+      h += '<th class="th-sub">آذار</th>';
+      h += '<th class="th-sub">نيسان</th>';
+      h += '</tr>';
+      h += '</thead>';
+      h += '<tbody>';
+      
+      pageRows.forEach(function(s, idx){
+        var g = s.grades;
+        var globalIdx = startIdx + idx + 1;
+        h += '<tr>';
+        h += '<td>' + arNum(globalIdx) + '</td>';
+        h += '<td class="td-name">' + esc(s.name) + '</td>';
+        h += '<td>' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
+        h += '<td>' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
+        h += '<td>' + (g&&g.m3!=null?arNum(g.m3):'') + '</td>';
+        h += '<td style="font-weight:bold;">' + (g&&g.a1!=null?arNum(g.a1):'') + '</td>';
+        h += '<td>' + (g&&g.half!=null?arNum(g.half):'') + '</td>';
+        h += '<td>' + (g&&g.m4!=null?arNum(g.m4):'') + '</td>';
+        h += '<td>' + (g&&g.m5!=null?arNum(g.m5):'') + '</td>';
+        h += '<td style="font-weight:bold;">' + (g&&g.a2!=null?arNum(g.a2):'') + '</td>';
+        h += '<td>' + (g&&g.annual!=null?arNum(g.annual):'') + '</td>';
+        h += '<td>' + (g&&g.exam!=null?arNum(g.exam):'') + '</td>';
+        
+        var finalClass = '';
+        if(g && g.final != null){
+          finalClass = g.final >= (g.max||100)/2 ? 'td-final-pass' : 'td-final-fail';
+        }
+        h += '<td class="' + finalClass + '">' + (g&&g.final!=null?arNum(g.final):'') + '</td>';
+        h += '</tr>';
+      });
+      
+      // إذا كانت الصفحة الأخيرة وعدد التلاميذ أقل من 30، أضف صفوف فارغة
+      if(pageRows.length < CHUNK_SIZE && pageIdx === totalPages - 1){
+        var emptyRows = CHUNK_SIZE - pageRows.length;
+        for(var e = 0; e < emptyRows; e++){
+          var emptyIdx = startIdx + pageRows.length + e + 1;
+          if(emptyIdx <= totalStudents) break; // لا نضيف أكثر من العدد الفعلي
+          h += '<tr>';
+          h += '<td>' + arNum(emptyIdx) + '</td>';
+          h += '<td class="td-name"></td>';
+          h += '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
+          h += '</tr>';
+        }
+      }
+      
+      h += '</tbody>';
+      h += '</table>';
+      
+      // التذييل (يظهر فقط في الصفحة الأخيرة من كل شعبة)
+      if(pageIdx === totalPages - 1){
+        h += '<div class="print-footer">';
+        h += '<div class="print-signature">';
+        h += '<div>توقيع المعلم</div>';
+        h += '<div class="signature-line"></div>';
+        h += '</div>';
+        h += '<div class="print-signature">';
+        h += '<div>توقيع المدير</div>';
+        h += '<div class="signature-line"></div>';
+        h += '</div>';
+        h += '</div>';
+      }
+      
+      h += '</div>'; // end print-page
+    }
   });
   
   h += '</body></html>';
