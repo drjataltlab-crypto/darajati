@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1e3a5f">
 <title>مدرستي - تطبيق المعلمين</title>
 <link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -13,19 +14,21 @@
   --primary-light:#2563eb;
   --accent:#10b981;
   --accent-dark:#059669;
-  --bg:#e0f2fe;
-  --card:#ffffff;
-  --text:#1e293b;
-  --muted:#64748b;
-  --danger:#ef4444;
   --warning:#f59e0b;
-  --shadow:0 4px 20px rgba(30,58,95,.12);
-  --shadow-lg:0 10px 40px rgba(30,58,95,.2);
+  --danger:#ef4444;
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --shadow:0 2px 12px rgba(30,58,95,.08);
+  --shadow-lg:0 8px 30px rgba(30,58,95,.15);
   --radius:16px;
   --radius-sm:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden}
+html,body{height:100%}
+body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 
 /* ═══ شاشة تسجيل الدخول ═══ */
 .login-screen{
@@ -38,20 +41,23 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   position:relative;
   overflow:hidden;
 }
-.login-screen::before{
-  content:'';position:absolute;top:-100px;right:-100px;
-  width:300px;height:300px;border-radius:50%;
-  background:rgba(255,255,255,.1);filter:blur(60px);
+.login-screen::before,.login-screen::after{
+  content:'';position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.1);filter:blur(80px);
 }
+.login-screen::before{width:300px;height:300px;top:-100px;right:-100px}
+.login-screen::after{width:400px;height:400px;bottom:-150px;left:-150px}
 .login-card{
   background:#fff;border-radius:24px;padding:30px;
   width:100%;max-width:400px;
   box-shadow:0 20px 60px rgba(0,0,0,.3);
   position:relative;z-index:2;
+  animation:slideUp .5s ease;
 }
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .login-logo{
   width:80px;height:80px;margin:0 auto 15px;
-  background:linear-gradient(135deg,#1e3a5f,#2563eb);
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
   border-radius:20px;display:flex;align-items:center;justify-content:center;
   font-size:40px;box-shadow:0 10px 30px rgba(37,99,235,.3);
 }
@@ -68,11 +74,11 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   color:var(--muted);margin-bottom:6px;
 }
 .login-card input{
-  width:100%;border:2px solid #e2e8f0;border-radius:12px;
+  width:100%;border:2px solid var(--border);border-radius:12px;
   padding:12px;font-size:16px;font-family:inherit;
-  margin-bottom:12px;transition:.2s;
+  margin-bottom:12px;transition:.2s;background:#f8fafc;
 }
-.login-card input:focus{outline:none;border-color:var(--primary-light)}
+.login-card input:focus{outline:none;border-color:var(--primary-light);background:#fff}
 .login-btn{
   width:100%;border:none;border-radius:12px;
   padding:14px;font-size:16px;font-weight:800;
@@ -83,186 +89,168 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
 }
 .login-btn:active{transform:scale(.97)}
 
-/* ══ التطبيق الرئيسي ═══ */
+/* ═══ التطبيق الرئيسي ═══ */
 .app{display:none;min-height:100vh;flex-direction:column}
 .app.active{display:flex}
 
-/* ═══ الشريط العلوي ═══ */
+/* ═══ الشريط العلوي ══ */
 .topbar{
-  background:linear-gradient(135deg,#1e3a5f,#2563eb);
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
   color:#fff;padding:15px 20px;
   display:flex;align-items:center;gap:12px;
-  box-shadow:0 4px 20px rgba(30,58,95,.3);
-  position:relative;overflow:hidden;
-}
-.topbar::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;
-  height:3px;background:linear-gradient(90deg,#10b981,#f59e0b,#ef4444);
+  box-shadow:var(--shadow-lg);
+  position:sticky;top:0;z-index:10;
 }
 .topbar-avatar{
-  width:50px;height:50px;border-radius:50%;
+  width:48px;height:48px;border-radius:50%;
   background:rgba(255,255,255,.2);
   display:flex;align-items:center;justify-content:center;
   font-size:24px;flex-shrink:0;
   border:2px solid rgba(255,255,255,.3);
 }
 .topbar-info{flex:1;min-width:0}
-.topbar-info h2{font-size:16px;font-weight:900;margin-bottom:2px}
-.topbar-info .subjects{font-size:11px;opacity:.9;margin-bottom:3px}
+.topbar-info h2{font-size:16px;font-weight:900;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-info .subjects{font-size:11px;opacity:.9;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-info .code{
   display:inline-block;background:rgba(255,255,255,.2);
   padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;
 }
-.topbar-school{
-  font-size:30px;flex-shrink:0;
-  filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
+.topbar-actions{display:flex;gap:6px}
+.top-btn{
+  background:rgba(255,255,255,.15);border:none;color:#fff;
+  border-radius:10px;padding:8px;font-size:16px;cursor:pointer;
+  position:relative;transition:.2s;
+}
+.top-btn:active{background:rgba(255,255,255,.3)}
+.badge{
+  position:absolute;top:-3px;right:-3px;
+  background:var(--danger);color:#fff;font-size:9px;font-weight:900;
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--primary);
 }
 
-/* ═══ المحتوى ═══ */
+/* ══ المحتوى ═══ */
 .main-content{
   flex:1;padding:15px;
   padding-bottom:100px;
   max-width:900px;margin:0 auto;width:100%;
 }
 
-/* ═══ بطاقة الشهر ═══ */
-.month-card{
-  background:#fff;border-radius:20px;
-  padding:18px;margin-bottom:15px;
+/* ═══ بطاقات الاختيار ═══ */
+.selectors-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:15px;margin-bottom:15px;
   box-shadow:var(--shadow);
-  display:flex;align-items:center;gap:15px;
-  position:relative;overflow:hidden;
+  display:grid;grid-template-columns:1fr;gap:10px;
 }
-.month-card::before{
-  content:'';position:absolute;top:0;right:0;
-  width:120px;height:120px;
-  background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(37,99,235,.1));
-  border-radius:50%;transform:translate(30%,-30%);
+@media(min-width:600px){
+  .selectors-card{grid-template-columns:repeat(3,1fr)}
 }
-.month-icon{
-  width:55px;height:55px;border-radius:14px;
-  background:linear-gradient(135deg,#e0f2fe,#bae6fd);
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;flex-shrink:0;
-  box-shadow:0 4px 12px rgba(37,99,235,.15);
+.select-group label{
+  display:block;font-size:11px;font-weight:800;
+  color:var(--muted);margin-bottom:5px;
 }
-.month-info{flex:1;position:relative;z-index:1}
-.month-info h3{font-size:22px;font-weight:900;color:var(--primary);margin-bottom:3px}
-.month-info small{font-size:12px;color:var(--muted);font-weight:700}
-.month-deco{font-size:50px;opacity:.8;position:relative;z-index:1}
-
-/* ═══ أزرار الشعب ═══ */
-.classes-row{
-  display:flex;gap:8px;margin-bottom:15px;
-  overflow-x:auto;padding-bottom:5px;
-  scrollbar-width:none;
+.select-group select{
+  width:100%;border:2px solid var(--border);border-radius:10px;
+  padding:10px;font-size:13px;font-weight:700;
+  font-family:inherit;background:#f8fafc;color:var(--text);
+  cursor:pointer;transition:.2s;
 }
-.classes-row::-webkit-scrollbar{display:none}
-.class-btn{
-  flex:0 0 auto;
-  padding:12px 18px;border:2px solid #e2e8f0;
-  background:#fff;border-radius:14px;
-  font-size:13px;font-weight:800;color:var(--primary);
-  font-family:inherit;cursor:pointer;
-  display:flex;align-items:center;gap:6px;
-  transition:.2s;white-space:nowrap;
-  box-shadow:0 2px 8px rgba(0,0,0,.04);
-}
-.class-btn:active{transform:scale(.95)}
-.class-btn.active{
-  background:linear-gradient(135deg,var(--primary),var(--primary-light));
-  color:#fff;border-color:transparent;
-  box-shadow:0 6px 20px rgba(37,99,235,.3);
-}
-.class-btn .icon{font-size:16px}
+.select-group select:focus{outline:none;border-color:var(--primary-light);background:#fff}
 
 /* ═══ شريط الأدوات ═══ */
 .tools-bar{
   background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-  border-radius:16px;padding:12px;
+  border-radius:var(--radius);padding:12px;
   display:flex;gap:8px;align-items:center;
   margin-bottom:15px;flex-wrap:wrap;
   box-shadow:0 6px 20px rgba(16,185,129,.3);
 }
 .tool-btn{
-  background:#fff;border:none;border-radius:12px;
-  padding:10px 14px;font-size:13px;font-weight:800;
+  background:#fff;border:none;border-radius:10px;
+  padding:9px 13px;font-size:12px;font-weight:800;
   font-family:inherit;cursor:pointer;
-  display:flex;align-items:center;gap:6px;
+  display:flex;align-items:center;gap:5px;
   color:var(--accent-dark);
   box-shadow:0 2px 8px rgba(0,0,0,.1);
   transition:.2s;
 }
 .tool-btn:active{transform:scale(.95)}
 .tool-btn.danger{color:var(--danger)}
-.tool-btn .icon{font-size:16px}
 .max-input{
-  display:flex;align-items:center;gap:6px;
-  color:#fff;font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:5px;
+  color:#fff;font-size:12px;font-weight:700;
   margin-right:auto;
 }
 .max-input input{
-  width:55px;padding:8px;border:none;
-  border-radius:10px;text-align:center;
-  font-size:14px;font-weight:800;font-family:inherit;
+  width:55px;padding:7px;border:none;
+  border-radius:8px;text-align:center;
+  font-size:13px;font-weight:800;font-family:inherit;
 }
 
-/* ═══ الإحصائيات ═══ */
+/* ═══ الإحصائيات ══ */
 .stats-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
+  display:grid;grid-template-columns:repeat(3,1fr);
   gap:8px;margin-bottom:15px;
 }
+@media(min-width:600px){
+  .stats-grid{grid-template-columns:repeat(5,1fr)}
+}
 .stat-card{
-  background:#fff;border-radius:14px;
+  background:var(--card);border-radius:var(--radius-sm);
   padding:12px 8px;text-align:center;
   box-shadow:var(--shadow);
-  border:2px solid transparent;
+  border-top:3px solid transparent;
   transition:.2s;
 }
 .stat-card:hover{transform:translateY(-2px)}
 .stat-card .stat-icon{
-  width:36px;height:36px;border-radius:50%;
+  width:32px;height:32px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  margin:0 auto 6px;font-size:18px;font-weight:900;
+  margin:0 auto 5px;font-size:16px;font-weight:900;
 }
 .stat-card .stat-label{
-  font-size:11px;color:var(--muted);
+  font-size:10px;color:var(--muted);
   font-weight:700;margin-bottom:3px;
 }
 .stat-card .stat-value{
-  font-size:20px;font-weight:900;
+  font-size:18px;font-weight:900;
 }
-.stat-card.students{border-color:#dbeafe}
+.stat-card.students{border-top-color:#2563eb}
 .stat-card.students .stat-icon{background:#dbeafe;color:#2563eb}
 .stat-card.students .stat-value{color:#2563eb}
-.stat-card.sum{border-color:#d1fae5}
+.stat-card.sum{border-top-color:#059669}
 .stat-card.sum .stat-icon{background:#d1fae5;color:#059669}
 .stat-card.sum .stat-value{color:#059669}
-.stat-card.avg{border-color:#ede9fe}
+.stat-card.avg{border-top-color:#7c3aed}
 .stat-card.avg .stat-icon{background:#ede9fe;color:#7c3aed}
 .stat-card.avg .stat-value{color:#7c3aed}
-.stat-card.pass{border-color:#fed7aa}
+.stat-card.pass{border-top-color:#ea580c}
 .stat-card.pass .stat-icon{background:#fed7aa;color:#ea580c}
 .stat-card.pass .stat-value{color:#ea580c}
+.stat-card.comp{border-top-color:#f59e0b}
+.stat-card.comp .stat-icon{background:#fef3c7;color:#f59e0b}
+.stat-card.comp .stat-value{color:#f59e0b}
 
 /* ═══ البحث ═══ */
 .search-box{
-  background:#fff;border-radius:14px;
-  padding:12px 15px;margin-bottom:15px;
+  background:var(--card);border-radius:var(--radius-sm);
+  padding:10px 15px;margin-bottom:15px;
   display:flex;align-items:center;gap:10px;
   box-shadow:var(--shadow);
-  border:2px solid #e2e8f0;
+  border:2px solid var(--border);
 }
 .search-box input{
   flex:1;border:none;outline:none;
   font-size:14px;font-family:inherit;
   background:transparent;
 }
-.search-box .icon{font-size:20px;color:var(--muted)}
+.search-box .icon{font-size:18px;color:var(--muted)}
 
 /* ═══ جدول التلاميذ ═══ */
 .students-table{
-  background:#fff;border-radius:16px;
+  background:var(--card);border-radius:var(--radius);
   overflow:hidden;box-shadow:var(--shadow);
   margin-bottom:15px;
 }
@@ -271,7 +259,7 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   padding:12px 15px;
   display:grid;grid-template-columns:40px 1fr 80px 40px;
   gap:8px;align-items:center;
-  font-size:13px;font-weight:800;color:var(--primary);
+  font-size:12px;font-weight:800;color:var(--primary);
 }
 .student-row{
   display:grid;grid-template-columns:40px 1fr 80px 40px;
@@ -289,24 +277,25 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   font-weight:900;font-size:13px;
 }
 .student-name{
-  font-size:14px;font-weight:700;color:var(--text);
-  background:#f8fafc;border:2px solid #e2e8f0;
-  border-radius:10px;padding:8px 10px;
+  font-size:13px;font-weight:700;color:var(--text);
+  background:#f8fafc;border:2px solid var(--border);
+  border-radius:8px;padding:7px 9px;
   font-family:inherit;
 }
-.student-name:focus{outline:none;border-color:var(--primary-light)}
+.student-name:focus{outline:none;border-color:var(--primary-light);background:#fff}
 .student-grade{
-  width:100%;padding:8px;border:2px solid #fecaca;
-  border-radius:10px;text-align:center;
-  font-size:14px;font-weight:900;font-family:inherit;
+  width:100%;padding:7px;border:2px solid #fecaca;
+  border-radius:8px;text-align:center;
+  font-size:13px;font-weight:900;font-family:inherit;
   background:#fef2f2;color:var(--danger);
+  transition:.2s;
 }
 .student-grade.pass{background:#d1fae5;border-color:#86efac;color:#059669}
 .student-grade.fail{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .student-grade:focus{outline:none}
 .student-delete{
   background:none;border:none;color:#cbd5e1;
-  font-size:18px;cursor:pointer;
+  font-size:16px;cursor:pointer;
   width:32px;height:32px;border-radius:8px;
   display:flex;align-items:center;justify-content:center;
   transition:.2s;
@@ -315,62 +304,46 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
 
 /* ═══ شريط الإرسال ═══ */
 .send-bar{
-  padding:12px;border-radius:14px;
+  padding:12px;border-radius:var(--radius-sm);
   text-align:center;font-size:13px;font-weight:800;
-  margin-bottom:15px;
+  margin-bottom:10px;
 }
 .send-bar.ok{background:#d1fae5;color:#059669}
 .send-bar.pending{background:#fef3c7;color:#92400e}
-.send-bar.no{background:#fff;color:var(--muted);border:2px dashed #e2e8f0}
+.send-bar.no{background:#fff;color:var(--muted);border:2px dashed var(--border)}
+
+/* ═══ مؤشر الحفظ ══ */
+.save-indicator{
+  text-align:center;font-size:11px;
+  color:var(--accent);font-weight:700;
+  opacity:0;transition:.3s;
+  margin-bottom:10px;
+}
+.save-indicator.show{opacity:1}
 
 /* ═══ زر الإرسال العائم ═══ */
 .fab{
-  position:fixed;bottom:90px;left:20px;
-  width:60px;height:60px;border-radius:50%;
+  position:fixed;bottom:25px;left:20px;
+  width:58px;height:58px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent-dark));
   color:#fff;border:none;
   display:flex;align-items:center;justify-content:center;
-  font-size:24px;cursor:pointer;
+  font-size:22px;cursor:pointer;
   box-shadow:0 8px 25px rgba(16,185,129,.4);
   z-index:100;transition:.2s;
 }
 .fab:active{transform:scale(.9)}
 .fab.busy{background:#94a3b8}
+.fab.busy svg{display:none}
 .fab.busy::after{
-  content:'';width:24px;height:24px;
+  content:'';width:22px;height:22px;
   border:3px solid rgba(255,255,255,.3);
   border-top-color:#fff;border-radius:50%;
   animation:spin .8s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ═══ شريط التنقل السفلي ═══ */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:#fff;
-  display:flex;justify-content:space-around;
-  padding:8px 0;
-  box-shadow:0 -4px 20px rgba(0,0,0,.08);
-  z-index:99;
-  border-top:1px solid #e2e8f0;
-}
-.nav-item{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;gap:3px;
-  padding:6px;background:none;border:none;
-  font-family:inherit;cursor:pointer;
-  color:var(--muted);transition:.2s;
-}
-.nav-item .nav-icon{font-size:22px}
-.nav-item .nav-label{font-size:10px;font-weight:700}
-.nav-item.active{color:var(--primary-light)}
-.nav-item.active .nav-icon-wrap{
-  background:var(--primary-light);color:#fff;
-  border-radius:12px;padding:6px 12px;
-  margin-bottom:-8px;
-}
-
-/* ═══ التوست ═══ */
+/* ══ التوست ═══ */
 .toast{
   position:fixed;bottom:100px;left:50%;
   transform:translateX(-50%) translateY(100px);
@@ -399,37 +372,26 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   padding:20px;width:100%;max-width:400px;
   max-height:80vh;overflow-y:auto;
   box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:slideUp .3s ease;
 }
 .modal h3{color:var(--primary);margin-bottom:12px;font-size:18px}
 .modal textarea{
-  width:100%;border:2px solid #e2e8f0;
+  width:100%;border:2px solid var(--border);
   border-radius:12px;padding:10px;
   font-family:inherit;font-size:14px;
   resize:vertical;min-height:100px;
 }
+.modal textarea:focus{outline:none;border-color:var(--primary-light)}
 .modal-actions{display:flex;gap:8px;margin-top:12px}
 .modal-actions button{flex:1}
-
-/* ═══ التجاوب ═══ */
-@media(min-width:768px){
-  .main-content{padding:20px}
-  .stats-grid{grid-template-columns:repeat(4,1fr);gap:12px}
-  .stat-card .stat-value{font-size:24px}
+.msg-item{
+  background:#f8fafc;border-radius:12px;
+  padding:12px;margin-bottom:10px;
+  border-right:4px solid var(--accent);
 }
-@media(max-width:400px){
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
-  .tools-bar{flex-direction:column;align-items:stretch}
-  .max-input{margin-right:0;justify-content:center}
-}
-
-/* ═══ مؤشر الحفظ ═══ */
-.save-indicator{
-  text-align:center;font-size:11px;
-  color:var(--accent);font-weight:700;
-  opacity:0;transition:.3s;
-  margin-bottom:10px;
-}
-.save-indicator.show{opacity:1}
+.msg-item.unread{background:#eff6ff;border-right-color:var(--primary-light)}
+.msg-date{font-size:11px;color:var(--muted);margin-bottom:4px}
+.msg-text{font-size:14px;color:var(--text);line-height:1.6}
 
 /* ═══ حالة فارغة ═══ */
 .empty-state{
@@ -437,8 +399,17 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   color:var(--muted);
 }
 .empty-state .icon{font-size:50px;margin-bottom:10px;opacity:.5}
-.empty-state p{font-size:14px;font-weight:700}
+.empty-state p{font-size:14px;font-weight:700;margin-bottom:5px}
 .empty-state small{font-size:12px}
+
+/* ═══ التجاوب ═══ */
+@media(max-width:400px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .tools-bar{flex-direction:column;align-items:stretch}
+  .max-input{margin-right:0;justify-content:center}
+  .student-row{grid-template-columns:35px 1fr 70px 35px;gap:6px;padding:8px 10px}
+  .table-header{grid-template-columns:35px 1fr 70px 35px;padding:10px}
+}
 </style>
 </head>
 <body>
@@ -449,13 +420,13 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
     <div class="login-logo">🏫</div>
     <h1>مدرستي</h1>
     <p>تطبيق المعلمين لإدخال الدرجات</p>
-    <label>الكود الخاص بك</label>
+    <label>الكود الخاص بك (من الإدارة)</label>
     <input id="codeInput" dir="ltr" placeholder="T-XXXX" style="text-align:center;font-weight:800">
     <button class="login-btn" onclick="doLogin()">تسجيل الدخول</button>
   </div>
 </section>
 
-<!-- ══ التطبيق الرئيسي ═══ -->
+<!-- ═══ التطبيق الرئيسي ═══ -->
 <div class="app" id="mainApp">
   <!-- الشريط العلوي -->
   <header class="topbar">
@@ -465,31 +436,51 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
       <div class="subjects" id="teacherSubjects">—</div>
       <span class="code" id="teacherCode">—</span>
     </div>
-    <div class="topbar-school">🏫</div>
+    <div class="topbar-actions">
+      <button class="top-btn" onclick="openMessages()" title="الرسائل">
+        🔔<span id="msgBadge" class="badge" style="display:none">0</span>
+      </button>
+      <button class="top-btn" onclick="copyCode()" title="نسخ الكود">🔑</button>
+      <button class="top-btn" onclick="logout()" title="خروج">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
   </header>
 
   <!-- المحتوى الرئيسي -->
   <main class="main-content">
-    <!-- بطاقة الشهر -->
-    <div class="month-card">
-      <div class="month-icon">📅</div>
-      <div class="month-info">
-        <h3 id="currentMonth">تشرين الأول</h3>
-        <small>العام الدراسي 2026 - 2027</small>
+    <!-- بطاقات الاختيار -->
+    <div class="selectors-card">
+      <div class="select-group">
+        <label>📚 المادة</label>
+        <select id="subjectSelect" onchange="onSubjectChange()">
+          <option value="">اختر المادة</option>
+        </select>
       </div>
-      <div class="month-deco">📚</div>
+      <div class="select-group">
+        <label>🏫 الصف والشعبة</label>
+        <select id="classSelect" onchange="onClassChange()">
+          <option value="">اختر الشعبة</option>
+        </select>
+      </div>
+      <div class="select-group">
+        <label>📅 الشهر</label>
+        <select id="monthSelect" onchange="onMonthChange()">
+        </select>
+      </div>
     </div>
-
-    <!-- أزرار الشعب -->
-    <div class="classes-row" id="classesRow"></div>
 
     <!-- شريط الأدوات -->
     <div class="tools-bar">
-      <button class="tool-btn" onclick="openPaste()"><span class="icon"></span> نسخ</button>
-      <button class="tool-btn" onclick="addRow()"><span class="icon">👤</span> + تلميذ</button>
-      <button class="tool-btn danger" onclick="clearAll()"><span class="icon">🗑️</span> مسح</button>
+      <button class="tool-btn" onclick="openPaste()">📋 نسخ</button>
+      <button class="tool-btn" onclick="addRow()">👤 + تلميذ</button>
+      <button class="tool-btn danger" onclick="clearAll()">🗑️ مسح</button>
       <div class="max-input">
-        <span class="icon"></span>
+        <span>🎯</span>
         <span>العظمى</span>
         <input id="maxInput" type="number" value="100" min="1" onchange="onCtx()">
       </div>
@@ -514,8 +505,13 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
       </div>
       <div class="stat-card pass">
         <div class="stat-icon">✓</div>
-        <div class="stat-label">ناجح</div>
+        <div class="stat-label">الناجحون</div>
         <div class="stat-value" id="statPass">0</div>
+      </div>
+      <div class="stat-card comp">
+        <div class="stat-icon">!</div>
+        <div class="stat-label">المكملون</div>
+        <div class="stat-value" id="statComp">0</div>
       </div>
     </div>
 
@@ -542,27 +538,9 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
   </main>
 
   <!-- زر الإرسال العائم -->
-  <button class="fab" id="sendBtn" onclick="sendGrades()" title="إرسال">▶</button>
-
-  <!-- شريط التنقل السفلي -->
-  <nav class="bottom-nav">
-    <button class="nav-item active">
-      <div class="nav-icon-wrap"><span class="nav-icon"></span></div>
-      <span class="nav-label">الرئيسية</span>
-    </button>
-    <button class="nav-item">
-      <span class="nav-icon">👥</span>
-      <span class="nav-label">التلاميذ</span>
-    </button>
-    <button class="nav-item">
-      <span class="nav-icon">📊</span>
-      <span class="nav-label">التقارير</span>
-    </button>
-    <button class="nav-item">
-      <span class="nav-icon">⚙️</span>
-      <span class="nav-label">الإعدادات</span>
-    </button>
-  </nav>
+  <button class="fab" id="sendBtn" onclick="sendGrades()" title="إرسال للإدارة">
+    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+  </button>
 </div>
 
 <!-- نافذة اللصق -->
@@ -574,6 +552,17 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
     <div class="modal-actions">
       <button class="login-btn" style="background:#e2e8f0;color:var(--text)" onclick="hideModal('pasteModal')">إلغاء</button>
       <button class="login-btn" onclick="doPaste()">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة الرسائل -->
+<div class="overlay" id="msgModal">
+  <div class="modal">
+    <h3>🔔 الرسائل والإشعارات</h3>
+    <div id="msgList" style="margin-top:10px;"></div>
+    <div class="modal-actions">
+      <button class="login-btn" onclick="hideModal('msgModal')">إغلاق</button>
     </div>
   </div>
 </div>
@@ -592,15 +581,20 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);min-height:
 
 <div class="toast" id="toast"></div>
 
+<!-- ═══ تحميل config.js ═══ -->
+<script src="config.js"></script>
+
 <script>
-const SERVER_URL = "https://script.google.com/macros/s/AKfycbyZVQkKBJPvx3ewVm77eGUTr_LIsOTZvgVazwXuq5aQiQ4mprAWK_c97ZXrYA9MAc15tA/exec";
-const MONTHS = ['تشرين الأول','تشرين الثاني','كانون الأول','آذار','نيسان'];
-const AR = '٠٢٣٤٥٦٧٨٩';
+// استخدام إعدادات config.js
+const MONTHS = APP_CONFIG.MONTHS;
+// SERVER_URL موجود بالفعل كمتغير عام من config.js
+
+const AR = '٠١٢٣٤٥٦٧٨٩';
 const arNum = x => String(x).replace(/\d/g, d => AR[d]);
 const $ = s => document.querySelector(s);
 
 let T = { code:'', name:'', subject:'', classes:[], cls:'', month:MONTHS[0], drafts:{}, subjects:[] };
-let toastT, confirmFn = null;
+let toastT, confirmFn = null, msgCheckInterval;
 const draftKey = () => T.cls + '¦' + T.month;
 
 function toast(m, e) {
@@ -628,6 +622,12 @@ function confirmAction() {
 function esc(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function escA(s) { return esc(s).replace(/"/g, '&quot;'); }
 
+function copyCode() {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(T.code).then(() => toast('تم نسخ الكود ✓'));
+  }
+}
+
 async function api(p, ms) {
   const url = localStorage.getItem('d_url') || SERVER_URL;
   const ctl = new AbortController();
@@ -638,6 +638,13 @@ async function api(p, ms) {
   } finally { clearTimeout(t); }
 }
 
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+
+// ═══ تسجيل الدخول ═══
 async function doLogin() {
   const code = $('#codeInput').value.trim().toUpperCase();
   if (!code) { toast('أدخل الكود', true); return; }
@@ -655,49 +662,131 @@ function enterHome() {
   if (!s) { $('#loginScreen').style.display = 'flex'; $('#mainApp').classList.remove('active'); return; }
   Object.assign(T, s);
   T.drafts = {};
+  
   if (!T.subjects || T.subjects.length === 0) {
     if (T.subject && T.classes && T.classes.length > 0) {
       T.subjects = [{ name: T.subject, classes: T.classes }];
     }
   }
+  
   T.month = MONTHS[0];
   T.cls = (T.classes && T.classes[0]) || '';
 
   $('#teacherName').textContent = T.name || 'مرحباً بك';
   $('#teacherSubjects').textContent = T.subject || '—';
-  $('#teacherCode').textContent = '🔑 ' + T.code;
+  $('#teacherCode').textContent = ' ' + T.code;
 
   $('#loginScreen').style.display = 'none';
   $('#mainApp').classList.add('active');
 
-  buildClasses();
+  buildSelectors();
+  loadCurrent();
+  requestNotificationPermission();
+  checkMessages();
+  msgCheckInterval = setInterval(checkMessages, 60000);
+}
+
+function logout() {
+  clearInterval(msgCheckInterval);
+  confirmDlg('تسجيل الخروج من حسابك؟', () => {
+    localStorage.removeItem('d_session');
+    location.reload();
+  });
+}
+
+// ═══ بناء القوائم المنسدلة ═══
+function buildSelectors() {
+  const subSel = $('#subjectSelect');
+  subSel.innerHTML = '<option value="">اختر المادة</option>';
+  if (T.subjects && T.subjects.length > 0) {
+    T.subjects.forEach((sub, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = sub.name;
+      subSel.appendChild(opt);
+    });
+    subSel.value = '0';
+  }
+  
+  const monthSel = $('#monthSelect');
+  monthSel.innerHTML = '';
+  MONTHS.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    if (m === T.month) opt.selected = true;
+    monthSel.appendChild(opt);
+  });
+  
+  onSubjectChange();
+}
+
+function onSubjectChange() {
+  const idx = $('#subjectSelect').value;
+  const clsSel = $('#classSelect');
+  clsSel.innerHTML = '<option value="">اختر الشعبة</option>';
+  
+  if (idx === '' || !T.subjects[idx]) {
+    T.subject = '';
+    T.classes = [];
+    T.cls = '';
+    loadCurrent();
+    return;
+  }
+  
+  T.subject = T.subjects[idx].name;
+  T.classes = T.subjects[idx].classes || [];
+  
+  T.classes.forEach(cl => {
+    const opt = document.createElement('option');
+    opt.value = cl;
+    opt.textContent = cl;
+    clsSel.appendChild(opt);
+  });
+  
+  if (T.classes.length > 0) {
+    clsSel.value = T.classes[0];
+    T.cls = T.classes[0];
+  } else {
+    T.cls = '';
+  }
+  
   loadCurrent();
 }
 
-function buildClasses() {
-  const row = $('#classesRow');
-  row.innerHTML = '';
-  if (T.classes && T.classes.length > 0) {
-    T.classes.forEach(cl => {
-      const b = document.createElement('button');
-      b.className = 'class-btn' + (cl === T.cls ? ' active' : '');
-      b.innerHTML = '<span class="icon">👥</span> ' + cl;
-      b.onclick = () => { T.cls = cl; buildClasses(); loadCurrent(); };
-      row.appendChild(b);
-    });
-  }
+function onClassChange() {
+  T.cls = $('#classSelect').value;
+  loadCurrent();
 }
 
+function onMonthChange() {
+  T.month = $('#monthSelect').value;
+  loadCurrent();
+}
+
+// ═══ تحميل البيانات ═══
 function loadCurrent() {
+  if (!T.cls) {
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="icon"></div><p>اختر المادة والشعبة</p><small>لعرض قائمة التلاميذ</small></div>';
+    $('#statStudents').textContent = '0';
+    $('#statSum').textContent = '0';
+    $('#statAvg').textContent = '-';
+    $('#statPass').textContent = '0';
+    $('#statComp').textContent = '0';
+    $('#sendBar').className = 'send-bar no';
+    $('#sendBar').textContent = 'لم يتم تحديد الشعبة';
+    return;
+  }
+  
   const k = draftKey();
   if (!T.drafts[k]) {
     const sv = localStorage.getItem('d_draft_' + T.code + '_' + k);
     T.drafts[k] = sv ? JSON.parse(sv) : { rows: [], sentHash: '', sentAt: 0, max: 100 };
   }
+  
   $('#maxInput').value = T.drafts[k].max || 100;
   
-  // جلب التلاميذ إذا كانت القائمة فارغة
-  if (T.drafts[k].rows.length === 0 && T.cls) {
+  if (T.drafts[k].rows.length === 0) {
     fetchStudents();
   } else {
     renderRows();
@@ -722,10 +811,11 @@ async function fetchStudents() {
       $('#studentsList').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>لا توجد أسماء</p><small>تواصل مع الإدارة</small></div>';
     }
   } catch (e) {
-    $('#studentsList').innerHTML = '<div class="empty-state"><div class="icon">️</div><p>تعذر التحميل</p></div>';
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>تعذر التحميل</p><small>تحقق من الإنترنت</small></div>';
   }
 }
 
+// ═══ الحفظ والعرض ══
 function onCtx() { saveDraft(); updStats(); updSendBar(); }
 
 function saveDraft() {
@@ -745,17 +835,20 @@ function renderRows() {
   const search = ($('#searchInput').value || '').trim().toLowerCase();
   const max = Number($('#maxInput').value) || 100;
   box.innerHTML = '';
-  let idx = 1;
+  
+  let displayIndex = 1;
   dr.rows.forEach((r, i) => {
     if (search && !(r.name || '').toLowerCase().includes(search)) return;
+    
     const deg = Number(r.degree);
     const isPass = !isNaN(deg) && deg >= max / 2;
     const isFail = !isNaN(deg) && deg < max / 2 && deg >= 0;
     const cls = isPass ? 'pass' : (isFail ? 'fail' : '');
+    
     const row = document.createElement('div');
     row.className = 'student-row';
     row.innerHTML = `
-      <div class="student-num">${arNum(idx)}</div>
+      <div class="student-num">${arNum(displayIndex)}</div>
       <input class="student-name" placeholder="اسم التلميذ" value="${escA(r.name)}">
       <input class="student-grade ${cls}" type="number" inputmode="decimal" placeholder="—" value="${r.degree === '' ? '' : escA(r.degree)}">
       <button class="student-delete">✕</button>
@@ -775,10 +868,13 @@ function renderRows() {
       dr.rows.splice(i, 1); saveDraft(); renderRows(); updStats(); updSendBar();
     };
     box.appendChild(row);
-    idx++;
+    displayIndex++;
   });
-  if (idx === 1 && !search) {
-    box.innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>لا توجد أسماء</p><small>استخدم زر "نسخ" أو "+ تلميذ"</small></div>';
+  
+  if (displayIndex === 1 && !search) {
+    box.innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>لا توجد أسماء</p><small>استخدم "نسخ" أو "+ تلميذ"</small></div>';
+  } else if (displayIndex === 1 && search) {
+    box.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>لا توجد نتائج</p></div>';
   }
 }
 
@@ -807,10 +903,13 @@ function updStats() {
   const sum = dg.reduce((a, b) => a + b, 0);
   const avg = dg.length ? (sum / dg.length).toFixed(1) : '-';
   const pass = dg.filter(v => v >= max / 2).length;
+  const comp = dg.filter(v => v >= (max / 2) - 10 && v < max / 2).length;
+  
   $('#statStudents').textContent = arNum(rows.length);
   $('#statSum').textContent = arNum(sum);
   $('#statAvg').textContent = avg === '-' ? '-' : arNum(avg.replace('.', '٫'));
   $('#statPass').textContent = arNum(pass);
+  $('#statComp').textContent = arNum(comp);
 }
 
 function updSendBar() {
@@ -833,12 +932,7 @@ function updSendBar() {
   }
 }
 
-function fnv1a(str) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); }
-  return (h >>> 0).toString(16).padStart(8, '0');
-}
-
+// ═══ الإرسال ═══
 async function sendGrades() {
   const dr = T.drafts[draftKey()];
   const cls = (T.cls || '').trim();
@@ -879,16 +973,17 @@ async function sendGrades() {
       saveDraft(); updSendBar();
       toast(r.duplicate ? 'مُرسلة سابقاً ✓✓' : 'تم الإرسال ✓✓');
     } else {
-      toast('❌ ' + r.error, true);
+      toast(' ' + r.error, true);
     }
   } catch (e) {
-    toast(' لا اتصال', true);
+    toast('📴 لا اتصال', true);
   } finally {
     btn.classList.remove('busy');
     btn.disabled = false;
   }
 }
 
+// ═══ اللصق ═══
 function openPaste() { $('#pasteBox').value = ''; $('#pasteModal').classList.add('show'); }
 
 function doPaste() {
@@ -909,7 +1004,57 @@ function doPaste() {
   toast('✓ تمت إضافة ' + arNum(n) + ' تلميذ');
 }
 
-// تهيئة
+// ═══ الإشعارات ═══
+function requestNotificationPermission() {
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+}
+
+async function checkMessages() {
+  if (!T.code) return;
+  try {
+    const r = await api({ action: 'getMessages', code: T.code });
+    if (r.ok) {
+      const badge = $('#msgBadge');
+      if (r.unread > 0) {
+        badge.textContent = arNum(r.unread);
+        badge.style.display = 'flex';
+        if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+          new Notification("رسالة جديدة من الإدارة", { body: "لديك رسالة جديدة في تطبيق مدرستي", icon: "icon.png" });
+        }
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch (e) { }
+}
+
+function openMessages() {
+  requestNotificationPermission();
+  $('#msgModal').classList.add('show');
+  $('#msgList').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)">جاري التحميل...</div>';
+  
+  api({ action: 'getMessages', code: T.code }).then(r => {
+    if (r.ok && r.messages.length > 0) {
+      let html = '';
+      r.messages.forEach(m => {
+        html += `<div class="msg-item ${m.read ? '' : 'unread'}">
+          <div class="msg-date">${m.date} ${m.read ? '• مقروءة' : '• جديدة'}</div>
+          <div class="msg-text">${esc(m.msg)}</div>
+        </div>`;
+      });
+      $('#msgList').innerHTML = html;
+      checkMessages();
+    } else {
+      $('#msgList').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)">لا توجد رسائل</div>';
+    }
+  }).catch(() => {
+    $('#msgList').innerHTML = '<div style="text-align:center;padding:20px;color:var(--danger)">تعذر تحميل الرسائل</div>';
+  });
+}
+
+// ══ التهيئة ═══
 (function init() {
   const s = JSON.parse(localStorage.getItem('d_session') || 'null');
   if (s) enterHome();
