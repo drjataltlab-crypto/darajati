@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة محسّنة مع مطابقة دقيقة) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (نسخة كاملة مع مؤشر حالة الحساب) ══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -9,6 +9,13 @@ var PRINT_SETTINGS = {
   schoolType: localStorage.getItem('print_school_type') || 'للبنين'
 };
 var CURRENT_PRINT_DATA = null;
+
+// ✅ دالة تحويل الأرقام الإنجليزية إلى عربية
+function toArabicNumerals(num) {
+  if (num === null || num === undefined || num === '') return '';
+  var arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','','٩'];
+  return String(num).replace(/[0-9]/g, function(d) { return arabicDigits[parseInt(d)]; });
+}
 
 registerPage('team', {
   enter: function() {
@@ -58,12 +65,25 @@ function renderTeachers(){
     var cnt = 0;
     if(t.subjects) t.subjects.forEach(function(s){ if(s.classes) cnt+=s.classes.length; });
     
+    // ✅ تحديد حالة الحساب (أخضر/أحمر)
+    var accountStatus = t.lastLogin && t.lastLogin > 0;
+    var statusColor = accountStatus ? '#22C55E' : '#EF4444';
+    var statusText = accountStatus ? 'فتح حسابه' : 'لم يفتحه';
+    var statusBg = accountStatus ? '#D1FAE5' : '#FEE2E2';
+    
     h += '<div class="teacher-card" style="border-right:5px solid '+col+'">';
     h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:10px">';
     h += '<div style="flex:1">';
-    h += '<div style="font-size:18px;font-weight:900;color:#0F172A;margin-bottom:4px">'+esc(t.name)+'</div>';
+    
+    // ✅ إضافة مؤشر الحالة بجانب اسم المعلم
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
+    h += '<div style="font-size:18px;font-weight:900;color:#0F172A">'+esc(t.name)+'</div>';
+    h += '<div style="width:12px;height:12px;border-radius:50%;background:'+statusColor+';box-shadow:0 0 8px '+statusColor+';animation:pulse 2s infinite;" title="'+statusText+'"></div>';
+    h += '</div>';
+    
     h += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
     h += '<span class="chip" style="background:#F1F5F9;color:#475569;font-weight:700;font-family:monospace">🔑 '+esc(t.code)+'</span>';
+    h += '<span class="chip" style="background:'+statusBg+';color:'+(accountStatus?'#047857':'#DC2626')+';font-size:11px;font-weight:700">'+(accountStatus?'🟢':'🔴')+' '+statusText+'</span>';
     h += '<button class="btn sm" onclick="copyText(\''+escA(t.code)+'\')">📋 نسخ</button>';
     h += '<button class="btn sm" style="background:#25D366;color:#fff" onclick="sendWA(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 واتساب</button>';
     h += '</div></div>';
@@ -115,7 +135,7 @@ function renderTeachers(){
 }
 
 function sendWA(code,name){
-  var msg='مرحباً '+name+' 👋\n\nكودك في تطبيق «درجاتي»:\n\n🔑 '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.';
+  var msg='مرحباً '+name+' 👋\n\nكودك في تطبيق «درجاتي»:\n\n '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
@@ -253,10 +273,10 @@ function addNewTeacher(){
   var subject = String(subjectEl.value || '').trim();
   var clsVal = String(clsEl.value || '').trim();
   if(!name){ toast('⚠️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
-  if(!subject){ toast('⚠️ اختر المادة', 'err'); subjectEl.focus(); return; }
+  if(!subject){ toast('️ اختر المادة', 'err'); subjectEl.focus(); return; }
   if(!clsVal){ toast('⚠️ اختر الصف', 'err'); clsEl.focus(); return; }
   
-  toast('⏳ جاري الإضافة...', '');
+  toast(' جاري الإضافة...', '');
   api({action:'addTeacher', key:key(), name:name, subject:subject, cls:clsVal}).then(function(r){
     if(r.ok){
       toast('✓ '+(r.message||'تمت الإضافة! الكود: '+r.code), 'ok');
@@ -317,7 +337,7 @@ function showSubjectClasses(code, subjectName, teacherName, classes){
     var btn = document.createElement('button');
     btn.className = 'btn';
     btn.style.cssText = 'width:auto; flex:1; min-width:120px; background:#ECFDF5; color:#047857; border:1px solid #A7F3D0;';
-    btn.textContent = '🏫 ' + cls;
+    btn.textContent = ' ' + cls;
     btn.onclick = function(){ showSubjectRecord(code, subjectName, teacherName, [cls]); };
     listEl.appendChild(btn);
   });
@@ -366,17 +386,13 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
           
           sr.names.forEach(function(studentName){
             var sName = (studentName || '').trim();
-            
-            // ✅ مطابقة دقيقة مع إزالة المسافات الزائدة
             var gradeRow = subjectGrades.find(function(g){
               var gName = (g.name || '').trim();
               var gCls = (g.cls || '').trim();
               var gGrade = (g.grade || '').trim();
               var gSection = (g.section || '').trim();
-              
               return gName === sName && (gCls === targetCls || (gGrade === grade && gSection === section));
             });
-            
             allStudentData.push({ grade: grade, section: section, name: studentName, grades: gradeRow || null });
           });
         }
@@ -434,21 +450,23 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
       var g = s.grades;
       var hasGrades = g && (g.m1!=null || g.m2!=null || g.m3!=null || g.m4!=null || g.m5!=null);
       var bg = hasGrades ? '#fff' : '#F8FAFC';
+      
+      // ✅ تصميم محسّن: خط أكبر ولون أسود للدرجات
       html += '<tr style="background:'+bg+';">';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">'+arNum(globalIndex)+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:right;font-weight:bold;">'+esc(s.name)+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;">'+(g&&g.m1!=null?arNum(g.m1):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;">'+(g&&g.m2!=null?arNum(g.m2):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;">'+(g&&g.m3!=null?arNum(g.m3):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-weight:bold;background:#FEF3C7;">'+(g&&g.a1!=null?arNum(g.a1):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">'+(g&&g.half!=null?arNum(g.half):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#ECFEFF;">'+(g&&g.m4!=null?arNum(g.m4):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;background:#ECFEFF;">'+(g&&g.m5!=null?arNum(g.m5):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-weight:bold;background:#FEF3C7;">'+(g&&g.a2!=null?arNum(g.a2):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-weight:bold;background:#FEF3C7;">'+(g&&g.annual!=null?arNum(g.annual):'—')+'</td>';
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;">'+(g&&g.exam!=null?arNum(g.exam):'—')+'</td>';
-      var finColor = (g && g.final != null && g.final >= (g.max||100)/2) ? '#D1FAE5;color:#047857' : (g && g.final != null ? '#FEE2E2;color:#DC2626' : '');
-      html += '<td style="padding:6px;border:1px solid #CBD5E1;text-align:center;font-weight:900;'+finColor+';">'+(g&&g.final!=null?arNum(g.final):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-size:13px;font-weight:700;color:#000;">'+arNum(globalIndex)+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:right;font-weight:800;color:#000;font-size:12px;">'+esc(s.name)+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;font-size:13px;font-weight:700;color:#000;">'+(g&&g.m1!=null?arNum(g.m1):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;font-size:13px;font-weight:700;color:#000;">'+(g&&g.m2!=null?arNum(g.m2):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;background:#EFF6FF;font-size:13px;font-weight:700;color:#000;">'+(g&&g.m3!=null?arNum(g.m3):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:800;background:#FEF3C7;font-size:13px;color:#000;">'+(g&&g.a1!=null?arNum(g.a1):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-size:13px;font-weight:700;color:#000;">'+(g&&g.half!=null?arNum(g.half):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;background:#ECFEFF;font-size:13px;font-weight:700;color:#000;">'+(g&&g.m4!=null?arNum(g.m4):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;background:#ECFEFF;font-size:13px;font-weight:700;color:#000;">'+(g&&g.m5!=null?arNum(g.m5):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:800;background:#FEF3C7;font-size:13px;color:#000;">'+(g&&g.a2!=null?arNum(g.a2):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:800;background:#FEF3C7;font-size:13px;color:#000;">'+(g&&g.annual!=null?arNum(g.annual):'—')+'</td>';
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-size:13px;font-weight:700;color:#000;">'+(g&&g.exam!=null?arNum(g.exam):'—')+'</td>';
+      var finColor = (g && g.final != null && g.final >= (g.max||100)/2) ? '#D1FAE5;color:#047857' : (g && g.final != null ? '#FEE2E2;color:#DC2626' : 'color:#000');
+      html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-weight:900;font-size:14px;'+finColor+';">'+(g&&g.final!=null?arNum(g.final):'—')+'</td>';
       html += '</tr>';
       globalIndex++;
     });
@@ -459,7 +477,7 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
 
 /* ═══ الطباعة ═══ */
 function openPrintSettings(){
-  if(!CURRENT_PRINT_DATA){ toast('⚠️ لا توجد بيانات للطباعة', 'err'); return; }
+  if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات للطباعة', 'err'); return; }
   $('#printSchoolName').value = PRINT_SETTINGS.schoolName;
   $('#printSchoolYear').value = PRINT_SETTINGS.schoolYear;
   $('#printSchoolType').value = PRINT_SETTINGS.schoolType;
@@ -583,17 +601,7 @@ function openExportExcelSelection(code) {
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
   
-  var modalHtml = `
-    <div class="ovl show" id="excelSelectionModal" style="z-index: 1000;">
-      <div class="modal" style="max-width:500px;">
-        <h3>📥 تصدير Excel - اختر المادة والشعبة</h3>
-        <div id="excelSelectionContent" style="max-height:60vh;overflow-y:auto;padding:10px;"></div>
-        <div class="mrow" style="margin-top:16px">
-          <button class="btn ghost" style="margin:0" onclick="document.getElementById('excelSelectionModal').remove()">إلغاء</button>
-        </div>
-      </div>
-    </div>
-  `;
+  var modalHtml = '<div class="ovl show" id="excelSelectionModal" style="z-index: 1000;"><div class="modal" style="max-width:500px;"><h3>📥 تصدير Excel - اختر المادة والشعبة</h3><div id="excelSelectionContent" style="max-height:60vh;overflow-y:auto;padding:10px;"></div><div class="mrow" style="margin-top:16px"><button class="btn ghost" style="margin:0" onclick="document.getElementById(\'excelSelectionModal\').remove()">إلغاء</button></div></div></div>';
   document.body.insertAdjacentHTML('beforeend', modalHtml);
   
   var content = document.getElementById('excelSelectionContent');
@@ -643,52 +651,109 @@ function generateTeacherExcelFile(code, teacherName, teacherCode, subjectName, c
     var targetCls = className.trim();
     var targetSubj = subjectName.trim();
     
-    // ✅ تصفية الدرجات مع تنظيف المسافات لضمان المطابقة
     var filteredRows = r.rows.filter(function(row) {
       var rowSubj = (row.subject || '').trim();
       var rowCls = (row.cls || '').trim();
       var rowGrade = (row.grade || '').trim();
       var rowSection = (row.section || '').trim();
-      
       var subjectMatch = (rowSubj === targetSubj);
       var classMatch = (rowCls === targetCls) || (rowGrade === grade && rowSection === section);
-      
       return subjectMatch && classMatch;
     });
     
     if(filteredRows.length === 0) {
       toast('⚠️ لا توجد درجات مسجلة لهذه الشعبة تحديداً (' + className + ')', 'err');
-      console.log('Debug: Target Subj:', targetSubj, 'Target Cls:', targetCls);
-      console.log('Debug: Available rows:', r.rows.map(function(r){ return r.subject + ' - ' + r.cls; }));
       return;
     }
     
-    var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl"><head><meta charset="utf-8"><style>table{border-collapse:collapse;width:100%;} th,td{border:1px solid #000;padding:6px;text-align:center;font-family:Arial,sans-serif;} th{background:#1E40AF;color:#fff;font-weight:bold;}</style></head><body>';
-    h += '<h2 style="text-align:center;color:#1E40AF;font-family:Arial;">كشف درجات: ' + esc(teacherName) + '</h2>';
-    h += '<p style="text-align:center;font-family:Arial;">المادة: ' + esc(subjectName) + ' | الصف والشعبة: ' + esc(className) + '</p>';
-    h += '<p style="text-align:center;font-family:Arial;">السنة الدراسية: ' + esc(getStudyYear()) + '</p><br>';
+    var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl">';
+    h += '<head><meta charset="utf-8">';
+    h += '<style>';
+    h += 'table{border-collapse:collapse;width:100%;font-family:Arial,sans-serif;}';
+    h += 'th,td{border:1px solid #000;padding:5px;text-align:center;font-size:11pt;}';
+    h += 'th{color:#fff;font-weight:bold;}';
+    h += '.th-f1{background-color:#1D4ED8;}';
+    h += '.th-f2{background-color:#0E7490;}';
+    h += '.th-avg{background-color:#B45309;color:#fff;}';
+    h += '.th-half{background-color:#7C3AED;color:#fff;}';
+    h += '.th-annual{background-color:#059669;color:#fff;}';
+    h += '.th-exam{background-color:#DC2626;color:#fff;}';
+    h += '.th-final{background-color:#BE123C;color:#fff;}';
+    h += '.th-sub{background-color:#E0E7FF;color:#1E40AF;font-weight:bold;}';
+    h += '.th-seq{background-color:#FDE047;color:#000;width:40px;}';
+    h += '.th-name{background-color:#fff;color:#000;width:180px;}';
+    h += '.td-name{text-align:right;font-weight:bold;padding-right:5px;}';
+    h += '.td-final-pass{background-color:#D1FAE5;color:#047857;font-weight:bold;}';
+    h += '.td-final-fail{background-color:#FEE2E2;color:#DC2626;font-weight:bold;}';
+    h += '.header-right{text-align:right;font-size:14pt;font-weight:bold;color:#1E40AF;}';
+    h += '.header-center{text-align:center;font-size:16pt;font-weight:bold;color:#1E40AF;}';
+    h += '.header-left{text-align:left;font-size:11pt;color:#0F172A;}';
+    h += '.info-row{margin:3px 0;font-weight:bold;}';
+    h += '</style></head><body>';
     
-    h += '<table><thead><tr><th>ت</th><th>اسم التلميذ</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th><th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
+    h += '<table style="border:none;width:100%;margin-bottom:10px;">';
+    h += '<tr style="border:none;">';
+    h += '<td style="border:none;" class="header-right">إدارة<br>' + esc(PRINT_SETTINGS.schoolName) + '<br>' + esc(PRINT_SETTINGS.schoolType) + '</td>';
+    h += '<td style="border:none;" class="header-center">سجل درجات المعلم<br><span style="font-size:11pt;color:#64748B;">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</span></td>';
+    h += '<td style="border:none;" class="header-left">';
+    h += '<div class="info-row">المادة: ' + esc(subjectName) + '</div>';
+    h += '<div class="info-row">الصف والشعبة: ' + esc(className) + '</div>';
+    h += '<div class="info-row">عدد التلاميذ: ' + toArabicNumerals(filteredRows.length) + '</div>';
+    h += '</td>';
+    h += '</tr></table>';
+    
+    h += '<table>';
+    h += '<thead>';
+    h += '<tr>';
+    h += '<th rowspan="2" class="th-seq">ت</th>';
+    h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
+    h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
+    h += '<th rowspan="2" class="th-avg">معدل<br>ف١</th>';
+    h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
+    h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
+    h += '<th rowspan="2" class="th-avg">معدل<br>ف٢</th>';
+    h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
+    h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
+    h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
+    h += '</tr>';
+    h += '<tr>';
+    h += '<th class="th-sub">ت١</th>';
+    h += '<th class="th-sub">ت٢</th>';
+    h += '<th class="th-sub">ك١</th>';
+    h += '<th class="th-sub">آذار</th>';
+    h += '<th class="th-sub">نيسان</th>';
+    h += '</tr>';
+    h += '</thead>';
+    h += '<tbody>';
     
     filteredRows.forEach(function(row, idx){
+      var finalClass = (row.final != null && row.final >= (row.max||100)/2) ? 'td-final-pass' : (row.final != null ? 'td-final-fail' : '');
       h += '<tr>';
-      h += '<td>' + (idx+1) + '</td>';
-      h += '<td style="text-align:right;font-weight:bold;">' + esc(row.name) + '</td>';
-      h += '<td>' + (row.m1!=null?row.m1:'') + '</td>';
-      h += '<td>' + (row.m2!=null?row.m2:'') + '</td>';
-      h += '<td>' + (row.m3!=null?row.m3:'') + '</td>';
-      h += '<td>' + (row.m4!=null?row.m4:'') + '</td>';
-      h += '<td>' + (row.m5!=null?row.m5:'') + '</td>';
-      h += '<td style="font-weight:bold;">' + (row.a1!=null?row.a1:'') + '</td>';
-      h += '<td>' + (row.half!=null?row.half:'') + '</td>';
-      h += '<td style="font-weight:bold;">' + (row.a2!=null?row.a2:'') + '</td>';
-      h += '<td style="font-weight:bold;">' + (row.annual!=null?row.annual:'') + '</td>';
-      h += '<td>' + (row.exam!=null?row.exam:'') + '</td>';
-      h += '<td style="font-weight:900;">' + (row.final!=null?row.final:'') + '</td>';
+      h += '<td>' + toArabicNumerals(idx+1) + '</td>';
+      h += '<td class="td-name">' + esc(row.name) + '</td>';
+      h += '<td>' + toArabicNumerals(row.m1!=null?row.m1:'') + '</td>';
+      h += '<td>' + toArabicNumerals(row.m2!=null?row.m2:'') + '</td>';
+      h += '<td>' + toArabicNumerals(row.m3!=null?row.m3:'') + '</td>';
+      h += '<td style="font-weight:bold;">' + toArabicNumerals(row.a1!=null?row.a1:'') + '</td>';
+      h += '<td>' + toArabicNumerals(row.half!=null?row.half:'') + '</td>';
+      h += '<td>' + toArabicNumerals(row.m4!=null?row.m4:'') + '</td>';
+      h += '<td>' + toArabicNumerals(row.m5!=null?row.m5:'') + '</td>';
+      h += '<td style="font-weight:bold;">' + toArabicNumerals(row.a2!=null?row.a2:'') + '</td>';
+      h += '<td style="font-weight:bold;">' + toArabicNumerals(row.annual!=null?row.annual:'') + '</td>';
+      h += '<td>' + toArabicNumerals(row.exam!=null?row.exam:'') + '</td>';
+      h += '<td class="' + finalClass + '">' + toArabicNumerals(row.final!=null?row.final:'') + '</td>';
       h += '</tr>';
     });
     
-    h += '</tbody></table></body></html>';
+    h += '</tbody></table>';
+    
+    h += '<table style="border:none;width:100%;margin-top:20px;">';
+    h += '<tr style="border:none;">';
+    h += '<td style="border:none;text-align:center;width:50%;padding-top:30px;"><div style="border-top:1px solid #000;padding-top:5px;">توقيع المعلم</div></td>';
+    h += '<td style="border:none;text-align:center;width:50%;padding-top:30px;"><div style="border-top:1px solid #000;padding-top:5px;">توقيع المدير</div></td>';
+    h += '</tr></table>';
+    
+    h += '</body></html>';
     
     var blob = new Blob(['\uFEFF' + h], {type: 'application/vnd.ms-excel;charset=utf-8;'});
     var a = document.createElement('a');
