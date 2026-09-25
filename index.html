@@ -54,7 +54,6 @@ button{cursor:pointer}
   overflow:hidden;
 }
 
-/* خلفية متحركة */
 #login::before{
   content:'';
   position:absolute;
@@ -88,7 +87,6 @@ button{cursor:pointer}
   to{opacity:1;transform:translateY(0)}
 }
 
-/* الشعار */
 .login-logo{
   text-align:center;
   margin-bottom:30px;
@@ -133,7 +131,6 @@ button{cursor:pointer}
   font-weight:500;
 }
 
-/* بطاقة الدخول */
 .login-card{
   background:rgba(255,255,255,.98);
   backdrop-filter:blur(20px);
@@ -226,7 +223,6 @@ button{cursor:pointer}
 /* ═══════════════════════════════════════ */
 #app{display:none;min-height:100vh;background:var(--bg)}
 
-/* الشريط العلوي */
 .app-header{
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:#fff;
@@ -306,13 +302,11 @@ button{cursor:pointer}
   border:2px solid var(--primary);
 }
 
-/* المحتوى */
 .app-content{
   padding:14px;
   padding-bottom:100px;
 }
 
-/* بطاقة الترحيب */
 .welcome-card{
   background:linear-gradient(135deg,#f0f9ff,#e0f2fe);
   border-radius:20px;
@@ -347,7 +341,7 @@ button{cursor:pointer}
   line-height:1.4;
 }
 
-/* بطاقات الاختيار */
+/* ═══ بطاقات الاختيار بألوان مميزة ═══ */
 .selectors{
   display:grid;
   grid-template-columns:1fr;
@@ -359,22 +353,69 @@ button{cursor:pointer}
   border-radius:16px;
   padding:12px;
   box-shadow:var(--shadow);
-  border:2px solid transparent;
+  border-right:5px solid;
   transition:.2s;
 }
 .select-card:focus-within{
-  border-color:var(--primary);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-lg);
 }
+
+/* بطاقة المادة - أزرق */
+.select-card.subject-card{
+  border-right-color:#3b82f6;
+  background:linear-gradient(135deg,#fff 0%,#eff6ff 100%);
+}
+.select-card.subject-card label{
+  color:#1e40af;
+}
+.select-card.subject-card select{
+  border-color:#bfdbfe;
+}
+.select-card.subject-card select:focus{
+  border-color:#3b82f6;
+  background:#fff;
+}
+
+/* بطاقة الصف والشعبة - أخضر */
+.select-card.class-card{
+  border-right-color:#10b981;
+  background:linear-gradient(135deg,#fff 0%,#ecfdf5 100%);
+}
+.select-card.class-card label{
+  color:#047857;
+}
+.select-card.class-card select{
+  border-color:#a7f3d0;
+}
+.select-card.class-card select:focus{
+  border-color:#10b981;
+  background:#fff;
+}
+
+/* بطاقة الشهر - برتقالي */
+.select-card.month-card{
+  border-right-color:#f59e0b;
+  background:linear-gradient(135deg,#fff 0%,#fffbeb 100%);
+}
+.select-card.month-card label{
+  color:#b45309;
+}
+.select-card.month-card select{
+  border-color:#fde68a;
+}
+.select-card.month-card select:focus{
+  border-color:#f59e0b;
+  background:#fff;
+}
+
 .select-card label{
   display:flex;
   align-items:center;
   gap:6px;
-  font-size:11px;
+  font-size:12px;
   font-weight:800;
-  color:var(--primary);
   margin-bottom:6px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
 }
 .select-card select{
   width:100%;
@@ -388,12 +429,8 @@ button{cursor:pointer}
   cursor:pointer;
   transition:.2s;
 }
-.select-card select:focus{
-  border-color:var(--primary);
-  background:#fff;
-}
 
-/* الإحصائيات */
+/* ═══ الإحصائيات ══ */
 .stats-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -459,7 +496,7 @@ button{cursor:pointer}
 .stat-box.fail .stat-ico{background:#ef4444}
 .stat-box.fail .stat-val{color:#dc2626}
 
-/* شريط الأدوات */
+/* ═══ شريط الأدوات ═══ */
 .tools-bar{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -485,7 +522,7 @@ button{cursor:pointer}
 .tool-btn.clear{background:linear-gradient(135deg,var(--danger),#dc2626)}
 .tool-btn.copy{background:linear-gradient(135deg,var(--info),#0891b2)}
 
-/* البحث */
+/* ══ البحث ═══ */
 .search-box{
   background:#fff;
   border-radius:14px;
@@ -506,7 +543,7 @@ button{cursor:pointer}
 }
 .search-box .s-icon{font-size:18px;color:var(--muted)}
 
-/* جدول التلاميذ */
+/* ═══ جدول التلاميذ ═══ */
 .students-card{
   background:#fff;
   border-radius:18px;
@@ -561,15 +598,6 @@ button{cursor:pointer}
   flex-shrink:0;
 }
 .s-info{flex:1;min-width:0}
-.s-name{
-  font-size:13px;
-  font-weight:700;
-  color:var(--text);
-  margin-bottom:2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
 .s-name-input{
   width:100%;
   padding:6px 8px;
@@ -618,7 +646,7 @@ button{cursor:pointer}
 }
 .s-del:active{background:var(--danger);color:#fff}
 
-/* شريط الإرسال */
+/* ═══ شريط الإرسال ═══ */
 .send-status{
   padding:12px;
   border-radius:14px;
@@ -642,7 +670,7 @@ button{cursor:pointer}
 }
 .save-hint.show{opacity:1}
 
-/* زر الإرسال العائم */
+/* ═══ زر الإرسال العائم ═══ */
 .fab{
   position:fixed;
   bottom:20px;
@@ -673,7 +701,7 @@ button{cursor:pointer}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* حالة فارغة */
+/* ═══ حالة فارغة ═══ */
 .empty-state{
   text-align:center;
   padding:40px 20px;
@@ -683,7 +711,7 @@ button{cursor:pointer}
 .empty-state p{font-size:14px;font-weight:bold;margin-bottom:4px}
 .empty-state small{font-size:12px}
 
-/* التوست */
+/* ═══ التوست ═══ */
 .toast{
   position:fixed;
   bottom:90px;
@@ -706,7 +734,7 @@ button{cursor:pointer}
 .toast.err{background:var(--danger)}
 .toast.ok{background:var(--success)}
 
-/* النوافذ */
+/* ═══ النوافذ ═══ */
 .overlay{
   position:fixed;
   inset:0;
@@ -798,7 +826,7 @@ button{cursor:pointer}
       <div class="input-wrapper">
         <label>الكود الخاص بك</label>
         <input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off">
-        <span class="input-icon">🔑</span>
+        <span class="input-icon"></span>
       </div>
 
       <button class="login-btn" onclick="doLogin()">
@@ -817,11 +845,10 @@ button{cursor:pointer}
 
 <!-- ═══ التطبيق الرئيسي ═══ -->
 <div id="app">
-  <!-- الشريط العلوي -->
   <div class="app-header">
     <div class="header-row">
       <div class="user-section">
-        <div class="user-avatar">👨‍🏫</div>
+        <div class="user-avatar">👨‍</div>
         <div class="user-info">
           <h3 id="teacherName">مرحباً</h3>
           <small id="teacherCode">🔑 —</small>
@@ -832,13 +859,12 @@ button{cursor:pointer}
           🔔
           <span class="notif-badge" id="msgBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="logout()"></button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
       </div>
     </div>
   </div>
 
   <div class="app-content">
-    <!-- بطاقة الترحيب -->
     <div class="welcome-card">
       <div class="welcome-icon">📚</div>
       <div class="welcome-text">
@@ -847,27 +873,26 @@ button{cursor:pointer}
       </div>
     </div>
 
-    <!-- بطاقات الاختيار -->
+    <!-- بطاقات الاختيار الملونة -->
     <div class="selectors">
-      <div class="select-card">
+      <div class="select-card subject-card">
         <label>📚 المادة</label>
         <select id="subjectSelect" onchange="onSubjectChange()">
           <option value="">اختر المادة</option>
         </select>
       </div>
-      <div class="select-card">
+      <div class="select-card class-card">
         <label>🏫 الصف والشعبة</label>
         <select id="classSelect" onchange="onClassChange()">
           <option value="">اختر الشعبة</option>
         </select>
       </div>
-      <div class="select-card">
-        <label>📅 الشهر</label>
+      <div class="select-card month-card">
+        <label> الشهر</label>
         <select id="monthSelect" onchange="onMonthChange()"></select>
       </div>
     </div>
 
-    <!-- الإحصائيات -->
     <div class="stats-grid">
       <div class="stat-box total">
         <div class="stat-ico">👥</div>
@@ -891,21 +916,18 @@ button{cursor:pointer}
       </div>
     </div>
 
-    <!-- الأدوات -->
     <div class="tools-bar">
       <button class="tool-btn paste" onclick="openPaste()">📋 لصق</button>
-      <button class="tool-btn add" onclick="addRow()"> تلميذ</button>
-      <button class="tool-btn copy" onclick="copyAll()"> نسخ</button>
-      <button class="tool-btn clear" onclick="clearAll()">️ مسح</button>
+      <button class="tool-btn add" onclick="addRow()">➕ تلميذ</button>
+      <button class="tool-btn copy" onclick="copyAll()">📄 نسخ</button>
+      <button class="tool-btn clear" onclick="clearAll()">🗑️ مسح</button>
     </div>
 
-    <!-- البحث -->
     <div class="search-box">
       <span class="s-icon">🔍</span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
-    <!-- جدول التلاميذ -->
     <div class="students-card">
       <div class="card-head">
         <h3>📝 قائمة التلاميذ</h3>
@@ -914,12 +936,10 @@ button{cursor:pointer}
       <div id="studentsList"></div>
     </div>
 
-    <!-- حالة الإرسال -->
     <div class="send-status no" id="sendBar">لم يتم الإرسال بعد</div>
     <div class="save-hint" id="saveInd">✓ تم الحفظ التلقائي</div>
   </div>
 
-  <!-- زر الإرسال -->
   <button class="fab" id="sendBtn" onclick="sendGrades()" title="إرسال للإدارة">
     <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
   </button>
@@ -928,7 +948,7 @@ button{cursor:pointer}
 <!-- نافذة اللصق -->
 <div class="overlay" id="pasteModal">
   <div class="modal">
-    <h3> لصق من Excel</h3>
+    <h3>📋 لصق من Excel</h3>
     <p style="font-size:12px;color:var(--muted);margin-bottom:10px">انسخ عمودين (الاسم ثم الدرجة) والصقهما هنا</p>
     <textarea id="pasteBox" placeholder="أحمد محمد&#9;95&#10;سارة علي&#9;88"></textarea>
     <div class="modal-actions">
@@ -952,7 +972,7 @@ button{cursor:pointer}
 <!-- نافذة التأكيد -->
 <div class="overlay" id="confirmModal">
   <div class="modal">
-    <h3>️ تأكيد</h3>
+    <h3>⚠️ تأكيد</h3>
     <p id="confirmMsg" style="margin-bottom:15px;line-height:1.6"></p>
     <div class="modal-actions">
       <button class="cancel" onclick="hideModal('confirmModal')">إلغاء</button>
@@ -1005,11 +1025,11 @@ function fnv1a(str){
   return(h>>>0).toString(16).padStart(8,'0');
 }
 
-// ═══ تسجيل الدخول ═══
+// ══ تسجيل الدخول ═══
 function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
   if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
-  $('#loginMsg').textContent='⏳ جاري التحقق...';
+  $('#loginMsg').textContent=' جاري التحقق...';
   $('#loginMsg').style.color='var(--muted)';
   
   api({action:'teacherLogin',code:code}).then(function(r){
@@ -1061,7 +1081,7 @@ function logout(){
   });
 }
 
-// ═══ بناء القوائم ═══
+// ═══ بناء القوائم ══
 function buildSelectors(){
   var subSel=$('#subjectSelect');
   subSel.innerHTML='<option value="">اختر المادة</option>';
@@ -1070,7 +1090,7 @@ function buildSelectors(){
       var sub=T.subjects[idx];
       var opt=document.createElement('option');
       opt.value=idx;
-      var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
+      var ci=SUBJECT_COLORS[sub.name]||{icon:''};
       opt.textContent=ci.icon+' '+sub.name;
       subSel.appendChild(opt);
     }
@@ -1158,7 +1178,7 @@ function loadCurrent(){
   if(T.drafts[k].rows.length===0){
     fetchStudents();
   }else{
-    renderRows();updStats();
+    renderRows();updStats();updSendBar();
   }
 }
 
@@ -1224,7 +1244,7 @@ function renderRows(){
       '<div class="s-info"><input class="s-name-input" placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
       '<div class="s-grade-wrap">'+
         '<input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'">'+
-        '<button class="s-del">✕</button>'+
+        '<button class="s-del"></button>'+
       '</div>';
     
     var inputs=row.querySelectorAll('input');
@@ -1254,7 +1274,7 @@ function renderRows(){
   $('#totalCount').textContent=arNum(dr.rows.length)+' تلميذ';
   
   if(displayIndex===1&&!search){
-    box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد أسماء</p><small>استخدم "لصق" أو "+ تلميذ"</small></div>';
+    box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p><small>استخدم "لصق" أو "تلميذ"</small></div>';
   }else if(displayIndex===1&&search){
     box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>';
   }
@@ -1306,17 +1326,17 @@ function updSendBar(){
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){
     el.className='send-status ok';
-    el.textContent='✓✓ تم الإرسال • '+T.month;
+    el.textContent='✓✓ تم الإرسال للإدارة • '+T.month;
   }else if(dr.sentHash){
     el.className='send-status pending';
-    el.textContent='لديك تعديلات لم تُرسل';
+    el.textContent='⚠️ لديك تعديلات لم تُرسل';
   }else{
     el.className='send-status no';
-    el.textContent='لم يتم الإرسال بعد';
+    el.textContent='📤 لم يتم الإرسال بعد';
   }
 }
 
-// ═══ إرسال الدرجات ═══
+// ═══ إرسال الدرجات إلى الإدارة ═══
 function sendGrades(){
   var dr=T.drafts[draftKey()];
   var cls=(T.cls||'').trim();
@@ -1341,29 +1361,36 @@ function sendGrades(){
   if(err){toast(err,true);return;}
   if(!clean.length){toast('أدخل الدرجات أولاً',true);return;}
 
-  confirmDlg('إرسال '+arNum(clean.length)+' درجة للإدارة؟',function(){
+  confirmDlg('📤 إرسال '+arNum(clean.length)+' درجة إلى الإدارة والمطور؟',function(){
     var btn=$('#sendBtn');
     btn.classList.add('busy');btn.disabled=true;
 
     var checksum=fnv1a([T.code,cls,month,clean.map(function(r){return r.name+';'+r.degree;}).join('|')].join('|'));
+    
+    // إرسال الدرجات إلى الخادم (Google Apps Script)
     api({
       action:'submitGrades',
-      code:T.code,cls:cls,month:month,maxDegree:max,
+      code:T.code,
+      cls:cls,
+      month:month,
+      maxDegree:max,
       rows:clean.map(function(r){return{name:r.name,v:[r.degree,null,null,null,null]};}),
-      checksum:checksum,batchId:'b'+checksum,sentAt:Date.now()
+      checksum:checksum,
+      batchId:'b'+checksum,
+      sentAt:Date.now()
     }).then(function(r){
       if(r.ok){
         dr.sentHash=checksum;
         dr.sentAt=r.time||Date.now();
         saveDraft();updSendBar();
-        toast(r.duplicate?'مُرسلة سابقاً ✓✓':'✓✓ تم الإرسال للإدارة');
+        toast('✓✓ تم إرسال الدرجات للإدارة والمطور بنجاح');
       }else{toast('❌ '+r.error,true);}
-    }).catch(function(e){toast('📴 لا اتصال',true);})
+    }).catch(function(e){toast('📴 لا اتصال بالخادم',true);})
     .finally(function(){btn.classList.remove('busy');btn.disabled=false;});
   });
 }
 
-// ═══ اللصق ══
+// ═══ اللصق ═══
 function openPaste(){$('#pasteBox').value='';$('#pasteModal').classList.add('show');}
 function doPaste(){
   var t=$('#pasteBox').value;
