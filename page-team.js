@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة كاملة محدثة) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (نسخة محسّنة مع مطابقة دقيقة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -340,7 +340,7 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
     if(!r.ok){ $('#trLoading').style.display = 'none'; toast('❌ '+r.error, 'err'); return; }
     
     var allGrades = r.rows || [];
-    var subjectGrades = allGrades.filter(function(g){ return g.subject === subjectName; });
+    var subjectGrades = allGrades.filter(function(g){ return (g.subject||'').trim() === subjectName.trim(); });
     
     if(!classes || classes.length === 0){
       $('#trLoading').style.display = 'none';
@@ -360,13 +360,21 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
         totalFetched += count;
         
         if(sr.ok && sr.names && sr.names.length > 0){
-          var grade = sr.grade || cls.split(' ')[0] || '';
-          var section = sr.section || cls.split(' ')[1] || '';
+          var grade = (sr.grade || cls.split(' ')[0] || '').trim();
+          var section = (sr.section || cls.split(' ')[1] || '').trim();
+          var targetCls = cls.trim();
           
           sr.names.forEach(function(studentName){
-            // ✅ تحسين منطق المطابقة لضمان ظهور الدرجات
+            var sName = (studentName || '').trim();
+            
+            // ✅ مطابقة دقيقة مع إزالة المسافات الزائدة
             var gradeRow = subjectGrades.find(function(g){
-              return g.name === studentName && (g.cls === cls || (String(g.grade) === String(grade) && String(g.section) === String(section)));
+              var gName = (g.name || '').trim();
+              var gCls = (g.cls || '').trim();
+              var gGrade = (g.grade || '').trim();
+              var gSection = (g.section || '').trim();
+              
+              return gName === sName && (gCls === targetCls || (gGrade === grade && gSection === section));
             });
             
             allStudentData.push({ grade: grade, section: section, name: studentName, grades: gradeRow || null });
@@ -570,7 +578,7 @@ function printSubjectRecord(){
   setTimeout(function() { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) {} }, 800);
 }
 
-/* ═══ تصدير Excel الذكي (مع اختيار المادة والشعبة) ═══ */
+/* ═══ تصدير Excel الذكي ═══ */
 function openExportExcelSelection(code) {
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -625,21 +633,33 @@ function generateTeacherExcelFile(code, teacherName, teacherCode, subjectName, c
   
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
     if(!r.ok || !r.rows || r.rows.length === 0) {
-      toast('⚠️ لا توجد درجات مسجلة لهذا المعلم', 'err');
+      toast('⚠️ لا توجد درجات مسجلة لهذا المعلم في النظام', 'err');
       return;
     }
     
     var parts = className.split(' ');
-    var grade = parts[0] || '';
-    var section = parts[1] || '';
+    var grade = (parts[0] || '').trim();
+    var section = (parts[1] || '').trim();
+    var targetCls = className.trim();
+    var targetSubj = subjectName.trim();
     
-    // تصفية الدرجات للمادة والشعبة المختارة فقط
+    // ✅ تصفية الدرجات مع تنظيف المسافات لضمان المطابقة
     var filteredRows = r.rows.filter(function(row) {
-      return row.subject === subjectName && (row.cls === className || (String(row.grade) === String(grade) && String(row.section) === String(section)));
+      var rowSubj = (row.subject || '').trim();
+      var rowCls = (row.cls || '').trim();
+      var rowGrade = (row.grade || '').trim();
+      var rowSection = (row.section || '').trim();
+      
+      var subjectMatch = (rowSubj === targetSubj);
+      var classMatch = (rowCls === targetCls) || (rowGrade === grade && rowSection === section);
+      
+      return subjectMatch && classMatch;
     });
     
     if(filteredRows.length === 0) {
-      toast('⚠️ لا توجد درجات مسجلة لهذه الشعبة تحديداً', 'err');
+      toast('⚠️ لا توجد درجات مسجلة لهذه الشعبة تحديداً (' + className + ')', 'err');
+      console.log('Debug: Target Subj:', targetSubj, 'Target Cls:', targetCls);
+      console.log('Debug: Available rows:', r.rows.map(function(r){ return r.subject + ' - ' + r.cls; }));
       return;
     }
     
