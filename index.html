@@ -24,8 +24,8 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:#DDE5E1;display:flex;
 .login-wrap p{color:#CFEAE0;font-size:13.5px;margin:4px 0 26px}
 .card{background:var(--card);border-radius:var(--rad);padding:16px;box-shadow:var(--sh);width:100%;max-width:360px}
 .card label{font-size:13px;font-weight:800;color:var(--mut);display:block;margin-bottom:6px}
-input,textarea{width:100%;border:2px solid #E2E8E5;border-radius:12px;padding:12px;font-family:inherit;font-size:16px;background:#FAFCFB;color:var(--ink)}
-input:focus,textarea:focus{outline:none;border-color:var(--acc)}
+input,textarea,select{width:100%;border:2px solid #E2E8E5;border-radius:12px;padding:12px;font-family:inherit;font-size:16px;background:#FAFCFB;color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--acc)}
 .btn{display:block;width:100%;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--acc),#0A8068);color:#fff;box-shadow:0 6px 16px rgba(22,163,74,.35);margin-top:12px}
 .btn:active{transform:scale(.98)}
 .btn.ghost{background:#fff;color:var(--p2);border:2px solid #D7E4DE;box-shadow:none}
@@ -38,10 +38,8 @@ input:focus,textarea:focus{outline:none;border-color:var(--acc)}
 .ibtn:active{background:rgba(255,255,255,.3)}
 .badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;font-weight:900;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--p)}
 .strip{background:linear-gradient(135deg,#0A8068,#064E3B);color:#D9F2E7;font-size:12px;padding:7px 14px;display:flex;gap:14px;flex-wrap:wrap}
-.months{display:flex;gap:7px;overflow-x:auto;padding:12px 12px 4px;scrollbar-width:none}
-.months::-webkit-scrollbar{display:none}
-.mp{flex:0 0 auto;border:2px solid #D3E2DB;background:#fff;color:var(--p);border-radius:22px;padding:9px 18px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 2px 6px rgba(6,78,59,.08)}
-.mp.act{background:linear-gradient(135deg,var(--acc),#0A8068);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(22,163,74,.4)}
+.month-select{padding:10px 14px;margin:8px 12px;border:2px solid #D3E2DB;border-radius:14px;background:#fff;color:var(--p);font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
+.month-select:focus{outline:none;border-color:var(--acc)}
 .subbar{display:flex;gap:8px;align-items:center;padding:8px 12px 12px;flex-wrap:wrap;background:linear-gradient(135deg,#0A8068,#064E3B)}
 .chip{background:#fff;border:2px solid #D3E2DB;border-radius:16px;padding:7px 13px;font-size:12.5px;font-weight:800;color:var(--p);font-family:inherit;cursor:pointer}
 .chip.act{background:var(--p);border-color:var(--p);color:#fff}
@@ -121,10 +119,20 @@ input:focus,textarea:focus{outline:none;border-color:var(--acc)}
         🔔<span id="msgBadge" class="badge" style="display:none">0</span>
       </button>
       <button class="ibtn" title="نسخ كودك" onclick="copyText(T.code)">🔑</button>
-      <button class="ibtn" title="خروج" onclick="logout()">⏻</button>
+      <!-- ✅ زر الخروج مع أيقونة -->
+      <button class="ibtn" title="خروج" onclick="logout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
     </header>
     <div class="strip" id="tInfo"></div>
-    <div class="months" id="monthBar"></div>
+    
+    <!-- ✅ الأشهر كقائمة منسدلة -->
+    <select id="monthSelect" class="month-select" onchange="onMonthChange()"></select>
+    
     <div class="subbar">
       <div id="clsChips" style="display:flex;gap:7px;flex-wrap:wrap"></div>
       <span class="grow"></span>
@@ -161,7 +169,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--acc)}
   </div></div>
 
   <div class="ovl" id="msgModal"><div class="modal">
-    <h3> الرسائل والإشعارات</h3>
+    <h3>🔔 الرسائل والإشعارات</h3>
     <div id="msgList" style="margin-top:10px;"></div>
     <div class="mrow">
       <button class="btn" onclick="hideModal('msgModal')">إغلاق</button>
@@ -180,7 +188,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--acc)}
 </div>
 
 <script>
-const SERVER_URL = "https://script.google.com/macros/s/AKfycbyZVQkKBJPvx3ewVm77eGUTr_LIsOTZvgVazwXuq5aQiQ4mprAWK_c97ZXrYA9MAc15tA/exec";
+const SERVER_URL = "https://script.google.com/macros/s/AKfycbwILgufN829u6CAXuyRJGrqIYdYv-8zGAspc3z5nO1TbapO3jn0iQV4ftYoSyPHOmb3/exec";
 const MONTHS=['تشرين الأول','تشرين الثاني','كانون الأول','آذار','نيسان'];
 const AR='٠١٢٣٤٥٦٧٨٩';
 const arNum=x=>String(x).replace(/\d/g,d=>AR[d]);
@@ -276,8 +284,9 @@ function openMessages() {
 }
 
 async function doLogin(){
-  const code=$('#codeIn').value.trim().toUpperCase();  if(!code){toast('أدخل الكود الخاص بك',true);return;}
-  if(!url()){toast('️ رابط الخادم غير موضوع في الملف',true);return;}
+  const code=$('#codeIn').value.trim().toUpperCase();
+  if(!code){toast('أدخل الكود الخاص بك',true);return;}
+  if(!url()){toast('⚠️ رابط الخادم غير موضوع في الملف',true);return;}
   try{
     const r=await api({action:'teacherLogin',code:code});
     if(!r.ok){toast(r.error,true);return;}
@@ -289,13 +298,29 @@ async function doLogin(){
 function enterHome(){
   const s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(!s){go('s-login');return;}
-  Object.assign(T,s);T.drafts={};T.cls=T.classes[0]||'';T.month=MONTHS[0];
+  Object.assign(T,s);
+  T.drafts={};
+  
+  // ✅ التأكد من وجود classes
+  if(!T.classes || T.classes.length===0){
+    // استخراج من subjects إذا لزم الأمر
+    if(T.subjects && T.subjects.length>0){
+      T.classes = T.subjects[0].classes || [];
+    }
+  }
+  
+  T.cls=T.classes[0]||'';
+  T.month=MONTHS[0];
+  
   $('#tName').textContent='درجاتي — '+T.name;
   $('#tSub').textContent=(T.subject||'معلم')+' • كودك: '+T.code;
   $('#tInfo').innerHTML='<span>📚 '+esc(T.subject||'—')+'</span><span>🏫 '+(T.classes.length?esc(T.classes.join('، ')):'كل الصفوف')+'</span><span>🔑 '+esc(T.code)+'</span>';
+  
   go('s-home');
   requestNotificationPermission();
-  buildChips();buildMonths();loadCurrent();
+  buildMonthSelect();
+  buildChips();
+  loadCurrent();
   checkMessages();
   msgCheckInterval = setInterval(checkMessages, 60000);
 }
@@ -305,21 +330,41 @@ function logout(){
   confirmDlg('تسجيل الخروج من حسابك؟',()=>{localStorage.removeItem('d_session');go('s-login');});
 }
 
-function buildChips(){
-  const c=$('#clsChips');c.innerHTML='';
-  if(T.classes.length){
-    T.classes.forEach(cl=>{const b=document.createElement('button');b.className='chip'+(cl===T.cls?' act':'');b.textContent=cl;
-      b.onclick=()=>{T.cls=cl;buildChips();loadCurrent();};c.appendChild(b);});
-  }else{
-    const i=document.createElement('input');i.className='freecls';i.placeholder='اكتب اسم الصف';
-    i.oninput=()=>{T.cls=i.value;saveDraft();updStats();updSentbar();};c.appendChild(i);
-  }
+// ✅ بناء قائمة الأشهر المنسدلة
+function buildMonthSelect(){
+  const sel=$('#monthSelect');
+  sel.innerHTML='';
+  MONTHS.forEach(m=>{
+    const opt=document.createElement('option');
+    opt.value=m;
+    opt.textContent=m;
+    if(m===T.month) opt.selected=true;
+    sel.appendChild(opt);
+  });
 }
 
-function buildMonths(){
-  const c=$('#monthBar');c.innerHTML='';
-  MONTHS.forEach(m=>{const b=document.createElement('button');b.className='mp'+(m===T.month?' act':'');b.textContent=m;
-    b.onclick=()=>{T.month=m;buildMonths();loadCurrent();};c.appendChild(b);});
+function onMonthChange(){
+  T.month=$('#monthSelect').value;
+  loadCurrent();
+}
+
+function buildChips(){
+  const c=$('#clsChips');c.innerHTML='';
+  if(T.classes && T.classes.length){
+    T.classes.forEach(cl=>{
+      const b=document.createElement('button');
+      b.className='chip'+(cl===T.cls?' act':'');
+      b.textContent=cl;
+      b.onclick=()=>{T.cls=cl;buildChips();loadCurrent();};
+      c.appendChild(b);
+    });
+  }else{
+    const i=document.createElement('input');
+    i.className='freecls';
+    i.placeholder='اكتب اسم الصف';
+    i.oninput=()=>{T.cls=i.value;saveDraft();updStats();updSentbar();};
+    c.appendChild(i);
+  }
 }
 
 function loadCurrent(){
@@ -453,7 +498,7 @@ async function sendGrades(){
     const r=await api(payload);
     if(r.ok){dr.sentHash=checksum;dr.sentAt=r.time||payload.sentAt;saveDraft();updSentbar();
       toast(r.duplicate?'هذه النسخة مُرسلة سابقًا ✓✓':(r.updated?'تم تحديث الدرجات لدى الإدارة ✓✓':'تم استلام درجاتك في الإدارة ✓✓'));}
-    else toast(' '+r.error,true);
+    else toast('❌ '+r.error,true);
   }catch(e){pushQ(payload);toast('📴 لا اتصال — سيُرسل تلقائيًا عند عودة الإنترنت');}
   finally{btn.classList.remove('busy');btn.disabled=false;}
 }
