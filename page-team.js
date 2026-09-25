@@ -435,11 +435,10 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
           var section = sr.section || cls.split(' ')[1] || '';
           
           sr.names.forEach(function(studentName){
-            var gradeRow = subjectGrades.find(function(g){
-              return g.name === studentName && 
-                     String(g.grade) === String(grade) && 
-                     String(g.section) === String(section);
-            });
+           var gradeRow = subjectGrades.find(function(g){
+            return g.name === studentName && 
+         (String(g.grade) === String(grade) || g.cls === (grade + ' ' + section));
+});
             
             allStudentData.push({
               grade: grade,
@@ -613,12 +612,17 @@ function printSubjectRecord(){
   h += '.print-info-row { margin-bottom: 0.5mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
-  // الجدول - نص داكن على خلفيات فاتحة لضمان الطباعة
+  // الجدول
   h += '.print-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin-bottom: 5mm; }';
   h += '.print-table th, .print-table td { border: 1px solid #000; padding: 1.2mm 0.5mm; text-align: center; vertical-align: middle; }';
-  
-  // عناوين رئيسية (الفصل الأول، الثاني، إلخ) - نص أبيض على خلفية داكنة
   h += '.print-table th { font-weight: 900; font-size: 8pt; color: #fff; }';
+  
+  // ✅ عمود التسلسل - خلفية صفراء وخط أسود
+  h += '.th-seq { width: 8mm; background-color: #FDE047 !important; color: #000 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  
+  // ✅ عمود اسم التلميذ - خط أسود على خلفية بيضاء
+  h += '.th-name { width: 40mm; background-color: #fff !important; color: #000 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  
   h += '.th-f1 { background-color: #1D4ED8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-f2 { background-color: #0E7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-avg1 { background-color: #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
@@ -627,13 +631,9 @@ function printSubjectRecord(){
   h += '.th-annual { background-color: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-exam { background-color: #DC2626 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-final { background-color: #BE123C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  
-  // عناوين فرعية (أشهر) - نص داكن على خلفية فاتحة لضمان الظهور
   h += '.th-sub { background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900; font-size: 8pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   
-  h += '.th-seq { width: 8mm; }';
-  h += '.th-name { width: 40mm; }';
-  h += '.td-name { text-align: right; font-weight: 700; padding-right: 1mm; font-size: 8pt; }';
+  h += '.td-name { text-align: right; font-weight: 700; padding-right: 1mm; font-size: 8pt; color: #000 !important; }';
   h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   
@@ -642,10 +642,6 @@ function printSubjectRecord(){
   h += '.print-signature { text-align: center; width: 40mm; }';
   h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 8mm; }';
   h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
-  
-  // تكرار العناوين في كل صفحة
-  h += 'thead { display: table-header-group; }';
-  h += 'tfoot { display: table-footer-group; }';
   
   h += '</style></head><body>';
   
@@ -656,7 +652,6 @@ function printSubjectRecord(){
     var section = parts[1] || '';
     var totalStudents = rows.length;
     
-    // تقسيم التلاميذ إلى صفحات (30 تلميذ لكل صفحة)
     var CHUNK_SIZE = 30;
     var totalPages = Math.ceil(totalStudents / CHUNK_SIZE);
     
@@ -668,7 +663,7 @@ function printSubjectRecord(){
       
       h += '<div class="print-page">';
       
-      // الترويسة (تتكرر في كل صفحة)
+      // الترويسة - ✅ تم حذف "صفحة X من Y"
       h += '<div class="print-header">';
       h += '<div class="print-header-right">';
       h += '<div class="print-school-name">';
@@ -681,9 +676,7 @@ function printSubjectRecord(){
       h += '<div class="print-header-center">';
       h += '<div class="print-title">سجل درجات المعلم</div>';
       h += '<div class="print-year">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</div>';
-      if(totalPages > 1){
-        h += '<div style="font-size:9pt;color:#64748B;margin-top:1mm;">صفحة ' + pageNumber + ' من ' + totalPages + '</div>';
-      }
+      // ✅ تم حذف سطر "صفحة X من Y"
       h += '</div>';
       
       h += '<div class="print-header-left">';
@@ -745,24 +738,10 @@ function printSubjectRecord(){
         h += '</tr>';
       });
       
-      // إذا كانت الصفحة الأخيرة وعدد التلاميذ أقل من 30، أضف صفوف فارغة
-      if(pageRows.length < CHUNK_SIZE && pageIdx === totalPages - 1){
-        var emptyRows = CHUNK_SIZE - pageRows.length;
-        for(var e = 0; e < emptyRows; e++){
-          var emptyIdx = startIdx + pageRows.length + e + 1;
-          if(emptyIdx <= totalStudents) break; // لا نضيف أكثر من العدد الفعلي
-          h += '<tr>';
-          h += '<td>' + arNum(emptyIdx) + '</td>';
-          h += '<td class="td-name"></td>';
-          h += '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
-          h += '</tr>';
-        }
-      }
-      
       h += '</tbody>';
       h += '</table>';
       
-      // التذييل (يظهر فقط في الصفحة الأخيرة من كل شعبة)
+      // التذييل (يظهر فقط في الصفحة الأخيرة)
       if(pageIdx === totalPages - 1){
         h += '<div class="print-footer">';
         h += '<div class="print-signature">';
@@ -776,13 +755,13 @@ function printSubjectRecord(){
         h += '</div>';
       }
       
-      h += '</div>'; // end print-page
+      h += '</div>';
     }
   });
   
   h += '</body></html>';
   
-  // الطباعة داخل البرنامج (iframe مخفي)
+  // الطباعة داخل البرنامج
   var oldFrame = document.getElementById('printFrame');
   if (oldFrame) oldFrame.remove();
   
