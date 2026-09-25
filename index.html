@@ -25,21 +25,26 @@
   --shadow-lg:0 8px 30px rgba(30,58,95,.15);
   --radius:16px;
   --radius-sm:12px;
+  --dynamic-bg:#f1f5f9;
+  --dynamic-accent:#2563eb;
+  --dynamic-light:#dbeafe;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body{
+  font-family:'Tajawal',system-ui,sans-serif;
+  background:var(--dynamic-bg);
+  color:var(--text);
+  overflow-x:hidden;
+  transition:background 0.6s ease;
+}
 
 /* ═══ شاشة تسجيل الدخول ═══ */
 .login-screen{
   min-height:100vh;
   background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 50%,#10b981 100%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  position:relative;
-  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;position:relative;overflow:hidden;
 }
 .login-screen::before,.login-screen::after{
   content:'';position:absolute;border-radius:50%;
@@ -61,18 +66,9 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
   border-radius:20px;display:flex;align-items:center;justify-content:center;
   font-size:40px;box-shadow:0 10px 30px rgba(37,99,235,.3);
 }
-.login-card h1{
-  text-align:center;color:var(--primary);
-  font-size:28px;font-weight:900;margin-bottom:5px;
-}
-.login-card p{
-  text-align:center;color:var(--muted);
-  font-size:13px;margin-bottom:20px;
-}
-.login-card label{
-  display:block;font-size:13px;font-weight:800;
-  color:var(--muted);margin-bottom:6px;
-}
+.login-card h1{text-align:center;color:var(--primary);font-size:28px;font-weight:900;margin-bottom:5px}
+.login-card p{text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px}
+.login-card label{display:block;font-size:13px;font-weight:800;color:var(--muted);margin-bottom:6px}
 .login-card input{
   width:100%;border:2px solid var(--border);border-radius:12px;
   padding:12px;font-size:16px;font-family:inherit;
@@ -89,53 +85,83 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 }
 .login-btn:active{transform:scale(.97)}
 
-/* ═══ التطبيق الرئيسي ═══ */
+/* ══ التطبيق الرئيسي ═══ */
 .app{display:none;min-height:100vh;flex-direction:column}
 .app.active{display:flex}
 
-/* ═══ الشريط العلوي ══ */
+/* ═══ الشريط العلوي ═══ */
 .topbar{
-  background:linear-gradient(135deg,var(--primary),var(--primary-light));
+  background:linear-gradient(135deg,var(--dynamic-accent),color-mix(in srgb, var(--dynamic-accent) 70%, black));
   color:#fff;padding:15px 20px;
   display:flex;align-items:center;gap:12px;
   box-shadow:var(--shadow-lg);
   position:sticky;top:0;z-index:10;
+  transition:background 0.6s ease;
 }
 .topbar-avatar{
   width:48px;height:48px;border-radius:50%;
-  background:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.25);
   display:flex;align-items:center;justify-content:center;
   font-size:24px;flex-shrink:0;
   border:2px solid rgba(255,255,255,.3);
 }
 .topbar-info{flex:1;min-width:0}
 .topbar-info h2{font-size:16px;font-weight:900;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topbar-info .subjects{font-size:11px;opacity:.9;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-info .subjects{font-size:11px;opacity:.95;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-info .code{
-  display:inline-block;background:rgba(255,255,255,.2);
+  display:inline-block;background:rgba(255,255,255,.25);
   padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;
 }
 .topbar-actions{display:flex;gap:6px}
 .top-btn{
-  background:rgba(255,255,255,.15);border:none;color:#fff;
+  background:rgba(255,255,255,.2);border:none;color:#fff;
   border-radius:10px;padding:8px;font-size:16px;cursor:pointer;
   position:relative;transition:.2s;
 }
-.top-btn:active{background:rgba(255,255,255,.3)}
+.top-btn:active{background:rgba(255,255,255,.35)}
 .badge{
   position:absolute;top:-3px;right:-3px;
   background:var(--danger);color:#fff;font-size:9px;font-weight:900;
   width:18px;height:18px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  border:2px solid var(--primary);
+  border:2px solid var(--dynamic-accent);
 }
 
-/* ══ المحتوى ═══ */
+/* ═══ المحتوى ═══ */
 .main-content{
-  flex:1;padding:15px;
-  padding-bottom:100px;
+  flex:1;padding:15px;padding-bottom:100px;
   max-width:900px;margin:0 auto;width:100%;
 }
+
+/* ═══ بطاقة الشهر الديناميكية ═══ */
+.month-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:18px;margin-bottom:15px;
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:15px;
+  position:relative;overflow:hidden;
+  border-right:5px solid var(--dynamic-accent);
+  transition:all 0.6s ease;
+}
+.month-card::before{
+  content:'';position:absolute;top:0;right:0;
+  width:150px;height:150px;
+  background:linear-gradient(135deg,var(--dynamic-light),transparent);
+  border-radius:50%;transform:translate(30%,-30%);
+  transition:background 0.6s ease;
+}
+.month-icon{
+  width:55px;height:55px;border-radius:14px;
+  background:var(--dynamic-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  transition:background 0.6s ease;
+}
+.month-info{flex:1;position:relative;z-index:1}
+.month-info h3{font-size:22px;font-weight:900;color:var(--dynamic-accent);margin-bottom:3px;transition:color 0.6s ease}
+.month-info small{font-size:12px;color:var(--muted);font-weight:700}
+.month-deco{font-size:50px;opacity:.8;position:relative;z-index:1}
 
 /* ═══ بطاقات الاختيار ═══ */
 .selectors-card{
@@ -144,20 +170,15 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
   box-shadow:var(--shadow);
   display:grid;grid-template-columns:1fr;gap:10px;
 }
-@media(min-width:600px){
-  .selectors-card{grid-template-columns:repeat(3,1fr)}
-}
-.select-group label{
-  display:block;font-size:11px;font-weight:800;
-  color:var(--muted);margin-bottom:5px;
-}
+@media(min-width:600px){.selectors-card{grid-template-columns:repeat(3,1fr)}}
+.select-group label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:5px}
 .select-group select{
   width:100%;border:2px solid var(--border);border-radius:10px;
   padding:10px;font-size:13px;font-weight:700;
   font-family:inherit;background:#f8fafc;color:var(--text);
   cursor:pointer;transition:.2s;
 }
-.select-group select:focus{outline:none;border-color:var(--primary-light);background:#fff}
+.select-group select:focus{outline:none;border-color:var(--dynamic-accent);background:#fff}
 
 /* ═══ شريط الأدوات ═══ */
 .tools-bar{
@@ -178,25 +199,15 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 }
 .tool-btn:active{transform:scale(.95)}
 .tool-btn.danger{color:var(--danger)}
-.max-input{
-  display:flex;align-items:center;gap:5px;
-  color:#fff;font-size:12px;font-weight:700;
-  margin-right:auto;
-}
+.max-input{display:flex;align-items:center;gap:5px;color:#fff;font-size:12px;font-weight:700;margin-right:auto}
 .max-input input{
-  width:55px;padding:7px;border:none;
-  border-radius:8px;text-align:center;
-  font-size:13px;font-weight:800;font-family:inherit;
+  width:55px;padding:7px;border:none;border-radius:8px;
+  text-align:center;font-size:13px;font-weight:800;font-family:inherit;
 }
 
-/* ═══ الإحصائيات ══ */
-.stats-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;margin-bottom:15px;
-}
-@media(min-width:600px){
-  .stats-grid{grid-template-columns:repeat(5,1fr)}
-}
+/* ═══ الإحصائيات ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(5,1fr)}}
 .stat-card{
   background:var(--card);border-radius:var(--radius-sm);
   padding:12px 8px;text-align:center;
@@ -210,13 +221,8 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
   display:flex;align-items:center;justify-content:center;
   margin:0 auto 5px;font-size:16px;font-weight:900;
 }
-.stat-card .stat-label{
-  font-size:10px;color:var(--muted);
-  font-weight:700;margin-bottom:3px;
-}
-.stat-card .stat-value{
-  font-size:18px;font-weight:900;
-}
+.stat-card .stat-label{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:3px}
+.stat-card .stat-value{font-size:18px;font-weight:900}
 .stat-card.students{border-top-color:#2563eb}
 .stat-card.students .stat-icon{background:#dbeafe;color:#2563eb}
 .stat-card.students .stat-value{color:#2563eb}
@@ -238,28 +244,23 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
   background:var(--card);border-radius:var(--radius-sm);
   padding:10px 15px;margin-bottom:15px;
   display:flex;align-items:center;gap:10px;
-  box-shadow:var(--shadow);
-  border:2px solid var(--border);
+  box-shadow:var(--shadow);border:2px solid var(--border);
 }
-.search-box input{
-  flex:1;border:none;outline:none;
-  font-size:14px;font-family:inherit;
-  background:transparent;
-}
+.search-box input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;background:transparent}
 .search-box .icon{font-size:18px;color:var(--muted)}
 
-/* ═══ جدول التلاميذ ═══ */
+/* ══ جدول التلاميذ ═══ */
 .students-table{
   background:var(--card);border-radius:var(--radius);
-  overflow:hidden;box-shadow:var(--shadow);
-  margin-bottom:15px;
+  overflow:hidden;box-shadow:var(--shadow);margin-bottom:15px;
 }
 .table-header{
-  background:linear-gradient(135deg,#e0f2fe,#bae6fd);
+  background:var(--dynamic-light);
   padding:12px 15px;
   display:grid;grid-template-columns:40px 1fr 80px 40px;
   gap:8px;align-items:center;
-  font-size:12px;font-weight:800;color:var(--primary);
+  font-size:12px;font-weight:800;color:var(--dynamic-accent);
+  transition:all 0.6s ease;
 }
 .student-row{
   display:grid;grid-template-columns:40px 1fr 80px 40px;
@@ -272,23 +273,22 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 .student-row:last-child{border-bottom:none}
 .student-num{
   width:32px;height:32px;border-radius:10px;
-  background:#e0f2fe;color:var(--primary-light);
+  background:var(--dynamic-light);color:var(--dynamic-accent);
   display:flex;align-items:center;justify-content:center;
   font-weight:900;font-size:13px;
+  transition:all 0.6s ease;
 }
 .student-name{
   font-size:13px;font-weight:700;color:var(--text);
   background:#f8fafc;border:2px solid var(--border);
-  border-radius:8px;padding:7px 9px;
-  font-family:inherit;
+  border-radius:8px;padding:7px 9px;font-family:inherit;
 }
-.student-name:focus{outline:none;border-color:var(--primary-light);background:#fff}
+.student-name:focus{outline:none;border-color:var(--dynamic-accent);background:#fff}
 .student-grade{
   width:100%;padding:7px;border:2px solid #fecaca;
   border-radius:8px;text-align:center;
   font-size:13px;font-weight:900;font-family:inherit;
-  background:#fef2f2;color:var(--danger);
-  transition:.2s;
+  background:#fef2f2;color:var(--danger);transition:.2s;
 }
 .student-grade.pass{background:#d1fae5;border-color:#86efac;color:#059669}
 .student-grade.fail{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
@@ -297,40 +297,30 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
   background:none;border:none;color:#cbd5e1;
   font-size:16px;cursor:pointer;
   width:32px;height:32px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  transition:.2s;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
 }
 .student-delete:hover{background:#fee2e2;color:var(--danger)}
 
 /* ═══ شريط الإرسال ═══ */
-.send-bar{
-  padding:12px;border-radius:var(--radius-sm);
-  text-align:center;font-size:13px;font-weight:800;
-  margin-bottom:10px;
-}
+.send-bar{padding:12px;border-radius:var(--radius-sm);text-align:center;font-size:13px;font-weight:800;margin-bottom:10px}
 .send-bar.ok{background:#d1fae5;color:#059669}
 .send-bar.pending{background:#fef3c7;color:#92400e}
 .send-bar.no{background:#fff;color:var(--muted);border:2px dashed var(--border)}
 
-/* ═══ مؤشر الحفظ ══ */
-.save-indicator{
-  text-align:center;font-size:11px;
-  color:var(--accent);font-weight:700;
-  opacity:0;transition:.3s;
-  margin-bottom:10px;
-}
+/* ═══ مؤشر الحفظ ═══ */
+.save-indicator{text-align:center;font-size:11px;color:var(--accent);font-weight:700;opacity:0;transition:.3s;margin-bottom:10px}
 .save-indicator.show{opacity:1}
 
 /* ═══ زر الإرسال العائم ═══ */
 .fab{
   position:fixed;bottom:25px;left:20px;
   width:58px;height:58px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+  background:linear-gradient(135deg,var(--dynamic-accent),color-mix(in srgb, var(--dynamic-accent) 70%, black));
   color:#fff;border:none;
   display:flex;align-items:center;justify-content:center;
   font-size:22px;cursor:pointer;
-  box-shadow:0 8px 25px rgba(16,185,129,.4);
-  z-index:100;transition:.2s;
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+  z-index:100;transition:all 0.6s ease;
 }
 .fab:active{transform:scale(.9)}
 .fab.busy{background:#94a3b8}
@@ -343,7 +333,7 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ══ التوست ═══ */
+/* ═══ التوست ═══ */
 .toast{
   position:fixed;bottom:100px;left:50%;
   transform:translateX(-50%) translateY(100px);
@@ -394,15 +384,25 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 .msg-text{font-size:14px;color:var(--text);line-height:1.6}
 
 /* ═══ حالة فارغة ═══ */
-.empty-state{
-  text-align:center;padding:30px;
-  color:var(--muted);
-}
+.empty-state{text-align:center;padding:30px;color:var(--muted)}
 .empty-state .icon{font-size:50px;margin-bottom:10px;opacity:.5}
 .empty-state p{font-size:14px;font-weight:700;margin-bottom:5px}
 .empty-state small{font-size:12px}
 
-/* ═══ التجاوب ═══ */
+/* ═══ شارة المادة والشعبة ═══ */
+.subject-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:12px;
+  font-size:11px;font-weight:800;
+  margin-right:5px;
+}
+.class-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:8px;
+  font-size:10px;font-weight:800;
+}
+
+/* ══ التجاوب ═══ */
 @media(max-width:400px){
   .stats-grid{grid-template-columns:repeat(2,1fr)}
   .tools-bar{flex-direction:column;align-items:stretch}
@@ -428,9 +428,8 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 
 <!-- ═══ التطبيق الرئيسي ═══ -->
 <div class="app" id="mainApp">
-  <!-- الشريط العلوي -->
-  <header class="topbar">
-    <div class="topbar-avatar">👤</div>
+  <header class="topbar" id="topbar">
+    <div class="topbar-avatar" id="topbarAvatar">👤</div>
     <div class="topbar-info">
       <h2 id="teacherName">مرحباً بك</h2>
       <div class="subjects" id="teacherSubjects">—</div>
@@ -451,8 +450,17 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
     </div>
   </header>
 
-  <!-- المحتوى الرئيسي -->
   <main class="main-content">
+    <!-- بطاقة الشهر الديناميكية -->
+    <div class="month-card" id="monthCard">
+      <div class="month-icon" id="monthIcon">📅</div>
+      <div class="month-info">
+        <h3 id="currentMonth">تشرين الأول</h3>
+        <small id="monthTheme">العام الدراسي 2026 - 2027</small>
+      </div>
+      <div class="month-deco" id="monthDeco"></div>
+    </div>
+
     <!-- بطاقات الاختيار -->
     <div class="selectors-card">
       <div class="select-group">
@@ -469,19 +477,17 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
       </div>
       <div class="select-group">
         <label>📅 الشهر</label>
-        <select id="monthSelect" onchange="onMonthChange()">
-        </select>
+        <select id="monthSelect" onchange="onMonthChange()"></select>
       </div>
     </div>
 
     <!-- شريط الأدوات -->
     <div class="tools-bar">
-      <button class="tool-btn" onclick="openPaste()">📋 نسخ</button>
+      <button class="tool-btn" onclick="openPaste()"> نسخ</button>
       <button class="tool-btn" onclick="addRow()">👤 + تلميذ</button>
       <button class="tool-btn danger" onclick="clearAll()">🗑️ مسح</button>
       <div class="max-input">
-        <span>🎯</span>
-        <span>العظمى</span>
+        <span></span><span>العظمى</span>
         <input id="maxInput" type="number" value="100" min="1" onchange="onCtx()">
       </div>
     </div>
@@ -537,7 +543,6 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
     <div class="save-indicator" id="saveInd">تم الحفظ التلقائي ✓</div>
   </main>
 
-  <!-- زر الإرسال العائم -->
   <button class="fab" id="sendBtn" onclick="sendGrades()" title="إرسال للإدارة">
     <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
   </button>
@@ -585,9 +590,10 @@ body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(-
 <script src="config.js"></script>
 
 <script>
-// استخدام إعدادات config.js
 const MONTHS = APP_CONFIG.MONTHS;
-// SERVER_URL موجود بالفعل كمتغير عام من config.js
+const SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS;
+const MONTH_THEMES = APP_CONFIG.MONTH_THEMES;
+const CLASS_COLORS = APP_CONFIG.CLASS_COLORS;
 
 const AR = '٠١٢٣٤٥٦٧٨٩';
 const arNum = x => String(x).replace(/\d/g, d => AR[d]);
@@ -644,6 +650,51 @@ function fnv1a(str) {
   return (h >>> 0).toString(16).padStart(8, '0');
 }
 
+// ═══ تطبيق الألوان الديناميكية ══
+function applyDynamicTheme() {
+  const root = document.documentElement;
+  
+  // لون المادة
+  const subjectColor = SUBJECT_COLORS[T.subject] || { primary: '#2563eb', light: '#dbeafe', bg: '#eff6ff', icon: '' };
+  
+  // لون الشهر (خلفية الصفحة)
+  const monthTheme = MONTH_THEMES[T.month] || { gradient: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', accent: '#475569', name: '' };
+  
+  // تطبيق الخلفية
+  root.style.setProperty('--dynamic-bg', monthTheme.gradient);
+  root.style.setProperty('--dynamic-accent', subjectColor.primary);
+  root.style.setProperty('--dynamic-light', subjectColor.light);
+  
+  // تحديث بطاقة الشهر
+  $('#currentMonth').textContent = T.month;
+  $('#monthTheme').textContent = monthTheme.name ? monthTheme.name + ' • ' + APP_CONFIG.STUDY_YEAR : APP_CONFIG.STUDY_YEAR;
+  $('#monthIcon').textContent = subjectColor.icon;
+  
+  // تحديث شارة المادة في الشريط العلوي
+  const subjectsEl = $('#teacherSubjects');
+  subjectsEl.innerHTML = '';
+  if (T.subject) {
+    const badge = document.createElement('span');
+    badge.className = 'subject-badge';
+    badge.style.background = subjectColor.light;
+    badge.style.color = subjectColor.primary;
+    badge.textContent = subjectColor.icon + ' ' + T.subject;
+    subjectsEl.appendChild(badge);
+  }
+  
+  // تحديث شارة الشعبة
+  if (T.cls) {
+    const sectionLetter = T.cls.split(' ').pop();
+    const classColor = CLASS_COLORS[sectionLetter] || { color: '#475569', bg: '#f1f5f9', icon: '' };
+    const classBadge = document.createElement('span');
+    classBadge.className = 'class-badge';
+    classBadge.style.background = classColor.bg;
+    classBadge.style.color = classColor.color;
+    classBadge.textContent = classColor.icon + ' ' + T.cls;
+    subjectsEl.appendChild(classBadge);
+  }
+}
+
 // ═══ تسجيل الدخول ═══
 async function doLogin() {
   const code = $('#codeInput').value.trim().toUpperCase();
@@ -673,13 +724,13 @@ function enterHome() {
   T.cls = (T.classes && T.classes[0]) || '';
 
   $('#teacherName').textContent = T.name || 'مرحباً بك';
-  $('#teacherSubjects').textContent = T.subject || '—';
-  $('#teacherCode').textContent = ' ' + T.code;
+  $('#teacherCode').textContent = '🔑 ' + T.code;
 
   $('#loginScreen').style.display = 'none';
   $('#mainApp').classList.add('active');
 
   buildSelectors();
+  applyDynamicTheme();
   loadCurrent();
   requestNotificationPermission();
   checkMessages();
@@ -702,7 +753,8 @@ function buildSelectors() {
     T.subjects.forEach((sub, idx) => {
       const opt = document.createElement('option');
       opt.value = idx;
-      opt.textContent = sub.name;
+      const colorInfo = SUBJECT_COLORS[sub.name] || { primary: '#475569', icon: '📚' };
+      opt.textContent = colorInfo.icon + ' ' + sub.name;
       subSel.appendChild(opt);
     });
     subSel.value = '0';
@@ -713,7 +765,8 @@ function buildSelectors() {
   MONTHS.forEach(m => {
     const opt = document.createElement('option');
     opt.value = m;
-    opt.textContent = m;
+    const theme = MONTH_THEMES[m] || {};
+    opt.textContent = (theme.name ? theme.name + ' - ' : '') + m;
     if (m === T.month) opt.selected = true;
     monthSel.appendChild(opt);
   });
@@ -730,6 +783,7 @@ function onSubjectChange() {
     T.subject = '';
     T.classes = [];
     T.cls = '';
+    applyDynamicTheme();
     loadCurrent();
     return;
   }
@@ -740,7 +794,9 @@ function onSubjectChange() {
   T.classes.forEach(cl => {
     const opt = document.createElement('option');
     opt.value = cl;
-    opt.textContent = cl;
+    const sectionLetter = cl.split(' ').pop();
+    const classColor = CLASS_COLORS[sectionLetter] || { icon: '' };
+    opt.textContent = classColor.icon + ' ' + cl;
     clsSel.appendChild(opt);
   });
   
@@ -751,23 +807,26 @@ function onSubjectChange() {
     T.cls = '';
   }
   
+  applyDynamicTheme();
   loadCurrent();
 }
 
 function onClassChange() {
   T.cls = $('#classSelect').value;
+  applyDynamicTheme();
   loadCurrent();
 }
 
 function onMonthChange() {
   T.month = $('#monthSelect').value;
+  applyDynamicTheme();
   loadCurrent();
 }
 
 // ═══ تحميل البيانات ═══
 function loadCurrent() {
   if (!T.cls) {
-    $('#studentsList').innerHTML = '<div class="empty-state"><div class="icon"></div><p>اختر المادة والشعبة</p><small>لعرض قائمة التلاميذ</small></div>';
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض قائمة التلاميذ</small></div>';
     $('#statStudents').textContent = '0';
     $('#statSum').textContent = '0';
     $('#statAvg').textContent = '-';
@@ -815,7 +874,6 @@ async function fetchStudents() {
   }
 }
 
-// ═══ الحفظ والعرض ══
 function onCtx() { saveDraft(); updStats(); updSendBar(); }
 
 function saveDraft() {
@@ -872,7 +930,7 @@ function renderRows() {
   });
   
   if (displayIndex === 1 && !search) {
-    box.innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>لا توجد أسماء</p><small>استخدم "نسخ" أو "+ تلميذ"</small></div>';
+    box.innerHTML = '<div class="empty-state"><div class="icon"></div><p>لا توجد أسماء</p><small>استخدم "نسخ" أو "+ تلميذ"</small></div>';
   } else if (displayIndex === 1 && search) {
     box.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>لا توجد نتائج</p></div>';
   }
@@ -932,7 +990,6 @@ function updSendBar() {
   }
 }
 
-// ═══ الإرسال ═══
 async function sendGrades() {
   const dr = T.drafts[draftKey()];
   const cls = (T.cls || '').trim();
@@ -973,7 +1030,7 @@ async function sendGrades() {
       saveDraft(); updSendBar();
       toast(r.duplicate ? 'مُرسلة سابقاً ✓✓' : 'تم الإرسال ✓✓');
     } else {
-      toast(' ' + r.error, true);
+      toast('❌ ' + r.error, true);
     }
   } catch (e) {
     toast('📴 لا اتصال', true);
@@ -983,7 +1040,6 @@ async function sendGrades() {
   }
 }
 
-// ═══ اللصق ═══
 function openPaste() { $('#pasteBox').value = ''; $('#pasteModal').classList.add('show'); }
 
 function doPaste() {
@@ -1004,7 +1060,6 @@ function doPaste() {
   toast('✓ تمت إضافة ' + arNum(n) + ' تلميذ');
 }
 
-// ═══ الإشعارات ═══
 function requestNotificationPermission() {
   if ("Notification" in window && Notification.permission === "default") {
     Notification.requestPermission();
@@ -1054,7 +1109,6 @@ function openMessages() {
   });
 }
 
-// ══ التهيئة ═══
 (function init() {
   const s = JSON.parse(localStorage.getItem('d_session') || 'null');
   if (s) enterHome();
