@@ -40,14 +40,17 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--acc)}
 .strip{background:linear-gradient(135deg,#0A8068,#064E3B);color:#D9F2E7;font-size:12px;padding:7px 14px;display:flex;gap:14px;flex-wrap:wrap}
 .month-select{padding:10px 14px;margin:8px 12px;border:2px solid #D3E2DB;border-radius:14px;background:#fff;color:var(--p);font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
 .month-select:focus{outline:none;border-color:var(--acc)}
+
+/* ✅ تنسيق اختيار المادة والشعبة */
+.selector-bar{display:flex;gap:8px;padding:10px 12px;background:linear-gradient(135deg,#0A8068,#064E3B);flex-wrap:wrap}
+.selector-bar select{flex:1;min-width:120px;padding:10px;border:2px solid rgba(255,255,255,.3);border-radius:12px;background:rgba(255,255,255,.95);color:var(--p);font-size:13px;font-weight:700;font-family:inherit}
+.selector-bar select:focus{outline:none;border-color:var(--acc);background:#fff}
+
 .subbar{display:flex;gap:8px;align-items:center;padding:8px 12px 12px;flex-wrap:wrap;background:linear-gradient(135deg,#0A8068,#064E3B)}
-.chip{background:#fff;border:2px solid #D3E2DB;border-radius:16px;padding:7px 13px;font-size:12.5px;font-weight:800;color:var(--p);font-family:inherit;cursor:pointer}
-.chip.act{background:var(--p);border-color:var(--p);color:#fff}
 .mini{background:#fff;border:none;border-radius:14px;padding:8px 12px;font-size:12.5px;font-weight:800;color:var(--p2);font-family:inherit;cursor:pointer;box-shadow:0 2px 6px rgba(6,78,59,.1)}
 .mini.danger{color:var(--red)}
 .maxw{display:flex;align-items:center;gap:5px;color:#fff;font-size:12px;font-weight:700}
 .maxw input{width:60px;padding:7px;border-radius:12px;text-align:center;font-size:14px;margin:0}
-.freecls{width:140px;margin:0;padding:8px 12px;font-size:13px;border-radius:14px}
 .wrap{flex:1;overflow-y:auto;padding:12px}
 .search-box{margin-bottom:12px;position:relative}
 .search-box input{padding-right:35px;font-size:14px}
@@ -93,6 +96,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--acc)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{background:var(--red)}
 .dbl{color:var(--acc);font-weight:900}
+.loading{text-align:center;padding:30px;color:var(--mut);font-size:14px}
 </style>
 </head>
 <body>
@@ -119,7 +123,6 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--acc)}
         🔔<span id="msgBadge" class="badge" style="display:none">0</span>
       </button>
       <button class="ibtn" title="نسخ كودك" onclick="copyText(T.code)">🔑</button>
-      <!-- ✅ زر الخروج مع أيقونة -->
       <button class="ibtn" title="خروج" onclick="logout()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -130,11 +133,20 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--acc)}
     </header>
     <div class="strip" id="tInfo"></div>
     
-    <!-- ✅ الأشهر كقائمة منسدلة -->
+    <!-- ✅ اختيار الشهر -->
     <select id="monthSelect" class="month-select" onchange="onMonthChange()"></select>
     
+    <!-- ✅ اختيار المادة والشعبة -->
+    <div class="selector-bar">
+      <select id="subjectSelect" onchange="onSubjectChange()">
+        <option value="">اختر المادة</option>
+      </select>
+      <select id="classSelect" onchange="onClassChange()">
+        <option value="">اختر الشعبة</option>
+      </select>
+    </div>
+    
     <div class="subbar">
-      <div id="clsChips" style="display:flex;gap:7px;flex-wrap:wrap"></div>
       <span class="grow"></span>
       <label class="maxw">العظمى <input id="maxIn" type="number" value="100" min="1" onchange="onCtx()"></label>
       <button class="mini" onclick="openPaste()">📋 لصق</button>
@@ -196,7 +208,7 @@ const $=s=>document.querySelector(s);
 const url=()=>localStorage.getItem('d_url')||SERVER_URL;
 let toastT,_yes=null;
 let msgCheckInterval;
-const T={code:'',name:'',subject:'',classes:[],cls:'',month:MONTHS[0],drafts:{}};
+const T={code:'',name:'',subject:'',classes:[],cls:'',month:MONTHS[0],drafts:{},subjects:[]};
 const draftKey=()=>T.cls+'¦'+T.month;
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');}
@@ -301,26 +313,23 @@ function enterHome(){
   Object.assign(T,s);
   T.drafts={};
   
-  // ✅ التأكد من وجود classes
-  if(!T.classes || T.classes.length===0){
-    // استخراج من subjects إذا لزم الأمر
-    if(T.subjects && T.subjects.length>0){
-      T.classes = T.subjects[0].classes || [];
+  // ✅ التأكد من وجود subjects
+  if(!T.subjects || T.subjects.length===0){
+    if(T.subject && T.classes && T.classes.length>0){
+      T.subjects = [{name: T.subject, classes: T.classes}];
     }
   }
   
-  T.cls=T.classes[0]||'';
   T.month=MONTHS[0];
   
   $('#tName').textContent='درجاتي — '+T.name;
   $('#tSub').textContent=(T.subject||'معلم')+' • كودك: '+T.code;
-  $('#tInfo').innerHTML='<span>📚 '+esc(T.subject||'—')+'</span><span>🏫 '+(T.classes.length?esc(T.classes.join('، ')):'كل الصفوف')+'</span><span>🔑 '+esc(T.code)+'</span>';
+  $('#tInfo').innerHTML='<span>📚 '+esc(T.subject||'—')+'</span><span>🏫 '+(T.classes&&T.classes.length?esc(T.classes.join('، ')):'كل الصفوف')+'</span><span>🔑 '+esc(T.code)+'</span>';
   
   go('s-home');
   requestNotificationPermission();
   buildMonthSelect();
-  buildChips();
-  loadCurrent();
+  buildSubjectSelect();
   checkMessages();
   msgCheckInterval = setInterval(checkMessages, 60000);
 }
@@ -330,7 +339,6 @@ function logout(){
   confirmDlg('تسجيل الخروج من حسابك؟',()=>{localStorage.removeItem('d_session');go('s-login');});
 }
 
-// ✅ بناء قائمة الأشهر المنسدلة
 function buildMonthSelect(){
   const sel=$('#monthSelect');
   sel.innerHTML='';
@@ -348,33 +356,105 @@ function onMonthChange(){
   loadCurrent();
 }
 
-function buildChips(){
-  const c=$('#clsChips');c.innerHTML='';
-  if(T.classes && T.classes.length){
-    T.classes.forEach(cl=>{
-      const b=document.createElement('button');
-      b.className='chip'+(cl===T.cls?' act':'');
-      b.textContent=cl;
-      b.onclick=()=>{T.cls=cl;buildChips();loadCurrent();};
-      c.appendChild(b);
+// ✅ بناء قائمة المواد
+function buildSubjectSelect(){
+  const sel=$('#subjectSelect');
+  sel.innerHTML='<option value="">اختر المادة</option>';
+  if(T.subjects && T.subjects.length>0){
+    T.subjects.forEach((sub,idx)=>{
+      const opt=document.createElement('option');
+      opt.value=idx;
+      opt.textContent=sub.name;
+      sel.appendChild(opt);
     });
-  }else{
-    const i=document.createElement('input');
-    i.className='freecls';
-    i.placeholder='اكتب اسم الصف';
-    i.oninput=()=>{T.cls=i.value;saveDraft();updStats();updSentbar();};
-    c.appendChild(i);
+    // اختيار أول مادة تلقائياً
+    sel.value='0';
+    onSubjectChange();
   }
 }
 
+// ✅ عند تغيير المادة
+function onSubjectChange(){
+  const idx=$('#subjectSelect').value;
+  if(idx==='' || !T.subjects[idx]){
+    $('#classSelect').innerHTML='<option value="">اختر الشعبة</option>';
+    T.cls='';
+    return;
+  }
+  T.subject=T.subjects[idx].name;
+  T.classes=T.subjects[idx].classes||[];
+  
+  // بناء قائمة الشعب
+  const clsSel=$('#classSelect');
+  clsSel.innerHTML='<option value="">اختر الشعبة</option>';
+  T.classes.forEach((cl,i)=>{
+    const opt=document.createElement('option');
+    opt.value=cl;
+    opt.textContent=cl;
+    clsSel.appendChild(opt);
+  });
+  
+  // اختيار أول شعبة تلقائياً
+  if(T.classes.length>0){
+    clsSel.value=T.classes[0];
+    T.cls=T.classes[0];
+  }
+  
+  loadCurrent();
+}
+
+// ✅ عند تغيير الشعبة
+function onClassChange(){
+  T.cls=$('#classSelect').value;
+  loadCurrent();
+}
+
 function loadCurrent(){
+  if(!T.cls){
+    $('#rowsBox').innerHTML='<div class="loading">⚠️ اختر المادة والشعبة أولاً</div>';
+    $('#tstats').innerHTML='';
+    $('#sentbar').className='sentbar no';
+    $('#sentbar').textContent='لم يتم تحديد الشعبة';
+    return;
+  }
+  
   const k=draftKey();
   if(!T.drafts[k]){
     const sv=localStorage.getItem('d_draft_'+T.code+'_'+k);
-    T.drafts[k]=sv?JSON.parse(sv):{rows:[{name:'',degree:''},{name:'',degree:''},{name:'',degree:''}],sentHash:'',sentAt:0,max:100};
+    T.drafts[k]=sv?JSON.parse(sv):{rows:[],sentHash:'',sentAt:0,max:100};
   }
-  $('#maxIn').value=T.drafts[k].max||100;
-  renderRows();updStats();updSentbar();
+  
+  // ✅ جلب أسماء التلاميذ من الخادم إذا كانت القائمة فارغة
+  if(T.drafts[k].rows.length===0){
+    fetchStudentsFromServer();
+  } else {
+    $('#maxIn').value=T.drafts[k].max||100;
+    renderRows();
+    updStats();
+    updSentbar();
+  }
+}
+
+// ✅ جلب التلاميذ من الخادم
+async function fetchStudentsFromServer(){
+  $('#rowsBox').innerHTML='<div class="loading">⏳ جاري تحميل أسماء التلاميذ...</div>';
+  
+  try{
+    const r=await api({action:'getStudents',code:T.code,cls:T.cls});
+    if(r.ok && r.names && r.names.length>0){
+      const k=draftKey();
+      T.drafts[k].rows=r.names.map(name=>({name:name,degree:''}));
+      saveDraft();
+      renderRows();
+      updStats();
+      updSentbar();
+      toast('✓ تم تحميل '+arNum(r.names.length)+' تلميذ');
+    } else {
+      $('#rowsBox').innerHTML='<div class="loading">📭 لا توجد أسماء تلاميذ لهذه الشعبة<br><small>تواصل مع الإدارة لإضافة الأسماء</small></div>';
+    }
+  }catch(e){
+    $('#rowsBox').innerHTML='<div class="loading">⚠️ تعذر تحميل الأسماء<br><small>تحقق من الاتصال بالإنترنت</small></div>';
+  }
 }
 
 function onCtx(){saveDraft();updStats();updSentbar();}
@@ -389,7 +469,12 @@ function saveDraft(){
 }
 
 function renderRows(){
-  const dr=T.drafts[draftKey()];const box=$('#rowsBox');box.innerHTML='';
+  const dr=T.drafts[draftKey()];
+  if(!dr){
+    $('#rowsBox').innerHTML='<div class="loading">⚠️ اختر المادة والشعبة أولاً</div>';
+    return;
+  }
+  const box=$('#rowsBox');box.innerHTML='';
   const searchTerm = ($('#searchInp').value || '').trim().toLowerCase();
   const max = Number($('#maxIn').value) || 100;
   
@@ -430,13 +515,22 @@ function renderRows(){
   if (visibleIndex === 1 && searchTerm) {
     box.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mut)">لا توجد نتائج مطابقة للبحث</div>';
   }
+  if (visibleIndex === 1 && !searchTerm && dr.rows.length===0) {
+    box.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mut)">لا توجد أسماء تلاميذ<br><small>تواصل مع الإدارة</small></div>';
+  }
 }
 
-function addRow(){T.drafts[draftKey()].rows.push({name:'',degree:''});saveDraft();renderRows();$('#rowsBox').lastElementChild.querySelector('input').focus();}
+function addRow(){
+  if(!T.cls){toast('اختر المادة والشعبة أولاً',true);return;}
+  T.drafts[draftKey()].rows.push({name:'',degree:''});
+  saveDraft();
+  renderRows();
+  $('#rowsBox').lastElementChild.querySelector('input').focus();
+}
 
 function clearAllRows() {
   confirmDlg('هل أنت متأكد من مسح جميع التلاميذ والدرجات في هذه الشعبة والشهر؟', () => {
-    T.drafts[draftKey()].rows = [{name:'',degree:''}];
+    T.drafts[draftKey()].rows = [];
     saveDraft();
     renderRows();
     updStats();
@@ -477,7 +571,7 @@ function updSentbar(){
 async function sendGrades(){
   const dr=T.drafts[draftKey()];
   const cls=(T.cls||'').trim(),month=T.month,max=Number($('#maxIn').value)||100;
-  if(!cls){toast('حدد الصف أولًا',true);return;}
+  if(!cls){toast('حدد الشعبة أولًا',true);return;}
   const clean=[];let err='';
   for(let i=0;i<dr.rows.length;i++){
     const nm=(dr.rows[i].name||'').trim(),dg=String(dr.rows[i].degree??'').trim();
@@ -499,7 +593,7 @@ async function sendGrades(){
     if(r.ok){dr.sentHash=checksum;dr.sentAt=r.time||payload.sentAt;saveDraft();updSentbar();
       toast(r.duplicate?'هذه النسخة مُرسلة سابقًا ✓✓':(r.updated?'تم تحديث الدرجات لدى الإدارة ✓✓':'تم استلام درجاتك في الإدارة ✓✓'));}
     else toast('❌ '+r.error,true);
-  }catch(e){pushQ(payload);toast('📴 لا اتصال — سيُرسل تلقائيًا عند عودة الإنترنت');}
+  }catch(e){pushQ(payload);toast(' لا اتصال — سيُرسل تلقائيًا عند عودة الإنترنت');}
   finally{btn.classList.remove('busy');btn.disabled=false;}
 }
 
