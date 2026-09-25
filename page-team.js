@@ -435,10 +435,12 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
           var section = sr.section || cls.split(' ')[1] || '';
           
           sr.names.forEach(function(studentName){
-           var gradeRow = subjectGrades.find(function(g){
-            return g.name === studentName && 
-         (String(g.grade) === String(grade) || g.cls === (grade + ' ' + section));
-});
+          var gradeRow = subjectGrades.find(function(g){
+          var studentCls = (g.grade || '') + ' ' + (g.section || '');
+          var targetCls = grade + ' ' + section;
+          return g.name === studentName && 
+         (studentCls.trim() === targetCls.trim() || (g.cls && g.cls.trim() === targetCls.trim()));
+          });
             
             allStudentData.push({
               grade: grade,
