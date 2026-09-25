@@ -1,20 +1,22 @@
-/* ═══ config.js — الإعدادات المشتركة مع الألوان ═══
+/* ═══ config.js — الإعدادات المشتركة ══
    هذا الملف يخدم جميع الصفحات:
    - index.html (صفحة المعلم)
    - admin.html (لوحة التحكم)
+   
+   ضع رابط الخادم مرة واحدة فقط هنا.
 */
 
 // رابط الخادم (Google Apps Script)
 var SERVER_URL = "https://script.google.com/macros/s/AKfycbyZVQkKBJPvx3ewVm77eGUTr_LIsOTZvgVazwXuq5aQiQ4mprAWK_c97ZXrYA9MAc15tA/exec";
 
-// ═══ ألوان المواد ═══
+// ═══ ألوان المواد ══
 var SUBJECT_COLORS = {
   'التربية الإسلامية': { primary: '#059669', light: '#d1fae5', bg: '#ecfdf5', icon: '🕌' },
-  'اللغة العربية':      { primary: '#2563eb', light: '#dbeafe', bg: '#eff6ff', icon: '' },
-  'اللغة الانكليزية':   { primary: '#7c3aed', light: '#ede9fe', bg: '#f5f3ff', icon: '🇬🇧' },
+  'اللغة العربية':      { primary: '#2563eb', light: '#dbeafe', bg: '#eff6ff', icon: '📖' },
+  'اللغة الانكليزية':   { primary: '#7c3aed', light: '#ede9fe', bg: '#f5f3ff', icon: '🇬' },
   'الرياضيات':          { primary: '#dc2626', light: '#fee2e2', bg: '#fef2f2', icon: '🔢' },
-  'الاجتماعيات':        { primary: '#d97706', light: '#fed7aa', bg: '#fffbeb', icon: '🌍' },
-  'العلوم':             { primary: '#0891b2', light: '#cffafe', bg: '#ecfeff', icon: '' },
+  'الاجتماعيات':        { primary: '#d97706', light: '#fed7aa', bg: '#fffbeb', icon: '' },
+  'العلوم':             { primary: '#0891b2', light: '#cffafe', bg: '#ecfeff', icon: '🔬' },
   'الفنية':             { primary: '#db2777', light: '#fbcfe8', bg: '#fdf2f8', icon: '🎨' },
   'الرياضة':            { primary: '#4f46e5', light: '#e0e7ff', bg: '#eef2ff', icon: '⚽' }
 };
@@ -28,15 +30,15 @@ var MONTH_THEMES = {
   'نيسان':        { gradient: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%)', accent: '#be185d', name: 'ربيع مزهر' }
 };
 
-// ═══ ألوان الصفوف ══
+// ═══ ألوان الصفوف ═══
 var CLASS_COLORS = {
-  'أ': { color: '#2563eb', bg: '#dbeafe', icon: '️' },
+  'أ': { color: '#2563eb', bg: '#dbeafe', icon: '🅰️' },
   'ب': { color: '#059669', bg: '#d1fae5', icon: '🅱️' },
-  'ج': { color: '#d97706', bg: '#fed7aa', icon: '🇨' },
+  'ج': { color: '#d97706', bg: '#fed7aa', icon: '' },
   'د': { color: '#7c3aed', bg: '#ede9fe', icon: '🇩' }
 };
 
-// إعدادات التطبيق
+// ═══ إعدادات التطبيق ═══
 var APP_CONFIG = {
   SERVER_URL: SERVER_URL,
   APP_NAME: "مدرستي",
