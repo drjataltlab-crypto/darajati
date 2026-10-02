@@ -16,14 +16,18 @@
   --warning:#f59e0b;
   --danger:#ef4444;
   --info:#06b6d4;
+  --bg:#f8fafc;
+  --card:#ffffff;
   --text:#1e293b;
   --muted:#64748b;
+  --border:#e2e8f0;
+  --shadow:0 4px 20px rgba(99,102,241,.12);
+  --shadow-lg:0 10px 40px rgba(99,102,241,.2);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{
   font-family:'Tajawal',system-ui,sans-serif;
-  /* ✅ خلفية ملونة متدرجة */
   background:linear-gradient(135deg,#e0e7ff 0%,#fce7f3 50%,#dbeafe 100%);
   color:var(--text);
   max-width:480px;
@@ -511,7 +515,7 @@ button{cursor:pointer}
 .tool-btn.clear{background:linear-gradient(135deg,var(--danger),#dc2626)}
 .tool-btn.copy{background:linear-gradient(135deg,var(--info),#0891b2)}
 
-/* ═══ البحث ═══ */
+/* ══ البحث ═══ */
 .search-box{
   background:rgba(255,255,255,.9);
   backdrop-filter:blur(10px);
@@ -664,7 +668,7 @@ button{cursor:pointer}
 }
 .save-hint.show{opacity:1}
 
-/* ═══ زر الإرسال العائم ═══ */
+/* ══ زر الإرسال العائم ═══ */
 .fab{
   position:fixed;
   bottom:20px;
@@ -882,14 +886,14 @@ button{cursor:pointer}
         </select>
       </div>
       <div class="select-card month-card">
-        <label>📅 الشهر</label>
+        <label> الشهر</label>
         <select id="monthSelect" onchange="onMonthChange()"></select>
       </div>
     </div>
 
     <div class="stats-grid">
       <div class="stat-box total">
-        <div class="stat-ico"></div>
+        <div class="stat-ico">👥</div>
         <div class="stat-val" id="statStudents">0</div>
         <div class="stat-lbl">التلاميذ</div>
       </div>
@@ -912,9 +916,9 @@ button{cursor:pointer}
 
     <div class="tools-bar">
       <button class="tool-btn paste" onclick="openPaste()">📋 لصق</button>
-      <button class="tool-btn add" onclick="addRow()"> تلميذ</button>
-      <button class="tool-btn copy" onclick="copyAll()"> نسخ</button>
-      <button class="tool-btn clear" onclick="clearAll()">🗑️ مسح</button>
+      <button class="tool-btn add" onclick="addRow()">➕ تلميذ</button>
+      <button class="tool-btn copy" onclick="copyAll()">📄 نسخ</button>
+      <button class="tool-btn clear" onclick="clearAll()">️ مسح</button>
     </div>
 
     <div class="search-box">
@@ -924,7 +928,7 @@ button{cursor:pointer}
 
     <div class="students-card">
       <div class="card-head">
-        <h3>📝 قائمة التلاميذ</h3>
+        <h3> قائمة التلاميذ</h3>
         <span class="count" id="totalCount">0 تلميذ</span>
       </div>
       <div id="studentsList"></div>
@@ -955,7 +959,7 @@ button{cursor:pointer}
 <!-- نافذة الرسائل -->
 <div class="overlay" id="msgModal">
   <div class="modal">
-    <h3> الرسائل</h3>
+    <h3>🔔 الرسائل</h3>
     <div id="msgList" style="margin-top:10px"></div>
     <div class="modal-actions">
       <button class="ok" onclick="hideModal('msgModal')">إغلاق</button>
@@ -966,7 +970,7 @@ button{cursor:pointer}
 <!-- نافذة التأكيد -->
 <div class="overlay" id="confirmModal">
   <div class="modal">
-    <h3>️ تأكيد</h3>
+    <h3>⚠️ تأكيد</h3>
     <p id="confirmMsg" style="margin-bottom:15px;line-height:1.6"></p>
     <div class="modal-actions">
       <button class="cancel" onclick="hideModal('confirmModal')">إلغاء</button>
@@ -1013,7 +1017,6 @@ function api(p,ms){
     .finally(function(){clearTimeout(t);});
 }
 
-// ✅ إصلاح دالة fnv1a لتطابق الخادم
 function fnv1a(str){
   var h=0x811c9dc5;
   for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193);}
@@ -1023,12 +1026,12 @@ function fnv1a(str){
 // ═══ تسجيل الدخول ═══
 function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
-  if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
+  if(!code){$('#loginMsg').textContent='️ أدخل الكود';return;}
   $('#loginMsg').textContent='⏳ جاري التحقق...';
   $('#loginMsg').style.color='var(--muted)';
   
   api({action:'teacherLogin',code:code}).then(function(r){
-    if(!r.ok){$('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
+    if(!r.ok){$('#loginMsg').textContent=' '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
     localStorage.setItem('d_session',JSON.stringify(r.teacher));
     enterHome();
   }).catch(function(e){$('#loginMsg').textContent='📴 تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
@@ -1327,11 +1330,11 @@ function updSendBar(){
     el.textContent='⚠️ لديك تعديلات لم تُرسل';
   }else{
     el.className='send-status no';
-    el.textContent='📤 لم يتم الإرسال بعد';
+    el.textContent=' لم يتم الإرسال بعد';
   }
 }
 
-// ═══ إرسال الدرجات (مُصلَح) ══
+// ═══ إرسال الدرجات (مُصلَح) ═══
 function sendGrades(){
   var dr=T.drafts[draftKey()];
   var cls=(T.cls||'').trim();
@@ -1360,15 +1363,19 @@ function sendGrades(){
     var btn=$('#sendBtn');
     btn.classList.add('busy');btn.disabled=true;
 
-    // ✅ إصلاح حساب checksum ليطابق الخادم تماماً
-    // الخادم يحسب: [code,cls].join('|') + '||' + rows.map(r => [r.name].concat(r.v.map(x=>x===null?'':String(x))).join(';')).join('|')
-    var canonical = [T.code, cls].join('|') + '||' + 
-      clean.map(function(r){
-        // v = [degree, null, null, null, null]
-        var v = [r.degree, null, null, null, null];
-        return [r.name].concat(v.map(function(x){return x===null?'':String(x);})).join(';');
-      }).join('|');
-    
+    // ✅ إصلاح: وضع الدرجة في الموضع الصحيح حسب الشهر
+    var rowsPayload = clean.map(function(r) {
+      var v = [null, null, null, null, null];
+      var monthIndex = MONTHS.indexOf(month);
+      if (monthIndex >= 0 && monthIndex < 5) {
+        v[monthIndex] = r.degree;
+      }
+      return { name: r.name, v: v };
+    });
+
+    // ✅ إصلاح حساب checksum ليطابق الخادم
+    var canonical = [T.code, cls, month].join('|') + '||' + 
+      clean.map(function(r){ return r.name + ';' + r.degree; }).join('|');
     var checksum = fnv1a(canonical);
     
     api({
@@ -1377,7 +1384,7 @@ function sendGrades(){
       cls:cls,
       month:month,
       maxDegree:max,
-      rows:clean.map(function(r){return{name:r.name,v:[r.degree,null,null,null,null]};}),
+      rows:rowsPayload,
       checksum:checksum,
       batchId:'b'+checksum+'-'+clean.length,
       sentAt:Date.now()
@@ -1386,7 +1393,7 @@ function sendGrades(){
         dr.sentHash=checksum;
         dr.sentAt=r.time||Date.now();
         saveDraft();updSendBar();
-        toast('✓✓ تم إرسال الدرجات للإدارة والمطور بنجاح');
+        toast('✓✓ تم إرسال درجات '+month+' للإدارة');
       }else{toast('❌ '+r.error,true);}
     }).catch(function(e){toast(' لا اتصال بالخادم',true);})
     .finally(function(){btn.classList.remove('busy');btn.disabled=false;});
