@@ -1,14 +1,50 @@
-var C='darajati-v8';
-self.addEventListener('install',function(e){self.skipWaiting();});
-self.addEventListener('activate',function(e){
-  e.waitUntil(caches.keys().then(function(ks){
-    return Promise.all(ks.map(function(k){return caches.delete(k);}));
-  }).then(function(){return clients.claim();}));
+var CACHE_NAME = 'darajati-v3';
+var urlsToCache = [
+  './',
+  './index.html',
+  './admin.html',
+  './install.html',
+  './config.js',
+  './core.js',
+  './icon.png',
+  './icon-admin.png',
+  './manifest.webmanifest',
+  './manifest-admin.webmanifest'
+];
+
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
 });
-self.addEventListener('fetch',function(e){
-  if(e.request.method!=='GET')return;
-  e.respondWith(fetch(e.request).then(function(res){
-    if(res&&res.ok){var cp=res.clone();caches.open(C).then(function(c){c.put(e.request,cp);});}
-    return res;
-  }).catch(function(){return caches.match(e.request);}));
+
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request)
+      .then(function(response) {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
+});
+
+self.addEventListener('activate', function(event) {
+  var cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
