@@ -2,25 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0B3B2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="إدارة درجاتي">
 <title>درجاتي — لوحة التحكم</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-<!-- ✅ Manifest جديد مع cache-busting -->
-<link rel="manifest" href="manifest-admin-v2.webmanifest?v=2">
-<meta name="theme-color" content="#1e3a5f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="إدارة درجاتي">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="إدارة درجاتي">
-<meta name="msapplication-TileColor" content="#1e3a5f">
+
+<!-- ✅ تم تعديل الأيقونات لتشير إلى أيقونة الإدارة مع منع الكاش -->
+<link rel="icon" type="image/png" href="icon-admin.png?v=2">
 <link rel="apple-touch-icon" href="icon-admin.png?v=2">
-<link rel="icon" type="image/png" href="icon-admin.png?v=2">>
+<link rel="manifest" href="manifest-admin.webmanifest?v=2">
+
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin.css?v=3.5">
 
@@ -109,6 +104,52 @@
 .edit-subject-row .remove-btn:hover {
   background: #B91C1C;
 }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ✅ إصلاحات التصميم للموبايل (تمنع اختفاء الصفحات) */
+/* ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* إخفاء الشريط الجانبي في الموبايل والاعتماد على الشريط السفلي */
+  .side { display: none !important; }
+  
+  /* جعل المحتوى الرئيسي يأخذ كامل العرض */
+  .maincol { width: 100% !important; margin: 0 !important; }
+  
+  /* إضافة مساحة كبيرة في الأسفل حتى لا يغطي شريط التنقل السفلي المحتوى */
+  .content { padding-bottom: 90px !important; }
+  
+  /* تحسين عرض الجداول والقوائم على الموبايل لمنع الكسر */
+  table, .tlist, .grid3, .setgrid { 
+    display: block !important; 
+    overflow-x: auto !important; 
+    white-space: nowrap; 
+  }
+  
+  /* تكبير الأزرار والحقول لتسهيل اللمس على الموبايل */
+  .btn, .iconbtn, input, select, textarea {
+    padding: 12px !important;
+    font-size: 14px !important;
+    min-height: 44px;
+  }
+  
+  /* تحسين عرض البطاقات والنوافذ المنبثقة */
+  .card, .setcard, .modal {
+    margin: 8px !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+
+  /* ضمان ظهور صفحات التلاميذ وكلمات المرور بشكل صحيح */
+  #tab-studs, #tab-keys, #tab-entry, #tab-team, #tab-res, #tab-dash, #tab-set {
+    display: block !important;
+    padding-bottom: 20px;
+  }
+  
+  /* تصغير العناوين قليلاً لتناسب الشاشة */
+  .ptitle { font-size: 16px !important; }
+  .bnav { height: 65px !important; }
+  .bnav button { font-size: 11px !important; }
+}
 </style>
 </head>
 <body>
@@ -116,7 +157,7 @@
 
 <section class="screen active" id="s-login">
   <div class="login"><div class="lcard">
-    <div class="hero"><img src="icon.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
+    <div class="hero"><img src="icon-admin.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
     <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
     <button class="btn" id="loginBtn" onclick="adminLogin()">دخول</button>
   </div></div>
@@ -125,7 +166,7 @@
 <section class="screen" id="s-main">
   <div class="app">
     <aside class="side">
-      <div class="brand"><img src="icon.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
+      <div class="brand"><img src="icon-admin.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">📊</span>نظرة عامة</button>
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
@@ -255,12 +296,15 @@
       </div>
     </div>
   </div>
+  
+  <!-- شريط التنقل السفلي للموبايل -->
   <nav class="bnav">
     <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">📊</span><small>نظرة</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
-    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span><small>التلاميذ</small></button>
+    <button data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span><small>كلمات</small></button>
   </nav>
 </section>
 
@@ -275,7 +319,7 @@
   <div class="content" id="tvBox"></div>
 </section>
 
-<!-- ═══ نافذة تعديل معلم (محدّثة - قوائم منسدلة ديناميكية) ═══ -->
+<!-- ═══ نافذة تعديل معلم ═══ -->
 <div class="ovl" id="editTeacherModal">
   <div class="modal" style="max-width:700px">
     <h3>✏️ تعديل بيانات المعلم</h3>
@@ -290,11 +334,8 @@
     </div>
     <div class="form-group">
       <label>المواد والصفوف</label>
-      <div id="editSubjectsContainer" style="background:#F8FAFC; padding:12px; border-radius:10px; border:1px solid #E2E8F0;">
-        <!-- سيتم إضافة الصفوف هنا ديناميكياً -->
-      </div>
+      <div id="editSubjectsContainer" style="background:#F8FAFC; padding:12px; border-radius:10px; border:1px solid #E2E8F0;"></div>
       <button class="btn" style="margin-top:10px; width:100%; background:#0891B2;" onclick="addEditSubjectRow()">➕ إضافة مادة وصف آخر</button>
-      <div class="form-hint" style="margin-top:6px">💡 يمكنك إضافة أكثر من مادة وصف. كل صف يحتوي على مادة وصف واحد.</div>
     </div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
@@ -309,7 +350,7 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
       <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
       <div style="display:flex; gap:8px;">
-        <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">️ طباعة</button>
+        <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
         <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
       </div>
     </div>
@@ -415,24 +456,12 @@
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
-}
-// ✅ إلغاء Service Worker القديم إجبارياً
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for (let registration of registrations) {
-      registration.unregister();
-      console.log('Service Worker unregistered');
-    }
-  });
-}
-
-// ✅ مسح جميع الـ caches
-if ('caches' in window) {
-  caches.keys().then(function(names) {
-    for (let name of names) caches.delete(name);
-    console.log('All caches deleted');
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.unregister(); // إلغاء التسجيل القديم لتجنب مشاكل الكاش
+      }
+    });
+    navigator.serviceWorker.register('sw.js?v=5').catch(function(){});
   });
 }
 </script>
