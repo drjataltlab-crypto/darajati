@@ -1,4 +1,4 @@
-var CACHE_NAME = 'darajati-v3';
+var CACHE_NAME = 'darajati-v4';
 var urlsToCache = [
   './',
   './index.html',
