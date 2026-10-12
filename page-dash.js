@@ -1,6 +1,6 @@
-/* ═══ page-dash.js — الصفحة الرئيسية (محدث ومتوافق 100%) ═══ */
+/* ══ page-dash.js — الصفحة الرئيسية (محدث واحترافي) ═══ */
 
-// متغير عام لحفظ بيانات المعلمين لاستخدامها عند النقر
+// متغير عام لحفظ بيانات المعلمين
 window.DASH_TEACHERS = [];
 
 registerPage('dash', {
@@ -12,78 +12,81 @@ registerPage('dash', {
   }
 });
 
-/* ═══ Dashboard Pro UI — تصميم احترافي مدمج ═══ */
+/* ═══ تصميم الصفحة الرئيسية ══ */
 (function(){
   if(document.getElementById('dashProStyles')) return;
   var s = document.createElement('style'); 
   s.id = 'dashProStyles';
   s.textContent = 
-  '#dashKpi{margin-bottom:18px}'+
-  '#dashKpi .dash-pro-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}'+
-  '#dashKpi .dash-pro-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;min-height:110px;padding:18px 20px;border-radius:20px;background:linear-gradient(145deg,#fff,#f8fafc);box-shadow:0 8px 24px rgba(15,23,42,.07);transition:.22s}'+
-  '#dashKpi .dash-pro-card:hover{transform:translateY(-3px);box-shadow:0 15px 32px rgba(15,23,42,.11)}'+
-  '#dashKpi .dash-pro-card:before{content:"";position:absolute;right:0;top:0;bottom:0;width:5px;background:var(--accent)}'+
-  '#dashKpi .dash-pro-icon{width:60px;height:60px;display:grid;place-items:center;border-radius:16px;background:var(--soft);font-size:28px;flex:none;box-shadow:0 4px 12px rgba(0,0,0,.08)}'+
-  '#dashKpi .dash-pro-value{font-size:30px;line-height:1;font-weight:900;color:#0f172a}'+
-  '#dashKpi .dash-pro-label{margin-top:8px;font-size:13px;color:#64748b;font-weight:700}'+
-  '#dashList .dash-pro-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:7px 0 14px}'+
-  '#dashList .dash-pro-title{font-size:21px;font-weight:900;color:#0f172a}'+
-  '#dashList .dash-pro-sub{margin-top:4px;font-size:12px;color:#64748b}'+
-  '#dashList .dash-pro-count{padding:7px 11px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:900;white-space:nowrap}'+
-  '#dashList .dash-pro-teachers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}'+
-  '#dashList .dash-pro-teacher{position:relative;overflow:hidden;border-radius:20px;padding:18px;box-shadow:0 6px 20px rgba(15,23,42,.08);cursor:pointer;transition:.22s;border:1px solid rgba(255,255,255,.3)}'+
-  '#dashList .dash-pro-teacher:hover{transform:translateY(-4px);box-shadow:0 15px 35px rgba(0,0,0,.15)}'+
-  '#dashList .dash-pro-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}'+
-  '#dashList .dash-pro-avatar{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:rgba(255,255,255,.9);color:var(--accent);font-size:22px;font-weight:900;flex:none;box-shadow:0 4px 12px rgba(0,0,0,.1)}'+
+  '#dashKpi{margin-bottom:20px}'+
+  '#dashKpi .dash-pro-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}'+
+  '#dashKpi .dash-pro-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;min-height:120px;padding:20px 22px;border-radius:22px;box-shadow:0 8px 24px rgba(15,23,42,.08);transition:.25s}'+
+  '#dashKpi .dash-pro-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(15,23,42,.15)}'+
+  '#dashKpi .dash-pro-card:before{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--accent)}'+
+  '#dashKpi .dash-pro-icon{width:68px;height:68px;display:grid;place-items:center;border-radius:18px;background:var(--soft);font-size:32px;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.08)}'+
+  '#dashKpi .dash-pro-value{font-size:34px;line-height:1;font-weight:900;color:#0f172a}'+
+  '#dashKpi .dash-pro-label{margin-top:8px;font-size:14px;color:#475569;font-weight:800}'+
+  '#dashList .dash-pro-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 16px}'+
+  '#dashList .dash-pro-title{font-size:22px;font-weight:900;color:#0f172a}'+
+  '#dashList .dash-pro-sub{margin-top:4px;font-size:13px;color:#64748b}'+
+  '#dashList .dash-pro-count{padding:8px 14px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:900;white-space:nowrap}'+
+  '#dashList .dash-pro-teachers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}'+
+  '#dashList .dash-pro-teacher{position:relative;overflow:hidden;border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(15,23,42,.12);cursor:pointer;transition:.25s;color:#fff}'+
+  '#dashList .dash-pro-teacher:hover{transform:translateY(-5px);box-shadow:0 20px 45px rgba(0,0,0,.2)}'+
+  '#dashList .dash-pro-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}'+
+  '#dashList .dash-pro-avatar{width:60px;height:60px;display:grid;place-items:center;border-radius:18px;font-size:28px;font-weight:900;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.15)}'+
   '#dashList .dash-pro-main{min-width:0;flex:1}'+
-  '#dashList .dash-pro-name{font-size:16px;font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.15);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-  '#dashList .dash-pro-code{margin-top:4px;color:rgba(255,255,255,.85);font:11px/1.2 monospace}'+
-  '#dashList .dash-pro-status{font-size:11px;font-weight:900;padding:7px 10px;border-radius:999px;white-space:nowrap;background:rgba(255,255,255,.9)}'+
+  '#dashList .dash-pro-name{font-size:19px;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}'+
+  '#dashList .dash-pro-code{font-size:12px;color:rgba(255,255,255,.9);font-family:monospace;font-weight:700}'+
+  '#dashList .dash-pro-status{font-size:12px;font-weight:900;padding:8px 12px;border-radius:999px;white-space:nowrap;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.1)}'+
   '#dashList .dash-pro-status.open{color:#047857}'+
   '#dashList .dash-pro-status.locked{color:#dc2626}'+
-  '#dashList .dash-pro-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2)}'+
-  '#dashList .dash-pro-info-item{display:flex;flex-direction:column;gap:3px}'+
-  '#dashList .dash-pro-info-label{font-size:9px;color:rgba(255,255,255,.85);font-weight:700}'+
-  '#dashList .dash-pro-info-value{font-size:11px;color:#fff;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-  '#dashList .dash-pro-meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}'+
-  '#dashList .dash-pro-meta-item{padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.2);font-size:10px;color:#fff;font-weight:700;display:flex;align-items:center;gap:4px}'+
-  '#dashList .dash-pro-meta-item svg{width:12px;height:12px}'+
-  '#dashList .dash-pro-open{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:800}'+
-  '#dashList .dash-pro-open span{font-size:16px;transition:.2s}'+
+  '#dashList .dash-pro-meta{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}'+
+  '#dashList .dash-pro-meta-item{padding:7px 11px;border-radius:11px;background:rgba(255,255,255,.22);font-size:12px;color:#fff;font-weight:700;display:flex;align-items:center;gap:5px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15)}'+
+  '#dashList .dash-pro-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.25)}'+
+  '#dashList .dash-pro-info-item{text-align:center}'+
+  '#dashList .dash-pro-info-item .lbl{font-size:10px;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:4px;display:block}'+
+  '#dashList .dash-pro-info-item .val{font-size:17px;color:#fff;font-weight:900;display:block}'+
+  '#dashList .dash-pro-info-item .val.small{font-size:13px}'+
+  '#dashList .dash-pro-open{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:14px;padding:11px;border-radius:13px;background:rgba(255,255,255,.18);color:#fff;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;border:1px solid rgba(255,255,255,.2)}'+
+  '#dashList .dash-pro-open:hover{background:rgba(255,255,255,.28)}'+
+  '#dashList .dash-pro-open span{font-size:18px;transition:.2s}'+
   '#dashList .dash-pro-teacher:hover .dash-pro-open span{transform:translateX(-4px)}'+
   '#dashKpi .dash-pro-shell{padding:2px 0}'+
-  '#dashKpi .dash-pro-welcome{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px;padding:20px 22px;border-radius:22px;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;box-shadow:0 12px 28px rgba(15,23,42,.15)}'+
-  '#dashKpi .dash-pro-eyebrow{font-size:11px;opacity:.8;font-weight:800;margin-bottom:4px}'+
-  '#dashKpi .dash-pro-heading{font-size:26px;font-weight:950}'+
-  '#dashKpi .dash-pro-desc{font-size:12px;opacity:.8;margin-top:6px}'+
-  '#dashKpi .dash-pro-health{padding:9px 12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;display:flex;align-items:center;gap:6px}'+
-  '#dashKpi .dash-pro-health-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.15);animation:pulse 2s infinite}'+
+  '#dashKpi .dash-pro-welcome{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px;padding:22px 24px;border-radius:24px;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;box-shadow:0 12px 30px rgba(15,23,42,.18)}'+
+  '#dashKpi .dash-pro-eyebrow{font-size:11px;opacity:.85;font-weight:800;margin-bottom:4px}'+
+  '#dashKpi .dash-pro-heading{font-size:28px;font-weight:950}'+
+  '#dashKpi .dash-pro-desc{font-size:13px;opacity:.85;margin-top:6px}'+
+  '#dashKpi .dash-pro-health{padding:10px 14px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap;display:flex;align-items:center;gap:7px}'+
+  '#dashKpi .dash-pro-health-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.2);animation:pulse 2s infinite}'+
   '@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}'+
-  '#dashKpi .dash-pro-card{min-height:115px}'+
   '#dashKpi .dash-pro-card.blue{--accent:#2563eb;--soft:#dbeafe;background:linear-gradient(135deg,#eff6ff,#dbeafe)}'+
   '#dashKpi .dash-pro-card.green{--accent:#10b981;--soft:#d1fae5;background:linear-gradient(135deg,#ecfdf5,#d1fae5)}'+
   '#dashKpi .dash-pro-card.red{--accent:#ef4444;--soft:#fee2e2;background:linear-gradient(135deg,#fef2f2,#fee2e2)}'+
   '#dashKpi .dash-pro-card.amber{--accent:#f59e0b;--soft:#fef3c7;background:linear-gradient(135deg,#fffbeb,#fef3c7)}'+
-  '#dashKpi .dash-pro-mini{font-size:10px;color:#64748b;margin-top:7px;font-weight:600}'+
-  '#dashKpi .dash-pro-progress{margin-top:14px;padding:15px 17px;border:1px solid #e5e7eb;border-radius:17px;background:#fff;box-shadow:0 5px 16px rgba(15,23,42,.04)}'+
-  '#dashKpi .dash-pro-progress>div:first-child{display:flex;justify-content:space-between;color:#64748b;font-size:11px;font-weight:700;margin-bottom:9px}'+
+  '#dashKpi .dash-pro-mini{font-size:11px;color:#64748b;margin-top:8px;font-weight:700}'+
+  '#dashKpi .dash-pro-progress{margin-top:16px;padding:16px 18px;border:1px solid #e5e7eb;border-radius:18px;background:#fff;box-shadow:0 5px 16px rgba(15,23,42,.04)}'+
+  '#dashKpi .dash-pro-progress>div:first-child{display:flex;justify-content:space-between;color:#64748b;font-size:12px;font-weight:700;margin-bottom:10px}'+
   '#dashKpi .dash-pro-progress b{color:#1d4ed8}'+
-  '#dashKpi .dash-pro-track{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden}'+
+  '#dashKpi .dash-pro-track{height:9px;background:#e2e8f0;border-radius:99px;overflow:hidden}'+
   '#dashKpi .dash-pro-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2563eb,#60a5fa);transition:width .5s ease}'+
-  '#dashList .dash-pro-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:13px}'+
+  '#dashList .dash-pro-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}'+
   '#dashList .dash-pro-search{display:flex;align-items:center;gap:7px;flex:1;max-width:430px;padding:0 12px;border:1px solid #e2e8f0;border-radius:13px;background:#fff;box-shadow:0 4px 12px rgba(15,23,42,.035)}'+
   '#dashList .dash-pro-search span{font-size:20px;color:#94a3b8}'+
-  '#dashList .dash-pro-search input{width:100%;border:0;outline:0;background:transparent;padding:11px 0;color:#334155;font:inherit;font-size:11px}'+
+  '#dashList .dash-pro-search input{width:100%;border:0;outline:0;background:transparent;padding:11px 0;color:#334155;font:inherit;font-size:12px}'+
   '#dashList .dash-pro-filters{display:flex;gap:5px;padding:4px;border-radius:13px;background:#f1f5f9}'+
-  '#dashList .dash-filter{border:0;background:transparent;color:#64748b;padding:7px 10px;border-radius:9px;font-size:10px;font-weight:800;cursor:pointer}'+
+  '#dashList .dash-filter{border:0;background:transparent;color:#64748b;padding:7px 10px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer}'+
   '#dashList .dash-filter.active{background:#fff;color:#1d4ed8;box-shadow:0 2px 7px rgba(15,23,42,.08)}'+
   '#dashList .dash-pro-noresults{padding:28px;text-align:center;border:1px dashed #cbd5e1;border-radius:16px;background:#f8fafc;color:#64748b;font-size:12px;font-weight:800}'+
   '@media(max-width:900px){#dashKpi .dash-pro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#dashList .dash-pro-teachers{grid-template-columns:1fr}}'+
   '@media(max-width:520px){'+
-  '#dashKpi .dash-pro-welcome{padding:16px;border-radius:18px}.dash-pro-heading{font-size:21px!important}.dash-pro-desc{font-size:10px!important}.dash-pro-health{font-size:10px!important;padding:7px 9px!important}'+
+  '#dashKpi .dash-pro-welcome{padding:16px;border-radius:18px}.dash-pro-heading{font-size:22px!important}.dash-pro-desc{font-size:11px!important}.dash-pro-health{font-size:11px!important;padding:8px 10px!important}'+
   '#dashList .dash-pro-toolbar{display:block}.dash-pro-search{max-width:none!important;margin-bottom:8px}.dash-pro-filters{width:max-content}'+
-  '#dashList .dash-pro-teachers{gap:10px}'+
-  '#dashKpi .dash-pro-grid{gap:9px}#dashKpi .dash-pro-card{min-height:95px;padding:14px}.dash-pro-icon{width:50px!important;height:50px!important;font-size:24px!important}.dash-pro-value{font-size:26px!important}}';
+  '#dashList .dash-pro-teachers{gap:12px}'+
+  '#dashKpi .dash-pro-grid{gap:10px}#dashKpi .dash-pro-card{min-height:100px;padding:14px}.dash-pro-icon{width:54px!important;height:54px!important;font-size:26px!important}.dash-pro-value{font-size:28px!important}'+
+  '#dashList .dash-pro-teacher{padding:16px}'+
+  '#dashList .dash-pro-name{font-size:16px!important}'+
+  '#dashList .dash-pro-avatar{width:50px!important;height:50px!important;font-size:24px!important}}';
   document.head.appendChild(s);
 })();
 
@@ -131,12 +134,12 @@ function loadDashData(silent) {
           '</div>' +
           '<div class="dash-pro-grid">' +
             '<div class="dash-pro-card blue"><div class="dash-pro-icon">👨‍🏫</div><div><div class="dash-pro-value">'+arNum(total)+'</div><div class="dash-pro-label">إجمالي المعلمين</div><div class="dash-pro-mini">متوسط '+arNum(avgSent)+' درجة/معلم</div></div></div>' +
-            '<div class="dash-pro-card green"><div class="dash-pro-icon">✓</div><div><div class="dash-pro-value">'+arNum(open)+'</div><div class="dash-pro-label">حسابات مفتوحة</div><div class="dash-pro-mini">نشاط الحسابات '+arNum(activeRate)+'%</div></div></div>' +
-            '<div class="dash-pro-card red"><div class="dash-pro-icon">🔒</div><div><div class="dash-pro-value">'+arNum(locked)+'</div><div class="dash-pro-label">حسابات مقفلة</div><div class="dash-pro-mini">تحتاج إلى مراجعة</div></div></div>' +
-            '<div class="dash-pro-card amber"><div class="dash-pro-icon">📝</div><div><div class="dash-pro-value">'+arNum(totalSent)+'</div><div class="dash-pro-label">درجات مرسلة</div><div class="dash-pro-mini">إجمالي عمليات الإرسال</div></div></div>' +
+            '<div class="dash-pro-card green"><div class="dash-pro-icon">🟢</div><div><div class="dash-pro-value">'+arNum(open)+'</div><div class="dash-pro-label">حسابات مفتوحة</div><div class="dash-pro-mini">نسبة النشاط '+arNum(activeRate)+'%</div></div></div>' +
+            '<div class="dash-pro-card red"><div class="dash-pro-icon"></div><div><div class="dash-pro-value">'+arNum(locked)+'</div><div class="dash-pro-label">حسابات مقفلة</div><div class="dash-pro-mini">تحتاج إلى مراجعة</div></div></div>' +
+            '<div class="dash-pro-card amber"><div class="dash-pro-icon">📊</div><div><div class="dash-pro-value">'+arNum(totalSent)+'</div><div class="dash-pro-label">إجمالي الدرجات</div><div class="dash-pro-mini">تم إرسالها للنظام</div></div></div>' +
           '</div>' +
           '<div class="dash-pro-progress">' +
-            '<div><span>نسبة الحسابات المفتوحة</span><b>'+arNum(activeRate)+'%</b></div>' +
+            '<div><span>نسبة الحسابات النشطة</span><b>'+arNum(activeRate)+'%</b></div>' +
             '<div class="dash-pro-track"><i style="width:'+activeRate+'%"></i></div>' +
           '</div>' +
         '</div>';
@@ -144,28 +147,32 @@ function loadDashData(silent) {
     
     if(listEl){
       if(!teachers.length){
-        listEl.innerHTML = '<div class="empty">لا يوجد معلمون بعد</div>';
+        listEl.innerHTML = '<div class="empty">📭 لا يوجد معلمون مسجلون بعد</div>';
         return;
       }
+      
+      // ألوان متدرجة قوية واحترافية
       var colors = [
-        {bg:'#dbeafe', accent:'#2563eb', text:'#1e40af'},
-        {bg:'#d1fae5', accent:'#10b981', text:'#047857'},
-        {bg:'#fef3c7', accent:'#f59e0b', text:'#b45309'},
-        {bg:'#fce7f3', accent:'#ec4899', text:'#be185d'},
-        {bg:'#e0e7ff', accent:'#6366f1', text:'#3730a3'},
-        {bg:'#ccfbf1', accent:'#14b8a6', text:'#0f766e'}
+        {gradient:'linear-gradient(135deg, #3b82f6, #1d4ed8)', accent:'#1d4ed8'},
+        {gradient:'linear-gradient(135deg, #10b981, #047857)', accent:'#047857'},
+        {gradient:'linear-gradient(135deg, #f59e0b, #b45309)', accent:'#b45309'},
+        {gradient:'linear-gradient(135deg, #ef4444, #b91c1c)', accent:'#b91c1c'},
+        {gradient:'linear-gradient(135deg, #8b5cf6, #6d28d9)', accent:'#6d28d9'},
+        {gradient:'linear-gradient(135deg, #06b6d4, #0e7490)', accent:'#0e7490'},
+        {gradient:'linear-gradient(135deg, #ec4899, #be185d)', accent:'#be185d'},
+        {gradient:'linear-gradient(135deg, #14b8a6, #0f766e)', accent:'#0f766e'}
       ];
       
       var h = '<div class="dash-pro-head">' +
-                '<div><div class="dash-pro-title">المعلمون</div><div class="dash-pro-sub">إدارة الحسابات ومتابعة النشاط والدرجات</div></div>' +
-                '<div class="dash-pro-count">'+arNum(total)+' معلم</div>' +
+                '<div><div class="dash-pro-title">👥 قائمة المعلمين</div><div class="dash-pro-sub">إدارة الحسابات ومتابعة النشاط والدرجات المرسلة</div></div>' +
+                '<div class="dash-pro-count">📊 '+arNum(total)+' معلم</div>' +
               '</div>' +
               '<div class="dash-pro-toolbar">' +
-                '<div class="dash-pro-search"><span>⌕</span><input id="dashTeacherSearch" type="search" placeholder="ابحث باسم المعلم أو الرمز..." oninput="filterDashTeachers(this.value)"></div>' +
+                '<div class="dash-pro-search"><span></span><input id="dashTeacherSearch" type="search" placeholder="ابحث باسم المعلم أو الكود..." oninput="filterDashTeachers(this.value)"></div>' +
                 '<div class="dash-pro-filters">' +
                   '<button class="dash-filter active" data-filter="all" onclick="setDashTeacherFilter(\'all\',this)">الكل</button>' +
-                  '<button class="dash-filter" data-filter="open" onclick="setDashTeacherFilter(\'open\',this)">مفتوحة</button>' +
-                  '<button class="dash-filter" data-filter="locked" onclick="setDashTeacherFilter(\'locked\',this)">مقفلة</button>' +
+                  '<button class="dash-filter" data-filter="open" onclick="setDashTeacherFilter(\'open\',this)">🟢 مفتوحة</button>' +
+                  '<button class="dash-filter" data-filter="locked" onclick="setDashTeacherFilter(\'locked\',this)"> مقفلة</button>' +
                 '</div>' +
               '</div>' +
               '<div id="dashTeacherGrid" class="dash-pro-teachers">';
@@ -175,6 +182,8 @@ function loadDashData(silent) {
         var last = t.lastLogin ? ago(t.lastLogin) : 'لم يدخل بعد';
         var cnt = 0;
         var subjectsList = [];
+        var lastSentDate = t.lastSent ? formatDate(t.lastSent) : '—';
+        
         if(t.subjects) {
           t.subjects.forEach(function(s){ 
             if(s.classes) {
@@ -183,52 +192,54 @@ function loadDashData(silent) {
             } 
           });
         }
+        
         var status = t.locked ? 'locked' : 'open';
-        var lastSent = t.lastSent ? formatDate(t.lastSent) : '—';
+        var subjectText = subjectsList.length > 0 ? subjectsList.join('، ') : '—';
+        var shortSubject = subjectText.length > 25 ? subjectText.substring(0, 25) + '...' : subjectText;
         
-        h += '<div class="dash-pro-teacher" data-status="'+status+'" data-search="'+escA((t.name||'')+' '+(t.code||''))+'" style="background:linear-gradient(135deg,'+theme.bg+', '+adjustColor(theme.bg, -20)+'); --accent:'+theme.accent+'" onclick="viewTeacher(\''+escA(t.code)+'\')" role="button" tabindex="0">';
-        h += '<div class="dash-pro-top"><div class="dash-pro-avatar" style="color:'+theme.accent+'">'+esc((t.name||'?').trim().charAt(0))+'</div>';
-        h += '<div class="dash-pro-main"><div class="dash-pro-name">'+esc(t.name)+'</div><div class="dash-pro-code"> '+esc(t.code)+'</div></div>';
-        h += '<div class="dash-pro-status '+status+'">'+(t.locked?' مقفل':'🟢 مفتوح')+'</div></div>';
+        h += '<div class="dash-pro-teacher" data-status="'+status+'" data-search="'+escA((t.name||'')+' '+(t.code||''))+'" style="background:'+theme.gradient+'" onclick="viewTeacher(\''+escA(t.code)+'\')" role="button" tabindex="0">';
         
+        // الرأس: الصورة والاسم والكود والحالة
+        h += '<div class="dash-pro-top">';
+        h += '<div class="dash-pro-avatar" style="background:rgba(255,255,255,.95);color:'+theme.accent+'">'+esc((t.name||'?').trim().charAt(0))+'</div>';
+        h += '<div class="dash-pro-main" style="flex:1;min-width:0">';
+        h += '<div class="dash-pro-name">'+esc(t.name)+'</div>';
+        h += '<div class="dash-pro-code">🔑 '+esc(t.code)+'</div>';
+        h += '</div>';
+        h += '<div class="dash-pro-status '+status+'">'+(t.locked?'🔒 مقفل':'🟢 مفتوح')+'</div>';
+        h += '</div>';
+        
+        // المادة وتاريخ الإرسال
         h += '<div class="dash-pro-meta">';
-        if(subjectsList.length > 0) {
-          h += '<div class="dash-pro-meta-item">📚 '+esc(subjectsList[0])+'</div>';
-        }
-        h += '<div class="dash-pro-meta-item">📅 '+lastSent+'</div>';
+        h += '<div class="dash-pro-meta-item">📚 '+esc(shortSubject)+'</div>';
+        h += '<div class="dash-pro-meta-item">📅 '+lastSentDate+'</div>';
         h += '</div>';
         
+        // الإحصائيات
         h += '<div class="dash-pro-info">';
-        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">آخر دخول</span><span class="dash-pro-info-value">'+esc(last)+'</span></div>';
-        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">الدرجات</span><span class="dash-pro-info-value">'+arNum(t.sentCount||0)+'</span></div>';
-        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">الشعب</span><span class="dash-pro-info-value">'+arNum(cnt)+'</span></div>';
-        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">الحالة</span><span class="dash-pro-info-value">'+(t.locked?'مقفلة':'مفتوحة')+'</span></div>';
+        h += '<div class="dash-pro-info-item"><span class="lbl">الدرجات</span><span class="val">'+arNum(t.sentCount||0)+'</span></div>';
+        h += '<div class="dash-pro-info-item"><span class="lbl">الشعب</span><span class="val">'+arNum(cnt)+'</span></div>';
+        h += '<div class="dash-pro-info-item"><span class="lbl">آخر دخول</span><span class="val small">'+esc(last)+'</span></div>';
         h += '</div>';
         
-        h += '<div class="dash-pro-open">فتح ملف المعلم <span>←</span></div></div>';
+        // زر فتح الملف
+        h += '<div class="dash-pro-open">📂 فتح ملف المعلم الكامل <span>←</span></div>';
+        
+        h += '</div>';
       });
+      
       h += '</div>';
-      h += '<div id="dashNoResults" class="dash-pro-noresults" style="display:none">لا توجد نتائج مطابقة للبحث</div>';
+      h += '<div id="dashNoResults" class="dash-pro-noresults" style="display:none">🔍 لا توجد نتائج مطابقة للبحث</div>';
       listEl.innerHTML = h;
     }
     
   }).catch(function(err){
-    var msg = '⚠️ تعذر الاتصال بالخادم';
-    if (err.message === 'no-url') msg = '🔗 رابط الخادم مفقود';
+    var msg = '️ تعذر الاتصال بالخادم';
+    if (err.message === 'no-url') msg = ' رابط الخادم مفقود';
     else if (err.name === 'AbortError') msg = '⏱ انتهت مهلة الاتصال';
     if(!silent) toast(msg, 'err');
     if(kpiEl) kpiEl.innerHTML = '<div class="empty">'+msg+'</div>';
   });
-}
-
-// دالة مساعدة لتغميق اللون
-function adjustColor(color, amount) {
-  var num = parseInt(color.replace("#",""),16),
-  amt = Math.round(2.55 * amount),
-  R = (num >> 16) + amt,
-  B = (num >> 8 & 0x00FF) + amt,
-  G = (num & 0x0000FF) + amt;
-  return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
 }
 
 // دالة تنسيق التاريخ
@@ -285,7 +296,7 @@ function viewTeacher(code){
     subjText = t.subject;
   }
   
-  $('#tvSub').textContent = '🔑 '+t.code+' | '+subjText;
+  $('#tvSub').textContent = ' '+t.code+' | '+subjText;
   go('s-tview');
   loadTeacherView(code);
 }
@@ -298,7 +309,7 @@ function loadTeacherView(code){
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); el.innerHTML = '<div class="empty">❌ '+r.error+'</div>'; return; }
     var rows = r.rows || [];
-    if(!rows.length){ el.innerHTML = '<div class="empty">لا توجد درجات مسجلة لهذا المعلم</div>'; return; }
+    if(!rows.length){ el.innerHTML = '<div class="empty">📭 لا توجد درجات مسجلة لهذا المعلم</div>'; return; }
     
     var byCls = {};
     rows.forEach(function(row){
@@ -312,7 +323,7 @@ function loadTeacherView(code){
     Object.keys(byCls).forEach(function(cls){
       h += '<div class="card" style="margin-bottom:15px"><div class="ct">🏫 '+esc(cls)+'</div>';
       Object.keys(byCls[cls]).forEach(function(subj){
-        h += '<h4 style="margin:10px 0;color:#047857">📘 '+esc(subj)+'</h4>';
+        h += '<h4 style="margin:10px 0;color:#047857"> '+esc(subj)+'</h4>';
         h += '<div style="overflow-x:auto"><table class="pt" style="width:100%;border-collapse:collapse">';
         h += '<thead><tr style="background:#1E40AF;color:#fff">';
         h += '<th style="padding:6px;border:1px solid #0F172A">ت</th>';
@@ -356,7 +367,7 @@ function loadTeacherView(code){
     el.innerHTML = h;
     
   }).catch(function(err){
-    el.innerHTML = '<div class="empty">⚠️ تعذر تحميل البيانات</div>';
+    el.innerHTML = '<div class="empty">️ تعذر تحميل البيانات</div>';
   });
 }
 
