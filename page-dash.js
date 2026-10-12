@@ -1,4 +1,4 @@
-/* ═══ page-dash.js — نظرة عامة (محدث ومتوافق 100%) ═══ */
+/* ═══ page-dash.js — الصفحة الرئيسية (محدث ومتوافق 100%) ═══ */
 
 // متغير عام لحفظ بيانات المعلمين لاستخدامها عند النقر
 window.DASH_TEACHERS = [];
@@ -20,51 +20,55 @@ registerPage('dash', {
   s.textContent = 
   '#dashKpi{margin-bottom:18px}'+
   '#dashKpi .dash-pro-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}'+
-  '#dashKpi .dash-pro-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:13px;min-height:94px;padding:16px 18px;border:1px solid #e5e7eb;border-radius:18px;background:linear-gradient(145deg,#fff,#f8fafc);box-shadow:0 8px 24px rgba(15,23,42,.07);transition:.22s}'+
+  '#dashKpi .dash-pro-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;min-height:110px;padding:18px 20px;border-radius:20px;background:linear-gradient(145deg,#fff,#f8fafc);box-shadow:0 8px 24px rgba(15,23,42,.07);transition:.22s}'+
   '#dashKpi .dash-pro-card:hover{transform:translateY(-3px);box-shadow:0 15px 32px rgba(15,23,42,.11)}'+
-  '#dashKpi .dash-pro-card:before{content:"";position:absolute;right:0;top:0;bottom:0;width:4px;background:var(--accent)}'+
-  '#dashKpi .dash-pro-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:var(--soft);font-size:21px;flex:none}'+
-  '#dashKpi .dash-pro-value{font-size:27px;line-height:1;font-weight:900;color:#0f172a}'+
-  '#dashKpi .dash-pro-label{margin-top:7px;font-size:12px;color:#64748b;font-weight:700}'+
+  '#dashKpi .dash-pro-card:before{content:"";position:absolute;right:0;top:0;bottom:0;width:5px;background:var(--accent)}'+
+  '#dashKpi .dash-pro-icon{width:60px;height:60px;display:grid;place-items:center;border-radius:16px;background:var(--soft);font-size:28px;flex:none;box-shadow:0 4px 12px rgba(0,0,0,.08)}'+
+  '#dashKpi .dash-pro-value{font-size:30px;line-height:1;font-weight:900;color:#0f172a}'+
+  '#dashKpi .dash-pro-label{margin-top:8px;font-size:13px;color:#64748b;font-weight:700}'+
   '#dashList .dash-pro-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:7px 0 14px}'+
-  '#dashList .dash-pro-title{font-size:19px;font-weight:900;color:#0f172a}'+
+  '#dashList .dash-pro-title{font-size:21px;font-weight:900;color:#0f172a}'+
   '#dashList .dash-pro-sub{margin-top:4px;font-size:12px;color:#64748b}'+
   '#dashList .dash-pro-count{padding:7px 11px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:900;white-space:nowrap}'+
   '#dashList .dash-pro-teachers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}'+
-  '#dashList .dash-pro-teacher{position:relative;overflow:hidden;border:1px solid #e5e7eb;border-radius:18px;background:#fff;padding:16px;box-shadow:0 6px 20px rgba(15,23,42,.055);cursor:pointer;transition:.22s}'+
-  '#dashList .dash-pro-teacher:before{content:"";position:absolute;right:0;top:0;bottom:0;width:4px;background:var(--accent)}'+
-  '#dashList .dash-pro-teacher:hover{transform:translateY(-3px);border-color:#cbd5e1;box-shadow:0 15px 30px rgba(15,23,42,.10)}'+
-  '#dashList .dash-pro-top{display:flex;align-items:center;gap:11px}'+
-  '#dashList .dash-pro-avatar{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent),#0f172a);color:#fff;font-size:19px;font-weight:900;flex:none}'+
+  '#dashList .dash-pro-teacher{position:relative;overflow:hidden;border-radius:20px;padding:18px;box-shadow:0 6px 20px rgba(15,23,42,.08);cursor:pointer;transition:.22s;border:1px solid rgba(255,255,255,.3)}'+
+  '#dashList .dash-pro-teacher:hover{transform:translateY(-4px);box-shadow:0 15px 35px rgba(0,0,0,.15)}'+
+  '#dashList .dash-pro-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}'+
+  '#dashList .dash-pro-avatar{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:rgba(255,255,255,.9);color:var(--accent);font-size:22px;font-weight:900;flex:none;box-shadow:0 4px 12px rgba(0,0,0,.1)}'+
   '#dashList .dash-pro-main{min-width:0;flex:1}'+
-  '#dashList .dash-pro-name{font-size:15px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-  '#dashList .dash-pro-code{margin-top:5px;color:#64748b;font:11px/1.2 monospace}'+
-  '#dashList .dash-pro-status{font-size:10px;font-weight:900;padding:6px 9px;border-radius:999px;white-space:nowrap}'+
-  '#dashList .dash-pro-status.open{color:#047857;background:#ecfdf5}'+
-  '#dashList .dash-pro-status.locked{color:#dc2626;background:#fef2f2}'+
-  '#dashList .dash-pro-stats{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:8px;margin-top:15px;padding-top:13px;border-top:1px solid #eef2f7}'+
-  '#dashList .dash-pro-stats span{display:block;color:#94a3b8;font-size:10px;margin-bottom:4px}'+
-  '#dashList .dash-pro-stats b{display:block;color:#334155;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-  '#dashList .dash-pro-open{display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px dashed #e2e8f0;color:#2563eb;font-size:11px;font-weight:800}'+
+  '#dashList .dash-pro-name{font-size:16px;font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.15);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+  '#dashList .dash-pro-code{margin-top:4px;color:rgba(255,255,255,.85);font:11px/1.2 monospace}'+
+  '#dashList .dash-pro-status{font-size:11px;font-weight:900;padding:7px 10px;border-radius:999px;white-space:nowrap;background:rgba(255,255,255,.9)}'+
+  '#dashList .dash-pro-status.open{color:#047857}'+
+  '#dashList .dash-pro-status.locked{color:#dc2626}'+
+  '#dashList .dash-pro-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2)}'+
+  '#dashList .dash-pro-info-item{display:flex;flex-direction:column;gap:3px}'+
+  '#dashList .dash-pro-info-label{font-size:9px;color:rgba(255,255,255,.85);font-weight:700}'+
+  '#dashList .dash-pro-info-value{font-size:11px;color:#fff;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+  '#dashList .dash-pro-meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}'+
+  '#dashList .dash-pro-meta-item{padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.2);font-size:10px;color:#fff;font-weight:700;display:flex;align-items:center;gap:4px}'+
+  '#dashList .dash-pro-meta-item svg{width:12px;height:12px}'+
+  '#dashList .dash-pro-open{display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:800}'+
   '#dashList .dash-pro-open span{font-size:16px;transition:.2s}'+
   '#dashList .dash-pro-teacher:hover .dash-pro-open span{transform:translateX(-4px)}'+
   '#dashKpi .dash-pro-shell{padding:2px 0}'+
-  '#dashKpi .dash-pro-welcome{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;box-shadow:0 12px 28px rgba(15,23,42,.13)}'+
-  '#dashKpi .dash-pro-eyebrow{font-size:10px;opacity:.7;font-weight:800;margin-bottom:3px}'+
-  '#dashKpi .dash-pro-heading{font-size:23px;font-weight:950}'+
-  '#dashKpi .dash-pro-desc{font-size:11px;opacity:.78;margin-top:5px}'+
-  '#dashKpi .dash-pro-health{padding:8px 11px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.09);border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}'+
-  '#dashKpi .dash-pro-health-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#34d399;margin-left:6px;box-shadow:0 0 0 4px rgba(52,211,153,.12)}'+
-  '#dashKpi .dash-pro-card{min-height:103px}'+
-  '#dashKpi .dash-pro-card.blue{--accent:#2563eb;--soft:#eff6ff}'+
-  '#dashKpi .dash-pro-card.green{--accent:#10b981;--soft:#ecfdf5}'+
-  '#dashKpi .dash-pro-card.red{--accent:#ef4444;--soft:#fef2f2}'+
-  '#dashKpi .dash-pro-card.amber{--accent:#f59e0b;--soft:#fffbeb}'+
-  '#dashKpi .dash-pro-mini{font-size:9px;color:#94a3b8;margin-top:6px}'+
-  '#dashKpi .dash-pro-progress{margin-top:12px;padding:13px 15px;border:1px solid #e5e7eb;border-radius:15px;background:#fff;box-shadow:0 5px 16px rgba(15,23,42,.04)}'+
-  '#dashKpi .dash-pro-progress>div:first-child{display:flex;justify-content:space-between;color:#64748b;font-size:10px;font-weight:700;margin-bottom:8px}'+
+  '#dashKpi .dash-pro-welcome{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px;padding:20px 22px;border-radius:22px;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;box-shadow:0 12px 28px rgba(15,23,42,.15)}'+
+  '#dashKpi .dash-pro-eyebrow{font-size:11px;opacity:.8;font-weight:800;margin-bottom:4px}'+
+  '#dashKpi .dash-pro-heading{font-size:26px;font-weight:950}'+
+  '#dashKpi .dash-pro-desc{font-size:12px;opacity:.8;margin-top:6px}'+
+  '#dashKpi .dash-pro-health{padding:9px 12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;display:flex;align-items:center;gap:6px}'+
+  '#dashKpi .dash-pro-health-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.15);animation:pulse 2s infinite}'+
+  '@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}'+
+  '#dashKpi .dash-pro-card{min-height:115px}'+
+  '#dashKpi .dash-pro-card.blue{--accent:#2563eb;--soft:#dbeafe;background:linear-gradient(135deg,#eff6ff,#dbeafe)}'+
+  '#dashKpi .dash-pro-card.green{--accent:#10b981;--soft:#d1fae5;background:linear-gradient(135deg,#ecfdf5,#d1fae5)}'+
+  '#dashKpi .dash-pro-card.red{--accent:#ef4444;--soft:#fee2e2;background:linear-gradient(135deg,#fef2f2,#fee2e2)}'+
+  '#dashKpi .dash-pro-card.amber{--accent:#f59e0b;--soft:#fef3c7;background:linear-gradient(135deg,#fffbeb,#fef3c7)}'+
+  '#dashKpi .dash-pro-mini{font-size:10px;color:#64748b;margin-top:7px;font-weight:600}'+
+  '#dashKpi .dash-pro-progress{margin-top:14px;padding:15px 17px;border:1px solid #e5e7eb;border-radius:17px;background:#fff;box-shadow:0 5px 16px rgba(15,23,42,.04)}'+
+  '#dashKpi .dash-pro-progress>div:first-child{display:flex;justify-content:space-between;color:#64748b;font-size:11px;font-weight:700;margin-bottom:9px}'+
   '#dashKpi .dash-pro-progress b{color:#1d4ed8}'+
-  '#dashKpi .dash-pro-track{height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden}'+
+  '#dashKpi .dash-pro-track{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden}'+
   '#dashKpi .dash-pro-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2563eb,#60a5fa);transition:width .5s ease}'+
   '#dashList .dash-pro-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:13px}'+
   '#dashList .dash-pro-search{display:flex;align-items:center;gap:7px;flex:1;max-width:430px;padding:0 12px;border:1px solid #e2e8f0;border-radius:13px;background:#fff;box-shadow:0 4px 12px rgba(15,23,42,.035)}'+
@@ -76,10 +80,10 @@ registerPage('dash', {
   '#dashList .dash-pro-noresults{padding:28px;text-align:center;border:1px dashed #cbd5e1;border-radius:16px;background:#f8fafc;color:#64748b;font-size:12px;font-weight:800}'+
   '@media(max-width:900px){#dashKpi .dash-pro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#dashList .dash-pro-teachers{grid-template-columns:1fr}}'+
   '@media(max-width:520px){'+
-  '#dashKpi .dash-pro-welcome{padding:14px;border-radius:16px}.dash-pro-heading{font-size:19px!important}.dash-pro-desc{font-size:9px!important}.dash-pro-health{font-size:9px!important;padding:6px 8px!important}'+
+  '#dashKpi .dash-pro-welcome{padding:16px;border-radius:18px}.dash-pro-heading{font-size:21px!important}.dash-pro-desc{font-size:10px!important}.dash-pro-health{font-size:10px!important;padding:7px 9px!important}'+
   '#dashList .dash-pro-toolbar{display:block}.dash-pro-search{max-width:none!important;margin-bottom:8px}.dash-pro-filters{width:max-content}'+
   '#dashList .dash-pro-teachers{gap:10px}'+
-  '#dashKpi .dash-pro-grid{gap:9px}#dashKpi .dash-pro-card{min-height:80px;padding:12px}.dash-pro-icon{width:40px!important;height:40px!important}.dash-pro-value{font-size:22px!important}}';
+  '#dashKpi .dash-pro-grid{gap:9px}#dashKpi .dash-pro-card{min-height:95px;padding:14px}.dash-pro-icon{width:50px!important;height:50px!important;font-size:24px!important}.dash-pro-value{font-size:26px!important}}';
   document.head.appendChild(s);
 })();
 
@@ -108,7 +112,7 @@ function loadDashData(silent) {
     }
     
     var teachers = r.teachers || [];
-    window.DASH_TEACHERS = teachers; // ✅ حفظ البيانات عالمياً لمنع أخطاء النقر
+    window.DASH_TEACHERS = teachers;
     
     var total = teachers.length;
     var open = teachers.filter(function(t){ return !t.locked; }).length;
@@ -122,7 +126,7 @@ function loadDashData(silent) {
       kpiEl.innerHTML =
         '<div class="dash-pro-shell">' +
           '<div class="dash-pro-welcome">' +
-            '<div><div class="dash-pro-eyebrow">لوحة الإدارة</div><div class="dash-pro-heading">نظرة عامة</div><div class="dash-pro-desc">متابعة المعلمين والحسابات والدرجات من مكان واحد</div></div>' +
+            '<div><div class="dash-pro-eyebrow">لوحة الإدارة</div><div class="dash-pro-heading">الرئيسية</div><div class="dash-pro-desc">متابعة المعلمين والحسابات والدرجات من مكان واحد</div></div>' +
             '<div class="dash-pro-health"><span class="dash-pro-health-dot"></span>النظام متصل</div>' +
           '</div>' +
           '<div class="dash-pro-grid">' +
@@ -143,7 +147,15 @@ function loadDashData(silent) {
         listEl.innerHTML = '<div class="empty">لا يوجد معلمون بعد</div>';
         return;
       }
-      var colors = ['#2563EB','#10B981','#F59E0B','#8B5CF6','#EC4899','#06B6D4'];
+      var colors = [
+        {bg:'#dbeafe', accent:'#2563eb', text:'#1e40af'},
+        {bg:'#d1fae5', accent:'#10b981', text:'#047857'},
+        {bg:'#fef3c7', accent:'#f59e0b', text:'#b45309'},
+        {bg:'#fce7f3', accent:'#ec4899', text:'#be185d'},
+        {bg:'#e0e7ff', accent:'#6366f1', text:'#3730a3'},
+        {bg:'#ccfbf1', accent:'#14b8a6', text:'#0f766e'}
+      ];
+      
       var h = '<div class="dash-pro-head">' +
                 '<div><div class="dash-pro-title">المعلمون</div><div class="dash-pro-sub">إدارة الحسابات ومتابعة النشاط والدرجات</div></div>' +
                 '<div class="dash-pro-count">'+arNum(total)+' معلم</div>' +
@@ -159,21 +171,40 @@ function loadDashData(silent) {
               '<div id="dashTeacherGrid" class="dash-pro-teachers">';
               
       teachers.forEach(function(t,i){
-        var col = colors[i%colors.length];
+        var theme = colors[i%colors.length];
         var last = t.lastLogin ? ago(t.lastLogin) : 'لم يدخل بعد';
         var cnt = 0;
-        if(t.subjects) t.subjects.forEach(function(s){ if(s.classes) cnt+=s.classes.length; });
+        var subjectsList = [];
+        if(t.subjects) {
+          t.subjects.forEach(function(s){ 
+            if(s.classes) {
+              cnt += s.classes.length;
+              subjectsList.push(s.name);
+            } 
+          });
+        }
         var status = t.locked ? 'locked' : 'open';
-
-        h += '<div class="dash-pro-teacher" data-status="'+status+'" data-search="'+escA((t.name||'')+' '+(t.code||''))+'" style="--accent:'+col+'" onclick="viewTeacher(\''+escA(t.code)+'\')" role="button" tabindex="0">';
-        h += '<div class="dash-pro-top"><div class="dash-pro-avatar">'+esc((t.name||'?').trim().charAt(0))+'</div>';
-        h += '<div class="dash-pro-main"><div class="dash-pro-name">'+esc(t.name)+'</div><div class="dash-pro-code">🔑 '+esc(t.code)+'</div></div>';
-        h += '<div class="dash-pro-status '+status+'">'+(t.locked?'🔒 مقفل':'🟢 مفتوح')+'</div></div>';
-        h += '<div class="dash-pro-stats">';
-        h += '<div><span>آخر دخول</span><b>'+esc(last)+'</b></div>';
-        h += '<div><span>الدرجات</span><b>'+arNum(t.sentCount||0)+'</b></div>';
-        h += '<div><span>الشعب</span><b>'+arNum(cnt)+'</b></div>';
+        var lastSent = t.lastSent ? formatDate(t.lastSent) : '—';
+        
+        h += '<div class="dash-pro-teacher" data-status="'+status+'" data-search="'+escA((t.name||'')+' '+(t.code||''))+'" style="background:linear-gradient(135deg,'+theme.bg+', '+adjustColor(theme.bg, -20)+'); --accent:'+theme.accent+'" onclick="viewTeacher(\''+escA(t.code)+'\')" role="button" tabindex="0">';
+        h += '<div class="dash-pro-top"><div class="dash-pro-avatar" style="color:'+theme.accent+'">'+esc((t.name||'?').trim().charAt(0))+'</div>';
+        h += '<div class="dash-pro-main"><div class="dash-pro-name">'+esc(t.name)+'</div><div class="dash-pro-code"> '+esc(t.code)+'</div></div>';
+        h += '<div class="dash-pro-status '+status+'">'+(t.locked?' مقفل':'🟢 مفتوح')+'</div></div>';
+        
+        h += '<div class="dash-pro-meta">';
+        if(subjectsList.length > 0) {
+          h += '<div class="dash-pro-meta-item">📚 '+esc(subjectsList[0])+'</div>';
+        }
+        h += '<div class="dash-pro-meta-item">📅 '+lastSent+'</div>';
         h += '</div>';
+        
+        h += '<div class="dash-pro-info">';
+        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">آخر دخول</span><span class="dash-pro-info-value">'+esc(last)+'</span></div>';
+        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">الدرجات</span><span class="dash-pro-info-value">'+arNum(t.sentCount||0)+'</span></div>';
+        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">الشعب</span><span class="dash-pro-info-value">'+arNum(cnt)+'</span></div>';
+        h += '<div class="dash-pro-info-item"><span class="dash-pro-info-label">الحالة</span><span class="dash-pro-info-value">'+(t.locked?'مقفلة':'مفتوحة')+'</span></div>';
+        h += '</div>';
+        
         h += '<div class="dash-pro-open">فتح ملف المعلم <span>←</span></div></div>';
       });
       h += '</div>';
@@ -188,6 +219,28 @@ function loadDashData(silent) {
     if(!silent) toast(msg, 'err');
     if(kpiEl) kpiEl.innerHTML = '<div class="empty">'+msg+'</div>';
   });
+}
+
+// دالة مساعدة لتغميق اللون
+function adjustColor(color, amount) {
+  var num = parseInt(color.replace("#",""),16),
+  amt = Math.round(2.55 * amount),
+  R = (num >> 16) + amt,
+  B = (num >> 8 & 0x00FF) + amt,
+  G = (num & 0x0000FF) + amt;
+  return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+}
+
+// دالة تنسيق التاريخ
+function formatDate(timestamp) {
+  if(!timestamp) return '—';
+  var date = new Date(timestamp);
+  var day = date.getDate();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  return day+'/'+month+'/'+year+' '+hours+':'+(minutes<10?'0':'')+minutes;
 }
 
 function filterDashTeachers(value){
@@ -218,7 +271,6 @@ function setDashTeacherFilter(filter, btn){
   filterDashTeachers(input ? input.value : '');
 }
 
-// ✅ تم إصلاح هذه الدالة لعدم الاعتماد على TEAM.teachers
 function viewTeacher(code){
   var t = (window.DASH_TEACHERS || []).find(function(x){ return x.code === code; });
   if(!t) { toast('بيانات المعلم غير متاحة', 'err'); return; }
