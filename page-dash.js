@@ -1,595 +1,499 @@
-/* ═══ page-dash.js — الصفحة الرئيسية (محدث) ═══ */
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0B3B2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="إدارة درجاتي">
+<title>درجاتي — لوحة التحكم</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
-window.DASH_TEACHERS = [];
+<!-- ✅ أيقونات الإدارة الصحيحة مع منع الكاش -->
+<link rel="icon" type="image/png" href="icon-admin.png?v=3">
+<link rel="apple-touch-icon" href="icon-admin.png?v=3">
+<link rel="manifest" href="manifest-admin.webmanifest?v=3">
 
-registerPage('dash', {
-  enter: function() { loadDashData(); },
-  silent: function() { loadDashData(true); }
-});
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css?v=3.5">
 
-/* ═══ التصميم ═══ */
-(function(){
-  if(document.getElementById('dashProStyles')) return;
-  var s = document.createElement('style'); 
-  s.id = 'dashProStyles';
-  s.textContent = 
-  '#dashKpi{margin-bottom:20px;width:100%}'+
-  
-  /* شريط الإحصائيات الأفقي - بعرض الصفحة الكامل */
-  '#dashKpi .stats-bar{display:flex;align-items:center;gap:14px;padding:18px 22px;border-radius:18px;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;box-shadow:0 8px 24px rgba(15,23,42,.15);width:100%;justify-content:space-between;flex-wrap:wrap}'+
-  '#dashKpi .stats-bar .stat-item{display:flex;align-items:center;gap:10px;padding:12px 18px;background:rgba(255,255,255,.1);border-radius:12px;border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(6px);flex:1;min-width:140px}'+
-  '#dashKpi .stats-bar .stat-icon{font-size:26px;width:42px;height:42px;display:grid;place-items:center;background:rgba(255,255,255,.15);border-radius:10px}'+
-  '#dashKpi .stats-bar .stat-info{display:flex;flex-direction:column}'+
-  '#dashKpi .stats-bar .stat-num{font-size:22px;font-weight:900;line-height:1}'+
-  '#dashKpi .stats-bar .stat-lbl{font-size:11px;opacity:.85;font-weight:700;margin-top:3px}'+
-  '#dashKpi .stats-bar .progress-wrap{flex:2;min-width:200px;padding:12px 16px;background:rgba(255,255,255,.1);border-radius:12px;border:1px solid rgba(255,255,255,.15)}'+
-  '#dashKpi .stats-bar .progress-top{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:6px;opacity:.9}'+
-  '#dashKpi .stats-bar .progress-track{height:10px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden}'+
-  '#dashKpi .stats-bar .progress-fill{height:100%;background:linear-gradient(90deg,#34d399,#10b981);border-radius:99px;transition:width .6s ease}'+
-  '#dashKpi .health-badge{padding:10px 16px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);border-radius:999px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0}'+
-  '#dashKpi .health-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.2);animation:pulse 2s infinite}'+
-  '@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}'+
-  
-  /* بطاقات المعلمين */
-  '#dashList .dash-pro-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 16px;flex-wrap:wrap}'+
-  '#dashList .dash-pro-title{font-size:22px;font-weight:900;color:#0f172a}'+
-  '#dashList .dash-pro-sub{margin-top:4px;font-size:13px;color:#64748b}'+
-  '#dashList .dash-pro-count{padding:8px 14px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:900;white-space:nowrap}'+
-  '#dashList .dash-pro-teachers{display:grid;grid-template-columns:1fr;gap:16px}'+
-  '#dashList .dash-pro-teacher{position:relative;overflow:hidden;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(15,23,42,.12);transition:.25s;color:#fff}'+
-  '#dashList .dash-pro-teacher:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.18)}'+
-  '#dashList .dash-pro-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}'+
-  '#dashList .dash-pro-avatar{width:64px;height:64px;display:grid;place-items:center;border-radius:18px;font-size:30px;font-weight:900;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.15);background:rgba(255,255,255,.95)}'+
-  '#dashList .dash-pro-main{min-width:0;flex:1}'+
-  '#dashList .dash-pro-name{font-size:20px;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.2);white-space:normal;word-wrap:break-word;overflow-wrap:break-word;line-height:1.3;margin-bottom:4px}'+
-  '#dashList .dash-pro-code{font-size:13px;color:rgba(255,255,255,.9);font-family:monospace;font-weight:700}'+
-  '#dashList .dash-pro-status{font-size:12px;font-weight:900;padding:8px 14px;border-radius:999px;white-space:nowrap;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.1)}'+
-  '#dashList .dash-pro-status.open{color:#047857}'+
-  '#dashList .dash-pro-status.locked{color:#dc2626}'+
-  
-  /* قسم الشعب والمواد */
-  '#dashList .dash-classes-section{background:rgba(255,255,255,.15);border-radius:14px;padding:14px;margin-top:14px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15)}'+
-  '#dashList .dash-classes-title{font-size:12px;font-weight:800;color:rgba(255,255,255,.9);margin-bottom:10px;display:flex;align-items:center;gap:6px}'+
-  '#dashList .dash-class-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(255,255,255,.12);border-radius:10px;margin-bottom:6px;font-size:12px;transition:.2s}'+
-  '#dashList .dash-class-item:hover{background:rgba(255,255,255,.2)}'+
-  '#dashList .dash-class-item:last-child{margin-bottom:0}'+
-  '#dashList .dash-class-name{font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;flex:1;min-width:0}'+
-  '#dashList .dash-class-stats{display:flex;gap:10px;align-items:center;flex-shrink:0}'+
-  '#dashList .dash-class-stat{font-size:11px;color:rgba(255,255,255,.9);font-weight:700}'+
-  '#dashList .dash-class-stat b{color:#fff;font-size:13px;margin-right:3px}'+
-  '#dashList .dash-class-open-btn{padding:6px 10px;background:rgba(255,255,255,.9);color:#1d4ed8;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer;border:none;transition:.2s;white-space:nowrap}'+
-  '#dashList .dash-class-open-btn:hover{background:#fff;transform:scale(1.05)}'+
-  
-  /* معلومات إضافية */
-  '#dashList .dash-pro-meta{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}'+
-  '#dashList .dash-pro-meta-item{padding:7px 12px;border-radius:11px;background:rgba(255,255,255,.2);font-size:12px;color:#fff;font-weight:700;display:flex;align-items:center;gap:5px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15)}'+
-  
-  /* الإحصائيات السفلية */
-  '#dashList .dash-pro-info{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.25)}'+
-  '#dashList .dash-pro-info-item{text-align:center}'+
-  '#dashList .dash-pro-info-item .lbl{font-size:10px;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:4px;display:block}'+
-  '#dashList .dash-pro-info-item .val{font-size:18px;color:#fff;font-weight:900;display:block}'+
-  '#dashList .dash-pro-info-item .val.small{font-size:13px}'+
-  
-  /* أزرار الإجراءات */
-  '#dashList .dash-pro-actions{display:flex;gap:10px;margin-top:14px}'+
-  '#dashList .dash-action-btn{flex:1;padding:11px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid rgba(255,255,255,.25)}'+
-  '#dashList .dash-action-btn.view{background:rgba(255,255,255,.2);color:#fff}'+
-  '#dashList .dash-action-btn.view:hover{background:rgba(255,255,255,.3)}'+
-  '#dashList .dash-action-btn.lock{background:rgba(255,255,255,.95);color:#dc2626}'+
-  '#dashList .dash-action-btn.lock:hover{background:#fff}'+
-  '#dashList .dash-action-btn.unlock{background:rgba(255,255,255,.95);color:#047857}'+
-  '#dashList .dash-action-btn.unlock:hover{background:#fff}'+
-  
-  '#dashList .dash-pro-toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}'+
-  '#dashList .dash-pro-search{display:flex;align-items:center;gap:7px;flex:1;max-width:430px;padding:0 12px;border:1px solid #e2e8f0;border-radius:13px;background:#fff;box-shadow:0 4px 12px rgba(15,23,42,.035)}'+
-  '#dashList .dash-pro-search span{font-size:20px;color:#94a3b8}'+
-  '#dashList .dash-pro-search input{width:100%;border:0;outline:0;background:transparent;padding:11px 0;color:#334155;font:inherit;font-size:12px}'+
-  '#dashList .dash-pro-filters{display:flex;gap:5px;padding:4px;border-radius:13px;background:#f1f5f9}'+
-  '#dashList .dash-filter{border:0;background:transparent;color:#64748b;padding:7px 10px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer}'+
-  '#dashList .dash-filter.active{background:#fff;color:#1d4ed8;box-shadow:0 2px 7px rgba(15,23,42,.08)}'+
-  '#dashList .dash-pro-noresults{padding:28px;text-align:center;border:1px dashed #cbd5e1;border-radius:16px;background:#f8fafc;color:#64748b;font-size:12px;font-weight:800}'+
-  
-  /* ✅ تنسيق جدول الدرجات - خط أسود واضح */
-  '.grades-table{width:100%;border-collapse:collapse;font-size:14px}'+
-  '.grades-table th,.grades-table td{padding:8px 10px;border:1.5px solid #334155;text-align:center;color:#0f172a;font-weight:700}'+
-  '.grades-table th{background:#1E40AF;color:#fff;font-weight:900;font-size:13px}'+
-  '.grades-table td.name-cell{text-align:right;font-weight:900;color:#0f172a;min-width:180px;max-width:220px;white-space:normal;word-wrap:break-word}'+
-  '.grades-table td.num-cell{background:#f1f5f9;font-weight:900}'+
-  '.grades-table td.avg-cell{background:#FEF3C7;font-weight:900;color:#92400e}'+
-  '.grades-table td.pass-cell{color:#047857;font-weight:900}'+
-  '.grades-table td.fail-cell{color:#DC2626;font-weight:900}'+
-  
-  /* ✅ تنسيق الطباعة */
-  '.print-container{font-family:Tajawal;width:210mm;margin:0 auto;padding:15mm}'+
-  '.print-container h2{text-align:center;color:#1E40AF;margin-bottom:15px;font-size:22px}'+
-  '.print-container .print-table{width:100%;border-collapse:collapse}'+
-  '.print-container .print-table th,.print-container .print-table td{padding:6px 8px;border:1px solid #333;text-align:center;font-size:12px;color:#000}'+
-  '.print-container .print-table th{background:#1E40AF;color:#fff;font-weight:900}'+
-  '.print-container .print-table td.name-cell{text-align:right;font-weight:bold;min-width:200px;max-width:250px;white-space:normal}'+
-  
-  '@media(max-width:768px){'+
-  '#dashKpi .stats-bar{flex-direction:column;align-items:stretch}'+
-  '#dashKpi .stats-bar .stat-item{width:100%}'+
-  '#dashKpi .stats-bar .progress-wrap{width:100%}'+
-  '#dashList .dash-pro-info{grid-template-columns:repeat(2,1fr)}'+
-  '#dashList .dash-pro-name{font-size:18px!important}'+
-  '#dashList .dash-class-item{flex-wrap:wrap;gap:8px}'+
-  '#dashList .dash-class-stats{width:100%;justify-content:flex-start}'+
-  '}';
-  document.head.appendChild(s);
-})();
+<style>
+/* ═══ تنسيق زر الخروج الاحترافي ═══ */
+.exit, .iconbtn.exit-btn {
+  background: linear-gradient(135deg, #DC2626, #991B1B);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+.exit { width: 40px; height: 40px; padding: 0; }
+.exit:hover, .iconbtn.exit-btn:hover {
+  background: linear-gradient(135deg, #EF4444, #B91C1C);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
+}
+.iconbtn.exit-btn { width: 42px; height: 42px; padding: 0; }
+.exit svg, .iconbtn.exit-btn svg {
+  width: 20px; height: 20px;
+  stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round; fill: none;
+}
 
-function loadDashData(silent) {
-  var kpiEl = $('#dashKpi');
-  var listEl = $('#dashList');
+/* ══ تنسيقات النماذج ═══ */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px;
+  font-family: inherit; font-size: 14px; transition: 0.15s; background: #fff;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-hint { font-size: 11.5px; color: #64748B; margin-top: 4px; line-height: 1.6; }
+.form-hint code { background: #F1F5F9; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; }
+
+.edit-subject-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #E2E8F0; }
+.edit-subject-row .row-num { font-weight: 700; color: #475569; min-width: 25px; }
+.edit-subject-row select { flex: 1; padding: 8px; border: 1px solid #E2E8F0; border-radius: 6px; font-family: inherit; }
+.edit-subject-row .remove-btn { width: auto; padding: 6px 10px; background: #DC2626; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.edit-subject-row .remove-btn:hover { background: #B91C1C; }
+
+/* ══════════════════════════════════════════════════════════ */
+/* ✅ إصلاح الشريط الأفقي */
+/* ═══════════════════════════════════════════════════════════ */
+#dashKpi .stats-bar {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  gap: 12px !important;
+  padding: 16px 20px !important;
+}
+
+#dashKpi .stats-bar .stat-item {
+  flex: 1 !important;
+  min-width: 130px !important;
+  white-space: nowrap !important;
+}
+
+#dashKpi .stats-bar .progress-wrap {
+  flex: 1.5 !important;
+  min-width: 180px !important;
+}
+
+#dashKpi .stats-bar .health-badge {
+  flex-shrink: 0 !important;
+}
+
+/* ════ إصلاح حدود الطباعة ════ */
+.print-container {
+  font-family: 'Tajawal', Arial, sans-serif !important;
+  width: 210mm !important;
+  margin: 0 auto !important;
+  padding: 10mm !important;
+  background: #fff !important;
+}
+
+.print-container h2 {
+  text-align: center !important;
+  color: #1E40AF !important;
+  margin-bottom: 15px !important;
+  font-size: 20px !important;
+  border-bottom: 2px solid #1E40AF !important;
+  padding-bottom: 10px !important;
+}
+
+.print-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border: 2px solid #000 !important;
+}
+
+.print-table th,
+.print-table td {
+  padding: 6px 8px !important;
+  border: 1.5px solid #000 !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  color: #000 !important;
+  font-weight: 700 !important;
+}
+
+.print-table th {
+  background: #1E40AF !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+}
+
+.print-table td.name-cell {
+  text-align: right !important;
+  font-weight: 900 !important;
+  min-width: 200px !important;
+  max-width: 250px !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+}
+
+.print-table td.avg-cell {
+  background: #FEF3C7 !important;
+  font-weight: 900 !important;
+}
+
+.print-table td.pass-cell {
+  color: #047857 !important;
+  font-weight: 900 !important;
+}
+
+.print-table td.fail-cell {
+  color: #DC2626 !important;
+  font-weight: 900 !important;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .print-container,
+  .print-container * {
+    visibility: visible !important;
+  }
+  .print-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10mm !important;
+  }
+  @page {
+    size: A4 landscape !important;
+    margin: 10mm !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ✅ إصلاحات الموبايل (تمنع اندماج الصفحات) */
+/* ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .side { display: none !important; }
+  .maincol { width: 100% !important; margin: 0 !important; }
   
-  if (!silent) {
-    if (kpiEl) kpiEl.innerHTML = '<div class="empty">⏳ جاري التحميل...</div>';
-    if (listEl) listEl.innerHTML = '';
+  [hidden] { display: none !important; }
+  
+  .content { padding-bottom: 80px !important; }
+  
+  table, .tlist, .grid3, .setgrid { 
+    display: block !important; overflow-x: auto !important; white-space: nowrap; 
   }
   
-  if (!url()) {
-    var msg = '⚠️ رابط الخادم غير موجود في config.js';
-    if (!silent) toast(msg, 'err');
-    if (kpiEl) kpiEl.innerHTML = '<div class="empty">'+msg+'</div>';
-    return;
-  }
+  .btn, .iconbtn, input, select, textarea { padding: 12px !important; font-size: 14px !important; min-height: 44px; }
+  .card, .setcard, .modal { margin: 8px !important; padding: 12px !important; border-radius: 12px !important; }
+  .ptitle { font-size: 16px !important; }
+  .bnav { height: 65px !important; }
+  .bnav button { font-size: 11px !important; padding: 4px 2px !important; }
   
-  api({action:'adminData', key:key()}, 30000).then(function(r){
-    if(!r.ok){ 
-      var errMsg = '❌ ' + (r.error || 'خطأ غير معروف');
-      if(!silent) toast(errMsg, 'err');
-      if(kpiEl) kpiEl.innerHTML = '<div class="empty">'+errMsg+'</div>';
-      return; 
-    }
-    
-    var teachers = r.teachers || [];
-    window.DASH_TEACHERS = teachers;
-    
-    var total = teachers.length;
-    var open = teachers.filter(function(t){ return !t.locked; }).length;
-    var locked = total - open;
-    var totalSent = teachers.reduce(function(sum, t){ return sum + (t.sentCount||0); }, 0);
-    var activeRate = total ? Math.round((open / total) * 100) : 0;
+  #dashKpi .stats-bar {
+    flex-wrap: wrap !important;
+  }
+  #dashKpi .stats-bar .stat-item {
+    min-width: calc(50% - 10px) !important;
+  }
+}
+</style>
+</head>
+<body>
+<div id="errbar"></div>
 
-    // شريط إحصائيات أفقي بعرض الصفحة
-    if(kpiEl){
-      kpiEl.innerHTML =
-        '<div class="stats-bar">' +
-          '<div class="stat-item"><div class="stat-icon">👨‍🏫</div><div class="stat-info"><span class="stat-num">'+arNum(total)+'</span><span class="stat-lbl">إجمالي المعلمين</span></div></div>' +
-          '<div class="stat-item"><div class="stat-icon">🟢</div><div class="stat-info"><span class="stat-num">'+arNum(open)+'</span><span class="stat-lbl">حسابات مفتوحة</span></div></div>' +
-          '<div class="stat-item"><div class="stat-icon">🔒</div><div class="stat-info"><span class="stat-num">'+arNum(locked)+'</span><span class="stat-lbl">حسابات مقفلة</span></div></div>' +
-          '<div class="stat-item"><div class="stat-icon">📊</div><div class="stat-info"><span class="stat-num">'+arNum(totalSent)+'</span><span class="stat-lbl">درجات مرسلة</span></div></div>' +
-          '<div class="progress-wrap">' +
-            '<div class="progress-top"><span>نسبة الحسابات النشطة</span><b>'+arNum(activeRate)+'%</b></div>' +
-            '<div class="progress-track"><div class="progress-fill" style="width:'+activeRate+'%"></div></div>' +
-          '</div>' +
-          '<div class="health-badge"><span class="health-dot"></span>النظام متصل</div>' +
-        '</div>';
-    }
+<section class="screen active" id="s-login">
+  <div class="login"><div class="lcard">
+    <div class="hero"><img src="icon-admin.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
+    <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
+    <button class="btn" id="loginBtn" onclick="adminLogin()">دخول</button>
+  </div></div>
+</section>
+
+<section class="screen" id="s-main">
+  <div class="app">
+    <aside class="side">
+      <div class="brand"><img src="icon-admin.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
+      <!-- ✅ الترتيب الجديد للشريط الجانبي - تغيير "نظرة عامة" إلى "الرئيسية" -->
+      <nav style="padding:8px 0;flex:1;overflow-y:auto">
+        <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">🏠</span>الرئيسية</button>
+        <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
+        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
+        <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
+        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
+        <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
+        <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
+      </nav>
+      <div class="sfoot"><div class="rolecard" id="roleCard">
+        <div class="dot2" id="roleDot">🛠️</div>
+        <div style="flex:1"><b id="roleLabel">المطور</b><small id="roleSub">صلاحيات كاملة</small></div>
+        <button class="exit" onclick="logoutAdmin()" title="تسجيل الخروج">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div></div>
+    </aside>
     
-    if(listEl){
-      if(!teachers.length){
-        listEl.innerHTML = '<div class="empty">📭 لا يوجد معلمون مسجلون بعد</div>';
-        return;
-      }
+    <div class="maincol">
+      <header class="topbar">
+        <div><b id="tbTitle">الرئيسية</b><small id="admSub">—</small></div>
+        <span class="grow"></span>
+        <button class="iconbtn" onclick="refresh()" title="تحديث">↻</button>
+        <button class="iconbtn exit-btn" onclick="logoutAdmin()" title="تسجيل الخروج">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </header>
       
-      var colors = [
-        {gradient:'linear-gradient(135deg, #3b82f6, #1d4ed8)', accent:'#1d4ed8'},
-        {gradient:'linear-gradient(135deg, #10b981, #047857)', accent:'#047857'},
-        {gradient:'linear-gradient(135deg, #f59e0b, #b45309)', accent:'#b45309'},
-        {gradient:'linear-gradient(135deg, #ef4444, #b91c1c)', accent:'#b91c1c'},
-        {gradient:'linear-gradient(135deg, #8b5cf6, #6d28d9)', accent:'#6d28d9'},
-        {gradient:'linear-gradient(135deg, #06b6d4, #0e7490)', accent:'#0e7490'},
-        {gradient:'linear-gradient(135deg, #ec4899, #be185d)', accent:'#be185d'},
-        {gradient:'linear-gradient(135deg, #14b8a6, #0f766e)', accent:'#0f766e'}
-      ];
-      
-      var h = '<div class="dash-pro-head">' +
-                '<div><div class="dash-pro-title">👥 قائمة المعلمين</div><div class="dash-pro-sub">إدارة الحسابات ومتابعة النشاط والدرجات</div></div>' +
-                '<div class="dash-pro-count"> '+arNum(total)+' معلم</div>' +
-              '</div>' +
-              '<div class="dash-pro-toolbar">' +
-                '<div class="dash-pro-search"><span>🔍</span><input id="dashTeacherSearch" type="search" placeholder="ابحث باسم المعلم أو الكود..." oninput="filterDashTeachers(this.value)"></div>' +
-                '<div class="dash-pro-filters">' +
-                  '<button class="dash-filter active" data-filter="all" onclick="setDashTeacherFilter(\'all\',this)">الكل</button>' +
-                  '<button class="dash-filter" data-filter="open" onclick="setDashTeacherFilter(\'open\',this)">🟢 مفتوحة</button>' +
-                  '<button class="dash-filter" data-filter="locked" onclick="setDashTeacherFilter(\'locked\',this)">🔒 مقفلة</button>' +
-                '</div>' +
-              '</div>' +
-              '<div id="dashTeacherGrid" class="dash-pro-teachers">';
-              
-      teachers.forEach(function(t,i){
-        var theme = colors[i%colors.length];
-        var last = t.lastLogin ? ago(t.lastLogin) : 'لم يدخل بعد';
-        var lastSentDate = t.lastSent ? formatDate(t.lastSent) : '—';
-        var status = t.locked ? 'locked' : 'open';
-        
-        var classesData = [];
-        var totalClasses = 0;
-        
-        if(t.subjects) {
-          t.subjects.forEach(function(subj){
-            if(subj.classes) {
-              subj.classes.forEach(function(cls){
-                totalClasses++;
-                classesData.push({name: cls, subject: subj.name});
-              });
-            }
-          });
-        }
-        
-        var subjectText = '';
-        if(t.subjects && t.subjects.length > 0) {
-          subjectText = t.subjects.map(function(s){ return s.name; }).join('، ');
-        } else if (t.subject) {
-          subjectText = t.subject;
-        } else {
-          subjectText = '—';
-        }
-        var shortSubject = subjectText.length > 30 ? subjectText.substring(0, 30) + '...' : subjectText;
-        
-        h += '<div class="dash-pro-teacher" data-status="'+status+'" data-search="'+escA((t.name||'')+' '+(t.code||''))+'" style="background:'+theme.gradient+'" role="button" tabindex="0">';
-        
-        h += '<div class="dash-pro-top">';
-        h += '<div class="dash-pro-avatar" style="color:'+theme.accent+'">'+esc((t.name||'?').trim().charAt(0))+'</div>';
-        h += '<div class="dash-pro-main" style="flex:1;min-width:0">';
-        h += '<div class="dash-pro-name">'+esc(t.name)+'</div>';
-        h += '<div class="dash-pro-code">🔑 '+esc(t.code)+'</div>';
-        h += '</div>';
-        h += '<div class="dash-pro-status '+status+'">'+(t.locked?'🔒 مقفل':' مفتوح')+'</div>';
-        h += '</div>';
-        
-        h += '<div class="dash-pro-meta">';
-        h += '<div class="dash-pro-meta-item"> '+esc(shortSubject)+'</div>';
-        h += '<div class="dash-pro-meta-item"> آخر إرسال: '+lastSentDate+'</div>';
-        h += '</div>';
-        
-        if(classesData.length > 0) {
-          h += '<div class="dash-classes-section">';
-          h += '<div class="dash-classes-title">🏫 الشعب والمواد ('+arNum(totalClasses)+' شعبة) — اضغط لعرض الدرجات</div>';
-          classesData.forEach(function(cd){
-            h += '<div class="dash-class-item">';
-            h += '<div class="dash-class-name">📖 '+esc(cd.subject)+' — '+esc(cd.name)+'</div>';
-            h += '<div class="dash-class-stats">';
-            h += '<button class="dash-class-open-btn" onclick="event.stopPropagation();viewTeacherSubject(\''+escA(t.code)+'\',\''+escA(cd.subject)+'\',\''+escA(cd.name)+'\')">📂 عرض الدرجات</button>';
-            h += '</div>';
-            h += '</div>';
-          });
-          h += '</div>';
-        } else {
-          h += '<div class="dash-classes-section"><div class="dash-classes-title">🏫 لا توجد شعب مسجلة</div></div>';
-        }
-        
-        h += '<div class="dash-pro-info">';
-        h += '<div class="dash-pro-info-item"><span class="lbl">الدرجات المرسلة</span><span class="val">'+arNum(t.sentCount||0)+'</span></div>';
-        h += '<div class="dash-pro-info-item"><span class="lbl">عدد الشعب</span><span class="val">'+arNum(totalClasses)+'</span></div>';
-        h += '<div class="dash-pro-info-item"><span class="lbl">آخر دخول</span><span class="val small">'+esc(last)+'</span></div>';
-        h += '<div class="dash-pro-info-item"><span class="lbl">الحالة</span><span class="val small">'+(t.locked?'مقفلة':'مفتوحة')+'</span></div>';
-        h += '</div>';
-        
-        h += '<div class="dash-pro-actions">';
-        h += '<button class="dash-action-btn view" onclick="event.stopPropagation();viewTeacher(\''+escA(t.code)+'\')">📂 كل المواد</button>';
-        if(t.locked) {
-          h += '<button class="dash-action-btn unlock" onclick="event.stopPropagation();toggleTeacherLock(\''+escA(t.code)+'\', false)">🔓 فتح الحساب</button>';
-        } else {
-          h += '<button class="dash-action-btn lock" onclick="event.stopPropagation();toggleTeacherLock(\''+escA(t.code)+'\', true)"> قفل الحساب</button>';
-        }
-        h += '</div>';
-        
-        h += '</div>';
-      });
-      
-      h += '</div>';
-      h += '<div id="dashNoResults" class="dash-pro-noresults" style="display:none">🔍 لا توجد نتائج مطابقة للبحث</div>';
-      listEl.innerHTML = h;
-    }
-    
-  }).catch(function(err){
-    var msg = '⚠️ تعذر الاتصال بالخادم';
-    if (err.message === 'no-url') msg = '🔗 رابط الخادم مفقود';
-    else if (err.name === 'AbortError') msg = '⏱ انتهت مهلة الاتصال — جاري إعادة المحاولة...';
-    if(!silent) toast(msg, 'err');
-    if(kpiEl) kpiEl.innerHTML = '<div class="empty">'+msg+'</div>';
+      <div class="content">
+        <!-- ✅ الترتيب الجديد لمحتوى الصفحات - تغيير "نظرة عامة" إلى "الرئيسية" -->
+        <div id="tab-dash">
+          <div class="ptitle"><span class="bar"></span>الرئيسية</div>
+          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <div class="kpi" id="dashKpi"></div>
+          <div class="card"><div class="ct"> كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
+        </div>
+
+        <div id="tab-studs" hidden>
+          <div class="ptitle"><span class="bar"></span>قوائم التلاميذ</div>
+          <p class="psub">اختر الصف والشعبة ثم أدر القائمة: لصق، استيراد Excel، تعديل، حذف</p>
+          <div id="studsBox"></div>
+        </div>
+
+        <div id="tab-team" hidden>
+          <div class="ptitle"><span class="bar"></span>المعلمون</div>
+          <div class="card">
+            <div class="ct" style="margin-bottom:10px">➕ إضافة معلم أو مادة جديدة</div>
+            <div class="grid3" style="margin-bottom:10px">
+              <input id="ntName" placeholder="اسم المعلم">
+              <select id="ntSubject">
+                <option value="">اختر المادة</option>
+                <option>التربية الإسلامية</option><option>اللغة العربية</option>
+                <option>اللغة الانكليزية</option><option>الرياضيات</option>
+                <option>العلوم</option><option>الاجتماعيات</option>
+              </select>
+              <select id="ntCls">
+                <option value="">اختر الصف والشعبة</option>
+                <option>الخامس أ</option><option>الخامس ب</option><option>الخامس ج</option>
+                <option>السادس أ</option><option>السادس ب</option><option>السادس ج</option>
+              </select>
+            </div>
+            <div class="grid3">
+              <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
+              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
+            </div>
+          </div>
+          <div id="teamList"></div>
+        </div>
+
+        <div id="tab-entry" hidden>
+          <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
+          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات</p>
+          <div id="entBox"></div>
+        </div>
+
+        <div id="tab-res" hidden>
+          <div class="ptitle"><span class="bar"></span>نتائج التلاميذ</div>
+          <p class="psub">بطاقة نتيجة احترافية لكل تلميذ</p>
+          <div id="resBox"></div>
+        </div>
+
+        <div id="tab-keys" hidden>
+          <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
+          <div class="setgrid">
+            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">️</div><h3>كلمة المطور</h3>
+              <label class="label">الحالية</label><input id="kDevCur" dir="ltr" readonly style="background:#F8FAFC">
+              <label class="label">الجديدة</label><input id="kDevNew" dir="ltr" type="password">
+              <button class="btn" style="background:#B45309" onclick="doChangeKey('DEV')">🔐 تغيير</button>
+            </div>
+            <div class="setcard" style="--sc:#7C3AED;--scb:#EDE9FE"><div class="hi">👔</div><h3>كلمة المدير</h3>
+              <label class="label">الحالية</label><input id="kMgrCur" dir="ltr" readonly style="background:#F8FAFC">
+              <label class="label">الجديدة</label><input id="kMgrNew" dir="ltr" type="password">
+              <button class="btn" style="background:#7C3AED" onclick="doChangeKey('MANAGER')">🔐 تغيير</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-set" hidden>
+          <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
+          <div class="setgrid">
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
+              <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
+              <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
+            </div>
+            <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi">📤</div><h3>قالب معبأ بالدرجات</h3>
+              <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
+              <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
+            </div>
+            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
+              <input id="setUrl" dir="ltr" placeholder="https://…/exec">
+              <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
+              <div id="connRes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ✅ الترتيب الجديد للشريط السفلي (الموبايل) - تغيير "نظرة" إلى "الرئيسية" -->
+  <nav class="bnav">
+    <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">🏠</span><small>الرئيسية</small></button>
+    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span><small>التلاميذ</small></button>
+    <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
+    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
+    <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
+    <button data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span><small>كلمات</small></button>
+    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+  </nav>
+</section>
+
+<section class="screen" id="s-tview">
+  <header class="topbar">
+    <button class="iconbtn" onclick="go('s-main')">→</button>
+    <div><b id="tvName"></b><small id="tvSub"></small></div>
+    <span class="grow"></span>
+    <button class="iconbtn" onclick="showSummary(ADM.tv.code)">📊</button>
+    <button class="iconbtn" onclick="printTView()">🖨️</button>
+  </header>
+  <div class="content" id="tvBox"></div>
+</section>
+
+<!-- نوافذ منبثقة -->
+<div class="ovl" id="editTeacherModal">
+  <div class="modal" style="max-width:700px">
+    <h3>✏️ تعديل بيانات المعلم</h3>
+    <div class="form-group"><label>اسم المعلم</label><input id="editTName" placeholder="مثال: أحمد محمد"></div>
+    <div class="form-group"><label>رمز الدخول (الكود)</label><input id="editTCode" style="font-family:monospace; direction:ltr; text-align:center; font-weight:700; letter-spacing:2px;"></div>
+    <div class="form-group">
+      <label>المواد والصفوف</label>
+      <div id="editSubjectsContainer" style="background:#F8FAFC; padding:12px; border-radius:10px; border:1px solid #E2E8F0;"></div>
+      <button class="btn" style="margin-top:10px; width:100%; background:#0891B2;" onclick="addEditSubjectRow()">➕ إضافة مادة وصف آخر</button>
+    </div>
+    <div class="mrow" style="margin-top:16px">
+      <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
+      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<div class="ovl" id="teacherRecordModal">
+  <div class="modal" style="max-width:950px; max-height:92vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
+      <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
+        <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
+      </div>
+    </div>
+    <div id="trSubjectsList" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
+    <div id="trTableContainer" style="display:none;">
+      <h4 id="trSubjectTitle" style="color:#047857; margin-bottom:10px;"></h4>
+      <div style="overflow-x:auto;">
+        <table class="pt" style="width:100%; border-collapse:collapse; border:2px solid #0F172A;">
+          <thead>
+            <tr style="background:#1E40AF; color:#fff;">
+              <th style="padding:8px; border:1px solid #0F172A;">ت</th>
+              <th style="padding:8px; border:1px solid #0F172A;">اسم التلميذ</th>
+              <th colspan="3" style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">الفصل الأول</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
+              <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
+            </tr>
+            <tr style="background:#1E40AF; color:#fff;">
+              <th style="padding:6px; border:1px solid #0F172A;"></th>
+              <th style="padding:6px; border:1px solid #0F172A;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك١</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#7C3AED;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#0E7490;">آذار</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#0E7490;">نيسان</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#059669;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#DC2626;"></th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#BE123C;"></th>
+            </tr>
+          </thead>
+          <tbody id="trTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="trLoading" class="empty" style="display:none;"> جاري تحميل البيانات...</div>
+    <div id="trEmpty" class="empty" style="display:none;">لا توجد مواد مسجلة لهذا المعلم.</div>
+  </div>
+</div>
+
+<div class="ovl" id="printSettingsModal">
+  <div class="modal" style="max-width:500px">
+    <h3>️ إعدادات الطباعة</h3>
+    <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٢٥ - ٢٢٦"></div>
+    <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
+    <div class="mrow" style="margin-top:16px">
+      <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
+      <button class="btn ok" style="margin:0" onclick="savePrintSettingsAndPrint()">💾 حفظ وطباعة</button>
+    </div>
+  </div>
+</div>
+  
+<div class="ovl" id="confirmOvl">
+  <div class="modal">
+    <h3 id="cfTitle">تأكيد</h3>
+    <p id="cfMsg"></p>
+    <div class="mrow">
+      <button class="btn ghost" style="margin:0" onclick="hideModal('confirmOvl')">إلغاء</button>
+      <button class="btn" style="margin:0" onclick="confirmYes()">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<div class="ovl" id="sumModal">
+  <div class="modal">
+    <h3>📊 ملخص النتائج</h3>
+    <div id="sumBox"></div>
+    <button class="btn ghost" style="margin-top:10px" onclick="hideModal('sumModal')">إغلاق</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js?v=3.5"></script>
+<script src="core.js?v=3.5"></script>
+<script src="page-dash.js?v=3.5"></script>
+<script src="page-results.js?v=3.5"></script>
+<script src="page-team.js?v=3.5"></script>
+<script src="page-entry.js?v=3.5"></script>
+<script src="page-students.js?v=3.5"></script>
+<script src="page-keys.js?v=3.5"></script>
+<script src="page-settings.js?v=3.5"></script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) { registration.unregister(); }
+    });
+    navigator.serviceWorker.register('sw.js?v=5').catch(function(){});
   });
 }
-
-// ✅ دالة عرض درجات مادة وشعبة محددة
-function viewTeacherSubject(code, subject, cls) {
-  var t = (window.DASH_TEACHERS || []).find(function(x){ return x.code === code; });
-  if(!t) { toast('بيانات المعلم غير متاحة', 'err'); return; }
-  
-  ADM.tv = t;
-  $('#tvName').textContent = t.name + ' — ' + subject + ' — ' + cls;
-  $('#tvSub').textContent = '🔑 '+t.code;
-  go('s-tview');
-  loadTeacherViewFiltered(code, subject, cls);
-}
-
-// ✅ دالة تحميل درجات مادة وشعبة محددة - بخط أسود واضح
-function loadTeacherViewFiltered(code, subject, cls) {
-  var el = $('#tvBox');
-  if(!el) return;
-  el.innerHTML = '<div class="empty">⏳ جاري التحميل...</div>';
-  
-  api({action:'teacherGrades', key:key(), code:code}, 30000).then(function(r){
-    if(!r.ok){ toast('❌ '+r.error, 'err'); el.innerHTML = '<div class="empty">❌ '+r.error+'</div>'; return; }
-    var rows = r.rows || [];
-    
-    var filteredRows = rows.filter(function(row){
-      return row.subject === subject && row.cls === cls;
-    });
-    
-    if(!filteredRows.length){ 
-      el.innerHTML = '<div class="empty">📭 لا توجد درجات مسجلة لـ '+esc(subject)+' — '+esc(cls)+'</div>'; 
-      return; 
-    }
-    
-    var h = '<div class="card" style="margin-bottom:15px">';
-    h += '<div class="ct">🏫 '+esc(cls)+' — 📘 '+esc(subject)+'</div>';
-    h += '<div style="overflow-x:auto">';
-    h += '<table class="grades-table">';
-    h += '<thead><tr>';
-    h += '<th style="width:40px">ت</th>';
-    h += '<th style="min-width:200px;max-width:250px">اسم التلميذ</th>';
-    h += '<th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th>';
-    h += '<th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th>';
-    h += '<th>السعي</th><th>النهاية</th><th>النهائية</th>';
-    h += '</tr></thead><tbody>';
-    
-    filteredRows.forEach(function(row, idx){
-      var finalClass = '';
-      if(row.final != null) {
-        finalClass = (row.final >= (row.max||100)/2) ? 'pass-cell' : 'fail-cell';
-      }
-      h += '<tr>';
-      h += '<td class="num-cell">'+arNum(idx+1)+'</td>';
-      h += '<td class="name-cell">'+esc(row.name)+'</td>';
-      h += '<td>'+(row.m1!=null?arNum(row.m1):'—')+'</td>';
-      h += '<td>'+(row.m2!=null?arNum(row.m2):'—')+'</td>';
-      h += '<td>'+(row.m3!=null?arNum(row.m3):'—')+'</td>';
-      h += '<td>'+(row.m4!=null?arNum(row.m4):'—')+'</td>';
-      h += '<td>'+(row.m5!=null?arNum(row.m5):'—')+'</td>';
-      h += '<td class="avg-cell">'+(row.a1!=null?arNum(row.a1):'—')+'</td>';
-      h += '<td>'+(row.half!=null?arNum(row.half):'—')+'</td>';
-      h += '<td class="avg-cell">'+(row.a2!=null?arNum(row.a2):'—')+'</td>';
-      h += '<td class="avg-cell">'+(row.annual!=null?arNum(row.annual):'—')+'</td>';
-      h += '<td>'+(row.exam!=null?arNum(row.exam):'—')+'</td>';
-      h += '<td class="'+finalClass+'">'+(row.final!=null?arNum(row.final):'—')+'</td>';
-      h += '</tr>';
-    });
-    h += '</tbody></table></div></div>';
-    el.innerHTML = h;
-    
-  }).catch(function(err){
-    el.innerHTML = '<div class="empty">⚠️ تعذر تحميل البيانات</div>';
-  });
-}
-
-function toggleTeacherLock(code, lock) {
-  var action = lock ? 'قفل' : 'فتح';
-  var msg = lock ? 'هل أنت متأكد من قفل حساب هذا المعلم؟' : 'هل أنت متأكد من فتح حساب هذا المعلم؟';
-  
-  confirmDlg(msg + '\n\nالكود: ' + code, function() {
-    api({action: 'toggleLock', key: key(), code: code}, 15000).then(function(r) {
-      if(r.ok) {
-        toast('✓ تم ' + action + ' الحساب بنجاح', 'ok');
-        loadDashData();
-      } else {
-        toast('❌ ' + (r.error || 'فشل العملية'), 'err');
-      }
-    }).catch(function(err) {
-      toast('⚠️ تعذر الاتصال بالخادم', 'err');
-    });
-  });
-}
-
-function formatDate(timestamp) {
-  if(!timestamp) return '—';
-  var date = new Date(timestamp);
-  var day = date.getDate();
-  var month = date.getMonth() + 1;
-  var year = date.getFullYear();
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  return day+'/'+month+'/'+year+' '+hours+':'+(minutes<10?'0':'')+minutes;
-}
-
-function filterDashTeachers(value){
-  var q = (value||'').toLowerCase().trim();
-  var grid = document.getElementById('dashTeacherGrid');
-  if(!grid) return;
-  var active = document.querySelector('#dashList .dash-filter.active');
-  var filter = active ? active.getAttribute('data-filter') : 'all';
-  var items = grid.querySelectorAll('.dash-pro-teacher');
-  var shown = 0;
-  items.forEach(function(el){
-    var text = (el.getAttribute('data-search')||'').toLowerCase();
-    var status = el.getAttribute('data-status');
-    var ok = (filter==='all' || status===filter) && (!q || text.indexOf(q)!==-1);
-    el.style.display = ok ? '' : 'none';
-    if(ok) shown++;
-  });
-  var empty = document.getElementById('dashNoResults');
-  if(empty) empty.style.display = shown ? 'none' : 'block';
-}
-
-function setDashTeacherFilter(filter, btn){
-  var box = document.getElementById('dashList');
-  if(!box) return;
-  box.querySelectorAll('.dash-filter').forEach(function(b){b.classList.remove('active');});
-  if(btn) btn.classList.add('active');
-  var input = document.getElementById('dashTeacherSearch');
-  filterDashTeachers(input ? input.value : '');
-}
-
-function viewTeacher(code){
-  var t = (window.DASH_TEACHERS || []).find(function(x){ return x.code === code; });
-  if(!t) { toast('بيانات المعلم غير متاحة', 'err'); return; }
-  
-  ADM.tv = t;
-  $('#tvName').textContent = t.name;
-  
-  var subjText = '—';
-  if(t.subjects && t.subjects.length > 0) {
-    subjText = t.subjects.map(function(s){ return s.name; }).join('، ');
-  } else if (t.subject) {
-    subjText = t.subject;
-  }
-  
-  $('#tvSub').textContent = '🔑 '+t.code+' | '+subjText;
-  go('s-tview');
-  loadTeacherView(code);
-}
-
-function loadTeacherView(code){
-  var el = $('#tvBox');
-  if(!el) return;
-  el.innerHTML = '<div class="empty">⏳ جاري التحميل...</div>';
-  
-  api({action:'teacherGrades', key:key(), code:code}, 30000).then(function(r){
-    if(!r.ok){ toast('❌ '+r.error, 'err'); el.innerHTML = '<div class="empty">❌ '+r.error+'</div>'; return; }
-    var rows = r.rows || [];
-    if(!rows.length){ el.innerHTML = '<div class="empty">📭 لا توجد درجات مسجلة لهذا المعلم</div>'; return; }
-    
-    var byCls = {};
-    rows.forEach(function(row){
-      var cls = row.cls || 'غير محدد';
-      if(!byCls[cls]) byCls[cls] = {};
-      if(!byCls[cls][row.subject]) byCls[cls][row.subject] = [];
-      byCls[cls][row.subject].push(row);
-    });
-    
-    var h = '';
-    Object.keys(byCls).forEach(function(cls){
-      h += '<div class="card" style="margin-bottom:15px"><div class="ct">🏫 '+esc(cls)+'</div>';
-      Object.keys(byCls[cls]).forEach(function(subj){
-        h += '<h4 style="margin:10px 0;color:#047857">📘 '+esc(subj)+'</h4>';
-        h += '<div style="overflow-x:auto">';
-        h += '<table class="grades-table">';
-        h += '<thead><tr>';
-        h += '<th style="width:40px">ت</th>';
-        h += '<th style="min-width:200px;max-width:250px">اسم التلميذ</th>';
-        h += '<th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th>';
-        h += '<th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th>';
-        h += '<th>السعي</th><th>النهاية</th><th>النهائية</th>';
-        h += '</tr></thead><tbody>';
-        
-        var subjRows = byCls[cls][subj];
-        subjRows.forEach(function(row, idx){
-          var finalClass = '';
-          if(row.final != null) {
-            finalClass = (row.final >= (row.max||100)/2) ? 'pass-cell' : 'fail-cell';
-          }
-          h += '<tr>';
-          h += '<td class="num-cell">'+arNum(idx+1)+'</td>';
-          h += '<td class="name-cell">'+esc(row.name)+'</td>';
-          h += '<td>'+(row.m1!=null?arNum(row.m1):'—')+'</td>';
-          h += '<td>'+(row.m2!=null?arNum(row.m2):'—')+'</td>';
-          h += '<td>'+(row.m3!=null?arNum(row.m3):'—')+'</td>';
-          h += '<td>'+(row.m4!=null?arNum(row.m4):'—')+'</td>';
-          h += '<td>'+(row.m5!=null?arNum(row.m5):'—')+'</td>';
-          h += '<td class="avg-cell">'+(row.a1!=null?arNum(row.a1):'—')+'</td>';
-          h += '<td>'+(row.half!=null?arNum(row.half):'—')+'</td>';
-          h += '<td class="avg-cell">'+(row.a2!=null?arNum(row.a2):'—')+'</td>';
-          h += '<td class="avg-cell">'+(row.annual!=null?arNum(row.annual):'—')+'</td>';
-          h += '<td>'+(row.exam!=null?arNum(row.exam):'—')+'</td>';
-          h += '<td class="'+finalClass+'">'+(row.final!=null?arNum(row.final):'—')+'</td>';
-          h += '</tr>';
-        });
-        h += '</tbody></table></div>';
-      });
-      h += '</div>';
-    });
-    el.innerHTML = h;
-    
-  }).catch(function(err){
-    el.innerHTML = '<div class="empty">️ تعذر تحميل البيانات</div>';
-  });
-}
-
-function showSummary(code){
-  var t = ADM.tv;
-  if(!t) return;
-  api({action:'teacherGrades', key:key(), code:code}, 30000).then(function(r){
-    if(!r.ok) return;
-    var rows = r.rows || [];
-    var bySubj = {};
-    rows.forEach(function(row){
-      if(!bySubj[row.subject]) bySubj[row.subject] = {count:0, finals:[]};
-      bySubj[row.subject].count++;
-      if(row.final != null) bySubj[row.subject].finals.push(row.final);
-    });
-    var h = '<div style="padding:10px">';
-    Object.keys(bySubj).forEach(function(subj){
-      var d = bySubj[subj];
-      var avg = d.finals.length ? Math.round(d.finals.reduce(function(a,b){return a+b;},0)/d.finals.length) : 0;
-      var pass = d.finals.filter(function(v){return v >= 50;}).length;
-      h += '<div style="margin-bottom:10px;padding:10px;background:#F8FAFC;border-radius:8px;border:1px solid #E2E8F0">';
-      h += '<div style="font-weight:900;color:#1E40AF;margin-bottom:5px">📘 '+esc(subj)+'</div>';
-      h += '<div style="font-size:13px;color:#475569">عدد التلاميذ: <b>'+arNum(d.count)+'</b> | المعدل: <b>'+arNum(avg)+'</b> | ناجحون: <b>'+arNum(pass)+'</b></div>';
-      h += '</div>';
-    });
-    h += '</div>';
-    $('#sumBox').innerHTML = h;
-    $('#sumModal').classList.add('show');
-  });
-}
-
-// ✅ دالة الطباعة المحسنة - مساحة كافية لاسم التلميذ الثلاثي
-function printTView(){
-  var el = $('#tvBox');
-  if(!el) return;
-  
-  var title = 'كشف درجات: '+esc(ADM.tv?ADM.tv.name:'');
-  var ctEl = el.querySelector('.ct');
-  if(ctEl) {
-    title += ' — ' + ctEl.textContent.trim();
-  }
-  
-  // بناء جدول الطباعة مع حدود كاملة
-  var h = '<div class="print-container">';
-  h += '<h2>'+title+'</h2>';
-  h += '<table class="print-table">';
-  h += '<thead><tr>';
-  h += '<th style="width:40px">ت</th>';
-  h += '<th style="min-width:200px;max-width:250px">اسم التلميذ</th>';
-  h += '<th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th>';
-  h += '<th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th>';
-  h += '<th>السعي</th><th>النهاية</th><th>النهائية</th>';
-  h += '</tr></thead><tbody>';
-  
-  // استخراج البيانات من الجدول المعروض
-  var tableRows = el.querySelectorAll('table tbody tr');
-  var idx = 1;
-  tableRows.forEach(function(row){
-    var cells = row.querySelectorAll('td');
-    if(cells.length >= 13) {
-      h += '<tr>';
-      h += '<td>'+arNum(idx++)+'</td>';
-      h += '<td class="name-cell">'+esc(cells[1].textContent)+'</td>';
-      for(var j=2; j<cells.length; j++){
-        var cellText = cells[j].textContent;
-        var cellClass = '';
-        if(j === 12) { // العمود الأخير (النهائية)
-          var numVal = parseFloat(cellText);
-          if(!isNaN(numVal)) {
-            cellClass = (numVal >= 50) ? 'pass-cell' : 'fail-cell';
-          }
-        } else if(j === 7 || j === 9 || j === 10) { // أعمدة المعدلات
-          cellClass = 'avg-cell';
-        }
-        h += '<td class="'+cellClass+'">'+esc(cellText)+'</td>';
-      }
-      h += '</tr>';
-    }
-  });
-  
-  h += '</tbody></table>';
-  h += '<div style="margin-top:20px;text-align:center;font-size:11px;color:#666">';
-  h += 'تم الطباعة بتاريخ: '+new Date().toLocaleDateString('ar-IQ')+'</div>';
-  h += '</div>';
-  
-  printWin(h);
-}
+</script>
+</body>
+</html>
