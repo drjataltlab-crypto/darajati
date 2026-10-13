@@ -1,4 +1,6 @@
-/* ═══ page-dash.js — الرئيسية (محدث: مستطيل عريض + بطاقات محسنة + طباعة بحدود) ═══ */
+/* ═══ page-dash.js — الرئيسية (محدث: مستطيل عريض + بطاقات محسنة + طباعة مطابقة للشاشة) ═══ */
+
+window.DASH_TEACHERS = [];
 
 registerPage('dash', {
   enter: function() { loadDashData(); },
@@ -39,7 +41,7 @@ registerPage('dash', {
   '#dashList .dash-pro-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}'+
   '#dashList .dash-pro-avatar{width:60px;height:60px;display:grid;place-items:center;border-radius:16px;font-size:28px;font-weight:900;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.15);background:rgba(255,255,255,.95)}'+
   '#dashList .dash-pro-main{min-width:0;flex:1}'+
-  '#dashList .dash-pro-name{font-size:19px;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.2);white-space:normal;word-wrap:break-word;overflow-wrap:break-word;line-height:1.3;margin-bottom:4px}'+ /* السماح بالتفاف الاسم الطويل */
+  '#dashList .dash-pro-name{font-size:19px;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.2);white-space:normal;word-wrap:break-word;overflow-wrap:break-word;line-height:1.3;margin-bottom:4px}'+
   '#dashList .dash-pro-code{font-size:12px;color:rgba(255,255,255,.9);font-family:monospace;font-weight:700}'+
   '#dashList .dash-pro-status{font-size:11px;font-weight:900;padding:7px 12px;border-radius:999px;white-space:nowrap;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.1)}'+
   '#dashList .dash-pro-status.open{color:#047857}'+
@@ -515,7 +517,7 @@ function showSummary(code){
   });
 }
 
-// ══ دالة الطباعة المحسنة (مع حدود سوداء واضحة) ══
+// ══ دالة الطباعة المحسنة (تحافظ على نفس تصميم الشاشة تماماً) ══
 function printTView(){
   var el = $('#tvBox');
   if(!el) return;
@@ -526,66 +528,51 @@ function printTView(){
     title += ' — ' + ctEl.textContent.trim();
   }
   
-  // بناء HTML مع CSS مدمج للطباعة يضمن الحدود
+  // بناء HTML مع CSS مدمج للطباعة يضمن الحدود والألوان
   var h = '<!DOCTYPE html><html dir="rtl" lang="ar"><head>';
   h += '<meta charset="UTF-8">';
   h += '<title>'+title+'</title>';
   h += '<style>';
-  h += '@page { size: A4 landscape; margin: 10mm; }';
-  h += 'body { font-family: "Tajawal", Arial, sans-serif; margin: 0; padding: 10mm; background: #fff; }';
-  h += 'h2 { text-align: center; color: #1E40AF; border-bottom: 3px solid #1E40AF; padding-bottom: 10px; margin-bottom: 20px; }';
-  h += 'table { width: 100%; border-collapse: collapse; border: 2px solid #000; }';
-  h += 'th, td { padding: 6px 8px; border: 1.5px solid #000; text-align: center; font-size: 12px; font-weight: 700; color: #000; }';
-  h += 'th { background: #1E40AF !important; color: #fff !important; font-weight: 900; font-size: 11px; }';
-  h += 'td.name-cell { text-align: right; font-weight: 900; min-width: 200px; max-width: 250px; white-space: normal; word-wrap: break-word; }';
-  h += 'td.avg-cell { background: #FEF3C7; font-weight: 900; }';
-  h += 'td.pass-cell { color: #047857; font-weight: 900; }';
-  h += 'td.fail-cell { color: #DC2626; font-weight: 900; }';
+  h += '@page { size: A4 landscape; margin: 8mm; }';
+  h += 'body { font-family: "Tajawal", Arial, sans-serif; margin: 0; padding: 8mm; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += 'h2 { text-align: center; color: #1E40AF; border-bottom: 2px solid #1E40AF; padding-bottom: 8px; margin-bottom: 15px; font-size: 18px; }';
+  h += 'table { width: 100%; border-collapse: collapse; }';
+  h += 'th, td { padding: 6px 8px; border: 1.5px solid #334155; text-align: center; font-size: 11px; font-weight: 700; color: #0f172a; }';
+  h += 'th { background: #1E40AF !important; color: #fff !important; font-weight: 900; font-size: 11px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += 'td.name-cell { text-align: right; font-weight: 900; min-width: 180px; max-width: 220px; white-space: normal; word-wrap: break-word; }';
+  h += 'td.num-cell { background: #f1f5f9 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += 'td.avg-cell { background: #FEF3C7 !important; font-weight: 900; color: #92400e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += 'td.pass-cell { color: #047857 !important; font-weight: 900; }';
+  h += 'td.fail-cell { color: #DC2626 !important; font-weight: 900; }';
+  h += '.print-footer { margin-top: 15px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #e5e7eb; padding-top: 10px; }';
   h += '</style></head><body>';
   
   h += '<h2>'+title+'</h2>';
-  h += '<table>';
-  h += '<thead><tr>';
-  h += '<th style="width:40px">ت</th>';
-  h += '<th style="min-width:200px;max-width:250px">اسم التلميذ</th>';
-  h += '<th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th>';
-  h += '<th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th>';
-  h += '<th>السعي</th><th>النهاية</th><th>النهائية</th>';
-  h += '</tr></thead><tbody>';
   
-  var tableRows = el.querySelectorAll('table tbody tr');
-  var idx = 1;
-  tableRows.forEach(function(row){
-    var cells = row.querySelectorAll('td');
-    if(cells.length >= 13) {
-      h += '<tr>';
-      h += '<td>'+arNum(idx++)+'</td>';
-      h += '<td class="name-cell">'+esc(cells[1].textContent)+'</td>';
-      for(var j=2; j<cells.length; j++){
-        var cellText = cells[j].textContent;
-        var cellClass = '';
-        if(j === 12) {
-          var numVal = parseFloat(cellText);
-          if(!isNaN(numVal)) {
-            cellClass = (numVal >= 50) ? 'pass-cell' : 'fail-cell';
-          }
-        } else if(j === 7 || j === 9 || j === 10) {
-          cellClass = 'avg-cell';
-        }
-        h += '<td class="'+cellClass+'">'+esc(cellText)+'</td>';
-      }
-      h += '</tr>';
-    }
-  });
+  // نسخ الجدول الحالي من الصفحة كما هو تماماً
+  var table = el.querySelector('table');
+  if(table) {
+    h += table.outerHTML;
+  }
   
-  h += '</tbody></table>';
-  h += '<div style="margin-top:20px;text-align:center;font-size:11px;color:#666">';
-  h += 'تم الطباعة بتاريخ: '+new Date().toLocaleDateString('ar-IQ')+'</div>';
+  h += '<div class="print-footer">';
+  h += 'تم الطباعة بتاريخ: '+new Date().toLocaleDateString('ar-IQ')+' '+new Date().toLocaleTimeString('ar-IQ');
+  h += '</div>';
   h += '</body></html>';
   
   var printWindow = window.open('', '_blank');
+  if(!printWindow) {
+    toast('⚠️ يرجى السماح بفتح النوافذ المنبثقة للطباعة', 'err');
+    return;
+  }
+  
   printWindow.document.write(h);
   printWindow.document.close();
   printWindow.focus();
-  setTimeout(function(){ printWindow.print(); printWindow.close(); }, 250);
+  
+  // انتظار تحميل الخطوط ثم الطباعة
+  setTimeout(function(){ 
+    printWindow.print(); 
+    setTimeout(function(){ printWindow.close(); }, 500);
+  }, 300);
 }
