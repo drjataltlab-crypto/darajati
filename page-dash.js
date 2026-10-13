@@ -543,10 +543,12 @@ function printTView(){
   if(!el) return;
   
   var title = 'كشف درجات: '+esc(ADM.tv?ADM.tv.name:'');
-  if(el.querySelector('.ct')) {
-    title += ' — ' + el.querySelector('.ct').textContent;
+  var ctEl = el.querySelector('.ct');
+  if(ctEl) {
+    title += ' — ' + ctEl.textContent.trim();
   }
   
+  // بناء جدول الطباعة مع حدود كاملة
   var h = '<div class="print-container">';
   h += '<h2>'+title+'</h2>';
   h += '<table class="print-table">';
@@ -554,27 +556,40 @@ function printTView(){
   h += '<th style="width:40px">ت</th>';
   h += '<th style="min-width:200px;max-width:250px">اسم التلميذ</th>';
   h += '<th>ت١</th><th>ت٢</th><th>ك١</th><th>آذار</th><th>نيسان</th>';
-  h += '<th>معدل ف</th><th>نصف السنة</th><th>معدل ف٢</th>';
+  h += '<th>معدل ف١</th><th>نصف السنة</th><th>معدل ف٢</th>';
   h += '<th>السعي</th><th>النهاية</th><th>النهائية</th>';
   h += '</tr></thead><tbody>';
   
-  var rows = el.querySelectorAll('tr');
+  // استخراج البيانات من الجدول المعروض
+  var tableRows = el.querySelectorAll('table tbody tr');
   var idx = 1;
-  for(var i=1; i<rows.length; i++) {
-    var row = rows[i];
-    if(row.tagName !== 'TR') continue;
+  tableRows.forEach(function(row){
     var cells = row.querySelectorAll('td');
-    if(cells.length < 13) continue;
-    
-    h += '<tr>';
-    h += '<td>'+arNum(idx++)+'</td>';
-    h += '<td style="text-align:right;font-weight:bold">'+cells[1].textContent+'</td>';
-    for(var j=2; j<cells.length; j++) {
-      h += '<td>'+cells[j].textContent+'</td>';
+    if(cells.length >= 13) {
+      h += '<tr>';
+      h += '<td>'+arNum(idx++)+'</td>';
+      h += '<td class="name-cell">'+esc(cells[1].textContent)+'</td>';
+      for(var j=2; j<cells.length; j++){
+        var cellText = cells[j].textContent;
+        var cellClass = '';
+        if(j === 12) { // العمود الأخير (النهائية)
+          var numVal = parseFloat(cellText);
+          if(!isNaN(numVal)) {
+            cellClass = (numVal >= 50) ? 'pass-cell' : 'fail-cell';
+          }
+        } else if(j === 7 || j === 9 || j === 10) { // أعمدة المعدلات
+          cellClass = 'avg-cell';
+        }
+        h += '<td class="'+cellClass+'">'+esc(cellText)+'</td>';
+      }
+      h += '</tr>';
     }
-    h += '</tr>';
-  }
+  });
   
-  h += '</tbody></table></div>';
+  h += '</tbody></table>';
+  h += '<div style="margin-top:20px;text-align:center;font-size:11px;color:#666">';
+  h += 'تم الطباعة بتاريخ: '+new Date().toLocaleDateString('ar-IQ')+'</div>';
+  h += '</div>';
+  
   printWin(h);
 }
