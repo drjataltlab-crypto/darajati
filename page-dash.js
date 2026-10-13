@@ -1,4 +1,4 @@
-/* ═══ page-dash.js — الرئيسية (محدث: مستطيل عريض + بطاقات محسنة + طباعة مطابقة للشاشة) ═══ */
+/* ═══ page-dash.js — الرئيسية (محدث: مستطيل عريض + بطاقات محسنة + طباعة عمودية بخطوط كبيرة) ══ */
 
 window.DASH_TEACHERS = [];
 
@@ -35,7 +35,7 @@ registerPage('dash', {
   '#dashList .dash-pro-title{font-size:22px;font-weight:900;color:#0f172a}'+
   '#dashList .dash-pro-sub{margin-top:4px;font-size:13px;color:#64748b}'+
   '#dashList .dash-pro-count{padding:8px 14px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:900;white-space:nowrap}'+
-  '#dashList .dash-pro-teachers{display:grid;grid-template-columns:1fr;gap:16px}'+ /* عرض كامل للبطاقة */
+  '#dashList .dash-pro-teachers{display:grid;grid-template-columns:1fr;gap:16px}'+
   '#dashList .dash-pro-teacher{position:relative;overflow:hidden;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(15,23,42,.12);transition:.25s;color:#fff}'+
   '#dashList .dash-pro-teacher:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.18)}'+
   '#dashList .dash-pro-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}'+
@@ -146,10 +146,10 @@ function loadDashData(silent) {
     if(kpiEl){
       kpiEl.innerHTML =
         '<div class="stats-rect">' +
-          '<div class="stat-box"><div class="stat-icon">👨‍🏫</div><div class="stat-num">'+arNum(total)+'</div><div class="stat-lbl">إجمالي المعلمين</div></div>' +
+          '<div class="stat-box"><div class="stat-icon">👨🏫</div><div class="stat-num">'+arNum(total)+'</div><div class="stat-lbl">إجمالي المعلمين</div></div>' +
           '<div class="stat-box"><div class="stat-icon">🟢</div><div class="stat-num">'+arNum(open)+'</div><div class="stat-lbl">فتح حسابه</div></div>' +
           '<div class="stat-box"><div class="stat-icon">🔒</div><div class="stat-num">'+arNum(locked)+'</div><div class="stat-lbl">لم يفتحه</div></div>' +
-          '<div class="stat-box"><div class="stat-icon">📊</div><div class="stat-num">'+arNum(totalSent)+'</div><div class="stat-lbl">درجات مرسلة</div></div>' +
+          '<div class="stat-box"><div class="stat-icon"></div><div class="stat-num">'+arNum(totalSent)+'</div><div class="stat-lbl">درجات مرسلة</div></div>' +
           '<div class="stat-box progress-box">' +
             '<div class="progress-top"><span>نسبة الحسابات النشطة</span><b>'+arNum(activeRate)+'%</b></div>' +
             '<div class="progress-track"><div class="progress-fill" style="width:'+activeRate+'%"></div></div>' +
@@ -273,8 +273,8 @@ function loadDashData(silent) {
     }
     
   }).catch(function(err){
-    var msg = '⚠️ تعذر الاتصال بالخادم';
-    if (err.message === 'no-url') msg = '🔗 رابط الخادم مفقود';
+    var msg = '️ تعذر الاتصال بالخادم';
+    if (err.message === 'no-url') msg = ' رابط الخادم مفقود';
     else if (err.name === 'AbortError') msg = '⏱ انتهت مهلة الاتصال';
     if(!silent) toast(msg, 'err');
     if(kpiEl) kpiEl.innerHTML = '<div class="empty">'+msg+'</div>';
@@ -297,7 +297,7 @@ function viewTeacherSubject(code, subject, cls) {
 function loadTeacherViewFiltered(code, subject, cls) {
   var el = $('#tvBox');
   if(!el) return;
-  el.innerHTML = '<div class="empty">⏳ جاري التحميل...</div>';
+  el.innerHTML = '<div class="empty"> جاري التحميل...</div>';
   
   api({action:'teacherGrades', key:key(), code:code}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); el.innerHTML = '<div class="empty">❌ '+r.error+'</div>'; return; }
@@ -353,7 +353,7 @@ function loadTeacherViewFiltered(code, subject, cls) {
   });
 }
 
-// ══ دالة قفل/فتح حساب المعلم ══
+// ══ دالة قفل/فتح حساب المعلم ═
 function toggleTeacherLock(code, lock) {
   var action = lock ? 'قفل' : 'فتح';
   var msg = lock ? 'هل أنت متأكد من قفل حساب هذا المعلم؟' : 'هل أنت متأكد من فتح حساب هذا المعلم؟';
@@ -517,7 +517,7 @@ function showSummary(code){
   });
 }
 
-// ══ دالة الطباعة المحسنة (تحافظ على نفس تصميم الشاشة تماماً) ══
+// ═ دالة الطباعة المحسنة (ورقة عمودية + خطوط كبيرة واضحة) ══
 function printTView(){
   var el = $('#tvBox');
   if(!el) return;
@@ -528,23 +528,28 @@ function printTView(){
     title += ' — ' + ctEl.textContent.trim();
   }
   
-  // بناء HTML مع CSS مدمج للطباعة يضمن الحدود والألوان
+  // بناء HTML مع CSS مدمج للطباعة - ورقة عمودية وخطوط كبيرة
   var h = '<!DOCTYPE html><html dir="rtl" lang="ar"><head>';
   h += '<meta charset="UTF-8">';
   h += '<title>'+title+'</title>';
   h += '<style>';
-  h += '@page { size: A4 landscape; margin: 8mm; }';
-  h += 'body { font-family: "Tajawal", Arial, sans-serif; margin: 0; padding: 8mm; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += 'h2 { text-align: center; color: #1E40AF; border-bottom: 2px solid #1E40AF; padding-bottom: 8px; margin-bottom: 15px; font-size: 18px; }';
+  // ✅ تغيير الورقة إلى عمودية (portrait) بدلاً من أفقية
+  h += '@page { size: A4 portrait; margin: 12mm; }';
+  h += 'body { font-family: "Tajawal", Arial, sans-serif; margin: 0; padding: 12mm; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  // ✅ تكبير حجم العنوان
+  h += 'h2 { text-align: center; color: #1E40AF; border-bottom: 3px solid #1E40AF; padding-bottom: 12px; margin-bottom: 20px; font-size: 24px; font-weight: 900; }';
   h += 'table { width: 100%; border-collapse: collapse; }';
-  h += 'th, td { padding: 6px 8px; border: 1.5px solid #334155; text-align: center; font-size: 11px; font-weight: 700; color: #0f172a; }';
-  h += 'th { background: #1E40AF !important; color: #fff !important; font-weight: 900; font-size: 11px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += 'td.name-cell { text-align: right; font-weight: 900; min-width: 180px; max-width: 220px; white-space: normal; word-wrap: break-word; }';
-  h += 'td.num-cell { background: #f1f5f9 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += 'td.avg-cell { background: #FEF3C7 !important; font-weight: 900; color: #92400e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += 'td.pass-cell { color: #047857 !important; font-weight: 900; }';
-  h += 'td.fail-cell { color: #DC2626 !important; font-weight: 900; }';
-  h += '.print-footer { margin-top: 15px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #e5e7eb; padding-top: 10px; }';
+  // ✅ تكبير الخطوط في الجدول (من 11px إلى 14px)
+  h += 'th, td { padding: 10px 8px; border: 2px solid #334155; text-align: center; font-size: 14px; font-weight: 700; color: #0f172a; }';
+  // ✅ تكبير خط العنوان
+  h += 'th { background: #1E40AF !important; color: #fff !important; font-weight: 900; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  // ✅ تكبير عمود اسم التلميذ
+  h += 'td.name-cell { text-align: right; font-weight: 900; min-width: 220px; max-width: 280px; white-space: normal; word-wrap: break-word; font-size: 15px; }';
+  h += 'td.num-cell { background: #f1f5f9 !important; font-weight: 900; font-size: 15px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += 'td.avg-cell { background: #FEF3C7 !important; font-weight: 900; color: #92400e; font-size: 15px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += 'td.pass-cell { color: #047857 !important; font-weight: 900; font-size: 15px; }';
+  h += 'td.fail-cell { color: #DC2626 !important; font-weight: 900; font-size: 15px; }';
+  h += '.print-footer { margin-top: 25px; text-align: center; font-size: 12px; color: #666; border-top: 2px solid #e5e7eb; padding-top: 12px; }';
   h += '</style></head><body>';
   
   h += '<h2>'+title+'</h2>';
