@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (نسخة كاملة مع مؤشر حالة الحساب) ══ */
+/* ═══ page-team.js — صفحة المعلمين (تصميم حديث متكامل + باركود) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -13,7 +13,7 @@ var CURRENT_PRINT_DATA = null;
 // ✅ دالة تحويل الأرقام الإنجليزية إلى عربية
 function toArabicNumerals(num) {
   if (num === null || num === undefined || num === '') return '';
-  var arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','','٩'];
+  var arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
   return String(num).replace(/[0-9]/g, function(d) { return arabicDigits[parseInt(d)]; });
 }
 
@@ -24,10 +24,45 @@ registerPage('team', {
   }
 });
 
+/* ═══ حقن التصميم الحديث (نفس تصميم الرئيسية) ═══ */
+(function(){
+  if(document.getElementById('teamProStyles')) return;
+  var s = document.createElement('style'); 
+  s.id = 'teamProStyles';
+  s.textContent = 
+  '.team-teacher-card{position:relative;overflow:hidden;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(15,23,42,.12);transition:.25s;color:#fff;margin-bottom:16px}'+
+  '.team-teacher-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.18)}'+
+  '.team-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}'+
+  '.team-avatar{width:60px;height:60px;display:grid;place-items:center;border-radius:16px;font-size:28px;font-weight:900;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.15);background:rgba(255,255,255,.95)}'+
+  '.team-main{min-width:0;flex:1}'+
+  '.team-name{font-size:19px;font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.2);white-space:normal;word-wrap:break-word;line-height:1.3;margin-bottom:4px}'+
+  '.team-code{font-size:12px;color:rgba(255,255,255,.9);font-family:monospace;font-weight:700}'+
+  '.team-status{font-size:11px;font-weight:900;padding:7px 12px;border-radius:999px;white-space:nowrap;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.1)}'+
+  '.team-status.open{color:#047857}'+
+  '.team-status.locked{color:#dc2626}'+
+  '.team-meta{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}'+
+  '.team-meta-item{padding:7px 12px;border-radius:11px;background:rgba(255,255,255,.2);font-size:12px;color:#fff;font-weight:700;display:flex;align-items:center;gap:5px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15)}'+
+  '.team-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}'+
+  '.team-btn{flex:1;min-width:80px;padding:9px 8px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.15);color:#fff}'+
+  '.team-btn:hover{background:rgba(255,255,255,.3)}'+
+  '.team-btn.danger{background:rgba(255,255,255,.95);color:#dc2626;border-color:transparent}'+
+  '.team-btn.danger:hover{background:#fff}'+
+  '.team-btn.success{background:rgba(255,255,255,.95);color:#047857;border-color:transparent}'+
+  '.team-btn.success:hover{background:#fff}'+
+  '.team-subjects-box{background:rgba(255,255,255,.15);border-radius:14px;padding:14px;margin-top:14px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15)}'+
+  '.team-subject-item{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.15)}'+
+  '.team-subject-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}'+
+  '.team-subject-name{font-weight:800;font-size:13px;margin-bottom:6px;color:#fff}'+
+  '.team-class-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);color:#1d4ed8;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;margin:3px}'+
+  '.team-class-badge button{width:18px;height:18px;border-radius:50%;background:#dc2626;color:#fff;border:none;font-size:10px;cursor:pointer;display:grid;place-items:center;margin-right:4px}'+
+  '@media(max-width:600px){.team-actions{flex-direction:column}.team-btn{width:100%}}';
+  document.head.appendChild(s);
+})();
+
 function loadTeachers() {
   var el = $('#teamList');
   if (!el) return;
-  el.innerHTML = '<div class="empty">⏳ جاري تحميل بيانات المعلمين...</div>';
+  el.innerHTML = '<div class="empty" style="padding:40px;text-align:center">⏳ جاري تحميل بيانات المعلمين...</div>';
   
   api({action:'adminData', key:key()}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
@@ -36,7 +71,7 @@ function loadTeachers() {
   }).catch(function(err){
     console.error('Load teachers error:', err);
     toast('تعذر الاتصال', 'err');
-    if(el) el.innerHTML = '<div class="empty">⚠️ تعذر الاتصال بالخادم</div>';
+    if(el) el.innerHTML = '<div class="empty" style="padding:40px;text-align:center">⚠️ تعذر الاتصال بالخادم</div>';
   });
 }
 
@@ -54,89 +89,126 @@ function renderTeachers(){
   var el = $('#teamList');
   if(!el) return;
   if(!TEAM.filtered.length){
-    el.innerHTML = '<div class="empty">لا يوجد معلمون مطابقون للبحث</div>';
+    el.innerHTML = '<div class="empty" style="padding:40px;text-align:center">📭 لا يوجد معلمون مطابقون للبحث</div>';
     return;
   }
-  var colors = ['#1E40AF','#047857','#B45309','#7E22CE','#BE123C','#0E7490'];
+  
+  var colors = [
+    {gradient:'linear-gradient(135deg, #3b82f6, #1d4ed8)', accent:'#1d4ed8'},
+    {gradient:'linear-gradient(135deg, #10b981, #047857)', accent:'#047857'},
+    {gradient:'linear-gradient(135deg, #f59e0b, #b45309)', accent:'#b45309'},
+    {gradient:'linear-gradient(135deg, #ef4444, #b91c1c)', accent:'#b91c1c'},
+    {gradient:'linear-gradient(135deg, #8b5cf6, #6d28d9)', accent:'#6d28d9'},
+    {gradient:'linear-gradient(135deg, #06b6d4, #0e7490)', accent:'#0e7490'}
+  ];
+  
   var h = '';
   TEAM.filtered.forEach(function(t,i){
-    var col = colors[i%colors.length];
+    var theme = colors[i%colors.length];
     var last = t.lastLogin ? ago(t.lastLogin) : 'لم يدخل بعد';
     var cnt = 0;
     if(t.subjects) t.subjects.forEach(function(s){ if(s.classes) cnt+=s.classes.length; });
     
-    // ✅ تحديد حالة الحساب (أخضر/أحمر)
-    var accountStatus = t.lastLogin && t.lastLogin > 0;
-    var statusColor = accountStatus ? '#22C55E' : '#EF4444';
-    var statusText = accountStatus ? 'فتح حسابه' : 'لم يفتحه';
-    var statusBg = accountStatus ? '#D1FAE5' : '#FEE2E2';
+    h += '<div class="team-teacher-card" style="background:'+theme.gradient+'">';
     
-    h += '<div class="teacher-card" style="border-right:5px solid '+col+'">';
-    h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:10px">';
-    h += '<div style="flex:1">';
-    
-    // ✅ إضافة مؤشر الحالة بجانب اسم المعلم
-    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
-    h += '<div style="font-size:18px;font-weight:900;color:#0F172A">'+esc(t.name)+'</div>';
-    h += '<div style="width:12px;height:12px;border-radius:50%;background:'+statusColor+';box-shadow:0 0 8px '+statusColor+';animation:pulse 2s infinite;" title="'+statusText+'"></div>';
+    // الرأس: الصورة والاسم والحالة
+    h += '<div class="team-top">';
+    h += '<div class="team-avatar" style="color:'+theme.accent+'">'+esc((t.name||'?').trim().charAt(0))+'</div>';
+    h += '<div class="team-main">';
+    h += '<div class="team-name">'+esc(t.name)+'</div>';
+    h += '<div class="team-code">🔑 '+esc(t.code)+'</div>';
+    h += '</div>';
+    h += '<div class="team-status '+(t.locked?'locked':'open')+'">'+(t.locked?'🔒 مقفل':'🟢 مفتوح')+'</div>';
     h += '</div>';
     
-    h += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-    h += '<span class="chip" style="background:#F1F5F9;color:#475569;font-weight:700;font-family:monospace">🔑 '+esc(t.code)+'</span>';
-    h += '<span class="chip" style="background:'+statusBg+';color:'+(accountStatus?'#047857':'#DC2626')+';font-size:11px;font-weight:700">'+(accountStatus?'🟢':'🔴')+' '+statusText+'</span>';
-    h += '<button class="btn sm" onclick="copyText(\''+escA(t.code)+'\')">📋 نسخ</button>';
-    h += '<button class="btn sm" style="background:#25D366;color:#fff" onclick="sendWA(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 واتساب</button>';
-    h += '</div></div>';
-    h += '<div style="display:flex;gap:6px;align-items:center">';
-    if(t.locked){
-      h += '<span class="chip" style="background:#FEE2E2;color:#DC2626">🔒 مقفل</span>';
-      h += '<button class="btn sm ok" onclick="toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
-    }else{
-      h += '<span class="chip" style="background:#D1FAE5;color:#047857">🔓 مفتوح</span>';
-      h += '<button class="btn sm danger" onclick="toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
-    }
-    h += '</div></div>';
-    
+    // المواد والشعب
     if(t.subjects && t.subjects.length){
-      h += '<div style="margin:10px 0;padding:10px;background:#F8FAFC;border-radius:10px;border:1px solid #E2E8F0">';
+      h += '<div class="team-subjects-box">';
       t.subjects.forEach(function(s){
-        h += '<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #E2E8F0;">';
-        h += '<div style="font-weight:800;font-size:13px;margin-bottom:6px;color:'+col+'">📘 '+esc(s.name)+'</div>';
+        h += '<div class="team-subject-item">';
+        h += '<div class="team-subject-name">📘 '+esc(s.name)+'</div>';
         if(s.classes && s.classes.length){
-          h += '<div style="display:flex;gap:6px;flex-wrap:wrap;padding-right:10px;">';
           s.classes.forEach(function(c){
-            h += '<div style="display:flex;align-items:center;gap:4px;background:#EFF6FF;color:#1E40AF;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;border:1px solid #BFDBFE;">';
-            h += '<span>🏫 '+esc(c)+'</span>';
-            h += '<button class="btn sm danger" style="width:auto;padding:2px 6px;font-size:10px;margin-left:4px;" onclick="removeSpecificClass(\''+escA(t.code)+'\',\''+escA(s.name)+'\',\''+escA(c)+'\')" title="حذف هذه الشعبة فقط">✕</button>';
-            h += '</div>';
+            h += '<span class="team-class-badge">🏫 '+esc(c)+' <button onclick="event.stopPropagation();removeSpecificClass(\''+escA(t.code)+'\',\''+escA(s.name)+'\',\''+escA(c)+'\')" title="حذف">✕</button></span>';
           });
-          h += '</div>';
         }
         h += '</div>';
       });
       h += '</div>';
     }
     
-    h += '<div style="display:flex;gap:12px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #E2E8F0;font-size:12px;color:#64748B">';
-    h += '<span>📊 آخر دخول: <b>'+last+'</b></span>';
-    h += '<span>📝 درجات مرسلة: <b>'+arNum(t.sentCount||0)+'</b></span>';
-    h += '<span>🏫 عدد الشعب: <b>'+arNum(cnt)+'</b></span>';
-    h += '<span>📘 عدد المواد: <b>'+arNum(t.subjects?t.subjects.length:0)+'</b></span>';
+    // الإحصائيات
+    h += '<div class="team-meta">';
+    h += '<div class="team-meta-item">📊 آخر دخول: '+esc(last)+'</div>';
+    h += '<div class="team-meta-item">📝 درجات: '+arNum(t.sentCount||0)+'</div>';
+    h += '<div class="team-meta-item">🏫 شعب: '+arNum(cnt)+'</div>';
     h += '</div>';
     
-    h += '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">';
-    h += '<button class="btn sm" style="background:#7C3AED;color:#fff" onclick="editT(\''+escA(t.code)+'\')">✏️ تعديل شامل</button>';
-    h += '<button class="btn sm" style="background:#0891B2;color:#fff" onclick="openTeacherRecord(\''+escA(t.code)+'\')">📊 كشف المعلم</button>';
-    h += '<button class="btn sm" style="background:#059669;color:#fff" onclick="openExportExcelSelection(\''+escA(t.code)+'\')">📥 Excel</button>';
-    h += '<button class="btn sm danger" onclick="delT(\''+escA(t.code)+'\')">🗑 حذف المعلم</button>';
-    h += '</div></div>';
+    // الأزرار (مرتبة في مجموعتين)
+    h += '<div class="team-actions">';
+    // مجموعة التواصل
+    h += '<button class="team-btn" onclick="event.stopPropagation();copyText(\''+escA(t.code)+'\')">📋 نسخ</button>';
+    h += '<button class="team-btn success" onclick="event.stopPropagation();sendWA(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 واتساب</button>';
+    h += '<button class="team-btn" onclick="event.stopPropagation();showQRCode(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 باركود</button>';
+    
+    // مجموعة الإدارة
+    h += '<button class="team-btn" onclick="event.stopPropagation();editT(\''+escA(t.code)+'\')">✏️ تعديل</button>';
+    h += '<button class="team-btn" onclick="event.stopPropagation();openTeacherRecord(\''+escA(t.code)+'\')">📊 الكشف</button>';
+    h += '<button class="team-btn success" onclick="event.stopPropagation();openExportExcelSelection(\''+escA(t.code)+'\')">📥 Excel</button>';
+    
+    // مجموعة التحكم
+    if(t.locked){
+      h += '<button class="team-btn success" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
+    }else{
+      h += '<button class="team-btn danger" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
+    }
+    h += '<button class="team-btn danger" onclick="event.stopPropagation();delT(\''+escA(t.code)+'\')">🗑 حذف</button>';
+    h += '</div>';
+    
+    h += '</div>';
   });
   el.innerHTML = h;
 }
 
+// ═══ دالة عرض الباركود (QR Code) ═══
+function showQRCode(code, name){
+  // تحديد رابط تطبيق المعلمين تلقائياً (يستبدل admin.html بـ index.html)
+  var currentUrl = window.location.href;
+  var appUrl = currentUrl.replace('admin.html', 'index.html');
+  if(appUrl === currentUrl) {
+    appUrl = window.location.origin + '/darajati/index.html'; // رابط احتياطي
+  }
+  
+  var qrData = 'مرحباً ' + name + '\nكودك في تطبيق درجاتي: ' + code + '\nرابط التحميل: ' + appUrl;
+  var qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(qrData);
+  
+  var modalHtml = 
+    '<div class="ovl show" id="qrModal" style="z-index:2000;">'+
+      '<div class="modal" style="max-width:350px;text-align:center;">'+
+        '<h3 style="margin-bottom:15px;color:#1E40AF">📱 باركود المعلم</h3>'+
+        '<div style="background:#fff;padding:15px;border-radius:12px;display:inline-block;margin-bottom:15px;">'+
+          '<img src="'+qrApiUrl+'" alt="QR Code" style="width:200px;height:200px;">'+
+        '</div>'+
+        '<div style="background:#F8FAFC;padding:12px;border-radius:10px;margin-bottom:15px;text-align:right;font-size:13px;line-height:1.6;">'+
+          '<div><b>الاسم:</b> '+esc(name)+'</div>'+
+          '<div><b>الكود:</b> <span dir="ltr" style="font-family:monospace;font-weight:900;color:#1E40AF">'+esc(code)+'</span></div>'+
+        '</div>'+
+        '<button class="btn ok" style="width:100%;margin:0" onclick="document.getElementById(\'qrModal\').remove()">إغلاق</button>'+
+      '</div>'+
+    '</div>';
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
 function sendWA(code,name){
-  var msg='مرحباً '+name+' 👋\n\nكودك في تطبيق «درجاتي»:\n\n '+code+'\n\nثبّت التطبيق وأدخل هذا الكود.';
+  var currentUrl = window.location.href.replace('admin.html', 'index.html');
+  var msg='مرحباً '+name+' 👋\n\nكودك في تطبيق «درجاتي»:\n\n 🔑 '+code+'\n\nرابط التطبيق:\n'+currentUrl+'\n\nثبّت التطبيق وأدخل هذا الكود.';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function copyText(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){ toast('✓ تم نسخ الكود', 'ok'); });
+  }
 }
 
 function toggleLock(code){
@@ -337,7 +409,7 @@ function showSubjectClasses(code, subjectName, teacherName, classes){
     var btn = document.createElement('button');
     btn.className = 'btn';
     btn.style.cssText = 'width:auto; flex:1; min-width:120px; background:#ECFDF5; color:#047857; border:1px solid #A7F3D0;';
-    btn.textContent = ' ' + cls;
+    btn.textContent = ' 🏫 ' + cls;
     btn.onclick = function(){ showSubjectRecord(code, subjectName, teacherName, [cls]); };
     listEl.appendChild(btn);
   });
@@ -451,7 +523,6 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
       var hasGrades = g && (g.m1!=null || g.m2!=null || g.m3!=null || g.m4!=null || g.m5!=null);
       var bg = hasGrades ? '#fff' : '#F8FAFC';
       
-      // ✅ تصميم محسّن: خط أكبر ولون أسود للدرجات
       html += '<tr style="background:'+bg+';">';
       html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:center;font-size:13px;font-weight:700;color:#000;">'+arNum(globalIndex)+'</td>';
       html += '<td style="padding:8px;border:1px solid #CBD5E1;text-align:right;font-weight:800;color:#000;font-size:12px;">'+esc(s.name)+'</td>';
