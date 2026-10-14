@@ -21,8 +21,11 @@
   --warning:#f59e0b;
   --danger:#ef4444;
   --info:#06b6d4;
+  --bg:#f8fafc;
+  --card:#ffffff;
   --text:#1e293b;
   --muted:#64748b;
+  --border:#e2e8f0;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -57,12 +60,6 @@ button{cursor:pointer}
   border-radius:50%;top:-100px;right:-100px;
   animation:pulse 4s ease-in-out infinite;
 }
-#login::after{
-  content:'';position:absolute;width:300px;height:300px;
-  background:radial-gradient(circle,rgba(255,255,255,.1) 0%,transparent 70%);
-  border-radius:50%;bottom:-80px;left:-80px;
-  animation:pulse 6s ease-in-out infinite reverse;
-}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.1);opacity:.8}}
 
 .login-content{position:relative;z-index:2;animation:fadeInUp .6s ease}
@@ -77,10 +74,6 @@ button{cursor:pointer}
   position:relative;animation:float 3s ease-in-out infinite;
 }
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.logo-icon::after{
-  content:'';position:absolute;bottom:-8px;width:60%;height:8px;
-  background:rgba(0,0,0,.15);border-radius:50%;filter:blur(4px);
-}
 .login-logo h1{font-size:38px;font-weight:900;color:#fff;margin-bottom:5px;text-shadow:0 2px 10px rgba(0,0,0,.2)}
 .login-logo p{color:rgba(255,255,255,.9);font-size:14px;font-weight:500}
 
@@ -144,7 +137,6 @@ button{cursor:pointer}
   border:2px solid var(--primary);
 }
 
-/* ✅ مؤشر المزامنة التلقائية */
 .sync-indicator{
   position:fixed;top:70px;left:50%;transform:translateX(-50%);
   background:rgba(16,185,129,.95);color:#fff;
@@ -196,7 +188,6 @@ button{cursor:pointer}
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 .stat-box{border-radius:16px;padding:14px;position:relative;overflow:hidden;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.1)}
 .stat-box::before{content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.15)}
-.stat-box::after{content:'';position:absolute;bottom:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
 .stat-box .stat-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px;background:rgba(255,255,255,.25);position:relative;z-index:1}
 .stat-box .stat-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px;position:relative;z-index:1}
 .stat-box .stat-lbl{font-size:11px;font-weight:700;opacity:.9;position:relative;z-index:1}
@@ -204,14 +195,6 @@ button{cursor:pointer}
 .stat-box.pass{background:linear-gradient(135deg,#10b981,#047857)}
 .stat-box.comp{background:linear-gradient(135deg,#f59e0b,#d97706)}
 .stat-box.fail{background:linear-gradient(135deg,#ef4444,#dc2626)}
-
-.tools-bar{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
-.tool-btn{padding:11px;border-radius:12px;font-size:12px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px;transition:.2s;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.tool-btn:active{transform:scale(.96)}
-.tool-btn.paste{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
-.tool-btn.add{background:linear-gradient(135deg,var(--success),#059669)}
-.tool-btn.clear{background:linear-gradient(135deg,var(--danger),#dc2626)}
-.tool-btn.copy{background:linear-gradient(135deg,var(--info),#0891b2)}
 
 .search-box{
   background:rgba(255,255,255,.9);backdrop-filter:blur(10px);
@@ -242,8 +225,6 @@ button{cursor:pointer}
 .s-grade.pass{background:#d1fae5;border-color:#86efac;color:#047857}
 .s-grade.fail{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .s-grade:focus{box-shadow:0 0 0 3px rgba(99,102,241,.15)}
-.s-del{width:28px;height:28px;border-radius:8px;background:#fee2e2;color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}
-.s-del:active{background:var(--danger);color:#fff}
 
 .send-status{padding:12px;border-radius:14px;text-align:center;font-size:13px;font-weight:800;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .send-status.ok{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#047857}
@@ -284,8 +265,6 @@ button{cursor:pointer}
 .modal{background:#fff;border-radius:22px;padding:22px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:modalIn .3s ease}
 @keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .modal h3{color:var(--primary);margin-bottom:12px;font-size:18px;font-weight:900;display:flex;align-items:center;gap:8px}
-.modal textarea{width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:12px;font-size:14px;resize:vertical;min-height:120px;font-family:inherit}
-.modal textarea:focus{border-color:var(--primary)}
 .modal-actions{display:flex;gap:8px;margin-top:14px}
 .modal-actions button{flex:1;padding:12px;border-radius:12px;font-weight:bold;font-size:14px}
 .modal-actions .cancel{background:#f1f5f9;color:var(--text)}
@@ -295,18 +274,6 @@ button{cursor:pointer}
 .msg-item.unread{background:#eff6ff;border-right-color:var(--primary)}
 .msg-date{font-size:11px;color:var(--muted);margin-bottom:4px}
 .msg-text{font-size:13px;color:var(--text);line-height:1.6}
-
-/* ✅ زر التثبيت العائم */
-.install-btn{
-  position:fixed;bottom:90px;left:20px;
-  background:linear-gradient(135deg,#f59e0b,#d97706);
-  color:#fff;border:none;border-radius:14px;
-  padding:10px 16px;font-size:12px;font-weight:800;
-  box-shadow:0 6px 20px rgba(245,158,11,.4);
-  display:none;align-items:center;gap:6px;
-  z-index:99;cursor:pointer;
-}
-.install-btn.show{display:flex}
 </style>
 </head>
 <body>
@@ -356,7 +323,6 @@ button{cursor:pointer}
     </div>
   </div>
 
-  <!-- ✅ مؤشر المزامنة التلقائية -->
   <div class="sync-indicator" id="syncIndicator">
     <div class="spinner"></div>
     <span>جاري المزامنة...</span>
@@ -373,7 +339,7 @@ button{cursor:pointer}
 
     <div class="selectors">
       <div class="select-card subject-card">
-        <label> المادة</label>
+        <label>📚 المادة</label>
         <select id="subjectSelect" onchange="onSubjectChange()">
           <option value="">اختر المادة</option>
         </select>
@@ -413,13 +379,6 @@ button{cursor:pointer}
       </div>
     </div>
 
-    <div class="tools-bar">
-      <button class="tool-btn paste" onclick="openPaste()"> لصق</button>
-      <button class="tool-btn add" onclick="addRow()">➕ تلميذ</button>
-      <button class="tool-btn copy" onclick="copyAll()">📄 نسخ</button>
-      <button class="tool-btn clear" onclick="clearAll()">🗑️ مسح</button>
-    </div>
-
     <div class="search-box">
       <span class="s-icon">🔍</span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
@@ -440,29 +399,12 @@ button{cursor:pointer}
   <button class="fab" id="sendBtn" onclick="sendGrades()" title="إرسال للإدارة">
     <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
   </button>
-
-  <!-- ✅ زر تثبيت التطبيق -->
-  <button class="install-btn" id="installBtn" onclick="installApp()">
-    📲 تثبيت التطبيق
-  </button>
 </div>
 
-<!-- نافذة اللصق -->
-<div class="overlay" id="pasteModal">
-  <div class="modal">
-    <h3>📋 لصق من Excel</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">انسخ عمودين (الاسم ثم الدرجة) والصقهما هنا</p>
-    <textarea id="pasteBox" placeholder="أحمد محمد&#9;95&#10;سارة علي&#9;88"></textarea>
-    <div class="modal-actions">
-      <button class="cancel" onclick="hideModal('pasteModal')">إلغاء</button>
-      <button class="ok" onclick="doPaste()">إضافة</button>
-    </div>
-  </div>
-</div>
-
+<!-- نافذة الرسائل -->
 <div class="overlay" id="msgModal">
   <div class="modal">
-    <h3> الرسائل</h3>
+    <h3>🔔 الرسائل</h3>
     <div id="msgList" style="margin-top:10px"></div>
     <div class="modal-actions">
       <button class="ok" onclick="hideModal('msgModal')">إغلاق</button>
@@ -470,6 +412,7 @@ button{cursor:pointer}
   </div>
 </div>
 
+<!-- نافذة التأكيد -->
 <div class="overlay" id="confirmModal">
   <div class="modal">
     <h3>⚠️ تأكيد</h3>
@@ -495,8 +438,6 @@ var $ = function(s){return document.querySelector(s);};
 var T = {code:'',name:'',subject:'',classes:[],cls:'',month:'',drafts:{},subjects:[]};
 var toastT,confirmFn=null,msgCheckInterval,syncInterval;
 var draftKey = function(){return T.cls+'¦'+T.month;};
-
-// ✅ إعدادات المزامنة التلقائية
 var SYNC_INTERVAL = 300000; // 5 دقائق
 
 function toast(m,e){
@@ -528,17 +469,12 @@ function fnv1a(str){
   return(h>>>0).toString(16).padStart(8,'0');
 }
 
-// ═══ مؤشر المزامنة ═══
 function showSyncIndicator(show) {
   var ind = $('#syncIndicator');
-  if (show) {
-    ind.classList.add('show');
-  } else {
-    ind.classList.remove('show');
-  }
+  if (show) ind.classList.add('show');
+  else ind.classList.remove('show');
 }
 
-// ═══ تسجيل الدخول ═══
 function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
   if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
@@ -581,21 +517,12 @@ function enterHome(){
 
   buildSelectors();
   
-  // ✅ مزامنة تلقائية عند فتح التطبيق
-  setTimeout(function() {
-    loadCurrent(true); // true = فرض المزامنة
-  }, 500);
+  setTimeout(function() { loadCurrent(true); }, 500);
   
   requestNotificationPermission();
   checkMessages();
   msgCheckInterval=setInterval(checkMessages,60000);
-  
-  // ✅ مزامنة خلفية كل 5 دقائق
-  syncInterval = setInterval(function() {
-    if (T.cls && T.subject) {
-      loadCurrent(true);
-    }
-  }, SYNC_INTERVAL);
+  syncInterval = setInterval(function() { if (T.cls && T.subject) loadCurrent(true); }, SYNC_INTERVAL);
 }
 
 function logout(){
@@ -607,7 +534,6 @@ function logout(){
   });
 }
 
-// ═══ بناء القوائم ═══
 function buildSelectors(){
   var subSel=$('#subjectSelect');
   subSel.innerHTML='<option value="">اختر المادة</option>';
@@ -633,7 +559,6 @@ function buildSelectors(){
     if(m===T.month)opt.selected=true;
     monthSel.appendChild(opt);
   }
-  
   onSubjectChange();
 }
 
@@ -664,14 +589,12 @@ function onSubjectChange(){
   }else{T.cls='';}
   
   updateWelcome();
-  // ✅ مزامنة تلقائية عند تغيير المادة
   loadCurrent(true);
 }
 
 function onClassChange(){
   T.cls=$('#classSelect').value;
   updateWelcome();
-  // ✅ مزامنة تلقائية عند تغيير الشعبة
   loadCurrent(true);
 }
 
@@ -687,10 +610,9 @@ function updateWelcome(){
   $('#welcomeSub').textContent=sub+' • '+cls;
 }
 
-// ═══ تحميل البيانات مع مزامنة تلقائية ═══
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
-    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon"></div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
     clearStats();
     $('#sendBar').className = 'send-status no';
     $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة';
@@ -703,7 +625,6 @@ function loadCurrent(forceRefresh) {
     T.drafts[k] = sv ? JSON.parse(sv) : { rows: [], sentHash: '', sentAt: 0, max: 100, lastSync: 0 };
   }
   
-  // ✅ التحقق من آخر مزامنة
   var lastSync = T.drafts[k].lastSync || 0;
   var now = Date.now();
   var shouldRefresh = forceRefresh || (now - lastSync > SYNC_INTERVAL);
@@ -725,43 +646,69 @@ function clearStats(){
   $('#totalCount').textContent='0 تلميذ';
 }
 
-// ═══ جلب الطلاب مع مزامنة ذكية ═══
+// ✅ الدالة المحسّنة: تجلب الأسماء والدرجات المحفوظة من الخادم معاً
 function fetchStudents(showLoading) {
-  if (showLoading) {
-    showSyncIndicator(true);
-  }
+  if (showLoading) showSyncIndicator(true);
   
   api({ action: 'getStudents', code: T.code, cls: T.cls }).then(function(r) {
-    showSyncIndicator(false);
-    
-    if (r.ok && r.names && r.names.length > 0) {
+    if(r.ok && r.names && r.names.length > 0){
       var k = draftKey();
       
-      // ✅ دمج الأسماء الجديدة مع الدرجات المحفوظة
-      var oldRows = T.drafts[k].rows || [];
-      var oldMap = {};
-      oldRows.forEach(function(row) {
-        oldMap[row.name] = row.degree;
+      // جلب الدرجات المحفوظة مسبقاً من الخادم لهذه المادة
+      api({action:'teacherGrades', code:T.code}).then(function(gradesRes){
+        var serverGrades = {};
+        if(gradesRes.ok && gradesRes.rows) {
+          gradesRes.rows.forEach(function(row){
+            if(row.cls === T.cls) {
+               var monthIndex = MONTHS.indexOf(T.month);
+               var degree = '';
+               if (monthIndex === 0) degree = row.m1;
+               else if (monthIndex === 1) degree = row.m2;
+               else if (monthIndex === 2) degree = row.m3;
+               else if (monthIndex === 3) degree = row.m4;
+               else if (monthIndex === 4) degree = row.m5;
+
+               if(degree !== null && degree !== undefined && degree !== '') {
+                 serverGrades[row.name] = degree;
+               }
+            }
+          });
+        }
+
+        // دمج البيانات: الأولوية للمسودة المحلية غير المرسلة، ثم للخادم
+        var newRows = r.names.map(function(name) {
+          var localDegree = '';
+          if(T.drafts[k] && T.drafts[k].rows) {
+            var localRow = T.drafts[k].rows.find(function(r){ return r.name === name; });
+            if(localRow && localRow.degree !== '') localDegree = localRow.degree;
+          }
+          
+          if(localDegree === '' && serverGrades[name] !== undefined) {
+            localDegree = serverGrades[name];
+          }
+
+          return { name: name, degree: localDegree };
+        });
+
+        T.drafts[k].rows = newRows;
+        T.drafts[k].lastSync = Date.now();
+        saveDraft();
+        renderRows();
+        updStats();
+        
+        if (showLoading) toast('✓ تم تحميل ' + arNum(r.names.length) + ' تلميذ مع الدرجات المحفوظة');
+        showSyncIndicator(false);
+      }).catch(function(){
+        // في حال فشل جلب الدرجات، نكتفي بالأسماء
+        var newRows = r.names.map(function(name) { return {name:name, degree:''}; });
+        T.drafts[k].rows = newRows;
+        T.drafts[k].lastSync = Date.now();
+        saveDraft();
+        renderRows(); updStats();
+        showSyncIndicator(false);
       });
-      
-      // بناء قائمة جديدة مع الحفاظ على الدرجات
-      var newRows = r.names.map(function(name) {
-        return {
-          name: name,
-          degree: oldMap[name] !== undefined ? oldMap[name] : ''
-        };
-      });
-      
-      T.drafts[k].rows = newRows;
-      T.drafts[k].lastSync = Date.now();
-      saveDraft();
-      renderRows();
-      updStats();
-      
-      if (showLoading) {
-        toast('✓ تم المزامنة: ' + arNum(r.names.length) + ' تلميذ');
-      }
     } else {
+      showSyncIndicator(false);
       $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>لا توجد أسماء</p><small>تواصل مع الإدارة</small></div>';
     }
   }).catch(function(e) {
@@ -809,7 +756,6 @@ function renderRows(){
       '<div class="s-info"><input class="s-name-input" placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
       '<div class="s-grade-wrap">'+
         '<input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'">'+
-        '<button class="s-del">✕</button>'+
       '</div>';
     
     var inputs=row.querySelectorAll('input');
@@ -825,13 +771,6 @@ function renderRows(){
       };
     })(i,inputs);
     
-    (function(idx){
-      row.querySelector('.s-del').onclick=function(){
-        if(dr.rows.length<=1){toast('يجب بقاء صف واحد',true);return;}
-        dr.rows.splice(idx,1);saveDraft();renderRows();updStats();
-      };
-    })(i);
-    
     box.appendChild(row);
     displayIndex++;
   }
@@ -839,33 +778,19 @@ function renderRows(){
   $('#totalCount').textContent=arNum(dr.rows.length)+' تلميذ';
   
   if(displayIndex===1&&!search){
-    box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p><small>استخدم "لصق" أو "➕ تلميذ"</small></div>';
+    box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>';
   }else if(displayIndex===1&&search){
     box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>';
   }
 }
 
-function addRow(){
-  if(!T.cls){toast('اختر الشعبة أولاً',true);return;}
-  T.drafts[draftKey()].rows.push({name:'',degree:''});
-  saveDraft();renderRows();
-}
-
 function clearAll(){
-  confirmDlg('مسح جميع التلاميذ والدرجات؟',function(){
-    T.drafts[draftKey()].rows=[];
+  confirmDlg('مسح جميع الدرجات المدخلة؟',function(){
+    var dr=T.drafts[draftKey()];
+    dr.rows.forEach(function(r){r.degree='';});
     saveDraft();renderRows();updStats();
     toast('تم المسح ✓');
   });
-}
-
-function copyAll(){
-  var dr=T.drafts[draftKey()];
-  if(!dr||!dr.rows.length){toast('لا توجد بيانات',true);return;}
-  var text=dr.rows.filter(function(r){return r.name||r.degree;}).map(function(r){return r.name+'\t'+(r.degree||'');}).join('\n');
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(text).then(function(){toast('تم النسخ ✓');});
-  }
 }
 
 function updStats(){
@@ -897,11 +822,10 @@ function updSendBar(){
     el.textContent='⚠️ لديك تعديلات لم تُرسل';
   }else{
     el.className='send-status no';
-    el.textContent=' لم يتم الإرسال بعد';
+    el.textContent='📤 لم يتم الإرسال بعد';
   }
 }
 
-// ═══ إرسال الدرجات ═══
 function sendGrades(){
   var dr=T.drafts[draftKey()];
   var cls=(T.cls||'').trim();
@@ -926,7 +850,7 @@ function sendGrades(){
   if(err){toast(err,true);return;}
   if(!clean.length){toast('أدخل الدرجات أولاً',true);return;}
 
-  confirmDlg('📤 إرسال '+arNum(clean.length)+' درجة إلى الإدارة والمطور؟',function(){
+  confirmDlg('📤 إرسال '+arNum(clean.length)+' درجة إلى الإدارة؟',function(){
     var btn=$('#sendBtn');
     btn.classList.add('busy');btn.disabled=true;
 
@@ -960,32 +884,11 @@ function sendGrades(){
         saveDraft();updSendBar();
         toast('✓✓ تم إرسال درجات '+month+' للإدارة');
       }else{toast('❌ '+r.error,true);}
-    }).catch(function(e){toast(' لا اتصال بالخادم',true);})
+    }).catch(function(e){toast('📴 لا اتصال بالخادم',true);})
     .finally(function(){btn.classList.remove('busy');btn.disabled=false;});
   });
 }
 
-// ══ اللصق ═══
-function openPaste(){$('#pasteBox').value='';$('#pasteModal').classList.add('show');}
-function doPaste(){
-  var t=$('#pasteBox').value;
-  var dr=T.drafts[draftKey()];
-  var n=0;
-  t.split(/\r?\n/).forEach(function(l){
-    if(!l.trim())return;
-    var p=l.split(/\t/).map(function(s){return s.trim();});
-    var name='',deg='';
-    if(p.length>=2){name=p[0];deg=p[1];}
-    else{var m=l.match(/^(.*?)\s+([\d.]+)\s*$/);if(m){name=m[1];deg=m[2];}else name=l.trim();}
-    if(name){dr.rows.push({name:name,degree:deg});n++;}
-  });
-  if(!n){toast('لم أجد بيانات',true);return;}
-  saveDraft();renderRows();updStats();
-  hideModal('pasteModal');
-  toast('✓ تمت إضافة '+arNum(n)+' تلميذ');
-}
-
-// ═══ الإشعارات ═══
 function requestNotificationPermission(){
   if("Notification"in window&&Notification.permission==="default"){
     Notification.requestPermission();
@@ -1031,41 +934,9 @@ function openMessages(){
   });
 }
 
-// ═══ تثبيت التطبيق (PWA) ═══
-var deferredPrompt;
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  $('#installBtn').classList.add('show');
-});
-
-function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(choiceResult) {
-      if (choiceResult.outcome === 'accepted') {
-        toast('✓ تم تثبيت التطبيق بنجاح');
-      }
-      deferredPrompt = null;
-      $('#installBtn').classList.remove('show');
-    });
-  } else {
-    // تعليمات يدوية
-    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      toast('اضغط زر المشاركة ← إضافة إلى الشاشة الرئيسية');
-    } else {
-      toast('اضغط ⋮ ← تثبيت التطبيق');
-    }
-  }
-}
-
-// ═══ التهيئة ═══
 (function(){
   var s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(s)enterHome();
-  
-  // تسجيل Service Worker
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(function(){});
   }
