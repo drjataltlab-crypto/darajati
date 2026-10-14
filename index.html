@@ -14,157 +14,61 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --primary:#6366f1;
-  --primary-dark:#4f46e5;
-  --primary-light:#818cf8;
-  --success:#10b981;
-  --warning:#f59e0b;
-  --danger:#ef4444;
-  --info:#06b6d4;
-  --bg:#f8fafc;
-  --card:#ffffff;
-  --text:#1e293b;
-  --muted:#64748b;
-  --border:#e2e8f0;
+  --primary:#6366f1; --primary-dark:#4f46e5; --success:#10b981; --danger:#ef4444;
+  --bg:#f8fafc; --text:#1e293b; --muted:#64748b;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{
   font-family:'Tajawal',system-ui,sans-serif;
   background:linear-gradient(135deg,#e0e7ff 0%,#fce7f3 50%,#dbeafe 100%);
-  color:var(--text);
-  max-width:480px;
-  margin:0 auto;
-  min-height:100vh;
-  position:relative;
-  overflow-x:hidden;
+  color:var(--text); max-width:480px; margin:0 auto; min-height:100vh; position:relative; overflow-x:hidden;
 }
 button,input,select{font:inherit;border:none;outline:none}
 button{cursor:pointer}
 .hidden{display:none!important}
 
-/* ═══ صفحة تسجيل الدخول ═══ */
-#login{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:24px;
-  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-  position:relative;
-  overflow:hidden;
-}
-#login::before{
-  content:'';position:absolute;width:400px;height:400px;
-  background:radial-gradient(circle,rgba(255,255,255,.15) 0%,transparent 70%);
-  border-radius:50%;top:-100px;right:-100px;
-  animation:pulse 4s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.1);opacity:.8}}
-
+#login{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden}
 .login-content{position:relative;z-index:2;animation:fadeInUp .6s ease}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-
 .login-logo{text-align:center;margin-bottom:30px}
-.logo-icon{
-  width:90px;height:90px;margin:0 auto 15px;
-  background:linear-gradient(135deg,#fff,#f0f9ff);
-  border-radius:24px;display:flex;align-items:center;justify-content:center;
-  font-size:48px;box-shadow:0 15px 40px rgba(0,0,0,.2);
-  position:relative;animation:float 3s ease-in-out infinite;
-}
+.logo-icon{width:90px;height:90px;margin:0 auto 15px;background:linear-gradient(135deg,#fff,#f0f9ff);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:48px;box-shadow:0 15px 40px rgba(0,0,0,.2);animation:float 3s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .login-logo h1{font-size:38px;font-weight:900;color:#fff;margin-bottom:5px;text-shadow:0 2px 10px rgba(0,0,0,.2)}
 .login-logo p{color:rgba(255,255,255,.9);font-size:14px;font-weight:500}
-
-.login-card{
-  background:rgba(255,255,255,.98);backdrop-filter:blur(20px);
-  border-radius:24px;padding:28px;box-shadow:0 25px 60px rgba(0,0,0,.25);
-}
+.login-card{background:rgba(255,255,255,.98);backdrop-filter:blur(20px);border-radius:24px;padding:28px;box-shadow:0 25px 60px rgba(0,0,0,.25)}
 .login-card h2{font-size:20px;font-weight:900;color:var(--text);margin-bottom:20px;text-align:center}
-
 .input-wrapper{position:relative;margin-bottom:16px}
 .input-wrapper label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
-.input-wrapper input{
-  width:100%;padding:14px 16px 14px 45px;background:#f1f5f9;
-  border:2px solid transparent;border-radius:14px;font-size:16px;
-  font-weight:700;color:var(--text);transition:.2s;text-align:center;letter-spacing:1px;
-}
+.input-wrapper input{width:100%;padding:14px 16px 14px 45px;background:#f1f5f9;border:2px solid transparent;border-radius:14px;font-size:16px;font-weight:700;color:var(--text);transition:.2s;text-align:center;letter-spacing:1px}
 .input-wrapper input:focus{background:#fff;border-color:var(--primary);box-shadow:0 0 0 4px rgba(99,102,241,.1)}
 .input-wrapper .input-icon{position:absolute;left:14px;bottom:14px;font-size:20px;opacity:.5}
-
-.login-btn{
-  width:100%;padding:15px;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;border-radius:14px;font-size:17px;font-weight:900;
-  margin-top:8px;box-shadow:0 8px 25px rgba(99,102,241,.4);
-  transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;
-}
+.login-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:14px;font-size:17px;font-weight:900;margin-top:8px;box-shadow:0 8px 25px rgba(99,102,241,.4);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
 .login-btn:active{transform:scale(.97)}
 .login-msg{text-align:center;min-height:20px;margin-top:12px;font-size:13px;font-weight:bold;color:var(--danger)}
 .login-footer{text-align:center;margin-top:25px;color:rgba(255,255,255,.9);font-size:13px;font-weight:500}
 
-/* ═══ التطبيق الرئيسي ═══ */
 #app{display:none;min-height:100vh}
-
-.app-header{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;padding:16px 18px;position:sticky;top:0;z-index:100;
-  box-shadow:0 4px 20px rgba(99,102,241,.3);
-}
+.app-header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:16px 18px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(99,102,241,.3)}
 .header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .user-section{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.user-avatar{
-  width:42px;height:42px;border-radius:12px;
-  background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;border:2px solid rgba(255,255,255,.3);
-}
+.user-avatar{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid rgba(255,255,255,.3)}
 .user-info{min-width:0;flex:1}
 .user-info h3{font-size:15px;font-weight:900;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .user-info small{font-size:11px;opacity:.85;display:flex;align-items:center;gap:4px}
 .header-actions{display:flex;gap:6px}
-.icon-btn{
-  width:38px;height:38px;border-radius:10px;
-  background:rgba(255,255,255,.15);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;position:relative;transition:.2s;
-}
+.icon-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative;transition:.2s}
 .icon-btn:active{background:rgba(255,255,255,.3)}
-.notif-badge{
-  position:absolute;top:-2px;right:-2px;background:var(--danger);color:#fff;
-  font-size:9px;font-weight:900;min-width:18px;height:18px;border-radius:9px;
-  display:none;align-items:center;justify-content:center;padding:0 4px;
-  border:2px solid var(--primary);
-}
+.notif-badge{position:absolute;top:-2px;right:-2px;background:var(--danger);color:#fff;font-size:9px;font-weight:900;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--primary)}
 
-.sync-indicator{
-  position:fixed;top:70px;left:50%;transform:translateX(-50%);
-  background:rgba(16,185,129,.95);color:#fff;
-  padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;
-  z-index:200;opacity:0;transition:.3s;
-  box-shadow:0 4px 15px rgba(16,185,129,.4);
-  display:flex;align-items:center;gap:6px;
-}
+.sync-indicator{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(16,185,129,.95);color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:.3s;box-shadow:0 4px 15px rgba(16,185,129,.4);display:flex;align-items:center;gap:6px}
 .sync-indicator.show{opacity:1}
-.sync-indicator .spinner{
-  width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;
-}
+.sync-indicator .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .app-content{padding:14px;padding-bottom:100px}
-
-.welcome-card{
-  background:linear-gradient(135deg,#c7d2fe 0%,#a5b4fc 100%);
-  border-radius:20px;padding:16px;margin-bottom:14px;
-  display:flex;align-items:center;gap:12px;
-  box-shadow:0 8px 20px rgba(99,102,241,.2);color:#1e1b4b;
-}
-.welcome-icon{
-  width:50px;height:50px;background:linear-gradient(135deg,#fff,#e0e7ff);
-  border-radius:14px;display:flex;align-items:center;justify-content:center;
-  font-size:26px;flex-shrink:0;box-shadow:0 6px 15px rgba(0,0,0,.1);
-}
+.welcome-card{background:linear-gradient(135deg,#c7d2fe 0%,#a5b4fc 100%);border-radius:20px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 20px rgba(99,102,241,.2);color:#1e1b4b}
+.welcome-icon{width:50px;height:50px;background:linear-gradient(135deg,#fff,#e0e7ff);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 6px 15px rgba(0,0,0,.1)}
 .welcome-text{flex:1;min-width:0}
 .welcome-text h4{font-size:15px;font-weight:900;margin-bottom:3px;color:#312e81}
 .welcome-text p{font-size:11px;color:#4338ca;line-height:1.4;font-weight:600}
@@ -187,7 +91,6 @@ button{cursor:pointer}
 
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 .stat-box{border-radius:16px;padding:14px;position:relative;overflow:hidden;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.1)}
-.stat-box::before{content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.15)}
 .stat-box .stat-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px;background:rgba(255,255,255,.25);position:relative;z-index:1}
 .stat-box .stat-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px;position:relative;z-index:1}
 .stat-box .stat-lbl{font-size:11px;font-weight:700;opacity:.9;position:relative;z-index:1}
@@ -196,19 +99,12 @@ button{cursor:pointer}
 .stat-box.comp{background:linear-gradient(135deg,#f59e0b,#d97706)}
 .stat-box.fail{background:linear-gradient(135deg,#ef4444,#dc2626)}
 
-.search-box{
-  background:rgba(255,255,255,.9);backdrop-filter:blur(10px);
-  border-radius:14px;padding:10px 14px;margin-bottom:14px;
-  display:flex;align-items:center;gap:10px;box-shadow:0 4px 15px rgba(0,0,0,.08);transition:.2s;
-}
+.search-box{background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-radius:14px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 15px rgba(0,0,0,.08);transition:.2s}
 .search-box:focus-within{background:#fff;box-shadow:0 6px 20px rgba(99,102,241,.15)}
 .search-box input{flex:1;font-size:14px;background:transparent}
 .search-box .s-icon{font-size:18px;color:var(--muted)}
 
-.students-card{
-  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
-  border-radius:18px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:14px;
-}
+.students-card{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-radius:18px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:14px}
 .card-head{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
 .card-head h3{font-size:14px;font-weight:900;display:flex;align-items:center;gap:6px}
 .card-head .count{background:rgba(255,255,255,.2);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:bold}
@@ -234,12 +130,7 @@ button{cursor:pointer}
 .save-hint{text-align:center;font-size:11px;color:var(--success);font-weight:700;opacity:0;transition:.3s;margin-bottom:14px}
 .save-hint.show{opacity:1}
 
-.fab{
-  position:fixed;bottom:20px;left:20px;width:60px;height:60px;border-radius:50%;
-  background:linear-gradient(135deg,var(--success),#059669);color:#fff;border:none;
-  display:flex;align-items:center;justify-content:center;font-size:24px;
-  box-shadow:0 10px 30px rgba(16,185,129,.4);z-index:100;transition:.2s;
-}
+.fab{position:fixed;bottom:20px;left:20px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--success),#059669);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 10px 30px rgba(16,185,129,.4);z-index:100;transition:.2s}
 .fab:active{transform:scale(.9)}
 .fab.busy{background:#94a3b8}
 .fab.busy svg{display:none}
@@ -250,12 +141,7 @@ button{cursor:pointer}
 .empty-state p{font-size:14px;font-weight:bold;margin-bottom:4px}
 .empty-state small{font-size:12px}
 
-.toast{
-  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:var(--text);color:#fff;padding:12px 20px;border-radius:14px;
-  font-size:13px;font-weight:700;z-index:300;opacity:0;transition:.3s;
-  max-width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3);
-}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:700;z-index:300;opacity:0;transition:.3s;max-width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{background:var(--danger)}
 .toast.ok{background:var(--success)}
@@ -278,7 +164,6 @@ button{cursor:pointer}
 </head>
 <body>
 
-<!-- ═══ صفحة تسجيل الدخول ═══ -->
 <div id="login">
   <div class="login-content">
     <div class="login-logo">
@@ -303,7 +188,6 @@ button{cursor:pointer}
   </div>
 </div>
 
-<!-- ═══ التطبيق الرئيسي ═══ -->
 <div id="app">
   <div class="app-header">
     <div class="header-row">
@@ -401,7 +285,6 @@ button{cursor:pointer}
   </button>
 </div>
 
-<!-- نافذة الرسائل -->
 <div class="overlay" id="msgModal">
   <div class="modal">
     <h3>🔔 الرسائل</h3>
@@ -412,7 +295,6 @@ button{cursor:pointer}
   </div>
 </div>
 
-<!-- نافذة التأكيد -->
 <div class="overlay" id="confirmModal">
   <div class="modal">
     <h3>⚠️ تأكيد</h3>
@@ -430,7 +312,6 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-
 var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
@@ -438,7 +319,7 @@ var $ = function(s){return document.querySelector(s);};
 var T = {code:'',name:'',subject:'',classes:[],cls:'',month:'',drafts:{},subjects:[]};
 var toastT,confirmFn=null,msgCheckInterval,syncInterval;
 var draftKey = function(){return T.cls+'¦'+T.month;};
-var SYNC_INTERVAL = 300000; // 5 دقائق
+var SYNC_INTERVAL = 300000;
 
 function toast(m,e){
   var t=$('#toast');
@@ -516,7 +397,6 @@ function enterHome(){
   $('#app').style.display='block';
 
   buildSelectors();
-  
   setTimeout(function() { loadCurrent(true); }, 500);
   
   requestNotificationPermission();
@@ -548,7 +428,6 @@ function buildSelectors(){
     }
     subSel.value='0';
   }
-  
   var monthSel=$('#monthSelect');
   monthSel.innerHTML='';
   for(var i=0;i<MONTHS.length;i++){
@@ -566,28 +445,22 @@ function onSubjectChange(){
   var idx=$('#subjectSelect').value;
   var clsSel=$('#classSelect');
   clsSel.innerHTML='<option value="">اختر الشعبة</option>';
-  
   if(idx===''||!T.subjects[idx]){
     T.subject='';T.classes=[];T.cls='';
     updateWelcome();loadCurrent();return;
   }
-  
   T.subject=T.subjects[idx].name;
   T.classes=T.subjects[idx].classes||[];
-  
   for(var i=0;i<T.classes.length;i++){
-    var cl=T.classes[i];
     var opt=document.createElement('option');
-    opt.value=cl;
-    opt.textContent='🏫 '+cl;
+    opt.value=T.classes[i];
+    opt.textContent='🏫 '+T.classes[i];
     clsSel.appendChild(opt);
   }
-  
   if(T.classes.length>0){
     clsSel.value=T.classes[0];
     T.cls=T.classes[0];
   }else{T.cls='';}
-  
   updateWelcome();
   loadCurrent(true);
 }
@@ -618,13 +491,11 @@ function loadCurrent(forceRefresh) {
     $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة';
     return;
   }
-  
   var k = draftKey();
   if (!T.drafts[k]) {
     var sv = localStorage.getItem('d_draft_' + T.code + '_' + k);
     T.drafts[k] = sv ? JSON.parse(sv) : { rows: [], sentHash: '', sentAt: 0, max: 100, lastSync: 0 };
   }
-  
   var lastSync = T.drafts[k].lastSync || 0;
   var now = Date.now();
   var shouldRefresh = forceRefresh || (now - lastSync > SYNC_INTERVAL);
@@ -646,21 +517,27 @@ function clearStats(){
   $('#totalCount').textContent='0 تلميذ';
 }
 
-// ✅ الدالة المحسّنة: تجلب الأسماء والدرجات المحفوظة من الخادم معاً
+// ✅ الدالة المحسّنة مع أدوات التتبع (Console Logs)
 function fetchStudents(showLoading) {
   if (showLoading) showSyncIndicator(true);
-  
+
+  console.log("🔍 بدء جلب البيانات للمعلم:", T.code, "الشعبة:", T.cls, "الشهر:", T.month);
+
   api({ action: 'getStudents', code: T.code, cls: T.cls }).then(function(r) {
     if(r.ok && r.names && r.names.length > 0){
       var k = draftKey();
-      
-      // جلب الدرجات المحفوظة مسبقاً من الخادم لهذه المادة
+
+      // جلب الدرجات المحفوظة من الخادم
       api({action:'teacherGrades', code:T.code}).then(function(gradesRes){
+        console.log("📦 استجابة الخادم للدرجات:", gradesRes); // <-- مهم جداً للتتبع
+
         var serverGrades = {};
         if(gradesRes.ok && gradesRes.rows) {
+          var targetMonth = T.month.trim();
+          var monthIndex = MONTHS.indexOf(targetMonth);
+
           gradesRes.rows.forEach(function(row){
-            if(row.cls === T.cls) {
-               var monthIndex = MONTHS.indexOf(T.month);
+            if(row.cls && row.cls.trim() === T.cls.trim()) {
                var degree = '';
                if (monthIndex === 0) degree = row.m1;
                else if (monthIndex === 1) degree = row.m2;
@@ -668,26 +545,31 @@ function fetchStudents(showLoading) {
                else if (monthIndex === 3) degree = row.m4;
                else if (monthIndex === 4) degree = row.m5;
 
-               if(degree !== null && degree !== undefined && degree !== '') {
-                 serverGrades[row.name] = degree;
+               if(degree !== null && degree !== undefined && String(degree).trim() !== '') {
+                 serverGrades[row.name.trim()] = String(degree).trim();
                }
             }
           });
         }
+        console.log("🗂️ الدرجات المستخرجة من الخادم لهذه الشعبة:", serverGrades);
 
-        // دمج البيانات: الأولوية للمسودة المحلية غير المرسلة، ثم للخادم
+        // دمج البيانات
         var newRows = r.names.map(function(name) {
+          var cleanName = name.trim();
           var localDegree = '';
+
           if(T.drafts[k] && T.drafts[k].rows) {
-            var localRow = T.drafts[k].rows.find(function(r){ return r.name === name; });
-            if(localRow && localRow.degree !== '') localDegree = localRow.degree;
-          }
-          
-          if(localDegree === '' && serverGrades[name] !== undefined) {
-            localDegree = serverGrades[name];
+            var localRow = T.drafts[k].rows.find(function(r){ return r.name.trim() === cleanName; });
+            if(localRow && String(localRow.degree).trim() !== '') {
+              localDegree = String(localRow.degree).trim();
+            }
           }
 
-          return { name: name, degree: localDegree };
+          if(localDegree === '' && serverGrades[cleanName] !== undefined) {
+            localDegree = serverGrades[cleanName];
+          }
+
+          return { name: cleanName, degree: localDegree };
         });
 
         T.drafts[k].rows = newRows;
@@ -695,23 +577,26 @@ function fetchStudents(showLoading) {
         saveDraft();
         renderRows();
         updStats();
-        
+
         if (showLoading) toast('✓ تم تحميل ' + arNum(r.names.length) + ' تلميذ مع الدرجات المحفوظة');
         showSyncIndicator(false);
-      }).catch(function(){
-        // في حال فشل جلب الدرجات، نكتفي بالأسماء
-        var newRows = r.names.map(function(name) { return {name:name, degree:''}; });
+
+      }).catch(function(err){
+        console.error("❌ خطأ في جلب الدرجات من الخادم:", err);
+        var newRows = r.names.map(function(name) { return {name:name.trim(), degree:''}; });
         T.drafts[k].rows = newRows;
         T.drafts[k].lastSync = Date.now();
         saveDraft();
         renderRows(); updStats();
         showSyncIndicator(false);
+        toast('⚠️ تم تحميل الأسماء فقط (فشل جلب الدرجات)', 'err');
       });
     } else {
       showSyncIndicator(false);
       $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><p>لا توجد أسماء</p><small>تواصل مع الإدارة</small></div>';
     }
   }).catch(function(e) {
+    console.error("❌ خطأ في جلب الأسماء من الخادم:", e);
     showSyncIndicator(false);
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">⚠️</div><p>تعذر المزامنة</p><small>تحقق من الإنترنت</small></div>';
   });
@@ -776,21 +661,11 @@ function renderRows(){
   }
   
   $('#totalCount').textContent=arNum(dr.rows.length)+' تلميذ';
-  
   if(displayIndex===1&&!search){
     box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>';
   }else if(displayIndex===1&&search){
     box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>';
   }
-}
-
-function clearAll(){
-  confirmDlg('مسح جميع الدرجات المدخلة؟',function(){
-    var dr=T.drafts[draftKey()];
-    dr.rows.forEach(function(r){r.degree='';});
-    saveDraft();renderRows();updStats();
-    toast('تم المسح ✓');
-  });
 }
 
 function updStats(){
