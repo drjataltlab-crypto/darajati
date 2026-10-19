@@ -207,7 +207,7 @@ button{cursor:pointer}
         <div class="user-avatar">👨‍🏫</div>
         <div class="user-info">
           <h3 id="teacherName">مرحباً</h3>
-          <small id="teacherCode"> —</small>
+          <small id="teacherCode">🔑 —</small>
         </div>
       </div>
       <div class="header-actions">
@@ -215,7 +215,7 @@ button{cursor:pointer}
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="logout()"></button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
       </div>
     </div>
   </div>
@@ -282,7 +282,7 @@ button{cursor:pointer}
     </div>
 
     <div class="search-box">
-      <span class="s-icon"></span>
+      <span class="s-icon">🔍</span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
@@ -330,7 +330,8 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-var AR = '٠٢٣٤٥٦٧٨٩';
+// ✅ تم إصلاح تسلسل الأرقام العربية (إضافة الرقم ١)
+var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
@@ -447,7 +448,7 @@ function doLogin(){
     localStorage.setItem('d_session',JSON.stringify(r.teacher));
     SendQueue.KEY = 'd_send_queue_' + r.teacher.code;
     enterHome();
-  }).catch(function(e){$('#loginMsg').textContent=' تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
+  }).catch(function(e){$('#loginMsg').textContent='📴 تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
 }
 
 function enterHome(){
@@ -456,7 +457,7 @@ function enterHome(){
   T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
   if(!T.subjects||T.subjects.length===0){ if(T.subject&&T.classes&&T.classes.length>0){ T.subjects=[{name:T.subject,classes:T.classes}]; } }
   T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
-  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent=' '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
+  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent='🔑 '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
   $('#login').style.display='none'; $('#app').style.display='block';
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
@@ -556,21 +557,44 @@ function fetchStudents(showLoading) {
             }
           });
         }
-        var newRows = r.names.map(function(name) {
+        
+        // ✅ فلترة الأسماء الفارغة والمكررة لضمان تسلسل صحيح
+        var uniqueNames = {};
+        var filteredNames = r.names.filter(function(name) {
+          var cleanName = (name || '').trim();
+          if (cleanName === '') return false; // تجاهل الأسماء الفارغة
+          if (uniqueNames[cleanName]) return false; // تجاهل الأسماء المكررة
+          uniqueNames[cleanName] = true;
+          return true;
+        });
+
+        var newRows = filteredNames.map(function(name) {
           var cleanName = name.trim(), localDegree = '';
           if(T.drafts[k] && T.drafts[k].rows) {
-            var localRow = T.drafts[k].rows.find(function(r){ return r.name.trim() === cleanName; });
-            if(localRow && String(localRow.degree).trim() !== '') { localDegree = String(localRow.degree).trim(); }
+            var localRow = T.drafts[k].rows.find(function(r){ return (r.name||'').trim() === cleanName; });
+            if(localRow && String(localRow.degree).trim() !== '') {
+              localDegree = String(localRow.degree).trim();
+            }
           }
-          if(localDegree === '' && serverGrades[cleanName] !== undefined) { localDegree = serverGrades[cleanName]; }
+          if(localDegree === '' && serverGrades[cleanName] !== undefined) {
+            localDegree = serverGrades[cleanName];
+          }
           return { name: cleanName, degree: localDegree };
         });
         T.drafts[k].rows = newRows; T.drafts[k].lastSync = Date.now();
         saveDraft(); renderRows(); updStats();
-        if (showLoading) toast('✓ تم تحميل ' + arNum(r.names.length) + ' تلميذ');
+        if (showLoading) toast('✓ تم تحميل ' + arNum(filteredNames.length) + ' تلميذ');
         showSyncIndicator(false);
       }).catch(function(){
-        var newRows = r.names.map(function(name) { return {name:name.trim(), degree:''}; });
+        var uniqueNames = {};
+        var filteredNames = r.names.filter(function(name) {
+          var cleanName = (name || '').trim();
+          if (cleanName === '') return false;
+          if (uniqueNames[cleanName]) return false;
+          uniqueNames[cleanName] = true;
+          return true;
+        });
+        var newRows = filteredNames.map(function(name) { return {name:name.trim(), degree:''}; });
         T.drafts[k].rows = newRows; T.drafts[k].lastSync = Date.now();
         saveDraft(); renderRows(); updStats(); showSyncIndicator(false);
       });
@@ -596,32 +620,64 @@ function renderRows(){
   var dr=T.drafts[draftKey()], box=$('#studentsList');
   if(!dr){box.innerHTML='';return;}
   var search=($('#searchInput').value||'').trim().toLowerCase(), max=100;
-  box.innerHTML=''; var displayIndex=1;
-  for(var i=0;i<dr.rows.length;i++){
+  box.innerHTML=''; 
+  
+  var displayIndex = 1;
+  var visibleCount = 0;
+
+  for(var i=0; i<dr.rows.length; i++){
     var r=dr.rows[i];
-    if(search&&!(r.name||'').toLowerCase().includes(search))continue;
+    var cleanName = (r.name||'').trim();
+    
+    // ✅ تجاهل الصفوف الفارغة تماماً (لا اسم ولا درجة)
+    if (cleanName === '' && (r.degree === '' || r.degree === null || r.degree === undefined)) {
+      continue;
+    }
+
+    if(search && !cleanName.toLowerCase().includes(search)) continue;
+
     var deg=Number(r.degree), cls='';
-    if(!isNaN(deg)){ if(deg>=max/2)cls='pass'; else if(deg>=max/2-10)cls=''; else cls='fail'; }
-    var row=document.createElement('div'); row.className='student-item';
+    if(!isNaN(deg)){ 
+      if(deg>=max/2) cls='pass'; 
+      else if(deg>=max/2-10) cls=''; 
+      else cls='fail'; 
+    }
+    
+    var row=document.createElement('div'); 
+    row.className='student-item';
     row.innerHTML='<div class="s-num">'+arNum(displayIndex)+'</div>'+
       '<div class="s-info"><input class="s-name-input" placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
       '<div class="s-grade-wrap"><input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'"></div>';
+      
     var inputs=row.querySelectorAll('input');
     (function(idx,inp){
-      inp[0].oninput=function(){dr.rows[idx].name=inp[0].value;saveDraft();updStats();hasUnsavedChanges=true;};
+      inp[0].oninput=function(){
+        dr.rows[idx].name = inp[0].value;
+        saveDraft(); updStats(); hasUnsavedChanges=true;
+      };
       inp[1].oninput=function(){
-        dr.rows[idx].degree=inp[1].value; var v=Number(inp[1].value);
+        dr.rows[idx].degree = inp[1].value; 
+        var v=Number(inp[1].value);
         inp[1].classList.remove('pass','fail');
-        if(!isNaN(v)&&v>=max/2)inp[1].classList.add('pass');
-        else if(!isNaN(v)&&v<max/2-10)inp[1].classList.add('fail');
-        saveDraft();updStats();hasUnsavedChanges=true;
+        if(!isNaN(v)&&v>=max/2) inp[1].classList.add('pass');
+        else if(!isNaN(v)&&v<max/2-10) inp[1].classList.add('fail');
+        saveDraft(); updStats(); hasUnsavedChanges=true;
       };
     })(i,inputs);
-    box.appendChild(row); displayIndex++;
+    
+    box.appendChild(row); 
+    displayIndex++;
+    visibleCount++;
   }
-  $('#totalCount').textContent=arNum(dr.rows.length)+' تلميذ';
-  if(displayIndex===1&&!search){ box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; }
-  else if(displayIndex===1&&search){ box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>'; }
+  
+  // ✅ تحديث العداد ليعكس عدد التلاميذ الظاهرين فعلياً
+  $('#totalCount').textContent = arNum(visibleCount) + ' تلميذ';
+  
+  if(visibleCount === 0 && !search){ 
+    box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; 
+  } else if(visibleCount === 0 && search){ 
+    box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; 
+  }
 }
 
 function updStats(){
@@ -638,7 +694,7 @@ function updSendBar(){
   var dr=T.drafts[draftKey()], el=$('#sendBar'); if(!dr)return;
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
-  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='️ لديك تعديلات لم تُرسل'; }
+  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
   else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
 }
 
@@ -678,7 +734,7 @@ function sendGrades(){
       SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
     }).finally(function(){ btn.classList.remove('busy');btn.disabled=false; });
   }else{
-    confirmDlg('️ أنت غير متصل بالإنترنت\n\nهل تريد حفظ الإرسال في الطابور ليتم إرساله تلقائياً عند العودة للاتصال؟', function(){
+    confirmDlg('⚠️ أنت غير متصل بالإنترنت\n\nهل تريد حفظ الإرسال في الطابور ليتم إرساله تلقائياً عند العودة للاتصال؟', function(){
       SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
       toast('✓ أُضيف للطابور - سيُرسل تلقائياً عند الاتصال', 'ok');
     });
@@ -725,7 +781,7 @@ if('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js')
       .then(function(reg) { console.log('✅ Service Worker المعلمين مسجل:', reg.scope); })
-      .catch(function(err) { console.log(' فشل تسجيل SW المعلمين:', err); });
+      .catch(function(err) { console.log('❌ فشل تسجيل SW المعلمين:', err); });
   });
 }
 </script>
