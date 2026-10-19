@@ -184,7 +184,7 @@ button{cursor:pointer}
       <p>تطبيق المعلمين لإدارة الدرجات</p>
     </div>
     <div class="login-card">
-      <h2>🔐 دخول المعلم</h2>
+      <h2> دخول المعلم</h2>
       <div class="input-wrapper">
         <label>الكود الخاص بك</label>
         <input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off">
@@ -211,11 +211,11 @@ button{cursor:pointer}
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" onclick="manualSync()" title="مزامنة يدوية">🔄</button>
+        <button class="icon-btn" onclick="manualSync()" title="مزامنة يدوية"></button>
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="logout()">🚪</button>
+        <button class="icon-btn" onclick="logout()"></button>
       </div>
     </div>
   </div>
@@ -232,7 +232,7 @@ button{cursor:pointer}
 
   <div class="app-content">
     <div class="welcome-card">
-      <div class="welcome-icon">📚</div>
+      <div class="welcome-icon"></div>
       <div class="welcome-text">
         <h4 id="welcomeTitle">أهلاً بك</h4>
         <p id="welcomeSub">اختر المادة والشعبة لبدء إدخال الدرجات</p>
@@ -253,7 +253,7 @@ button{cursor:pointer}
         </select>
       </div>
       <div class="select-card month-card">
-        <label>📅 الشهر</label>
+        <label> الشهر</label>
         <select id="monthSelect" onchange="onMonthChange()"></select>
       </div>
     </div>
@@ -282,7 +282,7 @@ button{cursor:pointer}
     </div>
 
     <div class="search-box">
-      <span class="s-icon">🔍</span>
+      <span class="s-icon"></span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
@@ -330,7 +330,6 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-// ✅ تم إصلاح تسلسل الأرقام العربية (إضافة الرقم ١)
 var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
@@ -558,12 +557,11 @@ function fetchStudents(showLoading) {
           });
         }
         
-        // ✅ فلترة الأسماء الفارغة والمكررة لضمان تسلسل صحيح
         var uniqueNames = {};
         var filteredNames = r.names.filter(function(name) {
           var cleanName = (name || '').trim();
-          if (cleanName === '') return false; // تجاهل الأسماء الفارغة
-          if (uniqueNames[cleanName]) return false; // تجاهل الأسماء المكررة
+          if (cleanName === '') return false;
+          if (uniqueNames[cleanName]) return false;
           uniqueNames[cleanName] = true;
           return true;
         });
@@ -629,7 +627,6 @@ function renderRows(){
     var r=dr.rows[i];
     var cleanName = (r.name||'').trim();
     
-    // ✅ تجاهل الصفوف الفارغة تماماً (لا اسم ولا درجة)
     if (cleanName === '' && (r.degree === '' || r.degree === null || r.degree === undefined)) {
       continue;
     }
@@ -670,7 +667,6 @@ function renderRows(){
     visibleCount++;
   }
   
-  // ✅ تحديث العداد ليعكس عدد التلاميذ الظاهرين فعلياً
   $('#totalCount').textContent = arNum(visibleCount) + ' تلميذ';
   
   if(visibleCount === 0 && !search){ 
@@ -695,7 +691,7 @@ function updSendBar(){
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
   else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
-  else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
+  else{ el.className='send-status no'; el.textContent=' لم يتم الإرسال بعد'; }
 }
 
 function sendGrades(){
@@ -742,6 +738,7 @@ function sendGrades(){
 }
 
 function requestNotificationPermission(){ if("Notification"in window&&Notification.permission==="default"){ Notification.requestPermission(); } }
+
 function checkMessages(){
   if(!T.code)return;
   api({action:'getMessages',code:T.code}).then(function(r){
@@ -751,12 +748,9 @@ function checkMessages(){
         badge.textContent=arNum(r.unread);
         badge.style.display='flex';
         
-        // ✅ تشغيل صوت تنبيه
-        playNotificationSound();
-        
         // ✅ اهتزاز الهاتف (إذا كان مدعوماً)
         if(navigator.vibrate){
-          navigator.vibrate([200, 100, 200]); // اهتزاز متقطع
+          navigator.vibrate([200, 100, 200]);
         }
         
         // ✅ إشعار Push (إذا كان مفعلاً)
@@ -776,10 +770,12 @@ function checkMessages(){
   });
 }
 
-// ✅ دالة تشغيل صوت التنبيه
+// ✅ دالة تشغيل صوت التنبيه (مبسطة)
 function playNotificationSound(){
-  try{
-    var audio = new Audio('data:audio/wav;base64,UklGRnoAXEXBBQAAAABAAABAAQAAABAAABAAABAAgAAABAAQAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAAB
+  // يمكن إضافة صوت لاحقاً إذا لزم الأمر
+  console.log('🔔 إشعار جديد');
+}
+
 function openMessages(){
   requestNotificationPermission(); $('#msgModal').classList.add('show');
   $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">جاري التحميل...</div>';
