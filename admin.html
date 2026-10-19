@@ -161,7 +161,7 @@
 <section class="screen active" id="s-login">
   <div class="login"><div class="lcard">
     <div class="hero"><img src="icon-admin.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
-    <input id="keyIn" dir="ltr" type="password" placeholder=" كلمة المرور" style="text-align:center;font-weight:700">
+    <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
     <button class="btn" id="loginBtn" onclick="adminLogin()">دخول</button>
   </div></div>
 </section>
@@ -171,16 +171,16 @@
     <aside class="side">
       <div class="brand"><img src="icon-admin.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
-        <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico"></span>الرئيسية</button>
+        <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">🏠</span>الرئيسية</button>
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
-        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
+        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico"></span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
-        <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
+        <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico"></span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
       <div class="sfoot"><div class="rolecard" id="roleCard">
-        <div class="dot2" id="roleDot">🛠️</div>
+        <div class="dot2" id="roleDot">️</div>
         <div style="flex:1"><b id="roleLabel">المطور</b><small id="roleSub">صلاحيات كاملة</small></div>
         <button class="exit" onclick="logoutAdmin()" title="تسجيل الخروج">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -201,9 +201,9 @@
       <div class="content">
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>الرئيسية</div>
-          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <p class="psub"> فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
-          <div class="card"><div class="ct"> كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
+          <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
 
         <div id="tab-studs" hidden>
@@ -232,7 +232,7 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
+              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
           </div>
@@ -241,7 +241,7 @@
 
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات</p>
+          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ) أدخل الدرجات</p>
           <div id="entBox"></div>
         </div>
 
@@ -270,7 +270,7 @@
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi"></div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
               <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
             </div>
@@ -278,10 +278,26 @@
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
               <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
             </div>
-            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi"></div><h3>رابط الخادم</h3>
+            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
               <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
               <div id="connRes"></div>
+            </div>
+            
+            <!-- ✅ بطاقة إرسال رسالة للمعلمين (جديدة) -->
+            <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
+              <div class="hi">📨</div>
+              <h3>إرسال رسالة للمعلمين</h3>
+              <div class="form-group">
+                <label>المعلم المستهدف</label>
+                <input id="msgTargetCode" dir="ltr" placeholder="T-XXXX أو ALL للكل">
+                <div class="form-hint">اكتب كود المعلم (مثل: T-HGDF) أو ALL لإرسال لجميع المعلمين</div>
+              </div>
+              <div class="form-group">
+                <label>نص الرسالة</label>
+                <textarea id="msgText" placeholder="اكتب رسالتك هنا..." rows="3"></textarea>
+              </div>
+              <button class="btn" style="background:#DC2626" onclick="sendAdminMessage()">📨 إرسال الرسالة</button>
             </div>
           </div>
         </div>
@@ -291,12 +307,12 @@
   
   <nav class="bnav">
     <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">🏠</span><small>الرئيسية</small></button>
-    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico"></span><small>التلاميذ</small></button>
+    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span><small>التلاميذ</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span><small>كلمات</small></button>
-    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">️</span><small>الإعدادات</small></button>
   </nav>
 </section>
 
@@ -334,7 +350,7 @@
       <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
       <div style="display:flex; gap:8px;">
         <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
-        <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;"> إغلاق</button>
+        <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
       </div>
     </div>
     <div id="trSubjectsList" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
@@ -382,9 +398,9 @@
 
 <div class="ovl" id="printSettingsModal">
   <div class="modal" style="max-width:500px">
-    <h3>️ إعدادات الطباعة</h3>
+    <h3>🖨️ إعدادات الطباعة</h3>
     <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٥ - ٢٠٢٦"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٢٥ - ٢٠٦"></div>
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
@@ -406,7 +422,7 @@
 
 <div class="ovl" id="sumModal">
   <div class="modal">
-    <h3>📊 ملخص النتائج</h3>
+    <h3> ملخص النتائج</h3>
     <div id="sumBox"></div>
     <button class="btn ghost" style="margin-top:10px" onclick="hideModal('sumModal')">إغلاق</button>
   </div>
@@ -431,6 +447,38 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw-admin.js')
       .then(function(reg) { console.log('✅ Service Worker الإدارة مسجل:', reg.scope); })
       .catch(function(err) { console.log('❌ فشل تسجيل SW الإدارة:', err); });
+  });
+}
+
+// ✅ دالة إرسال رسالة للمعلمين (جديدة)
+function sendAdminMessage(){
+  var target = document.getElementById('msgTargetCode').value.trim().toUpperCase() || 'ALL';
+  var message = document.getElementById('msgText').value.trim();
+  
+  if(!message){
+    toast('⚠️ اكتب نص الرسالة أولاً', 'err');
+    return;
+  }
+  
+  if(!confirm('📨 إرسال رسالة إلى: ' + (target === 'ALL' ? 'جميع المعلمين' : target) + '\n\n' + message)){
+    return;
+  }
+  
+  api({
+    action: 'sendAdminMessage',
+    key: key(),
+    targetCode: target,
+    message: message
+  }).then(function(r){
+    if(r.ok){
+      toast('✓✓ تم إرسال الرسالة بنجاح', 'ok');
+      document.getElementById('msgText').value = '';
+      document.getElementById('msgTargetCode').value = '';
+    } else {
+      toast('❌ ' + (r.error || 'فشل الإرسال'), 'err');
+    }
+  }).catch(function(err){
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
 </script>
