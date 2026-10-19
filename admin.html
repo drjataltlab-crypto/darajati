@@ -5,22 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0B3B2E">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="إدارة درجاتي">
+<meta name="application-name" content="إدارة درجاتي">
+<meta name="msapplication-TileColor" content="#0B3B2E">
 <title>درجاتي — لوحة التحكم</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
-<!-- ✅ أيقونات الإدارة الصحيحة مع منع الكاش -->
-<link rel="icon" type="image/png" href="icon-admin.png?v=6">
-<link rel="apple-touch-icon" href="icon-admin.png?v=6">
-<link rel="manifest" href="manifest-admin.webmanifest?v=6">
+<link rel="icon" type="image/png" href="icon-admin.png">
+<link rel="apple-touch-icon" href="icon-admin.png">
+<link rel="manifest" href="manifest-admin.webmanifest">
 
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin.css?v=3.5">
 
 <style>
-/* ═══ تنسيق زر الخروج الاحترافي ═══ */
 .exit, .iconbtn.exit-btn {
   background: linear-gradient(135deg, #DC2626, #991B1B);
   color: #fff;
@@ -46,7 +47,6 @@
   stroke-linecap: round; stroke-linejoin: round; fill: none;
 }
 
-/* ══ تنسيقات النماذج ═══ */
 .form-group { margin-bottom: 14px; }
 .form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
 .form-group input, .form-group textarea, .form-group select {
@@ -66,9 +66,6 @@
 .edit-subject-row .remove-btn { width: auto; padding: 6px 10px; background: #DC2626; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
 .edit-subject-row .remove-btn:hover { background: #B91C1C; }
 
-/* ══════════════════════════════════════════════════════════ */
-/* ✅ إصلاح الشريط الأفقي */
-/* ═══════════════════════════════════════════════════════════ */
 #dashKpi .stats-bar {
   display: flex !important;
   flex-direction: row !important;
@@ -79,23 +76,10 @@
   gap: 12px !important;
   padding: 16px 20px !important;
 }
+#dashKpi .stats-bar .stat-item { flex: 1 !important; min-width: 130px !important; white-space: nowrap !important; }
+#dashKpi .stats-bar .progress-wrap { flex: 1.5 !important; min-width: 180px !important; }
+#dashKpi .stats-bar .health-badge { flex-shrink: 0 !important; }
 
-#dashKpi .stats-bar .stat-item {
-  flex: 1 !important;
-  min-width: 130px !important;
-  white-space: nowrap !important;
-}
-
-#dashKpi .stats-bar .progress-wrap {
-  flex: 1.5 !important;
-  min-width: 180px !important;
-}
-
-#dashKpi .stats-bar .health-badge {
-  flex-shrink: 0 !important;
-}
-
-/* ════ إصلاح حدود الطباعة ════ */
 .print-container {
   font-family: 'Tajawal', Arial, sans-serif !important;
   width: 210mm !important;
@@ -103,7 +87,6 @@
   padding: 10mm !important;
   background: #fff !important;
 }
-
 .print-container h2 {
   text-align: center !important;
   color: #1E40AF !important;
@@ -112,15 +95,12 @@
   border-bottom: 2px solid #1E40AF !important;
   padding-bottom: 10px !important;
 }
-
 .print-table {
   width: 100% !important;
   border-collapse: collapse !important;
   border: 2px solid #000 !important;
 }
-
-.print-table th,
-.print-table td {
+.print-table th, .print-table td {
   padding: 6px 8px !important;
   border: 1.5px solid #000 !important;
   text-align: center !important;
@@ -128,14 +108,12 @@
   color: #000 !important;
   font-weight: 700 !important;
 }
-
 .print-table th {
   background: #1E40AF !important;
   color: #fff !important;
   font-weight: 900 !important;
   font-size: 11px !important;
 }
-
 .print-table td.name-cell {
   text-align: right !important;
   font-weight: 900 !important;
@@ -144,71 +122,36 @@
   white-space: normal !important;
   word-wrap: break-word !important;
 }
-
-.print-table td.avg-cell {
-  background: #FEF3C7 !important;
-  font-weight: 900 !important;
-}
-
-.print-table td.pass-cell {
-  color: #047857 !important;
-  font-weight: 900 !important;
-}
-
-.print-table td.fail-cell {
-  color: #DC2626 !important;
-  font-weight: 900 !important;
-}
+.print-table td.avg-cell { background: #FEF3C7 !important; font-weight: 900 !important; }
+.print-table td.pass-cell { color: #047857 !important; font-weight: 900 !important; }
+.print-table td.fail-cell { color: #DC2626 !important; font-weight: 900 !important; }
 
 @media print {
-  body * {
-    visibility: hidden !important;
-  }
-  .print-container,
-  .print-container * {
-    visibility: visible !important;
-  }
+  body * { visibility: hidden !important; }
+  .print-container, .print-container * { visibility: visible !important; }
   .print-container {
     position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 10mm !important;
+    left: 0 !important; top: 0 !important;
+    width: 100% !important; margin: 0 !important; padding: 10mm !important;
   }
-  @page {
-    size: A4 landscape !important;
-    margin: 10mm !important;
-  }
+  @page { size: A4 landscape !important; margin: 10mm !important; }
 }
 
-/* ═══════════════════════════════════════════════════════════ */
-/* ✅ إصلاحات الموبايل (تمنع اندماج الصفحات) */
-/* ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .side { display: none !important; }
   .maincol { width: 100% !important; margin: 0 !important; }
-  
   [hidden] { display: none !important; }
-  
   .content { padding-bottom: 80px !important; }
-  
   table, .tlist, .grid3, .setgrid { 
     display: block !important; overflow-x: auto !important; white-space: nowrap; 
   }
-  
   .btn, .iconbtn, input, select, textarea { padding: 12px !important; font-size: 14px !important; min-height: 44px; }
   .card, .setcard, .modal { margin: 8px !important; padding: 12px !important; border-radius: 12px !important; }
   .ptitle { font-size: 16px !important; }
   .bnav { height: 65px !important; }
   .bnav button { font-size: 11px !important; padding: 4px 2px !important; }
-  
-  #dashKpi .stats-bar {
-    flex-wrap: wrap !important;
-  }
-  #dashKpi .stats-bar .stat-item {
-    min-width: calc(50% - 10px) !important;
-  }
+  #dashKpi .stats-bar { flex-wrap: wrap !important; }
+  #dashKpi .stats-bar .stat-item { min-width: calc(50% - 10px) !important; }
 }
 </style>
 </head>
@@ -218,7 +161,7 @@
 <section class="screen active" id="s-login">
   <div class="login"><div class="lcard">
     <div class="hero"><img src="icon-admin.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
-    <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
+    <input id="keyIn" dir="ltr" type="password" placeholder=" كلمة المرور" style="text-align:center;font-weight:700">
     <button class="btn" id="loginBtn" onclick="adminLogin()">دخول</button>
   </div></div>
 </section>
@@ -227,9 +170,8 @@
   <div class="app">
     <aside class="side">
       <div class="brand"><img src="icon-admin.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
-      <!-- ✅ الترتيب الجديد للشريط الجانبي - تغيير "نظرة عامة" إلى "الرئيسية" -->
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
-        <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">🏠</span>الرئيسية</button>
+        <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico"></span>الرئيسية</button>
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
@@ -257,7 +199,6 @@
       </header>
       
       <div class="content">
-        <!-- ✅ الترتيب الجديد لمحتوى الصفحات - تغيير "نظرة عامة" إلى "الرئيسية" -->
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>الرئيسية</div>
           <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
@@ -291,7 +232,7 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
           </div>
@@ -313,7 +254,7 @@
         <div id="tab-keys" hidden>
           <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">️</div><h3>كلمة المطور</h3>
+            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">🛠️</div><h3>كلمة المطور</h3>
               <label class="label">الحالية</label><input id="kDevCur" dir="ltr" readonly style="background:#F8FAFC">
               <label class="label">الجديدة</label><input id="kDevNew" dir="ltr" type="password">
               <button class="btn" style="background:#B45309" onclick="doChangeKey('DEV')">🔐 تغيير</button>
@@ -337,7 +278,7 @@
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
               <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
             </div>
-            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
+            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi"></div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
               <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
               <div id="connRes"></div>
@@ -348,10 +289,9 @@
     </div>
   </div>
   
-  <!-- ✅ الترتيب الجديد للشريط السفلي (الموبايل) - تغيير "نظرة" إلى "الرئيسية" -->
   <nav class="bnav">
     <button data-tab="dash" class="act" onclick="adminTab('dash')"><span class="ico">🏠</span><small>الرئيسية</small></button>
-    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span><small>التلاميذ</small></button>
+    <button data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico"></span><small>التلاميذ</small></button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
@@ -371,7 +311,6 @@
   <div class="content" id="tvBox"></div>
 </section>
 
-<!-- نوافذ منبثقة -->
 <div class="ovl" id="editTeacherModal">
   <div class="modal" style="max-width:700px">
     <h3>✏️ تعديل بيانات المعلم</h3>
@@ -395,7 +334,7 @@
       <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
       <div style="display:flex; gap:8px;">
         <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
-        <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
+        <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;"> إغلاق</button>
       </div>
     </div>
     <div id="trSubjectsList" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
@@ -411,7 +350,7 @@
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
               <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
@@ -421,7 +360,7 @@
               <th style="padding:6px; border:1px solid #0F172A;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
               <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
-              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك١</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك</th>
               <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#7C3AED;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#0E7490;">آذار</th>
@@ -436,7 +375,7 @@
         </table>
       </div>
     </div>
-    <div id="trLoading" class="empty" style="display:none;"> جاري تحميل البيانات...</div>
+    <div id="trLoading" class="empty" style="display:none;">⏳ جاري تحميل البيانات...</div>
     <div id="trEmpty" class="empty" style="display:none;">لا توجد مواد مسجلة لهذا المعلم.</div>
   </div>
 </div>
@@ -445,7 +384,7 @@
   <div class="modal" style="max-width:500px">
     <h3>️ إعدادات الطباعة</h3>
     <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٢٥ - ٢٢٦"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٥ - ٢٠٢٦"></div>
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
@@ -486,15 +425,12 @@
 <script src="page-settings.js?v=3.5"></script>
 
 <script>
-// ✅ تسجيل Service Worker الخاص بالإدارة فقط (منفصل عن المعلمين)
+// ✅ تسجيل Service Worker الخاص بالإدارة فقط
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-      for(let registration of registrations) { registration.unregister(); }
-    });
-    navigator.serviceWorker.register('sw-admin.js?v=6').catch(function(err){
-      console.log('SW Admin registration failed:', err);
-    });
+    navigator.serviceWorker.register('./sw-admin.js')
+      .then(function(reg) { console.log('✅ Service Worker الإدارة مسجل:', reg.scope); })
+      .catch(function(err) { console.log('❌ فشل تسجيل SW الإدارة:', err); });
   });
 }
 </script>
