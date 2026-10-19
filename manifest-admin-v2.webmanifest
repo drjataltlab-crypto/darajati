@@ -1,12 +1,14 @@
 {
   "name": "درجاتي - لوحة الإدارة",
-  "short_name": "إدارة درجاتي",
+  "short_name": "درجاتي الإدارة",
   "description": "لوحة تحكم المطور والمدير",
   "start_url": "./admin.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#1e3a5f",
   "theme_color": "#1e3a5f",
   "orientation": "portrait",
+  "id": "darajati-admin-app",
   "icons": [
     {
       "src": "./icon-admin.png",
