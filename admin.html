@@ -60,6 +60,59 @@
 .form-hint { font-size: 11.5px; color: #64748B; margin-top: 4px; line-height: 1.6; }
 .form-hint code { background: #F1F5F9; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; }
 
+/* ✅ تنسيقات جديدة لاختيار المعلمين */
+.teacher-select-box {
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.teacher-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 6px;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.teacher-item:hover {
+  background: #F1F5F9;
+}
+.teacher-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.teacher-item label {
+  flex: 1;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1E293B;
+}
+.select-all-btn {
+  width: 100%;
+  padding: 8px;
+  background: #0891B2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 10px;
+  transition: 0.2s;
+}
+.select-all-btn:hover {
+  background: #0E7490;
+}
+
 .edit-subject-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #E2E8F0; }
 .edit-subject-row .row-num { font-weight: 700; color: #475569; min-width: 25px; }
 .edit-subject-row select { flex: 1; padding: 8px; border: 1px solid #E2E8F0; border-radius: 6px; font-family: inherit; }
@@ -173,9 +226,9 @@
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')"><span class="ico">🏠</span>الرئيسية</button>
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')"><span class="ico">🎓</span>التلاميذ</button>
-        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico"></span>المعلمون</button>
+        <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
-        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
+        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico"></span>نتائج التلاميذ</button>
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico"></span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
@@ -201,7 +254,7 @@
       <div class="content">
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>الرئيسية</div>
-          <p class="psub"> فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
           <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
@@ -241,7 +294,7 @@
 
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ) أدخل الدرجات</p>
+          <p class="psub">) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات</p>
           <div id="entBox"></div>
         </div>
 
@@ -270,34 +323,36 @@
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi"></div><h3>قالب Excel فارغ</h3>
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
               <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
             </div>
-            <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi">📤</div><h3>قالب معبأ بالدرجات</h3>
+            <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi"></div><h3>قالب معبأ بالدرجات</h3>
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
               <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
             </div>
-            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
+            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi"></div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
               <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
               <div id="connRes"></div>
             </div>
             
-            <!-- ✅ بطاقة إرسال رسالة للمعلمين (جديدة) -->
+            <!-- ✅ بطاقة إرسال رسالة للمعلمين (محدثة مع قائمة منسدلة) -->
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
               <div class="hi">📨</div>
               <h3>إرسال رسالة للمعلمين</h3>
               <div class="form-group">
-                <label>المعلم المستهدف</label>
-                <input id="msgTargetCode" dir="ltr" placeholder="T-XXXX أو ALL للكل">
-                <div class="form-hint">اكتب كود المعلم (مثل: T-HGDF) أو ALL لإرسال لجميع المعلمين</div>
+                <label>المعلمون المستهدفون</label>
+                <button type="button" class="select-all-btn" onclick="toggleSelectAllTeachers()">✅ تحديد الكل / إلغاء الكل</button>
+                <div class="teacher-select-box" id="teacherSelectBox">
+                  <div style="text-align:center;padding:20px;color:#64748B">جاري تحميل قائمة المعلمين...</div>
+                </div>
               </div>
               <div class="form-group">
                 <label>نص الرسالة</label>
                 <textarea id="msgText" placeholder="اكتب رسالتك هنا..." rows="3"></textarea>
               </div>
-              <button class="btn" style="background:#DC2626" onclick="sendAdminMessage()">📨 إرسال الرسالة</button>
+              <button class="btn" style="background:#DC2626" onclick="sendAdminMessageNew()">📨 إرسال الرسالة</button>
             </div>
           </div>
         </div>
@@ -312,7 +367,7 @@
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span><small>كلمات</small></button>
-    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">️</span><small>الإعدادات</small></button>
+    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
   </nav>
 </section>
 
@@ -335,7 +390,7 @@
     <div class="form-group">
       <label>المواد والصفوف</label>
       <div id="editSubjectsContainer" style="background:#F8FAFC; padding:12px; border-radius:10px; border:1px solid #E2E8F0;"></div>
-      <button class="btn" style="margin-top:10px; width:100%; background:#0891B2;" onclick="addEditSubjectRow()">➕ إضافة مادة وصف آخر</button>
+      <button class="btn" style="margin-top:10px; width:100%; background:#0891B2;" onclick="addEditSubjectRow()"> إضافة مادة وصف آخر</button>
     </div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
@@ -400,7 +455,7 @@
   <div class="modal" style="max-width:500px">
     <h3>🖨️ إعدادات الطباعة</h3>
     <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٢٥ - ٢٠٦"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٥ - ٢٠٢٦"></div>
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
@@ -422,7 +477,7 @@
 
 <div class="ovl" id="sumModal">
   <div class="modal">
-    <h3> ملخص النتائج</h3>
+    <h3>📊 ملخص النتائج</h3>
     <div id="sumBox"></div>
     <button class="btn ghost" style="margin-top:10px" onclick="hideModal('sumModal')">إغلاق</button>
   </div>
@@ -450,9 +505,58 @@ if('serviceWorker' in navigator){
   });
 }
 
-// ✅ دالة إرسال رسالة للمعلمين (جديدة)
-function sendAdminMessage(){
-  var target = document.getElementById('msgTargetCode').value.trim().toUpperCase() || 'ALL';
+// ✅ تحميل قائمة المعلمين عند فتح صفحة الإعدادات
+var allTeachers = [];
+var selectedTeachers = [];
+
+function loadTeachersList(){
+  api({action:'adminData', key:key()}).then(function(r){
+    if(r.ok && r.teachers){
+      allTeachers = r.teachers;
+      renderTeacherSelectBox();
+    }
+  }).catch(function(err){
+    document.getElementById('teacherSelectBox').innerHTML = 
+      '<div style="text-align:center;padding:20px;color:#DC2626">فشل تحميل قائمة المعلمين</div>';
+  });
+}
+
+function renderTeacherSelectBox(){
+  var box = document.getElementById('teacherSelectBox');
+  if(allTeachers.length === 0){
+    box.innerHTML = '<div style="text-align:center;padding:20px;color:#64748B">لا يوجد معلمين مسجلين</div>';
+    return;
+  }
+  
+  var html = '';
+  allTeachers.forEach(function(t){
+    html += '<div class="teacher-item">' +
+      '<input type="checkbox" id="teacher_' + t.code + '" value="' + t.code + '" onchange="updateSelectedTeachers()">' +
+      '<label for="teacher_' + t.code + '">' + t.name + ' (' + t.code + ')</label>' +
+      '</div>';
+  });
+  
+  box.innerHTML = html;
+}
+
+function toggleSelectAllTeachers(){
+  var checkboxes = document.querySelectorAll('#teacherSelectBox input[type="checkbox"]');
+  var allChecked = Array.from(checkboxes).every(function(cb){ return cb.checked; });
+  
+  checkboxes.forEach(function(cb){
+    cb.checked = !allChecked;
+  });
+  
+  updateSelectedTeachers();
+}
+
+function updateSelectedTeachers(){
+  var checkboxes = document.querySelectorAll('#teacherSelectBox input[type="checkbox"]:checked');
+  selectedTeachers = Array.from(checkboxes).map(function(cb){ return cb.value; });
+}
+
+// ✅ دالة إرسال رسالة للمعلمين (محدثة)
+function sendAdminMessageNew(){
   var message = document.getElementById('msgText').value.trim();
   
   if(!message){
@@ -460,27 +564,65 @@ function sendAdminMessage(){
     return;
   }
   
-  if(!confirm('📨 إرسال رسالة إلى: ' + (target === 'ALL' ? 'جميع المعلمين' : target) + '\n\n' + message)){
+  if(selectedTeachers.length === 0){
+    toast('⚠️ اختر معلماً واحداً على الأقل', 'err');
     return;
   }
   
-  api({
-    action: 'sendAdminMessage',
-    key: key(),
-    targetCode: target,
-    message: message
-  }).then(function(r){
-    if(r.ok){
-      toast('✓✓ تم إرسال الرسالة بنجاح', 'ok');
-      document.getElementById('msgText').value = '';
-      document.getElementById('msgTargetCode').value = '';
-    } else {
-      toast('❌ ' + (r.error || 'فشل الإرسال'), 'err');
-    }
-  }).catch(function(err){
-    toast('⚠️ تعذر الاتصال بالخادم', 'err');
+  var targetList = selectedTeachers.length === allTeachers.length ? 'جميع المعلمين (' + selectedTeachers.length + ')' : 
+                    selectedTeachers.length + ' معلم';
+  
+  if(!confirm('📨 إرسال رسالة إلى: ' + targetList + '\n\n' + message)){
+    return;
+  }
+  
+  // إرسال الرسالة لكل معلم محدد
+  var sentCount = 0;
+  var failedCount = 0;
+  
+  selectedTeachers.forEach(function(targetCode, index){
+    setTimeout(function(){
+      api({
+        action: 'sendAdminMessage',
+        key: key(),
+        targetCode: targetCode,
+        message: message
+      }).then(function(r){
+        if(r.ok){
+          sentCount++;
+          if(sentCount + failedCount === selectedTeachers.length){
+            toast('✓✓ تم إرسال الرسالة لـ ' + sentCount + ' معلم', 'ok');
+            document.getElementById('msgText').value = '';
+            // إلغاء تحديد الجميع
+            document.querySelectorAll('#teacherSelectBox input[type="checkbox"]').forEach(function(cb){
+              cb.checked = false;
+            });
+            selectedTeachers = [];
+          }
+        } else {
+          failedCount++;
+          if(sentCount + failedCount === selectedTeachers.length){
+            toast('⚠️ تم الإرسال: ' + sentCount + ' | فشل: ' + failedCount, 'err');
+          }
+        }
+      }).catch(function(err){
+        failedCount++;
+        if(sentCount + failedCount === selectedTeachers.length){
+          toast('️ تعذر الاتصال بالخادم', 'err');
+        }
+      });
+    }, index * 500); // إرسال كل رسالة بفارق نصف ثانية
   });
 }
+
+// تحميل قائمة المعلمين عند فتح الإعدادات
+var originalAdminTab = adminTab;
+adminTab = function(tab){
+  originalAdminTab(tab);
+  if(tab === 'set'){
+    setTimeout(loadTeachersList, 100);
+  }
+};
 </script>
 </body>
 </html>
