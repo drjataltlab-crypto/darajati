@@ -747,11 +747,39 @@ function checkMessages(){
   api({action:'getMessages',code:T.code}).then(function(r){
     if(r.ok){
       var badge=$('#msgBadge');
-      if(r.unread>0){ badge.textContent=arNum(r.unread); badge.style.display='flex'; }
-      else{badge.style.display='none';}
+      if(r.unread>0){
+        badge.textContent=arNum(r.unread);
+        badge.style.display='flex';
+        
+        // ✅ تشغيل صوت تنبيه
+        playNotificationSound();
+        
+        // ✅ اهتزاز الهاتف (إذا كان مدعوماً)
+        if(navigator.vibrate){
+          navigator.vibrate([200, 100, 200]); // اهتزاز متقطع
+        }
+        
+        // ✅ إشعار Push (إذا كان مفعلاً)
+        if("Notification"in window && Notification.permission==="granted" && document.hidden){
+          new Notification("رسالة من الإدارة",{
+            body:"لديك " + r.unread + " رسالة جديدة في درجاتي",
+            icon:"icon.png",
+            tag:"darajati-message"
+          });
+        }
+      }else{
+        badge.style.display='none';
+      }
     }
-  }).catch(function(e){});
+  }).catch(function(e){
+    console.log('فشل جلب الرسائل:', e);
+  });
 }
+
+// ✅ دالة تشغيل صوت التنبيه
+function playNotificationSound(){
+  try{
+    var audio = new Audio('data:audio/wav;base64,UklGRnoAXEXBBQAAAABAAABAAQAAABAAABAAABAAgAAABAAQAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAABAAAB
 function openMessages(){
   requestNotificationPermission(); $('#msgModal').classList.add('show');
   $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">جاري التحميل...</div>';
