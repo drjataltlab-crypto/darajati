@@ -1,14 +1,13 @@
 {
   "name": "درجاتي - تطبيق المعلمين",
-  "short_name": "درجاتي المعلمين",
+  "short_name": "درجاتي",
   "description": "تطبيق المعلمين لإدخال وإدارة الدرجات",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#6366f1",
   "theme_color": "#6366f1",
-  "orientation": "portrait",
-  "id": "darajati-teacher-app",
   "icons": [
     {
       "src": "./icon.png",
