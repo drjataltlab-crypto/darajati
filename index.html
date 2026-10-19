@@ -5,17 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#6366f1">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="درجاتي المعلمين">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="درجاتي المعلمين">
 <meta name="msapplication-TileColor" content="#6366f1">
 <meta name="description" content="تطبيق المعلمين لإدخال الدرجات">
 <title>درجاتي - تطبيق المعلمين</title>
-<link rel="icon" type="image/png" href="icon.png?v=6">
-<link rel="apple-touch-icon" href="icon.png?v=6">
-<!-- ✅ تم إصلاح علامة التنصيص المفقودة وإضافة رقم الإصدار -->
-<link rel="manifest" href="manifest.webmanifest?v=6">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -208,7 +207,7 @@ button{cursor:pointer}
         <div class="user-avatar">👨‍🏫</div>
         <div class="user-info">
           <h3 id="teacherName">مرحباً</h3>
-          <small id="teacherCode">🔑 —</small>
+          <small id="teacherCode"> —</small>
         </div>
       </div>
       <div class="header-actions">
@@ -216,7 +215,7 @@ button{cursor:pointer}
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="logout()">🚪</button>
+        <button class="icon-btn" onclick="logout()"></button>
       </div>
     </div>
   </div>
@@ -283,7 +282,7 @@ button{cursor:pointer}
     </div>
 
     <div class="search-box">
-      <span class="s-icon">🔍</span>
+      <span class="s-icon"></span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
@@ -331,7 +330,7 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-var AR = '٠١٢٣٤٥٦٧٨٩';
+var AR = '٠٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
@@ -369,9 +368,7 @@ var SendQueue = {
       btn.classList.add('pending');
       bar.className = 'send-status queue';
       bar.textContent = '📡 في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
-    }else{
-      btn.classList.remove('pending');
-    }
+    }else{ btn.classList.remove('pending'); }
   },
   processQueue: function(){
     var self = this;
@@ -385,17 +382,12 @@ var SendQueue = {
     var self = this;
     item.attempts++;
     if(item.attempts > 5){ this.remove(item.id); toast('⚠️ فشل الإرسال بعد 5 محاولات', 'err'); return; }
-    
     var queue = this.getAll();
     var itemIndex = queue.findIndex(function(q){ return q.id === item.id; });
     if(itemIndex > -1){ queue[itemIndex] = item; localStorage.setItem(this.KEY, JSON.stringify(queue)); }
-    
     api(item.payload, 30000).then(function(r){
-      if(r.ok){
-        self.remove(item.id);
-        toast('✓✓ تم إرسال البيانات المتراكمة', 'ok');
-        if(item.onSuccess) item.onSuccess(r);
-      }else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
+      if(r.ok){ self.remove(item.id); toast('✓✓ تم إرسال البيانات المتراكمة', 'ok'); if(item.onSuccess) item.onSuccess(r); }
+      else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
     }).catch(function(e){ console.log('❌ خطأ في الإرسال:', e); });
   }
 };
@@ -450,36 +442,29 @@ function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
   if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
   $('#loginMsg').textContent='⏳ جاري التحقق...'; $('#loginMsg').style.color='var(--muted)';
-  
   api({action:'teacherLogin',code:code}).then(function(r){
     if(!r.ok){$('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
     localStorage.setItem('d_session',JSON.stringify(r.teacher));
     SendQueue.KEY = 'd_send_queue_' + r.teacher.code;
     enterHome();
-  }).catch(function(e){$('#loginMsg').textContent='📴 تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
+  }).catch(function(e){$('#loginMsg').textContent=' تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
 }
 
 function enterHome(){
   var s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(!s){$('#login').style.display='flex';$('#app').style.display='none';return;}
-  
   T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
   if(!T.subjects||T.subjects.length===0){ if(T.subject&&T.classes&&T.classes.length>0){ T.subjects=[{name:T.subject,classes:T.classes}]; } }
   T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
-
-  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent='🔑 '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
+  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent=' '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
   $('#login').style.display='none'; $('#app').style.display='block';
-
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
-  
   window.addEventListener('online', updateConnectionStatus);
   window.addEventListener('offline', updateConnectionStatus);
   updateConnectionStatus();
-  
   SendQueue.updateUI();
   setTimeout(function(){ SendQueue.processQueue(); }, 2000);
-  
   requestNotificationPermission();
   checkMessages();
   msgCheckInterval=setInterval(checkMessages,60000);
@@ -636,7 +621,7 @@ function renderRows(){
   }
   $('#totalCount').textContent=arNum(dr.rows.length)+' تلميذ';
   if(displayIndex===1&&!search){ box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; }
-  else if(displayIndex===1&&search){ box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; }
+  else if(displayIndex===1&&search){ box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>'; }
 }
 
 function updStats(){
@@ -653,7 +638,7 @@ function updSendBar(){
   var dr=T.drafts[draftKey()], el=$('#sendBar'); if(!dr)return;
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
-  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
+  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='️ لديك تعديلات لم تُرسل'; }
   else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
 }
 
@@ -671,7 +656,6 @@ function sendGrades(){
     clean.push({name:nm,degree:v});
   }
   if(err){toast(err,true);return;} if(!clean.length){toast('أدخل الدرجات أولاً',true);return;}
-
   var payload = {
     action:'submitGrades', code:T.code, cls:cls, month:month, maxDegree:max,
     rows: clean.map(function(r) {
@@ -684,7 +668,6 @@ function sendGrades(){
     batchId:'b'+fnv1a([T.code, cls, month].join('|'))+'-'+clean.length+'-'+Date.now(),
     sentAt:Date.now()
   };
-
   if(navigator.onLine){
     var btn=$('#sendBtn'); btn.classList.add('busy');btn.disabled=true;
     api(payload, 30000).then(function(r){
@@ -695,7 +678,7 @@ function sendGrades(){
       SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
     }).finally(function(){ btn.classList.remove('busy');btn.disabled=false; });
   }else{
-    confirmDlg('⚠️ أنت غير متصل بالإنترنت\n\nهل تريد حفظ الإرسال في الطابور ليتم إرساله تلقائياً عند العودة للاتصال؟', function(){
+    confirmDlg('️ أنت غير متصل بالإنترنت\n\nهل تريد حفظ الإرسال في الطابور ليتم إرساله تلقائياً عند العودة للاتصال؟', function(){
       SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
       toast('✓ أُضيف للطابور - سيُرسل تلقائياً عند الاتصال', 'ok');
     });
@@ -737,15 +720,12 @@ window.onbeforeunload = function(e) {
   if(s)enterHome();
 })();
 
-// ✅ تسجيل Service Worker الخاص بالمعلمين فقط (منفصل عن الإدارة)
+// ✅ تسجيل Service Worker الخاص بالمعلمين
 if('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-      for(let registration of registrations) { registration.unregister(); }
-    });
-    navigator.serviceWorker.register('./sw.js?v=6')
+    navigator.serviceWorker.register('./sw.js')
       .then(function(reg) { console.log('✅ Service Worker المعلمين مسجل:', reg.scope); })
-      .catch(function(err) { console.log('❌ فشل تسجيل SW المعلمين:', err); });
+      .catch(function(err) { console.log(' فشل تسجيل SW المعلمين:', err); });
   });
 }
 </script>
