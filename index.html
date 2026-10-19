@@ -6,11 +6,16 @@
 <meta name="theme-color" content="#6366f1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="درجاتي">
+<meta name="apple-mobile-web-app-title" content="درجاتي المعلمين">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="درجاتي المعلمين">
+<meta name="msapplication-TileColor" content="#6366f1">
+<meta name="description" content="تطبيق المعلمين لإدخال الدرجات">
 <title>درجاتي - تطبيق المعلمين</title>
-<link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="manifest" href="manifest.webmanifest>
+<link rel="icon" type="image/png" href="icon.png?v=6">
+<link rel="apple-touch-icon" href="icon.png?v=6">
+<!-- ✅ تم إصلاح علامة التنصيص المفقودة وإضافة رقم الإصدار -->
+<link rel="manifest" href="manifest.webmanifest?v=6">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -65,7 +70,6 @@ button{cursor:pointer}
 .connection-status.show{opacity:1}
 .connection-status.online{background:rgba(16,185,129,.95);color:#fff}
 .connection-status.offline{background:rgba(239,68,68,.95);color:#fff}
-.connection-status.syncing{background:rgba(245,158,11,.95);color:#fff}
 
 .sync-indicator{position:fixed;top:110px;left:50%;transform:translateX(-50%);background:rgba(16,185,129,.95);color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:.3s;box-shadow:0 4px 15px rgba(16,185,129,.4);display:flex;align-items:center;gap:6px}
 .sync-indicator.show{opacity:1}
@@ -201,14 +205,13 @@ button{cursor:pointer}
   <div class="app-header">
     <div class="header-row">
       <div class="user-section">
-        <div class="user-avatar">‍🏫</div>
+        <div class="user-avatar">👨‍🏫</div>
         <div class="user-info">
           <h3 id="teacherName">مرحباً</h3>
           <small id="teacherCode">🔑 —</small>
         </div>
       </div>
       <div class="header-actions">
-        <!-- ✅ زر المزامنة اليدوية -->
         <button class="icon-btn" onclick="manualSync()" title="مزامنة يدوية">🔄</button>
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
@@ -230,7 +233,7 @@ button{cursor:pointer}
 
   <div class="app-content">
     <div class="welcome-card">
-      <div class="welcome-icon"></div>
+      <div class="welcome-icon">📚</div>
       <div class="welcome-text">
         <h4 id="welcomeTitle">أهلاً بك</h4>
         <p id="welcomeSub">اختر المادة والشعبة لبدء إدخال الدرجات</p>
@@ -251,7 +254,7 @@ button{cursor:pointer}
         </select>
       </div>
       <div class="select-card month-card">
-        <label> الشهر</label>
+        <label>📅 الشهر</label>
         <select id="monthSelect" onchange="onMonthChange()"></select>
       </div>
     </div>
@@ -286,7 +289,7 @@ button{cursor:pointer}
 
     <div class="students-card">
       <div class="card-head">
-        <h3> قائمة التلاميذ</h3>
+        <h3>📝 قائمة التلاميذ</h3>
         <span class="count" id="totalCount">0 تلميذ</span>
       </div>
       <div id="studentsList"></div>
@@ -340,7 +343,6 @@ var hasUnsavedChanges = false;
 
 var SendQueue = {
   KEY: 'd_send_queue_unknown',
-  
   add: function(item){
     var queue = this.getAll();
     item.id = Date.now() + '_' + Math.random().toString(36).substr(2,9);
@@ -348,33 +350,21 @@ var SendQueue = {
     item.attempts = 0;
     queue.push(item);
     localStorage.setItem(this.KEY, JSON.stringify(queue));
-    console.log('📦 أضيف للطابور:', item);
     this.updateUI();
   },
-  
   getAll: function(){
-    try{
-      var data = localStorage.getItem(this.KEY);
-      return data ? JSON.parse(data) : [];
-    }catch(e){ return []; }
+    try{ var data = localStorage.getItem(this.KEY); return data ? JSON.parse(data) : []; }catch(e){ return []; }
   },
-  
   remove: function(id){
     var queue = this.getAll().filter(function(item){ return item.id !== id; });
     localStorage.setItem(this.KEY, JSON.stringify(queue));
     this.updateUI();
   },
-  
-  clear: function(){
-    localStorage.removeItem(this.KEY);
-    this.updateUI();
-  },
-  
+  clear: function(){ localStorage.removeItem(this.KEY); this.updateUI(); },
   updateUI: function(){
     var queue = this.getAll();
     var btn = $('#sendBtn');
     var bar = $('#sendBar');
-    
     if(queue.length > 0){
       btn.classList.add('pending');
       bar.className = 'send-status queue';
@@ -383,66 +373,36 @@ var SendQueue = {
       btn.classList.remove('pending');
     }
   },
-  
   processQueue: function(){
     var self = this;
     var queue = this.getAll();
-    
-    if(queue.length === 0) return;
-    if(!navigator.onLine){
-      console.log('📴 لا اتصال - الطابور متوقف');
-      return;
-    }
-    
-    console.log('🔄 معالجة الطابور: ' + queue.length + ' عناصر');
-    
+    if(queue.length === 0 || !navigator.onLine) return;
     queue.forEach(function(item, index){
-      setTimeout(function(){
-        self.sendItem(item);
-      }, index * 2000);
+      setTimeout(function(){ self.sendItem(item); }, index * 2000);
     });
   },
-  
   sendItem: function(item){
     var self = this;
-    
     item.attempts++;
-    if(item.attempts > 5){
-      console.log('❌ تجاوز الحد الأقصى للمحاولات:', item.id);
-      this.remove(item.id);
-      toast('⚠️ فشل إرسال بعض البيانات بعد 5 محاولات', 'err');
-      return;
-    }
+    if(item.attempts > 5){ this.remove(item.id); toast('⚠️ فشل الإرسال بعد 5 محاولات', 'err'); return; }
     
     var queue = this.getAll();
     var itemIndex = queue.findIndex(function(q){ return q.id === item.id; });
-    if(itemIndex > -1){
-      queue[itemIndex] = item;
-      localStorage.setItem(this.KEY, JSON.stringify(queue));
-    }
+    if(itemIndex > -1){ queue[itemIndex] = item; localStorage.setItem(this.KEY, JSON.stringify(queue)); }
     
     api(item.payload, 30000).then(function(r){
       if(r.ok){
-        console.log('✓ تم الإرسال:', item.id);
         self.remove(item.id);
         toast('✓✓ تم إرسال البيانات المتراكمة', 'ok');
         if(item.onSuccess) item.onSuccess(r);
-      }else{
-        console.log('⚠️ فشل الإرسال:', r.error);
-        toast('⚠️ فشل الإرسال: ' + r.error, 'err');
-      }
-    }).catch(function(e){
-      console.log('❌ خطأ في الإرسال:', e);
-    });
+      }else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
+    }).catch(function(e){ console.log('❌ خطأ في الإرسال:', e); });
   }
 };
 
 function toast(m,e){
-  var t=$('#toast');
-  t.textContent=m;
-  t.className='toast show'+(e?' err':(m.indexOf('✓')>=0?' ok':''));
-  clearTimeout(toastT);
-  toastT=setTimeout(function(){t.className='toast';},3000);
+  var t=$('#toast'); t.textContent=m; t.className='toast show'+(e?' err':(m.indexOf('✓')>=0?' ok':''));
+  clearTimeout(toastT); toastT=setTimeout(function(){t.className='toast';},3000);
 }
 function hideModal(id){$('#'+id).classList.remove('show');}
 function confirmDlg(msg,fn){$('#confirmMsg').textContent=msg;confirmFn=fn;$('#confirmModal').classList.add('show');}
@@ -456,8 +416,7 @@ function api(p,ms){
   var ctl=new AbortController();
   var t=setTimeout(function(){ctl.abort();},ms||25000);
   return fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p),signal:ctl.signal})
-    .then(function(r){return r.json();})
-    .finally(function(){clearTimeout(t);});
+    .then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
 function fnv1a(str){
@@ -468,43 +427,29 @@ function fnv1a(str){
 
 function showSyncIndicator(show) {
   var ind = $('#syncIndicator');
-  if (show) ind.classList.add('show');
-  else ind.classList.remove('show');
+  if (show) ind.classList.add('show'); else ind.classList.remove('show');
 }
 
 function updateConnectionStatus(){
-  var status = $('#connStatus');
-  var icon = $('#connIcon');
-  var text = $('#connText');
-  
+  var status = $('#connStatus'), icon = $('#connIcon'), text = $('#connText');
   if(navigator.onLine){
-    status.className = 'connection-status online show';
-    icon.textContent = '🟢';
-    text.textContent = 'متصل بالإنترنت';
+    status.className = 'connection-status online show'; icon.textContent = '🟢'; text.textContent = 'متصل بالإنترنت';
     setTimeout(function(){ status.classList.remove('show'); }, 3000);
     SendQueue.processQueue();
   }else{
-    status.className = 'connection-status offline show';
-    icon.textContent = '🔴';
-    text.textContent = 'غير متصل - البيانات تُحفظ محلياً';
+    status.className = 'connection-status offline show'; icon.textContent = '🔴'; text.textContent = 'غير متصل - البيانات تُحفظ محلياً';
   }
 }
 
-// ✅ زر المزامنة اليدوية
 function manualSync(){
-  if(!T.cls || !T.subject){
-    toast('️ اختر المادة والشعبة أولاً', 'err');
-    return;
-  }
-  toast(' جاري المزامنة...', '');
-  loadCurrent(true);
+  if(!T.cls || !T.subject){ toast('⚠️ اختر المادة والشعبة أولاً', 'err'); return; }
+  toast('⏳ جاري المزامنة...', ''); loadCurrent(true);
 }
 
 function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
-  if(!code){$('#loginMsg').textContent='️ أدخل الكود';return;}
-  $('#loginMsg').textContent='⏳ جاري التحقق...';
-  $('#loginMsg').style.color='var(--muted)';
+  if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
+  $('#loginMsg').textContent='⏳ جاري التحقق...'; $('#loginMsg').style.color='var(--muted)';
   
   api({action:'teacherLogin',code:code}).then(function(r){
     if(!r.ok){$('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
@@ -518,28 +463,12 @@ function enterHome(){
   var s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(!s){$('#login').style.display='flex';$('#app').style.display='none';return;}
   
-  T.code=s.code||'';
-  T.name=s.name||'';
-  T.subject=s.subject||'';
-  T.classes=s.classes||[];
-  T.subjects=s.subjects||[];
-  T.drafts={};
-  
-  if(!T.subjects||T.subjects.length===0){
-    if(T.subject&&T.classes&&T.classes.length>0){
-      T.subjects=[{name:T.subject,classes:T.classes}];
-    }
-  }
-  
-  T.month=MONTHS[0];
-  T.cls=(T.classes&&T.classes[0])||'';
+  T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
+  if(!T.subjects||T.subjects.length===0){ if(T.subject&&T.classes&&T.classes.length>0){ T.subjects=[{name:T.subject,classes:T.classes}]; } }
+  T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
 
-  $('#teacherName').textContent='مرحباً '+T.name;
-  $('#teacherCode').textContent='🔑 '+T.code;
-  $('#welcomeTitle').textContent='أهلاً '+T.name;
-
-  $('#login').style.display='none';
-  $('#app').style.display='block';
+  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent='🔑 '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
+  $('#login').style.display='none'; $('#app').style.display='block';
 
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
@@ -558,92 +487,51 @@ function enterHome(){
 }
 
 function logout(){
-  clearInterval(msgCheckInterval);
-  clearInterval(syncInterval);
+  clearInterval(msgCheckInterval); clearInterval(syncInterval);
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
-  confirmDlg('تسجيل الخروج من حسابك؟',function(){
-    localStorage.removeItem('d_session');
-    location.reload();
-  });
+  confirmDlg('تسجيل الخروج من حسابك؟',function(){ localStorage.removeItem('d_session'); location.reload(); });
 }
 
 function buildSelectors(){
-  var subSel=$('#subjectSelect');
-  subSel.innerHTML='<option value="">اختر المادة</option>';
+  var subSel=$('#subjectSelect'); subSel.innerHTML='<option value="">اختر المادة</option>';
   if(T.subjects&&T.subjects.length>0){
     for(var idx=0;idx<T.subjects.length;idx++){
-      var sub=T.subjects[idx];
-      var opt=document.createElement('option');
-      opt.value=idx;
-      var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
-      opt.textContent=ci.icon+' '+sub.name;
-      subSel.appendChild(opt);
+      var sub=T.subjects[idx], opt=document.createElement('option');
+      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
+      opt.textContent=ci.icon+' '+sub.name; subSel.appendChild(opt);
     }
     subSel.value='0';
   }
-  var monthSel=$('#monthSelect');
-  monthSel.innerHTML='';
+  var monthSel=$('#monthSelect'); monthSel.innerHTML='';
   for(var i=0;i<MONTHS.length;i++){
-    var m=MONTHS[i];
-    var opt=document.createElement('option');
-    opt.value=m;
-    opt.textContent=m;
-    if(m===T.month)opt.selected=true;
+    var m=MONTHS[i], opt=document.createElement('option');
+    opt.value=m; opt.textContent=m; if(m===T.month)opt.selected=true;
     monthSel.appendChild(opt);
   }
   onSubjectChange();
 }
 
 function onSubjectChange(){
-  var idx=$('#subjectSelect').value;
-  var clsSel=$('#classSelect');
+  var idx=$('#subjectSelect').value, clsSel=$('#classSelect');
   clsSel.innerHTML='<option value="">اختر الشعبة</option>';
-  if(idx===''||!T.subjects[idx]){
-    T.subject='';T.classes=[];T.cls='';
-    updateWelcome();loadCurrent();return;
-  }
-  T.subject=T.subjects[idx].name;
-  T.classes=T.subjects[idx].classes||[];
+  if(idx===''||!T.subjects[idx]){ T.subject='';T.classes=[];T.cls=''; updateWelcome();loadCurrent();return; }
+  T.subject=T.subjects[idx].name; T.classes=T.subjects[idx].classes||[];
   for(var i=0;i<T.classes.length;i++){
-    var opt=document.createElement('option');
-    opt.value=T.classes[i];
-    opt.textContent='🏫 '+T.classes[i];
-    clsSel.appendChild(opt);
+    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent='🏫 '+T.classes[i]; clsSel.appendChild(opt);
   }
-  if(T.classes.length>0){
-    clsSel.value=T.classes[0];
-    T.cls=T.classes[0];
-  }else{T.cls='';}
-  updateWelcome();
-  loadCurrent(true);
+  if(T.classes.length>0){ clsSel.value=T.classes[0]; T.cls=T.classes[0]; }else{T.cls='';}
+  updateWelcome(); loadCurrent(true);
 }
 
-function onClassChange(){
-  T.cls=$('#classSelect').value;
-  updateWelcome();
-  loadCurrent(true);
-}
-
-function onMonthChange(){
-  T.month=$('#monthSelect').value;
-  updateWelcome();
-  loadCurrent();
-}
-
-function updateWelcome(){
-  var sub=T.subject||'—';
-  var cls=T.cls||'—';
-  $('#welcomeSub').textContent=sub+' • '+cls;
-}
+function onClassChange(){ T.cls=$('#classSelect').value; updateWelcome(); loadCurrent(true); }
+function onMonthChange(){ T.month=$('#monthSelect').value; updateWelcome(); loadCurrent(); }
+function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • '+(T.cls||'—'); }
 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
-    clearStats();
-    $('#sendBar').className = 'send-status no';
-    $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة';
-    return;
+    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
   if (!T.drafts[k]) {
@@ -651,24 +539,15 @@ function loadCurrent(forceRefresh) {
     T.drafts[k] = sv ? JSON.parse(sv) : { rows: [], sentHash: '', sentAt: 0, max: 100, lastSync: 0 };
   }
   var lastSync = T.drafts[k].lastSync || 0;
-  var now = Date.now();
-  var shouldRefresh = forceRefresh || (now - lastSync > SYNC_INTERVAL);
-  
-  if (T.drafts[k].rows.length === 0 || shouldRefresh) {
+  if (T.drafts[k].rows.length === 0 || forceRefresh || (Date.now() - lastSync > SYNC_INTERVAL)) {
     fetchStudents(forceRefresh);
   } else {
-    renderRows();
-    updStats();
-    updSendBar();
+    renderRows(); updStats(); updSendBar();
   }
 }
 
 function clearStats(){
-  $('#statStudents').textContent='0';
-  $('#statPass').textContent='0';
-  $('#statComp').textContent='0';
-  $('#statFail').textContent='0';
-  $('#totalCount').textContent='0 تلميذ';
+  $('#statStudents').textContent='0'; $('#statPass').textContent='0'; $('#statComp').textContent='0'; $('#statFail').textContent='0'; $('#totalCount').textContent='0 تلميذ';
 }
 
 function fetchStudents(showLoading) {
@@ -679,8 +558,7 @@ function fetchStudents(showLoading) {
       api({action:'teacherGrades', code:T.code}).then(function(gradesRes){
         var serverGrades = {};
         if(gradesRes.ok && gradesRes.rows) {
-          var targetMonth = T.month.trim();
-          var monthIndex = MONTHS.indexOf(targetMonth);
+          var targetMonth = T.month.trim(), monthIndex = MONTHS.indexOf(targetMonth);
           gradesRes.rows.forEach(function(row){
             if(row.cls && row.cls.trim() === T.cls.trim()) {
                var degree = '';
@@ -689,40 +567,27 @@ function fetchStudents(showLoading) {
                else if (monthIndex === 2) degree = row.m3;
                else if (monthIndex === 3) degree = row.m4;
                else if (monthIndex === 4) degree = row.m5;
-               if(degree !== null && degree !== undefined && String(degree).trim() !== '') {
-                 serverGrades[row.name.trim()] = String(degree).trim();
-               }
+               if(degree !== null && degree !== undefined && String(degree).trim() !== '') { serverGrades[row.name.trim()] = String(degree).trim(); }
             }
           });
         }
         var newRows = r.names.map(function(name) {
-          var cleanName = name.trim();
-          var localDegree = '';
+          var cleanName = name.trim(), localDegree = '';
           if(T.drafts[k] && T.drafts[k].rows) {
             var localRow = T.drafts[k].rows.find(function(r){ return r.name.trim() === cleanName; });
-            if(localRow && String(localRow.degree).trim() !== '') {
-              localDegree = String(localRow.degree).trim();
-            }
+            if(localRow && String(localRow.degree).trim() !== '') { localDegree = String(localRow.degree).trim(); }
           }
-          if(localDegree === '' && serverGrades[cleanName] !== undefined) {
-            localDegree = serverGrades[cleanName];
-          }
+          if(localDegree === '' && serverGrades[cleanName] !== undefined) { localDegree = serverGrades[cleanName]; }
           return { name: cleanName, degree: localDegree };
         });
-        T.drafts[k].rows = newRows;
-        T.drafts[k].lastSync = Date.now();
-        saveDraft();
-        renderRows();
-        updStats();
+        T.drafts[k].rows = newRows; T.drafts[k].lastSync = Date.now();
+        saveDraft(); renderRows(); updStats();
         if (showLoading) toast('✓ تم تحميل ' + arNum(r.names.length) + ' تلميذ');
         showSyncIndicator(false);
       }).catch(function(){
         var newRows = r.names.map(function(name) { return {name:name.trim(), degree:''}; });
-        T.drafts[k].rows = newRows;
-        T.drafts[k].lastSync = Date.now();
-        saveDraft();
-        renderRows(); updStats();
-        showSyncIndicator(false);
+        T.drafts[k].rows = newRows; T.drafts[k].lastSync = Date.now();
+        saveDraft(); renderRows(); updStats(); showSyncIndicator(false);
       });
     } else {
       showSyncIndicator(false);
@@ -735,134 +600,84 @@ function fetchStudents(showLoading) {
 }
 
 function saveDraft(){
-  var k=draftKey();
-  if(!T.drafts[k])return;
-  T.drafts[k].max=100;
-  if(!T.drafts[k].lastSync) T.drafts[k].lastSync = Date.now();
+  var k=draftKey(); if(!T.drafts[k])return;
+  T.drafts[k].max=100; if(!T.drafts[k].lastSync) T.drafts[k].lastSync = Date.now();
   localStorage.setItem('d_draft_'+T.code+'_'+k,JSON.stringify(T.drafts[k]));
   hasUnsavedChanges = false;
-  var ind=$('#saveInd');
-  ind.classList.add('show');
-  setTimeout(function(){ind.classList.remove('show');},2000);
+  var ind=$('#saveInd'); ind.classList.add('show'); setTimeout(function(){ind.classList.remove('show');},2000);
 }
 
 function renderRows(){
-  var dr=T.drafts[draftKey()];
-  var box=$('#studentsList');
+  var dr=T.drafts[draftKey()], box=$('#studentsList');
   if(!dr){box.innerHTML='';return;}
-  var search=($('#searchInput').value||'').trim().toLowerCase();
-  var max=100;
-  box.innerHTML='';
-  var displayIndex=1;
+  var search=($('#searchInput').value||'').trim().toLowerCase(), max=100;
+  box.innerHTML=''; var displayIndex=1;
   for(var i=0;i<dr.rows.length;i++){
     var r=dr.rows[i];
     if(search&&!(r.name||'').toLowerCase().includes(search))continue;
-    var deg=Number(r.degree);
-    var cls='';
-    if(!isNaN(deg)){
-      if(deg>=max/2)cls='pass';
-      else if(deg>=max/2-10)cls='';
-      else cls='fail';
-    }
-    var row=document.createElement('div');
-    row.className='student-item';
-    row.innerHTML=
-      '<div class="s-num">'+arNum(displayIndex)+'</div>'+
+    var deg=Number(r.degree), cls='';
+    if(!isNaN(deg)){ if(deg>=max/2)cls='pass'; else if(deg>=max/2-10)cls=''; else cls='fail'; }
+    var row=document.createElement('div'); row.className='student-item';
+    row.innerHTML='<div class="s-num">'+arNum(displayIndex)+'</div>'+
       '<div class="s-info"><input class="s-name-input" placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
-      '<div class="s-grade-wrap">'+
-        '<input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'">'+
-      '</div>';
+      '<div class="s-grade-wrap"><input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'"></div>';
     var inputs=row.querySelectorAll('input');
     (function(idx,inp){
       inp[0].oninput=function(){dr.rows[idx].name=inp[0].value;saveDraft();updStats();hasUnsavedChanges=true;};
       inp[1].oninput=function(){
-        dr.rows[idx].degree=inp[1].value;
-        var v=Number(inp[1].value);
+        dr.rows[idx].degree=inp[1].value; var v=Number(inp[1].value);
         inp[1].classList.remove('pass','fail');
         if(!isNaN(v)&&v>=max/2)inp[1].classList.add('pass');
         else if(!isNaN(v)&&v<max/2-10)inp[1].classList.add('fail');
         saveDraft();updStats();hasUnsavedChanges=true;
       };
     })(i,inputs);
-    box.appendChild(row);
-    displayIndex++;
+    box.appendChild(row); displayIndex++;
   }
   $('#totalCount').textContent=arNum(dr.rows.length)+' تلميذ';
-  if(displayIndex===1&&!search){
-    box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>';
-  }else if(displayIndex===1&&search){
-    box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>';
-  }
+  if(displayIndex===1&&!search){ box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; }
+  else if(displayIndex===1&&search){ box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; }
 }
 
 function updStats(){
-  var dr=T.drafts[draftKey()];
-  if(!dr)return;
-  var max=100;
-  var rows=dr.rows.filter(function(r){return(r.name||'').trim();});
+  var dr=T.drafts[draftKey()]; if(!dr)return;
+  var max=100, rows=dr.rows.filter(function(r){return(r.name||'').trim();});
   var dg=rows.map(function(r){return Number(r.degree);}).filter(function(v){return!isNaN(v);});
-  var pass=dg.filter(function(v){return v>=max/2;}).length;
-  var comp=dg.filter(function(v){return v>=max/2-10&&v<max/2;}).length;
-  var fail=dg.filter(function(v){return v<max/2-10;}).length;
   $('#statStudents').textContent=arNum(rows.length);
-  $('#statPass').textContent=arNum(pass);
-  $('#statComp').textContent=arNum(comp);
-  $('#statFail').textContent=arNum(fail);
+  $('#statPass').textContent=arNum(dg.filter(function(v){return v>=max/2;}).length);
+  $('#statComp').textContent=arNum(dg.filter(function(v){return v>=max/2-10&&v<max/2;}).length);
+  $('#statFail').textContent=arNum(dg.filter(function(v){return v<max/2-10;}).length);
 }
 
 function updSendBar(){
-  var dr=T.drafts[draftKey()];
-  var el=$('#sendBar');
-  if(!dr)return;
+  var dr=T.drafts[draftKey()], el=$('#sendBar'); if(!dr)return;
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
-  if(dr.sentHash&&clean.length>0){
-    el.className='send-status ok';
-    el.textContent='✓✓ تم الإرسال للإدارة • '+T.month;
-  }else if(dr.sentHash){
-    el.className='send-status pending';
-    el.textContent='⚠️ لديك تعديلات لم تُرسل';
-  }else{
-    el.className='send-status no';
-    el.textContent='📤 لم يتم الإرسال بعد';
-  }
+  if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
+  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
+  else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
 }
 
 function sendGrades(){
-  var dr=T.drafts[draftKey()];
-  var cls=(T.cls||'').trim();
-  var month=T.month;
-  var max=100;
-  if(!cls){toast('اختر الشعبة',true);return;}
-  if(!T.subject){toast('اختر المادة',true);return;}
-  
-  var clean=[];
-  var err='';
+  var dr=T.drafts[draftKey()], cls=(T.cls||'').trim(), month=T.month, max=100;
+  if(!cls){toast('اختر الشعبة',true);return;} if(!T.subject){toast('اختر المادة',true);return;}
+  var clean=[], err='';
   for(var i=0;i<dr.rows.length;i++){
-    var nm=(dr.rows[i].name||'').trim();
-    var dg=String(dr.rows[i].degree??'').trim();
+    var nm=(dr.rows[i].name||'').trim(), dg=String(dr.rows[i].degree??'').trim();
     if(!nm&&dg==='')continue;
     if(!nm){err='الصف '+(i+1)+': اكتب الاسم';break;}
     if(dg===''){err='الصف '+(i+1)+': أدخل درجة';break;}
-    var v=Number(dg);
-    if(isNaN(v)){err='الصف '+(i+1)+': درجة غير صحيحة';break;}
+    var v=Number(dg); if(isNaN(v)){err='الصف '+(i+1)+': درجة غير صحيحة';break;}
     if(v<0||v>max){err='الصف '+(i+1)+': خارج النطاق';break;}
     clean.push({name:nm,degree:v});
   }
-  if(err){toast(err,true);return;}
-  if(!clean.length){toast('أدخل الدرجات أولاً',true);return;}
+  if(err){toast(err,true);return;} if(!clean.length){toast('أدخل الدرجات أولاً',true);return;}
 
   var payload = {
-    action:'submitGrades',
-    code:T.code,
-    cls:cls,
-    month:month,
-    maxDegree:max,
+    action:'submitGrades', code:T.code, cls:cls, month:month, maxDegree:max,
     rows: clean.map(function(r) {
       var v = [null, null, null, null, null];
       var monthIndex = MONTHS.indexOf(month);
-      if (monthIndex >= 0 && monthIndex < 5) {
-        v[monthIndex] = r.degree;
-      }
+      if (monthIndex >= 0 && monthIndex < 5) { v[monthIndex] = r.degree; }
       return { name: r.name, v: v };
     }),
     checksum: fnv1a([T.code, cls, month].join('|') + '||' + clean.map(function(r){ return r.name + ';' + r.degree; }).join('|')),
@@ -871,95 +686,49 @@ function sendGrades(){
   };
 
   if(navigator.onLine){
-    var btn=$('#sendBtn');
-    btn.classList.add('busy');btn.disabled=true;
-    
+    var btn=$('#sendBtn'); btn.classList.add('busy');btn.disabled=true;
     api(payload, 30000).then(function(r){
-      if(r.ok){
-        dr.sentHash=payload.checksum;
-        dr.sentAt=r.time||Date.now();
-        saveDraft();updSendBar();
-        toast('✓✓ تم إرسال درجات '+month+' للإدارة');
-      }else{toast('❌ '+r.error,true);}
+      if(r.ok){ dr.sentHash=payload.checksum; dr.sentAt=r.time||Date.now(); saveDraft();updSendBar(); toast('✓✓ تم إرسال درجات '+month+' للإدارة'); }
+      else{toast('❌ '+r.error,true);}
     }).catch(function(e){
-      toast(' فشل الإرسال - أُضيف للطابور',true);
-      SendQueue.add({
-        payload: payload,
-        onSuccess: function(){
-          dr.sentHash=payload.checksum;
-          dr.sentAt=Date.now();
-          saveDraft();updSendBar();
-        }
-      });
-    }).finally(function(){
-      btn.classList.remove('busy');btn.disabled=false;
-    });
+      toast('⚠️ فشل الإرسال - أُضيف للطابور',true);
+      SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
+    }).finally(function(){ btn.classList.remove('busy');btn.disabled=false; });
   }else{
     confirmDlg('⚠️ أنت غير متصل بالإنترنت\n\nهل تريد حفظ الإرسال في الطابور ليتم إرساله تلقائياً عند العودة للاتصال؟', function(){
-      SendQueue.add({
-        payload: payload,
-        onSuccess: function(){
-          dr.sentHash=payload.checksum;
-          dr.sentAt=Date.now();
-          saveDraft();updSendBar();
-        }
-      });
+      SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
       toast('✓ أُضيف للطابور - سيُرسل تلقائياً عند الاتصال', 'ok');
     });
   }
 }
 
-function requestNotificationPermission(){
-  if("Notification"in window&&Notification.permission==="default"){
-    Notification.requestPermission();
-  }
-}
-
+function requestNotificationPermission(){ if("Notification"in window&&Notification.permission==="default"){ Notification.requestPermission(); } }
 function checkMessages(){
   if(!T.code)return;
   api({action:'getMessages',code:T.code}).then(function(r){
     if(r.ok){
       var badge=$('#msgBadge');
-      if(r.unread>0){
-        badge.textContent=arNum(r.unread);
-        badge.style.display='flex';
-        if("Notification"in window&&Notification.permission==="granted"&&document.hidden){
-          new Notification("رسالة من الإدارة",{body:"لديك رسالة جديدة في درجاتي"});
-        }
-      }else{badge.style.display='none';}
+      if(r.unread>0){ badge.textContent=arNum(r.unread); badge.style.display='flex'; }
+      else{badge.style.display='none';}
     }
   }).catch(function(e){});
 }
-
 function openMessages(){
-  requestNotificationPermission();
-  $('#msgModal').classList.add('show');
+  requestNotificationPermission(); $('#msgModal').classList.add('show');
   $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">جاري التحميل...</div>';
   api({action:'getMessages',code:T.code}).then(function(r){
     if(r.ok&&r.messages.length>0){
       var html='';
-      r.messages.forEach(function(m){
-        html+='<div class="msg-item '+(m.read?'':'unread')+'">'+
-          '<div class="msg-date">'+m.date+(m.read?' • مقروءة':' • جديدة')+'</div>'+
-          '<div class="msg-text">'+esc(m.msg)+'</div></div>';
-      });
-      $('#msgList').innerHTML=html;
-      checkMessages();
-    }else{
-      $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">لا توجد رسائل</div>';
-    }
-  }).catch(function(){
-    $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--danger)">تعذر التحميل</div>';
-  });
+      r.messages.forEach(function(m){ html+='<div class="msg-item '+(m.read?'':'unread')+'"><div class="msg-date">'+m.date+(m.read?' • مقروءة':' • جديدة')+'</div><div class="msg-text">'+esc(m.msg)+'</div></div>'; });
+      $('#msgList').innerHTML=html; checkMessages();
+    }else{ $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">لا توجد رسائل</div>'; }
+  }).catch(function(){ $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--danger)">تعذر التحميل</div>'; });
 }
 
-// ✅ تنبيه عند محاولة إغلاق الصفحة مع وجود تغييرات غير محفوظة
 window.onbeforeunload = function(e) {
   if (hasUnsavedChanges) {
     var message = '⚠️ لديك درجات غير محفوظة! هل أنت متأكد من المغادرة؟';
-    e.preventDefault();
-    e.returnValue = message;
-    return message;
+    e.preventDefault(); e.returnValue = message; return message;
   }
 };
 
@@ -967,90 +736,18 @@ window.onbeforeunload = function(e) {
   var s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(s)enterHome();
 })();
-</script>
-<!-- ═══ نافذة التثبيت الذكي ═══ -->
-<div id="installPrompt" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:20px">
-  <div style="background:#fff;border-radius:24px;padding:28px;max-width:380px;width:100%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:popIn .3s ease">
-    <div style="font-size:60px;margin-bottom:12px"></div>
-    <h3 style="font-size:20px;font-weight:900;color:#1e293b;margin-bottom:8px">تثبيت تطبيق درجاتي</h3>
-    <p style="font-size:14px;color:#64748b;line-height:1.6;margin-bottom:20px">
-      ثبّت التطبيق على جهازك للوصول السريع وإدارة الدرجات بسهولة
-    </p>
-    <div style="display:flex;gap:10px">
-      <button onclick="closeInstallPrompt()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#f1f5f9;color:#1e293b;font-weight:700;font-size:14px;cursor:pointer">لاحقاً</button>
-      <button id="installBtn" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(99,102,241,.4)">تثبيت الآن</button>
-    </div>
-    <div id="iosInstructions" style="display:none;margin-top:16px;padding:14px;background:#f8fafc;border-radius:12px;text-align:right;font-size:12px;color:#475569">
-      <div style="font-weight:700;margin-bottom:8px">📱 للتثبيت على آيفون:</div>
-      <div>1️ اضغط زر المشاركة ⬆️</div>
-      <div>2️⃣ اختر "إضافة إلى الشاشة الرئيسية"</div>
-      <div>3️⃣ اضغط "إضافة"</div>
-    </div>
-  </div>
-</div>
 
-<style>
-@keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-</style>
-
-<script>
-// ═══ نظام التثبيت الذكي ═══
-(function(){
-  var deferredPrompt = null;
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  
-  // إذا كان التطبيق مثبتاً بالفعل، لا تظهر النافذة
-  if(isStandalone) return;
-  
-  // التقاط حدث التثبيت
-  window.addEventListener('beforeinstallprompt', function(e){
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallPrompt();
+// ✅ تسجيل Service Worker الخاص بالمعلمين فقط (منفصل عن الإدارة)
+if('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) { registration.unregister(); }
+    });
+    navigator.serviceWorker.register('./sw.js?v=6')
+      .then(function(reg) { console.log('✅ Service Worker المعلمين مسجل:', reg.scope); })
+      .catch(function(err) { console.log('❌ فشل تسجيل SW المعلمين:', err); });
   });
-  
-  // لأجهزة iOS (لا تدعم beforeinstallprompt)
-  if(isIOS && !isStandalone){
-    setTimeout(function(){
-      document.getElementById('iosInstructions').style.display = 'block';
-      document.getElementById('installBtn').textContent = 'فهمت';
-      document.getElementById('installBtn').onclick = function(){
-        closeInstallPrompt();
-        // فتح تعليمات Safari
-        window.open('https://support.apple.com/ar-sa/guide/iphone/iph42ab2f3a7/ios', '_blank');
-      };
-      showInstallPrompt();
-    }, 2000);
-  }
-  
-  function showInstallPrompt(){
-    var prompt = document.getElementById('installPrompt');
-    prompt.style.display = 'flex';
-  }
-  
-  window.closeInstallPrompt = function(){
-    document.getElementById('installPrompt').style.display = 'none';
-    // حفظ في localStorage لعدم الإزعاج مرة أخرى
-    localStorage.setItem('install_prompt_shown', 'true');
-  };
-  
-  // زر التثبيت
-  document.getElementById('installBtn').addEventListener('click', function(){
-    if(deferredPrompt){
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function(choiceResult){
-        if(choiceResult.outcome === 'accepted'){
-          console.log('✅ المستخدم قبل التثبيت');
-        }
-        deferredPrompt = null;
-        closeInstallPrompt();
-      });
-    } else if(isIOS){
-      closeInstallPrompt();
-    }
-  });
-})();
+}
 </script>
 </body>
 </html>
