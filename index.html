@@ -440,15 +440,28 @@ function updateConnectionStatus(){
   }
 }
 
+// ✅ زر المزامنة والتحديث المطور (يجبر Service Worker على التحديث)
 function manualSyncAndRefresh(){
-  if(!T.cls || !T.subject){ 
-    toast('⚠️ اختر المادة والشعبة أولاً', 'err'); 
-    return; 
+  toast('⏳ جاري البحث عن تحديثات...', ''); 
+  
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+      if (reg) {
+        // 1. إجبار المتصفح على التحقق من وجود ملف sw.js جديد على الخادم
+        reg.update(); 
+        
+        // 2. إذا كان هناك إصدار جديد في الانتظار، قم بتفعيله فوراً
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }
+    });
   }
-  toast('⏳ جاري المزامنة والتحديث...', ''); 
+
+  // 3. إعادة تحميل الصفحة مع تجاهل الكاش بعد ثانية واحدة
   setTimeout(function(){
     window.location.reload(true);
-  }, 500);
+  }, 1000);
 }
 
 function doLogin(){
@@ -824,9 +837,10 @@ window.onbeforeunload = function(e) {
   if(s)enterHome();
 })();
 
+// ✅ تسجيل Service Worker مع رقم إصدار لإجبار المتصفح على جلب النسخة المحدثة
 if('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('./sw.js?v=2')
       .then(function(reg) { console.log('✅ Service Worker المعلمين مسجل:', reg.scope); })
       .catch(function(err) { console.log('❌ فشل تسجيل SW المعلمين:', err); });
   });
