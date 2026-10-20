@@ -129,8 +129,8 @@ button{cursor:pointer}
 .student-item:hover{background:#f8fafc}
 .s-num{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
 .s-info{flex:1;min-width:0}
-.s-name-input{width:100%;padding:6px 8px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:700;transition:.2s}
-.s-name-input:focus{border-color:var(--primary);background:#fff}
+/* ✅ تنسيق حقل الاسم ليظهر أنه غير قابل للتعديل */
+.s-name-input{width:100%;padding:6px 8px;background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:700;color:#64748b;cursor:not-allowed;}
 .s-grade-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .s-grade{width:55px;padding:7px 4px;border:2px solid #fecaca;border-radius:10px;text-align:center;font-size:14px;font-weight:900;background:#fef2f2;color:var(--danger);transition:.2s}
 .s-grade.pass{background:#d1fae5;border-color:#86efac;color:#047857}
@@ -185,7 +185,7 @@ button{cursor:pointer}
 <div id="login">
   <div class="login-content">
     <div class="login-logo">
-      <div class="logo-icon"></div>
+      <div class="logo-icon">🎓</div>
       <h1>درجاتي</h1>
       <p>تطبيق المعلمين لإدارة الدرجات</p>
     </div>
@@ -202,7 +202,7 @@ button{cursor:pointer}
       </button>
       <div class="login-msg" id="loginMsg"></div>
     </div>
-    <div class="login-footer"> الكود من إدارة النظام</div>
+    <div class="login-footer">💡 الكود من إدارة النظام</div>
   </div>
 </div>
 
@@ -217,7 +217,6 @@ button{cursor:pointer}
         </div>
       </div>
       <div class="header-actions">
-        <!-- ✅ زر المزامنة والتحديث المحدث -->
         <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
@@ -248,13 +247,13 @@ button{cursor:pointer}
 
     <div class="selectors">
       <div class="select-card subject-card">
-        <label> المادة</label>
+        <label>📚 المادة</label>
         <select id="subjectSelect" onchange="onSubjectChange()">
           <option value="">اختر المادة</option>
         </select>
       </div>
       <div class="select-card class-card">
-        <label> الصف والشعبة</label>
+        <label>🏫 الصف والشعبة</label>
         <select id="classSelect" onchange="onClassChange()">
           <option value="">اختر الشعبة</option>
         </select>
@@ -295,7 +294,7 @@ button{cursor:pointer}
 
     <div class="students-card">
       <div class="card-head">
-        <h3> قائمة التلاميذ</h3>
+        <h3>📝 قائمة التلاميذ</h3>
         <span class="count" id="totalCount">0 تلميذ</span>
       </div>
       <div id="studentsList"></div>
@@ -441,15 +440,12 @@ function updateConnectionStatus(){
   }
 }
 
-// ✅ زر المزامنة والتحديث المحدث
 function manualSyncAndRefresh(){
   if(!T.cls || !T.subject){ 
     toast('⚠️ اختر المادة والشعبة أولاً', 'err'); 
     return; 
   }
   toast('⏳ جاري المزامنة والتحديث...', ''); 
-  
-  // ✅ فرض إعادة تحميل كاملة مع تجاهل الكاش
   setTimeout(function(){
     window.location.reload(true);
   }, 500);
@@ -500,7 +496,7 @@ function buildSelectors(){
   if(T.subjects&&T.subjects.length>0){
     for(var idx=0;idx<T.subjects.length;idx++){
       var sub=T.subjects[idx], opt=document.createElement('option');
-      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:''};
+      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
       opt.textContent=ci.icon+' '+sub.name; subSel.appendChild(opt);
     }
     subSel.value='0';
@@ -659,16 +655,14 @@ function renderRows(){
     
     var row=document.createElement('div'); 
     row.className='student-item';
+    // ✅ تم إضافة readonly ومنع تعديل الاسم
     row.innerHTML='<div class="s-num">'+arNum(displayIndex)+'</div>'+
-      '<div class="s-info"><input class="s-name-input" placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
+      '<div class="s-info"><input class="s-name-input" readonly placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
       '<div class="s-grade-wrap"><input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'"></div>';
       
     var inputs=row.querySelectorAll('input');
     (function(idx,inp){
-      inp[0].oninput=function(){
-        dr.rows[idx].name = inp[0].value;
-        saveDraft(); updStats(); hasUnsavedChanges=true;
-      };
+      // ✅ تم إزالة مستمع الحدث من حقل الاسم (inp[0]) والاحتفاظ به لحقل الدرجة فقط (inp[1])
       inp[1].oninput=function(){
         dr.rows[idx].degree = inp[1].value; 
         var v=Number(inp[1].value);
@@ -689,7 +683,7 @@ function renderRows(){
   if(visibleCount === 0 && !search){ 
     box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; 
   } else if(visibleCount === 0 && search){ 
-    box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>'; 
+    box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; 
   }
 }
 
@@ -707,7 +701,7 @@ function updSendBar(){
   var dr=T.drafts[draftKey()], el=$('#sendBar'); if(!dr)return;
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
-  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='️ لديك تعديلات لم تُرسل'; }
+  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
   else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
 }
 
@@ -765,12 +759,13 @@ function checkMessages(){
         badge.textContent=arNum(r.unread);
         badge.style.display='flex';
         
-        // ✅ اهتزاز الهاتف (إذا كان مدعوماً)
+        // ✅ تم استدعاء دالة الصوت هنا لضمان عملها
+        playNotificationSound();
+        
         if(navigator.vibrate){
           navigator.vibrate([200, 100, 200]);
         }
         
-        // ✅ إشعار Push (إذا كان مفعلاً)
         if("Notification"in window && Notification.permission==="granted" && document.hidden){
           new Notification("رسالة من الإدارة",{
             body:"لديك " + r.unread + " رسالة جديدة في درجاتي",
@@ -787,8 +782,22 @@ function checkMessages(){
   });
 }
 
+// ✅ دالة تشغيل صوت الإشعار (محدثة برابط موثوق)
 function playNotificationSound(){
-  console.log('🔔 إشعار جديد');
+  try {
+    var audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+    audio.volume = 0.6;
+    var playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(function() {
+        console.log('✅ تم تشغيل صوت الإشعار');
+      }).catch(function(error) {
+        console.log('⚠️ المتصفح منع التشغيل التلقائي للصوت:', error);
+      });
+    }
+  } catch(e) {
+    console.log("خطأ في تشغيل الصوت:", e);
+  }
 }
 
 function openMessages(){
@@ -815,7 +824,6 @@ window.onbeforeunload = function(e) {
   if(s)enterHome();
 })();
 
-// ✅ تسجيل Service Worker الخاص بالمعلمين
 if('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js')
