@@ -16,7 +16,7 @@ self.addEventListener('install', function(event) {
         return Promise.all(
           urlsToCache.map(function(url) {
             return cache.add(url).catch(function(err) {
-              console.log('️ فشل تخزين:', url, err);
+              console.log('⚠️ فشل تخزين:', url, err);
             });
           })
         );
@@ -26,7 +26,7 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  // تجاهل طلبات POST (مثل إرسال الدرجات)
+  // تجاهل طلبات POST (مثل إرسال الدرجات) لحماية البيانات
   if (event.request.method !== 'GET') return;
   
   event.respondWith(
@@ -34,7 +34,7 @@ self.addEventListener('fetch', function(event) {
       .then(function(response) {
         if (response) return response;
         return fetch(event.request).then(function(networkResponse) {
-          // تخزين الاستجابة الجديدة
+          // تخزين الاستجابة الجديدة لتحسين الأداء مستقبلاً
           if (networkResponse && networkResponse.status === 200) {
             var responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then(function(cache) {
@@ -61,4 +61,11 @@ self.addEventListener('activate', function(event) {
     })
   );
   self.clients.claim();
+});
+
+// ✅ هذا السطر مهم جداً للسماح بتحديث التطبيق فوراً عند النقر على زر التحديث
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
