@@ -440,25 +440,18 @@ function updateConnectionStatus(){
   }
 }
 
-// ✅ زر المزامنة والتحديث المطور (يجبر Service Worker على التحديث)
 function manualSyncAndRefresh(){
   toast('⏳ جاري البحث عن تحديثات...', ''); 
-  
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) {
-        // 1. إجبار المتصفح على التحقق من وجود ملف sw.js جديد على الخادم
         reg.update(); 
-        
-        // 2. إذا كان هناك إصدار جديد في الانتظار، قم بتفعيله فوراً
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
       }
     });
   }
-
-  // 3. إعادة تحميل الصفحة مع تجاهل الكاش بعد ثانية واحدة
   setTimeout(function(){
     window.location.reload(true);
   }, 1000);
@@ -476,6 +469,7 @@ function doLogin(){
   }).catch(function(e){$('#loginMsg').textContent='📴 تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
 }
 
+// ✅ دالة الدخول المحدثة لطلب الإذن وفحص الرسائل بشكل أسرع
 function enterHome(){
   var s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(!s){$('#login').style.display='flex';$('#app').style.display='none';return;}
@@ -491,9 +485,14 @@ function enterHome(){
   updateConnectionStatus();
   SendQueue.updateUI();
   setTimeout(function(){ SendQueue.processQueue(); }, 2000);
+  
+  // ✅ طلب إذن الإشعارات فور الدخول لضمان عملها
   requestNotificationPermission();
+  
+  // ✅ فحص الرسائل فوراً ثم كل 30 ثانية (أسرع لضمان الوصول)
   checkMessages();
-  msgCheckInterval=setInterval(checkMessages,60000);
+  msgCheckInterval=setInterval(checkMessages, 30000); 
+  
   syncInterval = setInterval(function() { if (T.cls && T.subject) loadCurrent(true); }, SYNC_INTERVAL);
 }
 
@@ -668,14 +667,12 @@ function renderRows(){
     
     var row=document.createElement('div'); 
     row.className='student-item';
-    // ✅ تم إضافة readonly ومنع تعديل الاسم
     row.innerHTML='<div class="s-num">'+arNum(displayIndex)+'</div>'+
       '<div class="s-info"><input class="s-name-input" readonly placeholder="اسم التلميذ" value="'+escA(r.name)+'"></div>'+
       '<div class="s-grade-wrap"><input class="s-grade '+cls+'" type="number" inputmode="decimal" placeholder="—" value="'+(r.degree===''?'':escA(r.degree))+'"></div>';
       
     var inputs=row.querySelectorAll('input');
     (function(idx,inp){
-      // ✅ تم إزالة مستمع الحدث من حقل الاسم (inp[0]) والاحتفاظ به لحقل الدرجة فقط (inp[1])
       inp[1].oninput=function(){
         dr.rows[idx].degree = inp[1].value; 
         var v=Number(inp[1].value);
@@ -761,33 +758,59 @@ function sendGrades(){
   }
 }
 
-function requestNotificationPermission(){ if("Notification"in window&&Notification.permission==="default"){ Notification.requestPermission(); } }
+// ✅ دالة طلب الإذن المحسنة
+function requestNotificationPermission(){ 
+  if("Notification" in window && Notification.permission === "default"){ 
+    Notification.requestPermission().then(function(permission) {
+      if (permission === "granted") {
+        console.log("✅ تم منح إذن الإشعارات");
+      } else {
+        console.log("⚠️ تم رفض إذن الإشعارات");
+      }
+    });
+  } 
+}
 
+// ✅ دالة فحص الرسائل المحسنة مع تنبيه مرئي مضمون
 function checkMessages(){
-  if(!T.code)return;
-  api({action:'getMessages',code:T.code}).then(function(r){
+  if(!T.code) return;
+  
+  api({action:'getMessages', code:T.code}).then(function(r){
+    console.log("نتيجة فحص الرسائل:", r); // للتشخيص
+    
     if(r.ok){
-      var badge=$('#msgBadge');
-      if(r.unread>0){
-        badge.textContent=arNum(r.unread);
-        badge.style.display='flex';
+      var badge = $('#msgBadge');
+      
+      if(r.unread > 0){
+        // 1. إظهار العلامة الحمراء
+        badge.textContent = arNum(r.unread);
+        badge.style.display = 'flex'; 
         
-        // ✅ تم استدعاء دالة الصوت هنا لضمان عملها
+        // 2. تنبيه مرئي داخل التطبيق (مضمون 100% حتى لو منع المتصفح الإشعارات)
+        toast('📩 لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
+        
+        // 3. تشغيل الصوت
         playNotificationSound();
         
-        if(navigator.vibrate){
+        // 4. اهتزاز الهاتف
+        if(navigator.vibrate) {
           navigator.vibrate([200, 100, 200]);
         }
         
-        if("Notification"in window && Notification.permission==="granted" && document.hidden){
-          new Notification("رسالة من الإدارة",{
-            body:"لديك " + r.unread + " رسالة جديدة في درجاتي",
-            icon:"icon.png",
-            tag:"darajati-message"
-          });
+        // 5. إشعار نظام التشغيل
+        if("Notification" in window && Notification.permission === "granted"){
+          try {
+            new Notification("رسالة من الإدارة", {
+              body: "لديك " + r.unread + " رسالة جديدة في درجاتي",
+              icon: "icon.png",
+              tag: "darajati-message"
+            });
+          } catch(e) { 
+            console.log("خطأ في إشعار النظام:", e); 
+          }
         }
-      }else{
-        badge.style.display='none';
+      } else {
+        badge.style.display = 'none';
       }
     }
   }).catch(function(e){
@@ -795,7 +818,6 @@ function checkMessages(){
   });
 }
 
-// ✅ دالة تشغيل صوت الإشعار (محدثة برابط موثوق)
 function playNotificationSound(){
   try {
     var audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
@@ -837,10 +859,10 @@ window.onbeforeunload = function(e) {
   if(s)enterHome();
 })();
 
-// ✅ تسجيل Service Worker مع رقم إصدار لإجبار المتصفح على جلب النسخة المحدثة
+// ✅ تسجيل Service Worker مع رقم إصدار v=3 لإجبار المتصفح على جلب النسخة المحدثة
 if('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=2')
+    navigator.serviceWorker.register('./sw.js?v=3')
       .then(function(reg) { console.log('✅ Service Worker المعلمين مسجل:', reg.scope); })
       .catch(function(err) { console.log('❌ فشل تسجيل SW المعلمين:', err); });
   });
