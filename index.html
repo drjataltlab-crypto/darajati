@@ -197,7 +197,7 @@ button{cursor:pointer}
       <div class="input-wrapper">
         <label>الكود الخاص بك</label>
         <input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off">
-        <span class="input-icon"></span>
+        <span class="input-icon">🔑</span>
       </div>
       <button class="login-btn" onclick="doLogin()">
         <span>تسجيل الدخول</span>
@@ -213,18 +213,18 @@ button{cursor:pointer}
   <div class="app-header">
     <div class="header-row">
       <div class="user-section">
-        <div class="user-avatar">👨‍🏫</div>
+        <div class="user-avatar">👨‍</div>
         <div class="user-info">
           <h3 id="teacherName">مرحباً</h3>
           <small id="teacherCode" style="display:none">🔑</small>
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
+        <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث"></button>
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="logout()">🚪</button>
+        <button class="icon-btn" onclick="logout()"></button>
       </div>
     </div>
   </div>
@@ -269,7 +269,7 @@ button{cursor:pointer}
 
     <div class="stats-grid">
       <div class="stat-box total">
-        <div class="stat-ico"></div>
+        <div class="stat-ico">👥</div>
         <div class="stat-val" id="statStudents">0</div>
         <div class="stat-lbl">التلاميذ</div>
       </div>
@@ -291,7 +291,7 @@ button{cursor:pointer}
     </div>
 
     <div class="search-box">
-      <span class="s-icon">🔍</span>
+      <span class="s-icon"></span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
@@ -339,7 +339,8 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-var AR = '٠١٣٤٥٦٧٨٩';
+// ✅ تم إصلاح تسلسل الأرقام - أضفت الرقم ٢
+var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
@@ -348,7 +349,7 @@ var toastT,confirmFn=null,msgCheckInterval,syncInterval;
 var draftKey = function(){return T.cls+'¦'+T.month;};
 var SYNC_INTERVAL = 300000;
 var hasUnsavedChanges = false;
-var deletedMessages = []; // قائمة الرسائل المحذوفة
+var deletedMessages = [];
 
 var SendQueue = {
   KEY: 'd_send_queue_unknown',
@@ -377,7 +378,7 @@ var SendQueue = {
     if(queue.length > 0){
       btn.classList.add('pending');
       bar.className = 'send-status queue';
-      bar.textContent = '📡 في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
+      bar.textContent = ' في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
     }else{ btn.classList.remove('pending'); }
   },
   processQueue: function(){
@@ -398,7 +399,7 @@ var SendQueue = {
     api(item.payload, 30000).then(function(r){
       if(r.ok){ self.remove(item.id); toast('✓✓ تم إرسال البيانات المتراكمة', 'ok'); if(item.onSuccess) item.onSuccess(r); }
       else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
-    }).catch(function(e){ console.log(' خطأ في الإرسال:', e); });
+    }).catch(function(e){ console.log('❌ خطأ في الإرسال:', e); });
   }
 };
 
@@ -469,7 +470,7 @@ function doLogin(){
     localStorage.setItem('d_session',JSON.stringify(r.teacher));
     SendQueue.KEY = 'd_send_queue_' + r.teacher.code;
     enterHome();
-  }).catch(function(e){$('#loginMsg').textContent='📴 تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
+  }).catch(function(e){$('#loginMsg').textContent=' تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
 }
 
 function enterHome(){
@@ -525,7 +526,7 @@ function onSubjectChange(){
   if(idx===''||!T.subjects[idx]){ T.subject='';T.classes=[];T.cls=''; updateWelcome();loadCurrent();return; }
   T.subject=T.subjects[idx].name; T.classes=T.subjects[idx].classes||[];
   for(var i=0;i<T.classes.length;i++){
-    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent='🏫 '+T.classes[i]; clsSel.appendChild(opt);
+    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent=' '+T.classes[i]; clsSel.appendChild(opt);
   }
   if(T.classes.length>0){ clsSel.value=T.classes[0]; T.cls=T.classes[0]; }else{T.cls='';}
   updateWelcome(); loadCurrent(true);
@@ -537,7 +538,7 @@ function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • 
 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
-    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon"></div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
     clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
@@ -618,7 +619,7 @@ function fetchStudents(showLoading) {
     }
   }).catch(function(e) {
     showSyncIndicator(false);
-    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">️</div><p>تعذر المزامنة</p><small>تحقق من الإنترنت</small></div>';
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">⚠️</div><p>تعذر المزامنة</p><small>تحقق من الإنترنت</small></div>';
   });
 }
 
@@ -670,7 +671,7 @@ function renderRows(){
   }
   $('#totalCount').textContent = arNum(visibleCount) + ' تلميذ';
   if(visibleCount === 0 && !search){ box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; }
-  else if(visibleCount === 0 && search){ box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>'; }
+  else if(visibleCount === 0 && search){ box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; }
 }
 
 function updStats(){
@@ -723,7 +724,7 @@ function sendGrades(){
       if(r.ok){ dr.sentHash=payload.checksum; dr.sentAt=r.time||Date.now(); saveDraft();updSendBar(); toast('✓✓ تم إرسال درجات '+month+' للإدارة'); }
       else{toast('❌ '+r.error,true);}
     }).catch(function(e){
-      toast('⚠️ فشل الإرسال - أُضيف للطابور',true);
+      toast('️ فشل الإرسال - أُضيف للطابور',true);
       SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
     }).finally(function(){ btn.classList.remove('busy');btn.disabled=false; });
   }else{
@@ -739,14 +740,8 @@ function requestNotificationPermission(){
     Notification.requestPermission().then(function(permission) {
       if (permission === "granted") {
         console.log("✅ تم منح إذن الإشعارات");
-        // تشغيل صوت تجريبي لتفعيل نظام الصوت
-        try {
-          var testAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=");
-          testAudio.volume = 0.1;
-          testAudio.play().catch(function(){});
-        } catch(e){}
       } else {
-        console.log("⚠️ تم رفض إذن الإشعارات");
+        console.log("️ تم رفض إذن الإشعارات");
       }
     });
   } 
@@ -782,18 +777,26 @@ function checkMessages(){
   });
 }
 
+// ✅ صوت أعلى وأوضح - رنين جرس
 function playNotificationSound(){
   try {
-    // ✅ صوت واضح ومسموع
-    var audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-    audio.volume = 1.0; // أعلى مستوى للصوت
+    // ✅ استخدام صوت جرس واضح وعالٍ
+    var audio = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.wav");
+    audio.volume = 1.0; // أقصى مستوى
     audio.preload = 'auto';
+    
     var playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.then(function() {
         console.log('✅ تم تشغيل صوت الإشعار');
       }).catch(function(error) {
-        console.log('⚠️ المتصفح منع التشغيل التلقائي:', error);
+        console.log('⚠️ المتصفح منع التشغيل:', error);
+        // ✅ صوت بديل بسيط
+        try {
+          var fallbackAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=");
+          fallbackAudio.volume = 1.0;
+          fallbackAudio.play().catch(function(){});
+        } catch(e2){}
       });
     }
   } catch(e) {
@@ -801,7 +804,6 @@ function playNotificationSound(){
   }
 }
 
-// ✅ دالة عرض الرسائل مع زر الحذف
 function openMessages(){
   requestNotificationPermission(); 
   $('#msgModal').classList.add('show');
@@ -809,10 +811,7 @@ function openMessages(){
   
   api({action:'getMessages',code:T.code}).then(function(r){
     if(r.ok && r.messages.length > 0){
-      // تحميل قائمة الرسائل المحذوفة محلياً
       deletedMessages = JSON.parse(localStorage.getItem('d_deleted_msgs_'+T.code) || '[]');
-      
-      // تصفية الرسائل المحذوفة
       var visibleMessages = r.messages.filter(function(m, index){
         return deletedMessages.indexOf(index) === -1;
       });
@@ -841,21 +840,13 @@ function openMessages(){
   });
 }
 
-// ✅ دالة حذف رسالة (محلياً)
 function deleteMessage(index){
   if(confirm('هل تريد حذف هذه الرسالة؟')){
-    // تحميل قائمة الحذف الحالية
     deletedMessages = JSON.parse(localStorage.getItem('d_deleted_msgs_'+T.code) || '[]');
-    
-    // إضافة الرسالة إلى قائمة الحذف
     if(deletedMessages.indexOf(index) === -1){
       deletedMessages.push(index);
     }
-    
-    // حفظ القائمة
     localStorage.setItem('d_deleted_msgs_'+T.code, JSON.stringify(deletedMessages));
-    
-    // إعادة عرض الرسائل
     openMessages();
     toast('✓ تم حذف الرسالة', 'ok');
   }
