@@ -11,6 +11,12 @@
 <meta name="application-name" content="درجاتي المعلمين">
 <meta name="msapplication-TileColor" content="#6366f1">
 <meta name="description" content="تطبيق المعلمين لإدخال الدرجات">
+
+<!-- ✅ إجبار المتصفح على عدم استخدام الكاش وجلب أحدث نسخة دائماً -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <title>درجاتي - تطبيق المعلمين</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
@@ -179,12 +185,12 @@ button{cursor:pointer}
 <div id="login">
   <div class="login-content">
     <div class="login-logo">
-      <div class="logo-icon">🎓</div>
+      <div class="logo-icon"></div>
       <h1>درجاتي</h1>
       <p>تطبيق المعلمين لإدارة الدرجات</p>
     </div>
     <div class="login-card">
-      <h2> دخول المعلم</h2>
+      <h2>🔐 دخول المعلم</h2>
       <div class="input-wrapper">
         <label>الكود الخاص بك</label>
         <input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off">
@@ -196,7 +202,7 @@ button{cursor:pointer}
       </button>
       <div class="login-msg" id="loginMsg"></div>
     </div>
-    <div class="login-footer">💡 الكود من إدارة النظام</div>
+    <div class="login-footer"> الكود من إدارة النظام</div>
   </div>
 </div>
 
@@ -211,11 +217,12 @@ button{cursor:pointer}
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" onclick="manualSync()" title="مزامنة يدوية"></button>
+        <!-- ✅ زر المزامنة والتحديث المحدث -->
+        <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
         <button class="icon-btn" onclick="openMessages()">
           🔔<span class="notif-badge" id="msgBadge">0</span>
         </button>
-        <button class="icon-btn" onclick="logout()"></button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
       </div>
     </div>
   </div>
@@ -232,7 +239,7 @@ button{cursor:pointer}
 
   <div class="app-content">
     <div class="welcome-card">
-      <div class="welcome-icon"></div>
+      <div class="welcome-icon">📚</div>
       <div class="welcome-text">
         <h4 id="welcomeTitle">أهلاً بك</h4>
         <p id="welcomeSub">اختر المادة والشعبة لبدء إدخال الدرجات</p>
@@ -241,19 +248,19 @@ button{cursor:pointer}
 
     <div class="selectors">
       <div class="select-card subject-card">
-        <label>📚 المادة</label>
+        <label> المادة</label>
         <select id="subjectSelect" onchange="onSubjectChange()">
           <option value="">اختر المادة</option>
         </select>
       </div>
       <div class="select-card class-card">
-        <label>🏫 الصف والشعبة</label>
+        <label> الصف والشعبة</label>
         <select id="classSelect" onchange="onClassChange()">
           <option value="">اختر الشعبة</option>
         </select>
       </div>
       <div class="select-card month-card">
-        <label> الشهر</label>
+        <label>📅 الشهر</label>
         <select id="monthSelect" onchange="onMonthChange()"></select>
       </div>
     </div>
@@ -282,13 +289,13 @@ button{cursor:pointer}
     </div>
 
     <div class="search-box">
-      <span class="s-icon"></span>
+      <span class="s-icon">🔍</span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
     <div class="students-card">
       <div class="card-head">
-        <h3>📝 قائمة التلاميذ</h3>
+        <h3> قائمة التلاميذ</h3>
         <span class="count" id="totalCount">0 تلميذ</span>
       </div>
       <div id="studentsList"></div>
@@ -326,7 +333,8 @@ button{cursor:pointer}
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js"></script>
+<!-- ✅ استخدام timestamp لضمان تحميل أحدث نسخة دائماً -->
+<script src="config.js?v=" + Date.now() + "></script>
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
@@ -433,9 +441,18 @@ function updateConnectionStatus(){
   }
 }
 
-function manualSync(){
-  if(!T.cls || !T.subject){ toast('⚠️ اختر المادة والشعبة أولاً', 'err'); return; }
-  toast('⏳ جاري المزامنة...', ''); loadCurrent(true);
+// ✅ زر المزامنة والتحديث المحدث
+function manualSyncAndRefresh(){
+  if(!T.cls || !T.subject){ 
+    toast('⚠️ اختر المادة والشعبة أولاً', 'err'); 
+    return; 
+  }
+  toast('⏳ جاري المزامنة والتحديث...', ''); 
+  
+  // ✅ فرض إعادة تحميل كاملة مع تجاهل الكاش
+  setTimeout(function(){
+    window.location.reload(true);
+  }, 500);
 }
 
 function doLogin(){
@@ -483,7 +500,7 @@ function buildSelectors(){
   if(T.subjects&&T.subjects.length>0){
     for(var idx=0;idx<T.subjects.length;idx++){
       var sub=T.subjects[idx], opt=document.createElement('option');
-      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
+      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:''};
       opt.textContent=ci.icon+' '+sub.name; subSel.appendChild(opt);
     }
     subSel.value='0';
@@ -672,7 +689,7 @@ function renderRows(){
   if(visibleCount === 0 && !search){ 
     box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; 
   } else if(visibleCount === 0 && search){ 
-    box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; 
+    box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>'; 
   }
 }
 
@@ -690,8 +707,8 @@ function updSendBar(){
   var dr=T.drafts[draftKey()], el=$('#sendBar'); if(!dr)return;
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
-  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
-  else{ el.className='send-status no'; el.textContent=' لم يتم الإرسال بعد'; }
+  else if(dr.sentHash){ el.className='send-status pending'; el.textContent='️ لديك تعديلات لم تُرسل'; }
+  else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
 }
 
 function sendGrades(){
@@ -770,9 +787,7 @@ function checkMessages(){
   });
 }
 
-// ✅ دالة تشغيل صوت التنبيه (مبسطة)
 function playNotificationSound(){
-  // يمكن إضافة صوت لاحقاً إذا لزم الأمر
   console.log('🔔 إشعار جديد');
 }
 
