@@ -551,19 +551,24 @@ function savePrintSettingsAndPrint(){
 }
 
 /* ═══ الطباعة (معدلة: تكبير التسلسل والأسماء + تحريك للأسفل + 35 تلميذ) ═══ */
+/* ═══ الطباعة (معدلة: توقيع واحد + اسم المعلم + بدون صفحة بيضاء) ══ */
 function printSubjectRecord(){
   if(!CURRENT_PRINT_DATA){ toast('⚠️ لا توجد بيانات', 'err'); return; }
   var data = CURRENT_PRINT_DATA;
   var subjectName = data.subjectName;
   var byClass = data.byClass;
   var classKeys = Object.keys(byClass).sort();
+  
+  // ✅ جلب اسم المعلم من الواجهة
+  var teacherName = $('#trTeacherName') ? $('#trTeacherName').textContent.trim() : '';
+  
   var h = '';
   
   h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>كشف درجات</title>';
   h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
   h += '<style>';
-  // ✅ هوامش متوازنة مع منع تجاوز A4
-  h += '@page { size: A4 portrait; margin: 6mm 6mm 8mm 6mm; ';
+  // ✅ هوامش محكمة لمنع الصفحة البيضاء الثانية
+  h += '@page { size: A4 portrait; margin: 6mm 6mm 6mm 6mm; ';
   h += '@top-left { content: none; } @top-center { content: none; } @top-right { content: none; } ';
   h += '@bottom-left { content: none; } @bottom-center { content: none; } @bottom-right { content: none; } }';
   
@@ -572,7 +577,7 @@ function printSubjectRecord(){
   h += '.print-page { width: 100%; max-width: 210mm; margin: 0 auto; padding: 0; page-break-after: always; overflow: hidden; }';
   h += '.print-page:last-child { page-break-after: auto; }';
   
-  // ✅ رأس الصفحة مضغوط ومرتب
+  // ✅ رأس الصفحة
   h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2mm; padding-bottom: 2mm; border-bottom: 1.5px solid #1E40AF; }';
   h += '.print-header-right, .print-header-center { flex: 1; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: right; }';
@@ -586,17 +591,15 @@ function printSubjectRecord(){
   h += '.print-info-row { margin-bottom: 0.5mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
-  // ✅ تحريك الجدول للأسفل قليلاً + منع التجاوز
+  // ✅ غلاف الجدول مع تحريك للأسفل
   h += '.print-table-wrapper { margin-top: 3mm; width: 100%; overflow: hidden; }';
   h += '.print-table { width: 100%; border-collapse: collapse; font-size: 8pt; table-layout: fixed !important; }';
   h += '.print-table th, .print-table td { border: 0.5px solid #000; padding: 1.5mm 1mm; text-align: center; vertical-align: middle; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }';
   h += '.print-table th { font-weight: 900; font-size: 8pt; color: #fff; white-space: normal !important; word-wrap: break-word !important; }';
   
-  // ✅ تكبير عمود التسلسل بشكل واضح
+  // ✅ ألوان وأحجام الأعمدة (السلوان)
   h += '.th-seq { width: 14mm !important; background-color: #FDE047 !important; color: #000 !important; font-weight: 900; font-size: 9pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  // ✅ تكبير عمود الأسماء بشكل واضح
   h += '.th-name { width: 48mm !important; background-color: #fff !important; color: #000 !important; font-weight: 900; white-space: normal !important; word-wrap: break-word !important; font-size: 8.5pt; text-align: right !important; padding-right: 1.5mm !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  
   h += '.th-f1 { background-color: #1D4ED8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-f2 { background-color: #0E7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-avg1, .th-avg2 { background-color: #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
@@ -610,10 +613,11 @@ function printSubjectRecord(){
   h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   
-  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 5mm; }';
-  h += '.print-signature { text-align: center; width: 40mm; }';
-  h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 8mm; }';
-  h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
+  // ✅ توقيع واحد فقط - معلم المادة - بدون خط سفلي يسبب صفحة بيضاء
+  h += '.print-footer { margin-top: 4mm; display: flex; justify-content: flex-end; padding-right: 10mm; }';
+  h += '.print-signature { text-align: center; width: 60mm; }';
+  h += '.print-signature .sig-title { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 2mm; }';
+  h += '.print-signature .sig-name { font-size: 10pt; font-weight: 900; color: #1E40AF; border-bottom: 1px solid #0F172A; padding-bottom: 1mm; display: inline-block; min-width: 50mm; }';
   h += '</style></head><body>';
   
   classKeys.forEach(function(clsKey, clsIndex){
@@ -623,7 +627,6 @@ function printSubjectRecord(){
     var section = parts[1] || '';
     var totalStudents = rows.length;
     
-    // ✅ الحفاظ على 35 تلميذاً في الصفحة
     var CHUNK_SIZE = 35; 
     var totalPages = Math.ceil(totalStudents / CHUNK_SIZE);
     
@@ -639,7 +642,6 @@ function printSubjectRecord(){
       h += '<div class="print-header-left"><div class="print-info-box"><div class="print-info-row"><b>الصف:</b> ' + esc(grade) + ' ' + esc(section) + '</div><div class="print-info-row"><b>المادة:</b> ' + esc(subjectName) + '</div><div class="print-info-row"><b>العدد:</b> ' + arNum(totalStudents) + '</div></div></div>';
       h += '</div>';
       
-      // ✅ تحريك الجدول للأسفل قليلاً
       h += '<div class="print-table-wrapper">';
       h += '<table class="print-table"><thead><tr><th rowspan="2" class="th-seq">ت</th><th rowspan="2" class="th-name">اسم التلميذ</th><th colspan="3" class="th-f1">الفصل الأول</th><th rowspan="2" class="th-avg1">معدل<br>ف١</th><th rowspan="2" class="th-half">نصف<br>السنة</th><th colspan="2" class="th-f2">الفصل الثاني</th><th rowspan="2" class="th-avg2">معدل<br>ف٢</th><th rowspan="2" class="th-annual">السعي<br>السنوي</th><th rowspan="2" class="th-exam">نهاية<br>السنة</th><th rowspan="2" class="th-final">الدرجة<br>النهائية</th></tr><tr><th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th></tr></thead><tbody>';
       
@@ -652,10 +654,16 @@ function printSubjectRecord(){
       });
       
       h += '</tbody></table>';
-      h += '</div>'; // إغلاق print-table-wrapper
+      h += '</div>';
       
+      // ✅ توقيع واحد فقط في الصفحة الأخيرة - معلم المادة مع اسمه
       if(pageIdx === totalPages - 1){
-        h += '<div class="print-footer"><div class="print-signature"><div>توقيع المعلم</div><div class="signature-line"></div></div><div class="print-signature"><div>توقيع المدير</div><div class="signature-line"></div></div></div>';
+        h += '<div class="print-footer">';
+        h += '<div class="print-signature">';
+        h += '<div class="sig-title">معلم المادة</div>';
+        h += '<div class="sig-name">' + esc(teacherName) + '</div>';
+        h += '</div>';
+        h += '</div>';
       }
       h += '</div>';
     }
