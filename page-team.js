@@ -555,6 +555,7 @@ function savePrintSettingsAndPrint(){
 /* ═══ الطباعة (معدلة نهائياً: ألوان + توقيع في نفس الصفحة) ═══ */
 /* ═══ الطباعة (جدول واحد متواصل + ألوان واضحة + عناوين مقروءة) ═══ */
 /* ═══ الطباعة (معلومات الشعبة في الرأس + جدول نظيف + ألوان صحيحة) ═══ */
+/* ═══ الطباعة (توقيع معلم المادة في سطر واحد + أرقام مضخمة + ألوان مضمونة) ═══ */
 function printSubjectRecord(){
   if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات', 'err'); return; }
   var data = CURRENT_PRINT_DATA;
@@ -598,30 +599,37 @@ function printSubjectRecord(){
   
   h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 2.5mm 1mm !important; text-align: center; vertical-align: middle; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }';
   
-  h += '.print-table th { font-weight: 900 !important; font-size: 8pt !important; white-space: normal !important; word-wrap: break-word !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.print-table th { font-weight: 900 !important; font-size: 8pt !important; white-space: normal !important; word-wrap: break-word !important; }';
   
-  h += '.th-seq { width: 13mm !important; background-color: #FDE047 !important; color: #000 !important; font-weight: 900 !important; font-size: 10pt !important; }';
-  h += '.th-name { width: 45mm !important; background-color: #ffffff !important; color: #000 !important; font-weight: 900 !important; white-space: normal !important; word-wrap: break-word !important; font-size: 8.5pt !important; text-align: right !important; padding-right: 1mm !important; }';
-  h += '.th-f1 { background-color: #1D4ED8 !important; color: #ffffff !important; }';
-  h += '.th-f2 { background-color: #0E7490 !important; color: #ffffff !important; }';
-  h += '.th-avg1 { background-color: #B45309 !important; color: #ffffff !important; }';
-  h += '.th-avg2 { background-color: #B45309 !important; color: #ffffff !important; }';
-  h += '.th-half { background-color: #7C3AED !important; color: #ffffff !important; }';
-  h += '.th-annual { background-color: #059669 !important; color: #ffffff !important; }';
-  h += '.th-exam { background-color: #DC2626 !important; color: #ffffff !important; }';
-  h += '.th-final { background-color: #BE123C !important; color: #ffffff !important; }';
-  h += '.th-sub { background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900 !important; font-size: 8pt !important; }';
+  // ✅ ألوان مضمونة - استخدام !important على كل خاصية + جميع الخصائص الممكنة
+  h += '.th-seq { width: 13mm !important; background: #FDE047 !important; background-color: #FDE047 !important; color: #000 !important; font-weight: 900 !important; font-size: 10pt !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-name { width: 45mm !important; background: #ffffff !important; background-color: #ffffff !important; color: #000 !important; font-weight: 900 !important; white-space: normal !important; word-wrap: break-word !important; font-size: 8.5pt !important; text-align: right !important; padding-right: 1mm !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  
+  // ✅ خلفيات داكنة مع نص أبيض - جميع الخصائص مكررة لضمان العمل
+  h += '.th-f1 { background: #1D4ED8 !important; background-color: #1D4ED8 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-f2 { background: #0E7490 !important; background-color: #0E7490 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-avg1 { background: #B45309 !important; background-color: #B45309 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-avg2 { background: #B45309 !important; background-color: #B45309 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-half { background: #7C3AED !important; background-color: #7C3AED !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-annual { background: #059669 !important; background-color: #059669 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-exam { background: #DC2626 !important; background-color: #DC2626 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-final { background: #BE123C !important; background-color: #BE123C !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-sub { background: #E0E7FF !important; background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900 !important; font-size: 8pt !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  
+  // ✅ تضخيم أرقام التسلسل - حجم أكبر ولون أسود واضح
+  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; }';
   
   h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 8.5pt !important; color: #000 !important; overflow: hidden !important; text-overflow: ellipsis !important; }';
-  h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900 !important; }';
-  h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900 !important; }';
+  h += '.td-final-pass { background: #D1FAE5 !important; background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.td-final-fail { background: #FEE2E2 !important; background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
-  h += '.print-footer { margin-top: 3mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
-  h += '.print-signature { text-align: center; width: 55mm; }';
-  h += '.print-signature .sig-title { font-size: 8pt; font-weight: 700; color: #0F172A; margin-bottom: 1mm; }';
-  h += '.print-signature .sig-name { font-size: 9pt; font-weight: 900; color: #1E40AF; border-bottom: 1px solid #0F172A; padding-bottom: 0.5mm; display: inline-block; min-width: 45mm; }';
+  // ✅ توقيع معلم المادة في سطر واحد بدون خط
+  h += '.print-footer { margin-top: 4mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
+  h += '.print-signature { text-align: right; width: 70mm; }';
+  h += '.print-signature .sig-text { font-size: 10pt; font-weight: 700; color: #0F172A; }';
+  h += '.print-signature .sig-name { font-size: 11pt; font-weight: 900; color: #1E40AF; margin-right: 2mm; }';
   
   h += '</style></head><body>';
   
@@ -630,35 +638,31 @@ function printSubjectRecord(){
   var totalAll = 0;
   classKeys.forEach(function(ck){ totalAll += byClass[ck].length; });
   
-  // ✅ تجميع أسماء الشعب في سطر واحد
   var classesText = classKeys.map(function(ck){ return esc(ck); }).join(' - ');
   
   h += '<div class="print-header">';
   h += '<div class="print-header-right"><div class="print-school-name"><span class="line1">إدارة</span><span class="line2">' + esc(PRINT_SETTINGS.schoolName) + '</span><span class="line3">' + esc(PRINT_SETTINGS.schoolType) + '</span></div></div>';
   h += '<div class="print-header-center"><div class="print-title">كشف درجات المعلم</div><div class="print-year">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</div></div>';
-  
-  // ✅ معلومات الشعبة والمادة والعدد في جهة اليسار (بالترتيب المطلوب)
   h += '<div class="print-header-left"><div class="print-info-box">';
   h += '<div class="print-info-row"><b>الصف والشعبة:</b> ' + classesText + '</div>';
   h += '<div class="print-info-row"><b>المادة:</b> ' + esc(subjectName) + '</div>';
   h += '<div class="print-info-row"><b>العدد الكلي:</b> ' + arNum(totalAll) + ' تلميذ</div>';
   h += '</div></div>';
-  
   h += '</div>';
   
   h += '<table class="print-table">';
-  h += '<thead><tr><th rowspan="2" class="th-seq">ت</th><th rowspan="2" class="th-name">اسم التلميذ</th><th colspan="3" class="th-f1">الفصل الأول</th><th rowspan="2" class="th-avg1">معدل<br>ف١</th><th rowspan="2" class="th-half">نصف<br>السنة</th><th colspan="2" class="th-f2">الفصل الثاني</th><th rowspan="2" class="th-avg2">معدل<br>ف٢</th><th rowspan="2" class="th-annual">السعي<br>السنوي</th><th rowspan="2" class="th-exam">نهاية<br>السنة</th><th rowspan="2" class="th-final">الدرجة<br>النهائية</th></tr><tr><th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th></tr></thead>';
+  h += '<thead><tr><th rowspan="2" class="th-seq">ت</th><th rowspan="2" class="th-name">اسم التلميذ</th><th colspan="3" class="th-f1">الفصل الأول</th><th rowspan="2" class="th-avg1">معدل<br>ف١</th><th rowspan="2" class="th-half">نصف<br>السنة</th><th colspan="2" class="th-f2">الفصل الثاني</th><th rowspan="2" class="th-avg2">معدل<br>ف٢</th><th rowspan="2" class="th-annual" style="font-size:7pt !important;">السعي<br>السنوي</th><th rowspan="2" class="th-exam">نهاية<br>السنة</th><th rowspan="2" class="th-final" style="font-size:7pt !important;">الدرجة<br>النهائية</th></tr><tr><th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th></tr></thead>';
   h += '<tbody>';
   
   var globalIndex = 1;
   classKeys.forEach(function(clsKey){
     var rows = byClass[clsKey];
     
-    // ✅ لا سطر عنوان الشعبة داخل الجدول - فقط التلاميذ مباشرة
     rows.forEach(function(s){
       var g = s.grades;
       h += '<tr>';
-      h += '<td>' + arNum(globalIndex) + '</td>';
+      // ✅ أرقام التسلسل مضخمة وباللون الأسود
+      h += '<td class="seq-num">' + arNum(globalIndex) + '</td>';
       h += '<td class="td-name">' + esc(s.name) + '</td>';
       h += '<td>' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
       h += '<td>' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
@@ -679,10 +683,11 @@ function printSubjectRecord(){
   
   h += '</tbody></table>';
   
+  // ✅ توقيع معلم المادة في سطر واحد بدون خط
   h += '<div class="print-footer">';
   h += '<div class="print-signature">';
-  h += '<div class="sig-title">معلم المادة</div>';
-  h += '<div class="sig-name">' + esc(teacherName) + '</div>';
+  h += '<span class="sig-text">معلم المادة: </span>';
+  h += '<span class="sig-name">' + esc(teacherName) + '</span>';
   h += '</div>';
   h += '</div>';
   
