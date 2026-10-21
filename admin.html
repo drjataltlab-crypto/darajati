@@ -104,35 +104,35 @@
 #dashKpi .stats-bar .progress-wrap { flex: 1.5 !important; min-width: 180px !important; }
 #dashKpi .stats-bar .health-badge { flex-shrink: 0 !important; }
 
-/* ✅ تنسيقات الطباعة المحسنة لتتسع لـ 35 تلميذ في صفحة A4 بالعرض */
+/* ✅ تنسيقات الطباعة العمودية (Portrait) المحسنة لتتسع لـ 35 تلميذ */
 .print-container {
   font-family: 'Tajawal', Arial, sans-serif !important;
-  width: 297mm !important; /* عرض A4 Landscape */
+  width: 210mm !important; /* عرض A4 العمودي */
   margin: 0 auto !important;
-  padding: 5mm !important; /* تقليل الهوامش لاستغلال المساحة */
+  padding: 5mm !important; /* هوامش ضيقة جداً */
   background: #fff !important;
 }
 .print-container h2 {
-  text-align: center !important; color: #1E40AF !important; margin-bottom: 10px !important;
-  font-size: 18px !important; border-bottom: 2px solid #1E40AF !important; padding-bottom: 5px !important;
+  text-align: center !important; color: #1E40AF !important; margin-bottom: 8px !important;
+  font-size: 16px !important; border-bottom: 2px solid #1E40AF !important; padding-bottom: 4px !important;
 }
 .print-table {
   width: 100% !important; border-collapse: collapse !important; border: 1.5px solid #000 !important;
 }
 .print-table th, .print-table td {
-  padding: 2px 4px !important; /* تقليل الحشو الداخلي بشكل كبير */
+  padding: 2px 3px !important; /* تقليل الحشو لأقصى حد */
   border: 1px solid #000 !important;
   text-align: center !important;
-  font-size: 10px !important; /* تصغير الخط ليتسع لـ 35 صف */
+  font-size: 9px !important; /* خط صغير جداً ليتسع لـ 35 صف */
   line-height: 1.1 !important;
   color: #000 !important; font-weight: 700 !important;
 }
 .print-table th {
-  background: #1E40AF !important; color: #fff !important; font-weight: 900 !important; font-size: 9px !important;
+  background: #1E40AF !important; color: #fff !important; font-weight: 900 !important; font-size: 8px !important;
 }
 .print-table td.name-cell {
   text-align: right !important; font-weight: 900 !important;
-  min-width: 140px !important; max-width: 180px !important;
+  min-width: 90px !important; max-width: 120px !important;
   white-space: normal !important; word-wrap: break-word !important;
 }
 .print-table td.avg-cell { background: #FEF3C7 !important; font-weight: 900 !important; }
@@ -147,8 +147,8 @@
     width: 100% !important; margin: 0 !important; padding: 5mm !important;
   }
   @page { 
-    size: A4 landscape !important; 
-    margin: 5mm !important; /* هوامش الطباعة الدنيا */
+    size: A4 portrait !important; /* ✅ ورقة عمودية */
+    margin: 5mm !important; 
   }
 }
 
@@ -205,7 +205,6 @@
       <header class="topbar">
         <div><b id="tbTitle">الرئيسية</b><small id="admSub">—</small></div>
         <span class="grow"></span>
-        <!-- ✅ تم إصلاح أيقونة التحديث لتظهر بشكل صحيح -->
         <button class="iconbtn" onclick="refresh()" title="تحديث" style="font-size:20px;">🔄</button>
         <button class="iconbtn exit-btn" onclick="logoutAdmin()" title="تسجيل الخروج">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -314,6 +313,37 @@
               </div>
               <button class="btn" style="background:#DC2626" onclick="sendAdminMessageNew()">📨 إرسال الرسالة</button>
             </div>
+
+            <!-- ✅ بطاقة حذف درجات المعلم (مضافة الآن) -->
+            <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
+              <div class="hi">🗑️</div>
+              <h3>حذف درجات معلم</h3>
+              <div class="form-group">
+                <label>كود المعلم</label>
+                <input id="delTeacherCode" dir="ltr" placeholder="T-XXXX">
+              </div>
+              <div class="form-group">
+                <label>الصف والشعبة (اختياري)</label>
+                <input id="delClass" placeholder="مثال: الخامس أ">
+              </div>
+              <div class="form-group">
+                <label>الشهر</label>
+                <select id="delMonth">
+                  <option value="">اختر الشهر</option>
+                  <option>تشرين الأول</option>
+                  <option>تشرين الثاني</option>
+                  <option>كانون الأول</option>
+                  <option>آذار</option>
+                  <option>نيسان</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>اسم التلميذ (اختياري - اتركه فارغاً لحذف الجميع)</label>
+                <input id="delStudentName" placeholder="اتركه فارغاً لحذف الكل">
+              </div>
+              <button class="btn" style="background:#DC2626" onclick="deleteTeacherGrades()">🗑️ حذف الدرجات</button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -536,6 +566,48 @@ function sendAdminMessageNew(){
         if(sentCount + failedCount === selectedTeachers.length){ toast('⚠️ تعذر الاتصال بالخادم', 'err'); }
       });
     }, index * 500);
+  });
+}
+
+// ✅ دالة حذف درجات المعلم (مضافة الآن)
+function deleteTeacherGrades(){
+  var code = document.getElementById('delTeacherCode').value.trim().toUpperCase();
+  var cls = document.getElementById('delClass').value.trim();
+  var month = document.getElementById('delMonth').value.trim();
+  var studentName = document.getElementById('delStudentName').value.trim();
+  
+  if(!code){ toast('⚠️ أدخل كود المعلم', 'err'); return; }
+  if(!month){ toast('⚠️ اختر الشهر', 'err'); return; }
+  
+  var confirmMsg = '⚠️ هل أنت متأكد من حذف درجات:\n\n';
+  confirmMsg += 'المعلم: ' + code + '\n';
+  confirmMsg += 'الشهر: ' + month + '\n';
+  if(cls) confirmMsg += 'الصف: ' + cls + '\n';
+  if(studentName) confirmMsg += 'التلميذ: ' + studentName + '\n';
+  else confirmMsg += 'جميع التلاميذ\n';
+  confirmMsg += '\nلا يمكن التراجع عن هذا الإجراء!';
+  
+  if(!confirm(confirmMsg)) return;
+  
+  api({
+    action: 'deleteGrades',
+    key: key(),
+    code: code,
+    month: month,
+    cls: cls,
+    studentName: studentName
+  }).then(function(r){
+    if(r.ok){
+      toast('✓✓ تم حذف ' + r.count + ' درجة بنجاح', 'ok');
+      document.getElementById('delTeacherCode').value = '';
+      document.getElementById('delClass').value = '';
+      document.getElementById('delMonth').value = '';
+      document.getElementById('delStudentName').value = '';
+    } else {
+      toast('❌ ' + (r.error || 'فشل الحذف'), 'err');
+    }
+  }).catch(function(err){
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
 
