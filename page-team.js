@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (تصميم حديث متكامل + باركود) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (تصميم حديث متكامل + باركود + طباعة 35 تلميذ) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -10,7 +10,6 @@ var PRINT_SETTINGS = {
 };
 var CURRENT_PRINT_DATA = null;
 
-// ✅ دالة تحويل الأرقام الإنجليزية إلى عربية
 function toArabicNumerals(num) {
   if (num === null || num === undefined || num === '') return '';
   var arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
@@ -24,7 +23,6 @@ registerPage('team', {
   }
 });
 
-/* ═══ حقن التصميم الحديث (نفس تصميم الرئيسية) ═══ */
 (function(){
   if(document.getElementById('teamProStyles')) return;
   var s = document.createElement('style'); 
@@ -110,8 +108,6 @@ function renderTeachers(){
     if(t.subjects) t.subjects.forEach(function(s){ if(s.classes) cnt+=s.classes.length; });
     
     h += '<div class="team-teacher-card" style="background:'+theme.gradient+'">';
-    
-    // الرأس: الصورة والاسم والحالة
     h += '<div class="team-top">';
     h += '<div class="team-avatar" style="color:'+theme.accent+'">'+esc((t.name||'?').trim().charAt(0))+'</div>';
     h += '<div class="team-main">';
@@ -121,7 +117,6 @@ function renderTeachers(){
     h += '<div class="team-status '+(t.locked?'locked':'open')+'">'+(t.locked?'🔒 مقفل':'🟢 مفتوح')+'</div>';
     h += '</div>';
     
-    // المواد والشعب
     if(t.subjects && t.subjects.length){
       h += '<div class="team-subjects-box">';
       t.subjects.forEach(function(s){
@@ -137,26 +132,20 @@ function renderTeachers(){
       h += '</div>';
     }
     
-    // الإحصائيات
     h += '<div class="team-meta">';
     h += '<div class="team-meta-item">📊 آخر دخول: '+esc(last)+'</div>';
     h += '<div class="team-meta-item">📝 درجات: '+arNum(t.sentCount||0)+'</div>';
     h += '<div class="team-meta-item">🏫 شعب: '+arNum(cnt)+'</div>';
     h += '</div>';
     
-    // الأزرار (مرتبة في مجموعتين)
     h += '<div class="team-actions">';
-    // مجموعة التواصل
     h += '<button class="team-btn" onclick="event.stopPropagation();copyText(\''+escA(t.code)+'\')">📋 نسخ</button>';
     h += '<button class="team-btn success" onclick="event.stopPropagation();sendWA(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 واتساب</button>';
     h += '<button class="team-btn" onclick="event.stopPropagation();showQRCode(\''+escA(t.code)+'\',\''+escA(t.name)+'\')">📱 باركود</button>';
-    
-    // مجموعة الإدارة
     h += '<button class="team-btn" onclick="event.stopPropagation();editT(\''+escA(t.code)+'\')">✏️ تعديل</button>';
     h += '<button class="team-btn" onclick="event.stopPropagation();openTeacherRecord(\''+escA(t.code)+'\')">📊 الكشف</button>';
     h += '<button class="team-btn success" onclick="event.stopPropagation();openExportExcelSelection(\''+escA(t.code)+'\')">📥 Excel</button>';
     
-    // مجموعة التحكم
     if(t.locked){
       h += '<button class="team-btn success" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
     }else{
@@ -164,20 +153,15 @@ function renderTeachers(){
     }
     h += '<button class="team-btn danger" onclick="event.stopPropagation();delT(\''+escA(t.code)+'\')">🗑 حذف</button>';
     h += '</div>';
-    
     h += '</div>';
   });
   el.innerHTML = h;
 }
 
-// ═══ دالة عرض الباركود (QR Code) ═══
 function showQRCode(code, name){
-  // تحديد رابط تطبيق المعلمين تلقائياً (يستبدل admin.html بـ index.html)
   var currentUrl = window.location.href;
   var appUrl = currentUrl.replace('admin.html', 'index.html');
-  if(appUrl === currentUrl) {
-    appUrl = window.location.origin + '/darajati/index.html'; // رابط احتياطي
-  }
+  if(appUrl === currentUrl) appUrl = window.location.origin + '/darajati/index.html';
   
   var qrData = 'مرحباً ' + name + '\nكودك في تطبيق درجاتي: ' + code + '\nرابط التحميل: ' + appUrl;
   var qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(qrData);
@@ -546,7 +530,7 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
   CURRENT_PRINT_DATA = { subjectName: subjectName, classes: classes, students: studentData, byClass: byClass };
 }
 
-/* ═══ الطباعة ═══ */
+/* ═══ الطباعة (معدلة لتتسع لـ 35 تلميذ في الوضع العمودي) ═══ */
 function openPrintSettings(){
   if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات للطباعة', 'err'); return; }
   $('#printSchoolName').value = PRINT_SETTINGS.schoolName;
@@ -577,28 +561,32 @@ function printSubjectRecord(){
   h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>سجل درجات</title>';
   h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
   h += '<style>';
-  h += '@page { size: A4 portrait; margin: 8mm 8mm; }';
+  h += '@page { size: A4 portrait; margin: 5mm; }'; // ✅ تقليل الهوامش لأقصى حد
   h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
   h += 'body { font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; }';
-  h += '.print-page { width: 100%; padding: 2mm 0; page-break-after: always; }';
+  h += '.print-page { width: 100%; padding: 0; page-break-after: always; }';
   h += '.print-page:last-child { page-break-after: auto; }';
-  h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
+  
+  // ✅ ضغط حجم الرأس (Header) لتوفير مساحة عمودية
+  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2mm; padding-bottom: 1mm; border-bottom: 1.5px solid #1E40AF; }';
   h += '.print-header-right, .print-header-center { flex: 1; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: right; }';
-  h += '.print-school-name { font-size: 11pt; font-weight: 900; color: #1E40AF; line-height: 1.4; }';
-  h += '.print-school-name .line1 { display: block; font-size: 10pt; }';
-  h += '.print-school-name .line2 { display: block; font-size: 12pt; }';
-  h += '.print-school-name .line3 { display: block; font-size: 10pt; }';
-  h += '.print-title { font-size: 15pt; font-weight: 900; color: #1E40AF; margin-bottom: 1mm; }';
-  h += '.print-year { font-size: 10pt; color: #64748B; font-weight: 700; }';
-  h += '.print-info-box { font-size: 9pt; line-height: 1.6; color: #0F172A; }';
+  h += '.print-school-name { font-size: 9pt; font-weight: 900; color: #1E40AF; line-height: 1.2; }';
+  h += '.print-school-name .line1 { display: block; font-size: 8pt; }';
+  h += '.print-school-name .line2 { display: block; font-size: 10pt; }';
+  h += '.print-school-name .line3 { display: block; font-size: 8pt; }';
+  h += '.print-title { font-size: 12pt; font-weight: 900; color: #1E40AF; margin: 0; }';
+  h += '.print-year { font-size: 8pt; color: #64748B; font-weight: 700; }';
+  h += '.print-info-box { font-size: 8pt; line-height: 1.3; color: #0F172A; }';
   h += '.print-info-row { margin-bottom: 0.5mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
-  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin-bottom: 5mm; }';
-  h += '.print-table th, .print-table td { border: 1px solid #000; padding: 1.2mm 0.5mm; text-align: center; vertical-align: middle; }';
-  h += '.print-table th { font-weight: 900; font-size: 8pt; color: #fff; }';
+  
+  // ✅ تصغير خط الجدول والحشو الداخلي ليتسع لـ 35 صفاً
+  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 7.5pt; margin-bottom: 2mm; table-layout: fixed; }';
+  h += '.print-table th, .print-table td { border: 0.5px solid #000; padding: 0.5mm 0.5mm; text-align: center; vertical-align: middle; line-height: 1.1; overflow: hidden; white-space: nowrap; }';
+  h += '.print-table th { font-weight: 900; font-size: 7.5pt; color: #fff; }';
   h += '.th-seq { width: 8mm; background-color: #FDE047 !important; color: #000 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-name { width: 40mm; background-color: #fff !important; color: #000 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.th-name { width: 38mm !important; background-color: #fff !important; color: #000 !important; font-weight: 900; white-space: normal !important; word-wrap: break-word !important; font-size: 7.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-f1 { background-color: #1D4ED8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-f2 { background-color: #0E7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-avg1, .th-avg2 { background-color: #B45309 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
@@ -606,13 +594,13 @@ function printSubjectRecord(){
   h += '.th-annual { background-color: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-exam { background-color: #DC2626 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.th-final { background-color: #BE123C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.th-sub { background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900; font-size: 8pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.td-name { text-align: right; font-weight: 700; padding-right: 1mm; font-size: 8pt; color: #000 !important; }';
+  h += '.th-sub { background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900; font-size: 7.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
+  h += '.td-name { text-align: right; font-weight: 700; padding-right: 1mm; font-size: 7.5pt; color: #000 !important; }';
   h += '.td-final-pass { background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
   h += '.td-final-fail { background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900; -webkit-print-color-adjust: exact; print-color-adjust: exact; }';
-  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 8mm; }';
+  h += '.print-footer { display: flex; justify-content: space-between; margin-top: 4mm; }';
   h += '.print-signature { text-align: center; width: 40mm; }';
-  h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 8mm; }';
+  h += '.print-signature div:first-child { font-size: 9pt; font-weight: 700; color: #0F172A; margin-bottom: 6mm; }';
   h += '.signature-line { border-top: 1px solid #0F172A; width: 100%; }';
   h += '</style></head><body>';
   
@@ -622,7 +610,9 @@ function printSubjectRecord(){
     var grade = parts[0] || '';
     var section = parts[1] || '';
     var totalStudents = rows.length;
-    var CHUNK_SIZE = 30;
+    
+    // ✅ تغيير عدد التلاميذ في الصفحة من 30 إلى 35
+    var CHUNK_SIZE = 35; 
     var totalPages = Math.ceil(totalStudents / CHUNK_SIZE);
     
     for(var pageIdx = 0; pageIdx < totalPages; pageIdx++){
@@ -634,7 +624,7 @@ function printSubjectRecord(){
       h += '<div class="print-header">';
       h += '<div class="print-header-right"><div class="print-school-name"><span class="line1">إدارة</span><span class="line2">' + esc(PRINT_SETTINGS.schoolName) + '</span><span class="line3">' + esc(PRINT_SETTINGS.schoolType) + '</span></div></div>';
       h += '<div class="print-header-center"><div class="print-title">سجل درجات المعلم</div><div class="print-year">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</div></div>';
-      h += '<div class="print-header-left"><div class="print-info-box"><div class="print-info-row"><b>الصف والشعبة:</b> ' + esc(grade) + ' ' + esc(section) + '</div><div class="print-info-row"><b>المادة:</b> ' + esc(subjectName) + '</div><div class="print-info-row"><b>العدد:</b> ' + arNum(totalStudents) + ' تلميذ</div></div></div>';
+      h += '<div class="print-header-left"><div class="print-info-box"><div class="print-info-row"><b>الصف:</b> ' + esc(grade) + ' ' + esc(section) + '</div><div class="print-info-row"><b>المادة:</b> ' + esc(subjectName) + '</div><div class="print-info-row"><b>العدد:</b> ' + arNum(totalStudents) + '</div></div></div>';
       h += '</div>';
       
       h += '<table class="print-table"><thead><tr><th rowspan="2" class="th-seq">ت</th><th rowspan="2" class="th-name">اسم التلميذ</th><th colspan="3" class="th-f1">الفصل الأول</th><th rowspan="2" class="th-avg1">معدل<br>ف١</th><th rowspan="2" class="th-half">نصف<br>السنة</th><th colspan="2" class="th-f2">الفصل الثاني</th><th rowspan="2" class="th-avg2">معدل<br>ف٢</th><th rowspan="2" class="th-annual">السعي<br>السنوي</th><th rowspan="2" class="th-exam">نهاية<br>السنة</th><th rowspan="2" class="th-final">الدرجة<br>النهائية</th></tr><tr><th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th></tr></thead><tbody>';
