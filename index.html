@@ -188,12 +188,12 @@ button{cursor:pointer}
 <div id="login">
   <div class="login-content">
     <div class="login-logo">
-      <div class="logo-icon">🎓</div>
+      <div class="logo-icon"></div>
       <h1>درجاتي</h1>
       <p>تطبيق المعلمين لإدارة الدرجات</p>
     </div>
     <div class="login-card">
-      <h2> دخول المعلم</h2>
+      <h2>🔐 دخول المعلم</h2>
       <div class="input-wrapper">
         <label>الكود الخاص بك</label>
         <input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off">
@@ -205,7 +205,7 @@ button{cursor:pointer}
       </button>
       <div class="login-msg" id="loginMsg"></div>
     </div>
-    <div class="login-footer">💡 الكود من إدارة النظام</div>
+    <div class="login-footer"> الكود من إدارة النظام</div>
   </div>
 </div>
 
@@ -222,7 +222,7 @@ button{cursor:pointer}
       <div class="header-actions">
         <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
         <button class="icon-btn" onclick="openMessages()" title="الرسائل">🔔<span class="notif-badge" id="msgBadge">0</span></button>
-        <button class="icon-btn" onclick="logout()" title="تسجيل الخروج">🚪</button>
+        <button class="icon-btn" onclick="logout()" title="تسجيل الخروج"></button>
       </div>
     </div>
   </div>
@@ -239,7 +239,7 @@ button{cursor:pointer}
 
   <div class="app-content">
     <div class="welcome-card">
-      <div class="welcome-icon"></div>
+      <div class="welcome-icon">📚</div>
       <div class="welcome-text">
         <h4 id="welcomeTitle">أهلاً بك</h4>
         <p id="welcomeSub">اختر المادة والشعبة لبدء إدخال الدرجات</p>
@@ -289,7 +289,7 @@ button{cursor:pointer}
     </div>
 
     <div class="search-box">
-      <span class="s-icon">🔍</span>
+      <span class="s-icon"></span>
       <input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()">
     </div>
 
@@ -301,7 +301,7 @@ button{cursor:pointer}
       <div id="studentsList"></div>
     </div>
 
-    <div class="send-status no" id="sendBar"> لم يتم الإرسال بعد</div>
+    <div class="send-status no" id="sendBar">📤 لم يتم الإرسال بعد</div>
     <div class="save-hint" id="saveInd">✓ تم الحفظ التلقائي</div>
   </div>
 
@@ -337,7 +337,7 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-var AR = '٠١٢٣٤٥٦٧٨٩';
+var AR = '٠١٢٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
@@ -375,7 +375,7 @@ var SendQueue = {
     if(queue.length > 0){
       btn.classList.add('pending');
       bar.className = 'send-status queue';
-      bar.textContent = ' في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
+      bar.textContent = '📡 في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
     }else{ btn.classList.remove('pending'); }
   },
   processQueue: function(){
@@ -389,13 +389,13 @@ var SendQueue = {
   sendItem: function(item){
     var self = this;
     item.attempts++;
-    if(item.attempts > 5){ this.remove(item.id); toast('️ فشل الإرسال بعد 5 محاولات', 'err'); return; }
+    if(item.attempts > 5){ this.remove(item.id); toast('⚠️ فشل الإرسال بعد 5 محاولات', 'err'); return; }
     var queue = this.getAll();
     var itemIndex = queue.findIndex(function(q){ return q.id === item.id; });
     if(itemIndex > -1){ queue[itemIndex] = item; localStorage.setItem(this.KEY, JSON.stringify(queue)); }
     api(item.payload, 30000).then(function(r){
       if(r.ok){ self.remove(item.id); toast('✓✓ تم إرسال البيانات المتراكمة', 'ok'); if(item.onSuccess) item.onSuccess(r); }
-      else{ toast('️ فشل الإرسال: ' + r.error, 'err'); }
+      else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
     }).catch(function(e){ console.log('❌ خطأ في الإرسال:', e); });
   }
 };
@@ -437,12 +437,12 @@ function updateConnectionStatus(){
     setTimeout(function(){ status.classList.remove('show'); }, 3000);
     SendQueue.processQueue();
   }else{
-    status.className = 'connection-status offline show'; icon.textContent = '🔴'; text.textContent = 'غير متصل - البيانات تُحفظ محلياً';
+    status.className = 'connection-status offline show'; icon.textContent = ''; text.textContent = 'غير متصل - البيانات تُحفظ محلياً';
   }
 }
 
 function manualSyncAndRefresh(){
-  toast('⏳ جاري البحث عن تحديثات...', ''); 
+  toast(' جاري البحث عن تحديثات...', ''); 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) {
@@ -463,7 +463,7 @@ function doLogin(){
   if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
   $('#loginMsg').textContent='⏳ جاري التحقق...'; $('#loginMsg').style.color='var(--muted)';
   api({action:'teacherLogin',code:code}).then(function(r){
-    if(!r.ok){$('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
+    if(!r.ok){$('#loginMsg').textContent=' '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
     localStorage.setItem('d_session',JSON.stringify(r.teacher));
     SendQueue.KEY = 'd_send_queue_' + r.teacher.code;
     enterHome();
@@ -476,7 +476,7 @@ function enterHome(){
   T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
   if(!T.subjects||T.subjects.length===0){ if(T.subject&&T.classes&&T.classes.length>0){ T.subjects=[{name:T.subject,classes:T.classes}]; } }
   T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
-  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent='🔑 '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
+  $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent=' '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
   $('#login').style.display='none'; $('#app').style.display='block';
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
@@ -503,7 +503,7 @@ function buildSelectors(){
   if(T.subjects&&T.subjects.length>0){
     for(var idx=0;idx<T.subjects.length;idx++){
       var sub=T.subjects[idx], opt=document.createElement('option');
-      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
+      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:''};
       opt.textContent=ci.icon+' '+sub.name; subSel.appendChild(opt);
     }
     subSel.value='0';
@@ -536,7 +536,7 @@ function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
-    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = ' لم يتم تحديد الشعبة'; return;
+    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
   if (!T.drafts[k]) {
@@ -555,12 +555,14 @@ function clearStats(){
   $('#statStudents').textContent='0'; $('#statPass').textContent='0'; $('#statComp').textContent='0'; $('#statFail').textContent='0'; $('#totalCount').textContent='0 تلميذ';
 }
 
+// ✅ دالة جلب التلاميذ المعدلة - تزامن كامل مع الخادم
 function fetchStudents(showLoading) {
   if (showLoading) showSyncIndicator(true);
   api({ action: 'getStudents', code: T.code, cls: T.cls }).then(function(r) {
     if(r.ok && r.names && r.names.length > 0){
       var k = draftKey();
       api({action:'teacherGrades', code:T.code}).then(function(gradesRes){
+        // ✅ جمع درجات الخادم (بما فيها الفارغة/المحذوفة)
         var serverGrades = {};
         if(gradesRes.ok && gradesRes.rows) {
           var targetMonth = T.month.trim(), monthIndex = MONTHS.indexOf(targetMonth);
@@ -572,10 +574,12 @@ function fetchStudents(showLoading) {
                else if (monthIndex === 2) degree = row.m3;
                else if (monthIndex === 3) degree = row.m4;
                else if (monthIndex === 4) degree = row.m5;
-               if(degree !== null && degree !== undefined && String(degree).trim() !== '') { serverGrades[row.name.trim()] = String(degree).trim(); }
+               // ✅ نضيف التلميذ حتى لو كانت درجته فارغة (تم حذفها)
+               serverGrades[row.name.trim()] = (degree !== null && degree !== undefined) ? String(degree).trim() : '';
             }
           });
         }
+        
         var uniqueNames = {};
         var filteredNames = r.names.filter(function(name) {
           var cleanName = (name || '').trim();
@@ -584,17 +588,46 @@ function fetchStudents(showLoading) {
           uniqueNames[cleanName] = true;
           return true;
         });
+        
+        var hasSentHash = T.drafts[k] && T.drafts[k].sentHash;
+        
         var newRows = filteredNames.map(function(name) {
           var cleanName = name.trim(), localDegree = '';
           if(T.drafts[k] && T.drafts[k].rows) {
             var localRow = T.drafts[k].rows.find(function(r){ return (r.name||'').trim() === cleanName; });
-            if(localRow && String(localRow.degree).trim() !== '') { localDegree = String(localRow.degree).trim(); }
+            if(localRow && String(localRow.degree).trim() !== '') { 
+              localDegree = String(localRow.degree).trim(); 
+            }
           }
-          if(localDegree === '' && serverGrades[cleanName] !== undefined) { localDegree = serverGrades[cleanName]; }
+          
+          // ✅ المنطق الجديد للمزامنة:
+          if(serverGrades.hasOwnProperty(cleanName)){
+            var serverDegree = serverGrades[cleanName];
+            if(serverDegree !== ''){
+              // الخادم يحتوي على درجة → نستخدمها (تتجاوز المحلية)
+              localDegree = serverDegree;
+            } else if(hasSentHash && localDegree !== ''){
+              // ✅ الخادم فارغ (تم الحذف) وكانت محلية مرسلة → نمسح المحلية
+              localDegree = '';
+            }
+            // إذا لم يكن هناك sentHash، نحتفظ بالمحلية (مسودة غير مرسلة)
+          }
+          
           return { name: cleanName, degree: localDegree };
         });
-        T.drafts[k].rows = newRows; T.drafts[k].lastSync = Date.now();
-        saveDraft(); renderRows(); updStats();
+        
+        T.drafts[k].rows = newRows; 
+        T.drafts[k].lastSync = Date.now();
+        // ✅ إذا حُذفت درجات، نمسح sentHash ليعكس الحالة الجديدة
+        if(hasSentHash){
+          var anyDegree = newRows.some(function(r){ return String(r.degree).trim() !== ''; });
+          if(!anyDegree){
+            T.drafts[k].sentHash = '';
+            T.drafts[k].sentAt = 0;
+          }
+        }
+        
+        saveDraft(); renderRows(); updStats(); updSendBar();
         if (showLoading) toast('✓ تم تحميل ' + arNum(filteredNames.length) + ' تلميذ');
         showSyncIndicator(false);
       }).catch(function(){
@@ -686,7 +719,7 @@ function updSendBar(){
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
   else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
-  else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
+  else{ el.className='send-status no'; el.textContent=' لم يتم الإرسال بعد'; }
 }
 
 function sendGrades(){
@@ -738,7 +771,7 @@ function requestNotificationPermission(){
       if (permission === "granted") {
         console.log("✅ تم منح إذن الإشعارات");
       } else {
-        console.log("⚠️ تم رفض إذن الإشعارات");
+        console.log("️ تم رفض إذن الإشعارات");
       }
     });
   } 
@@ -793,7 +826,6 @@ function playNotificationSound(){
   }
 }
 
-// ✅ دالة عرض الرسائل المعدلة - تُعلّم الرسائل كمقروءة عند الفتح فقط
 function openMessages(){
   requestNotificationPermission(); 
   $('#msgModal').classList.add('show');
@@ -822,9 +854,8 @@ function openMessages(){
       });
       $('#msgList').innerHTML=html; 
       
-      // ✅ تعليم الرسائل كمقروءة بعد عرضها
       api({action:'markMessagesAsRead', code:T.code}).then(function(){
-        checkMessages(); // تحديث العداد لإخفاء العلامة الحمراء
+        checkMessages();
       });
     } else { 
       $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">لا توجد رسائل</div>'; 
@@ -848,7 +879,7 @@ function deleteMessage(index){
 
 window.onbeforeunload = function(e) {
   if (hasUnsavedChanges) {
-    var message = '⚠️ لديك درجات غير محفوظة! هل أنت متأكد من المغادرة؟';
+    var message = '️ لديك درجات غير محفوظة! هل أنت متأكد من المغادرة؟';
     e.preventDefault(); e.returnValue = message; return message;
   }
 };
