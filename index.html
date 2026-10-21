@@ -64,7 +64,7 @@ button{cursor:pointer}
 .user-info h3{font-size:15px;font-weight:900;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .user-info small{font-size:11px;opacity:.85;display:flex;align-items:center;gap:4px}
 .header-actions{display:flex;gap:6px}
-.icon-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative;transition:.2s}
+.icon-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;transition:.2s}
 .icon-btn:active{background:rgba(255,255,255,.3)}
 .notif-badge{position:absolute;top:-2px;right:-2px;background:var(--danger);color:#fff;font-size:9px;font-weight:900;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--primary)}
 
@@ -193,7 +193,7 @@ button{cursor:pointer}
       <p>تطبيق المعلمين لإدارة الدرجات</p>
     </div>
     <div class="login-card">
-      <h2>🔐 دخول المعلم</h2>
+      <h2> دخول المعلم</h2>
       <div class="input-wrapper">
         <label>الكود الخاص بك</label>
         <input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off">
@@ -213,23 +213,16 @@ button{cursor:pointer}
   <div class="app-header">
     <div class="header-row">
       <div class="user-section">
-        <div class="user-avatar">‍🏫</div>
+        <div class="user-avatar">👨‍🏫</div>
         <div class="user-info">
           <h3 id="teacherName">مرحباً</h3>
           <small id="teacherCode" style="display:none">🔑</small>
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">
-          <span style="font-size:20px">🔄</span>
-        </button>
-        <button class="icon-btn" onclick="openMessages()">
-          <span style="font-size:20px"></span>
-          <span class="notif-badge" id="msgBadge">0</span>
-        </button>
-        <button class="icon-btn" onclick="logout()" title="تسجيل الخروج">
-          <span style="font-size:20px">🚪</span>
-        </button>
+        <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
+        <button class="icon-btn" onclick="openMessages()" title="الرسائل">🔔<span class="notif-badge" id="msgBadge">0</span></button>
+        <button class="icon-btn" onclick="logout()" title="تسجيل الخروج">🚪</button>
       </div>
     </div>
   </div>
@@ -246,7 +239,7 @@ button{cursor:pointer}
 
   <div class="app-content">
     <div class="welcome-card">
-      <div class="welcome-icon">📚</div>
+      <div class="welcome-icon"></div>
       <div class="welcome-text">
         <h4 id="welcomeTitle">أهلاً بك</h4>
         <p id="welcomeSub">اختر المادة والشعبة لبدء إدخال الدرجات</p>
@@ -289,7 +282,7 @@ button{cursor:pointer}
         <div class="stat-lbl">مكمل</div>
       </div>
       <div class="stat-box fail">
-        <div class="stat-ico"></div>
+        <div class="stat-ico">✕</div>
         <div class="stat-val" id="statFail">0</div>
         <div class="stat-lbl">راسب</div>
       </div>
@@ -308,7 +301,7 @@ button{cursor:pointer}
       <div id="studentsList"></div>
     </div>
 
-    <div class="send-status no" id="sendBar">📤 لم يتم الإرسال بعد</div>
+    <div class="send-status no" id="sendBar"> لم يتم الإرسال بعد</div>
     <div class="save-hint" id="saveInd">✓ تم الحفظ التلقائي</div>
   </div>
 
@@ -382,7 +375,7 @@ var SendQueue = {
     if(queue.length > 0){
       btn.classList.add('pending');
       bar.className = 'send-status queue';
-      bar.textContent = '📡 في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
+      bar.textContent = ' في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
     }else{ btn.classList.remove('pending'); }
   },
   processQueue: function(){
@@ -402,7 +395,7 @@ var SendQueue = {
     if(itemIndex > -1){ queue[itemIndex] = item; localStorage.setItem(this.KEY, JSON.stringify(queue)); }
     api(item.payload, 30000).then(function(r){
       if(r.ok){ self.remove(item.id); toast('✓✓ تم إرسال البيانات المتراكمة', 'ok'); if(item.onSuccess) item.onSuccess(r); }
-      else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
+      else{ toast('️ فشل الإرسال: ' + r.error, 'err'); }
     }).catch(function(e){ console.log('❌ خطأ في الإرسال:', e); });
   }
 };
@@ -530,7 +523,7 @@ function onSubjectChange(){
   if(idx===''||!T.subjects[idx]){ T.subject='';T.classes=[];T.cls=''; updateWelcome();loadCurrent();return; }
   T.subject=T.subjects[idx].name; T.classes=T.subjects[idx].classes||[];
   for(var i=0;i<T.classes.length;i++){
-    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent=' '+T.classes[i]; clsSel.appendChild(opt);
+    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent='🏫 '+T.classes[i]; clsSel.appendChild(opt);
   }
   if(T.classes.length>0){ clsSel.value=T.classes[0]; T.cls=T.classes[0]; }else{T.cls='';}
   updateWelcome(); loadCurrent(true);
@@ -543,7 +536,7 @@ function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
-    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
+    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = ' لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
   if (!T.drafts[k]) {
@@ -760,7 +753,7 @@ function checkMessages(){
       if(r.unread > 0){
         badge.textContent = arNum(r.unread);
         badge.style.display = 'flex'; 
-        toast(' لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
+        toast('📩 لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
         playNotificationSound();
         if(navigator.vibrate) { navigator.vibrate([200, 100, 200]); }
         if("Notification" in window && Notification.permission === "granted"){
@@ -792,12 +785,7 @@ function playNotificationSound(){
       playPromise.then(function() {
         console.log('✅ تم تشغيل صوت الإشعار');
       }).catch(function(error) {
-        console.log('️ المتصفح منع التشغيل:', error);
-        try {
-          var fallbackAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=");
-          fallbackAudio.volume = 1.0;
-          fallbackAudio.play().catch(function(){});
-        } catch(e2){}
+        console.log('⚠️ المتصفح منع التشغيل:', error);
       });
     }
   } catch(e) {
@@ -805,6 +793,7 @@ function playNotificationSound(){
   }
 }
 
+// ✅ دالة عرض الرسائل المعدلة - تُعلّم الرسائل كمقروءة عند الفتح فقط
 function openMessages(){
   requestNotificationPermission(); 
   $('#msgModal').classList.add('show');
@@ -832,7 +821,11 @@ function openMessages(){
         '</div>'; 
       });
       $('#msgList').innerHTML=html; 
-      checkMessages();
+      
+      // ✅ تعليم الرسائل كمقروءة بعد عرضها
+      api({action:'markMessagesAsRead', code:T.code}).then(function(){
+        checkMessages(); // تحديث العداد لإخفاء العلامة الحمراء
+      });
     } else { 
       $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">لا توجد رسائل</div>'; 
     }
@@ -869,7 +862,7 @@ if('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js?v=4')
       .then(function(reg) { console.log('✅ Service Worker المعلمين مسجل:', reg.scope); })
-      .catch(function(err) { console.log(' فشل تسجيل SW المعلمين:', err); });
+      .catch(function(err) { console.log('❌ فشل تسجيل SW المعلمين:', err); });
   });
 }
 </script>
