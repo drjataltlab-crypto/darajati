@@ -1,4 +1,4 @@
-/* ═══ page-team.js — صفحة المعلمين (طباعة 35 تلميذ + عناوين مرتبة + إخفاء التذييل) ═══ */
+/* ═══ page-team.js — صفحة المعلمين (35 تلميذ + ألوان مضمونة) ═══ */
 
 var TEAM = { teachers: [], filtered: [], search: '', filterSubject: '', filterClass: '' };
 var EDIT_SUBJECTS = [];
@@ -69,7 +69,7 @@ function loadTeachers() {
   }).catch(function(err){
     console.error('Load teachers error:', err);
     toast('تعذر الاتصال', 'err');
-    if(el) el.innerHTML = '<div class="empty" style="padding:40px;text-align:center">⚠️ تعذر الاتصال بالخادم</div>';
+    if(el) el.innerHTML = '<div class="empty" style="padding:40px;text-align:center">️ تعذر الاتصال بالخادم</div>';
   });
 }
 
@@ -135,7 +135,7 @@ function renderTeachers(){
     h += '<div class="team-meta">';
     h += '<div class="team-meta-item">📊 آخر دخول: '+esc(last)+'</div>';
     h += '<div class="team-meta-item">📝 درجات: '+arNum(t.sentCount||0)+'</div>';
-    h += '<div class="team-meta-item">🏫 شعب: '+arNum(cnt)+'</div>';
+    h += '<div class="team-meta-item"> شعب: '+arNum(cnt)+'</div>';
     h += '</div>';
     
     h += '<div class="team-actions">';
@@ -149,7 +149,7 @@ function renderTeachers(){
     if(t.locked){
       h += '<button class="team-btn success" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\')">🔓 فتح</button>';
     }else{
-      h += '<button class="team-btn danger" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\')">🔒 قفل</button>';
+      h += '<button class="team-btn danger" onclick="event.stopPropagation();toggleLock(\''+escA(t.code)+'\')"> قفل</button>';
     }
     h += '<button class="team-btn danger" onclick="event.stopPropagation();delT(\''+escA(t.code)+'\')">🗑 حذف</button>';
     h += '</div>';
@@ -185,7 +185,7 @@ function showQRCode(code, name){
 
 function sendWA(code,name){
   var currentUrl = window.location.href.replace('admin.html', 'index.html');
-  var msg='مرحباً '+name+' 👋\n\nكودك في تطبيق «درجاتي»:\n\n 🔑 '+code+'\n\nرابط التطبيق:\n'+currentUrl+'\n\nثبّت التطبيق وأدخل هذا الكود.';
+  var msg='مرحباً '+name+' \n\nكودك في تطبيق «درجاتي»:\n\n 🔑 '+code+'\n\nرابط التطبيق:\n'+currentUrl+'\n\nثبّت التطبيق وأدخل هذا الكود.';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
@@ -297,7 +297,7 @@ function saveEditedTeacher(){
     return subj + ':' + subjectsBySubject[subj].join('،');
   }).join(' | ');
   
-  toast('⏳ جاري الحفظ...', '');
+  toast(' جاري الحفظ...', '');
   var oldCode = '';
   var existingTeacher = TEAM.teachers.find(function(t){ return t.name === name; });
   if(existingTeacher) oldCode = existingTeacher.code;
@@ -305,7 +305,7 @@ function saveEditedTeacher(){
   api({ action: 'updateTeacherFull', key: key(), code: newCode, oldCode: oldCode, name: name, subjectsData: subjectsData }).then(function(r){
     if(r.ok){ toast('✓ تم الحفظ بنجاح', 'ok'); hideModal('editTeacherModal'); loadTeachers(); }
     else { toast('❌ '+r.error, 'err'); }
-  }).catch(function(err){ console.error('Save error:', err); toast('⚠️ تعذر الاتصال', 'err'); });
+  }).catch(function(err){ console.error('Save error:', err); toast('️ تعذر الاتصال', 'err'); });
 }
 
 function delT(code){
@@ -328,7 +328,7 @@ function addNewTeacher(){
   var name = String(nameEl.value || '').trim();
   var subject = String(subjectEl.value || '').trim();
   var clsVal = String(clsEl.value || '').trim();
-  if(!name){ toast('⚠️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
+  if(!name){ toast('️ اكتب اسم المعلم', 'err'); nameEl.focus(); return; }
   if(!subject){ toast('️ اختر المادة', 'err'); subjectEl.focus(); return; }
   if(!clsVal){ toast('⚠️ اختر الصف', 'err'); clsEl.focus(); return; }
   
@@ -393,7 +393,7 @@ function showSubjectClasses(code, subjectName, teacherName, classes){
     var btn = document.createElement('button');
     btn.className = 'btn';
     btn.style.cssText = 'width:auto; flex:1; min-width:120px; background:#ECFDF5; color:#047857; border:1px solid #A7F3D0;';
-    btn.textContent = ' 🏫 ' + cls;
+    btn.textContent = '  ' + cls;
     btn.onclick = function(){ showSubjectRecord(code, subjectName, teacherName, [cls]); };
     listEl.appendChild(btn);
   });
@@ -477,7 +477,7 @@ function showSubjectRecord(code, subjectName, teacherName, classes){
     });
   }).catch(function(err){
     $('#trLoading').style.display = 'none';
-    toast('⚠️ تعذر تحميل البيانات', 'err');
+    toast('️ تعذر تحميل البيانات', 'err');
   });
 }
 
@@ -485,7 +485,7 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
   $('#trLoading').style.display = 'none';
   $('#trTableContainer').style.display = 'block';
   if(studentData.length === 0){
-    $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;">📭 لا توجد بيانات.</td></tr>';
+    $('#trTableBody').innerHTML = '<tr><td colspan="14" style="text-align:center;padding:20px;"> لا توجد بيانات.</td></tr>';
     return;
   }
   
@@ -530,7 +530,7 @@ function renderTeacherRecordTable(subjectName, studentData, classes){
   CURRENT_PRINT_DATA = { subjectName: subjectName, classes: classes, students: studentData, byClass: byClass };
 }
 
-/* ═══ الطباعة (معدلة نهائياً: 35 تلميذ + عناوين مرتبة + إخفاء التذييل) ═══ */
+/* ═══ الطباعة (35 تلميذ + ألوان مضمونة + تسلسل صغير) ══ */
 function openPrintSettings(){
   if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات للطباعة', 'err'); return; }
   $('#printSchoolName').value = PRINT_SETTINGS.schoolName;
@@ -550,14 +550,8 @@ function savePrintSettingsAndPrint(){
   printSubjectRecord();
 }
 
-/* ═══ الطباعة (معدلة: تكبير التسلسل والأسماء + تحريك للأسفل + 35 تلميذ) ═══ */
-/* ═══ الطباعة (معدلة: توقيع واحد + اسم المعلم + بدون صفحة بيضاء) ══ */
-/* ═══ الطباعة (معدلة نهائياً: ألوان + توقيع في نفس الصفحة) ═══ */
-/* ═══ الطباعة (جدول واحد متواصل + ألوان واضحة + عناوين مقروءة) ═══ */
-/* ═══ الطباعة (معلومات الشعبة في الرأس + جدول نظيف + ألوان صحيحة) ═══ */
-/* ═══ الطباعة (توقيع معلم المادة في سطر واحد + أرقام مضخمة + ألوان مضمونة) ═══ */
 function printSubjectRecord(){
-  if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات', 'err'); return; }
+  if(!CURRENT_PRINT_DATA){ toast('⚠️ لا توجد بيانات', 'err'); return; }
   var data = CURRENT_PRINT_DATA;
   var subjectName = data.subjectName;
   var byClass = data.byClass;
@@ -571,9 +565,18 @@ function printSubjectRecord(){
   h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
   h += '<style>';
   
-  h += '@page { size: A4 portrait; margin: 5mm 5mm 5mm 5mm; ';
+  // ✅ هوامش محكمة جداً
+  h += '@page { size: A4 portrait; margin: 4mm 4mm 4mm 4mm; ';
   h += '@top-left { content: none !important; } @top-center { content: none !important; } @top-right { content: none !important; } ';
   h += '@bottom-left { content: none !important; } @bottom-center { content: none !important; } @bottom-right { content: none !important; } }';
+  
+  // ✅强制 طباعة الألوان - حل جذري
+  h += '@media print {';
+  h += '  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '  th, td { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '  .th-seq, .th-name, .th-f1, .th-f2, .th-avg1, .th-avg2, .th-half, .th-annual, .th-exam, .th-final, .th-sub,';
+  h += '  .td-final-pass, .td-final-fail { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '}';
   
   h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
   h += 'html, body { width: 100%; font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; }';
@@ -597,36 +600,35 @@ function printSubjectRecord(){
   h += '.print-table thead { display: table-header-group !important; }';
   h += '.print-table tbody { display: table-row-group !important; }';
   
-  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 2.5mm 1mm !important; text-align: center; vertical-align: middle; line-height: 1.2; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }';
+  // ✅ تقليل padding لتمكين 35 تلميذ
+  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.5mm 0.8mm !important; text-align: center; vertical-align: middle; line-height: 1.1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }';
   
   h += '.print-table th { font-weight: 900 !important; font-size: 8pt !important; white-space: normal !important; word-wrap: break-word !important; }';
   
-  // ✅ ألوان مضمونة - استخدام !important على كل خاصية + جميع الخصائص الممكنة
-  h += '.th-seq { width: 13mm !important; background: #FDE047 !important; background-color: #FDE047 !important; color: #000 !important; font-weight: 900 !important; font-size: 10pt !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-name { width: 45mm !important; background: #ffffff !important; background-color: #ffffff !important; color: #000 !important; font-weight: 900 !important; white-space: normal !important; word-wrap: break-word !important; font-size: 8.5pt !important; text-align: right !important; padding-right: 1mm !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  // ✅ ألوان مع جميع الخصائص الممكنة
+  h += '.th-seq { width: 10mm !important; background: #FDE047 !important; background-color: #FDE047 !important; color: #000 !important; font-weight: 900 !important; font-size: 8pt !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-name { width: 42mm !important; background: #ffffff !important; background-color: #ffffff !important; color: #000 !important; font-weight: 900 !important; white-space: normal !important; word-wrap: break-word !important; font-size: 8pt !important; text-align: right !important; padding-right: 1mm !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
   
-  // ✅ خلفيات داكنة مع نص أبيض - جميع الخصائص مكررة لضمان العمل
-  h += '.th-f1 { background: #1D4ED8 !important; background-color: #1D4ED8 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-f2 { background: #0E7490 !important; background-color: #0E7490 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-avg1 { background: #B45309 !important; background-color: #B45309 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-avg2 { background: #B45309 !important; background-color: #B45309 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-half { background: #7C3AED !important; background-color: #7C3AED !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-annual { background: #059669 !important; background-color: #059669 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-exam { background: #DC2626 !important; background-color: #DC2626 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-final { background: #BE123C !important; background-color: #BE123C !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; -webkit-print-color-adjust: force !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
-  h += '.th-sub { background: #E0E7FF !important; background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900 !important; font-size: 8pt !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-f1 { background: #1D4ED8 !important; background-color: #1D4ED8 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-f2 { background: #0E7490 !important; background-color: #0E7490 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-avg1 { background: #B45309 !important; background-color: #B45309 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-avg2 { background: #B45309 !important; background-color: #B45309 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-half { background: #7C3AED !important; background-color: #7C3AED !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-annual { background: #059669 !important; background-color: #059669 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-exam { background: #DC2626 !important; background-color: #DC2626 !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-final { background: #BE123C !important; background-color: #BE123C !important; color: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
+  h += '.th-sub { background: #E0E7FF !important; background-color: #E0E7FF !important; color: #1E40AF !important; font-weight: 900 !important; font-size: 7.5pt !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
   
-  // ✅ تضخيم أرقام التسلسل - حجم أكبر ولون أسود واضح
-  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; }';
+  // ✅ تسلسل صغير وواضح
+  h += '.seq-num { font-size: 8pt !important; font-weight: 700 !important; color: #000000 !important; }';
   
-  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 8.5pt !important; color: #000 !important; overflow: hidden !important; text-overflow: ellipsis !important; }';
+  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 8pt !important; color: #000 !important; overflow: hidden !important; text-overflow: ellipsis !important; }';
   h += '.td-final-pass { background: #D1FAE5 !important; background-color: #D1FAE5 !important; color: #047857 !important; font-weight: 900 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
   h += '.td-final-fail { background: #FEE2E2 !important; background-color: #FEE2E2 !important; color: #DC2626 !important; font-weight: 900 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
-  // ✅ توقيع معلم المادة في سطر واحد بدون خط
-  h += '.print-footer { margin-top: 4mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
+  h += '.print-footer { margin-top: 3mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
   h += '.print-signature { text-align: right; width: 70mm; }';
   h += '.print-signature .sig-text { font-size: 10pt; font-weight: 700; color: #0F172A; }';
   h += '.print-signature .sig-name { font-size: 11pt; font-weight: 900; color: #1E40AF; margin-right: 2mm; }';
@@ -651,7 +653,7 @@ function printSubjectRecord(){
   h += '</div>';
   
   h += '<table class="print-table">';
-  h += '<thead><tr><th rowspan="2" class="th-seq">ت</th><th rowspan="2" class="th-name">اسم التلميذ</th><th colspan="3" class="th-f1">الفصل الأول</th><th rowspan="2" class="th-avg1">معدل<br>ف١</th><th rowspan="2" class="th-half">نصف<br>السنة</th><th colspan="2" class="th-f2">الفصل الثاني</th><th rowspan="2" class="th-avg2">معدل<br>ف٢</th><th rowspan="2" class="th-annual" style="font-size:7pt !important;">السعي<br>السنوي</th><th rowspan="2" class="th-exam">نهاية<br>السنة</th><th rowspan="2" class="th-final" style="font-size:7pt !important;">الدرجة<br>النهائية</th></tr><tr><th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th></tr></thead>';
+  h += '<thead><tr><th rowspan="2" class="th-seq">ت</th><th rowspan="2" class="th-name">اسم التلميذ</th><th colspan="3" class="th-f1">الفصل الأول</th><th rowspan="2" class="th-avg1">معدل<br>ف١</th><th rowspan="2" class="th-half">نصف<br>السنة</th><th colspan="2" class="th-f2">الفصل الثاني</th><th rowspan="2" class="th-avg2">معدل<br>ف٢</th><th rowspan="2" class="th-annual" style="font-size:7pt !important;">السعي<br>السنوي</th><th rowspan="2" class="th-exam">نهاية<br>السنة</th><th rowspan="2" class="th-final" style="font-size:7pt !important;">الدرجة<br>النهائية</th></tr><tr><th class="th-sub">ت</th><th class="th-sub">ت</th><th class="th-sub">ك</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th></tr></thead>';
   h += '<tbody>';
   
   var globalIndex = 1;
@@ -661,7 +663,6 @@ function printSubjectRecord(){
     rows.forEach(function(s){
       var g = s.grades;
       h += '<tr>';
-      // ✅ أرقام التسلسل مضخمة وباللون الأسود
       h += '<td class="seq-num">' + arNum(globalIndex) + '</td>';
       h += '<td class="td-name">' + esc(s.name) + '</td>';
       h += '<td>' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
@@ -683,7 +684,6 @@ function printSubjectRecord(){
   
   h += '</tbody></table>';
   
-  // ✅ توقيع معلم المادة في سطر واحد بدون خط
   h += '<div class="print-footer">';
   h += '<div class="print-signature">';
   h += '<span class="sig-text">معلم المادة: </span>';
@@ -709,7 +709,8 @@ function printSubjectRecord(){
     } catch (e) {} 
   }, 800);
 }
-/* ═══ تصدير Excel الذكي ═══ */
+
+/* ═══ تصدير Excel الذكي ══ */
 function openExportExcelSelection(code) {
   var t = TEAM.teachers.find(function(x){return x.code===code;});
   if(!t) return;
@@ -899,7 +900,7 @@ function printTeachersList(){
     h+='<tr><td style="padding:8px;border:1px solid #0F172A;text-align:center">'+esc(t.code)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A">'+esc(t.name)+'</td>';
     h+='<td style="padding:8px;border:1px solid #0F172A;font-size:11px">'+esc(sub)+'</td>';
-    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?'🔒 مقفل':'🔓 مفتوح')+'</td></tr>';
+    h+='<td style="padding:8px;border:1px solid #0F172A;text-align:center">'+(t.locked?' مقفل':'🔓 مفتوح')+'</td></tr>';
   });
   h+='</tbody></table></div>';
   printWin(h);
