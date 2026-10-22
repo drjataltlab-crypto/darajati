@@ -1,4 +1,4 @@
-/* ═══ core.js — الأساس المشترك (نسخة نهائية مصححة) ═══ */
+/* ═══ core.js — الأساس المشترك (نسخة نهائية مصححة + صفحة المعدلات) ══ */
 
 window.addEventListener('error', function(e) {
   var d = document.getElementById('errbar');
@@ -20,7 +20,8 @@ var THEMES = {
   entry: ['#7E22CE', '#DDD6FE'],
   studs: ['#0E7490', '#A5F3FC'],
   keys: ['#BE123C', '#FECDD3'],
-  set: ['#475569', '#E2E8F0']
+  set: ['#475569', '#E2E8F0'],
+  averages: ['#059669', '#D1FAE5']  // ✅ أضيفت صفحة المعدلات
 };
 
 var AV = ['#1D4ED8', '#7E22CE', '#047857', '#B45309', '#BE123C', '#0E7490', '#DB2777', '#65A30D'];
@@ -131,7 +132,7 @@ function copyText(s) {
 }
 
 function shareWa(code, name) {
-  window.open('https://wa.me/?text=' + encodeURIComponent('مرحباً ' + (name || 'أستاذي') + ' 👋\nكودك في تطبيق «درجاتي»:\n\n🔑 ' + code + '\n\nثبّت التطبيق وأدخل هذا الكود.'), '_blank');
+  window.open('https://wa.me/?text=' + encodeURIComponent('مرحباً ' + (name || 'أستاذي') + ' 👋\nكودك في تطبيق «درجاتي»:\n\n ' + code + '\n\nثبّت التطبيق وأدخل هذا الكود.'), '_blank');
 }
 
 function api(p, ms) {
@@ -148,8 +149,8 @@ function api(p, ms) {
     },
     body: JSON.stringify(p),
     signal: c.signal,
-    redirect: 'follow',  // ✅ إضافة مهمة للتعامل مع redirect
-    mode: 'cors'         // ✅ إضافة مهمة
+    redirect: 'follow',
+    mode: 'cors'
   }).then(function(r) { 
     return r.json(); 
   }).finally(function() { 
@@ -295,7 +296,7 @@ function buildOneResult(rows, compact, hideSignatures) {
     + '<th style="' + thStyle + ';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">ت</th>'
     + '<th style="' + thStyle + ';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">الدروس</th>'
     + '<th style="' + thStyle + ';background:linear-gradient(135deg,#1D4ED8,#3B82F6)" colspan="3">الفصل الأول</th>'
-    + '<th style="' + thStyle + ';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف١</th>'
+    + '<th style="' + thStyle + ';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف</th>'
     + '<th style="' + thStyle + ';background:linear-gradient(135deg,#1E40AF,#2563EB)" rowspan="2">نصف السنة</th>'
     + '<th style="' + thStyle + ';background:linear-gradient(135deg,#0E7490,#06B6D4)" colspan="2">الفصل الثاني</th>'
     + '<th style="' + thStyle + ';background:linear-gradient(135deg,#B45309,#D97706)" rowspan="2">معدل ف٢</th>'
@@ -457,7 +458,6 @@ function adminLogin() {
     localStorage.setItem('d_admin', ROLE);
     enterAdmin();
   }).catch(function(err) { 
-    // ✅ تم تحسين رسالة الخطأ لتظهر السبب الحقيقي
     console.error('❌ فشل الاتصال بالخادم:', err); 
     var msg = 'تعذر الاتصال بالخادم';
     if (err.message === 'no-url') msg = 'رابط الخادم غير موجود في config.js';
@@ -496,7 +496,7 @@ function applyRole() {
   var rc = $('#roleCard');
   if (rc) {
     rc.className = 'rolecard ' + (dev ? 'dev' : 'mgr');
-    var dot = $('#roleDot'); if (dot) dot.textContent = dev ? '🛠️' : '👔';
+    var dot = $('#roleDot'); if (dot) dot.textContent = dev ? '️' : '👔';
     var lbl = $('#roleLabel'); if (lbl) lbl.textContent = dev ? 'المطور' : 'المدير';
     var sub = $('#roleSub'); if (sub) sub.textContent = dev ? 'صلاحيات كاملة' : 'عرض الدرجات';
   }
@@ -518,22 +518,45 @@ function refresh() {
   if (Pages.dash && Pages.dash.enter) Pages.dash.enter();
 }
 
+// ✅ تم إصلاح الدالة لإضافة صفحة averages وتصحيح مشكلة undefined
 function adminTab(t) {
-  ['dash', 'res', 'team', 'entry', 'studs', 'keys', 'set'].forEach(function(x) {
+  // ✅ إضافة 'averages' إلى القائمة
+  ['dash', 'res', 'team', 'entry', 'studs', 'averages', 'keys', 'set'].forEach(function(x) {
     var tab = $('#tab-' + x);
     if (tab) tab.hidden = (x !== t);
     $$('[data-tab="' + x + '"]').forEach(function(b) { b.classList.toggle('act', x === t); });
   });
+  
+  // ✅ التحقق من وجود theme قبل الوصول إليه
   var th = THEMES[t];
-  document.documentElement.style.setProperty('--th', th[0]);
-  document.documentElement.style.setProperty('--thb', th[1]);
+  if (th && th[0] && th[1]) {
+    document.documentElement.style.setProperty('--th', th[0]);
+    document.documentElement.style.setProperty('--thb', th[1]);
+  }
+  
   document.body.setAttribute('data-page', t);
   var tb = $('#tbTitle');
-  if (tb) tb.textContent = { dash: 'نظرة عامة', res: 'نتائج التلاميذ', team: 'المعلمون', entry: 'إدخال إداري', studs: 'التلاميذ', keys: 'كلمات المرور', set: 'الإعدادات' }[t];
+  
+  // ✅ إضافة 'averages' إلى قائمة العناوين
+  var titles = { 
+    dash: 'نظرة عامة', 
+    res: 'نتائج التلاميذ', 
+    team: 'المعلمون', 
+    entry: 'إدخال إداري', 
+    studs: 'التلاميذ', 
+    averages: 'معدلات التلاميذ',  // ✅ الجديد
+    keys: 'كلمات المرور', 
+    set: 'الإعدادات' 
+  };
+  
+  if (tb && titles[t]) {
+    tb.textContent = titles[t];
+  }
+  
   if (Pages[t] && Pages[t].enter) Pages[t].enter();
 }
 
-// ═══ التهيئة عند تحميل الصفحة ═══
+// ═══ التهيئة عند تحميل الصفحة ══
 
 (function init() {
   try {
