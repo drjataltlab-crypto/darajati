@@ -557,8 +557,9 @@ function savePrintSettingsAndPrint(){
 /* ═══ الطباعة (درجات سوداء + حجم 12 + خط واضح) ═══ */
 /* ═══ الطباعة (درجات 11pt + تسلسل 11pt + أسماء 10pt) ═══ */
 /* ═══ الطباعة (درجات 11pt + تسلسل 11pt + أسماء 9pt) ═══ */
+/* ═══ الطباعة (تسلسل 9pt + أسماء 8pt + درجات 10pt) ═══ */
 function printSubjectRecord(){
-  if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات', 'err'); return; }
+  if(!CURRENT_PRINT_DATA){ toast('⚠️ لا توجد بيانات', 'err'); return; }
   var data = CURRENT_PRINT_DATA;
   var subjectName = data.subjectName;
   var byClass = data.byClass;
@@ -607,19 +608,19 @@ function printSubjectRecord(){
   h += '.th-sub { font-size: 7.5pt !important; }';
   h += '.th-annual, .th-final { font-size: 7pt !important; }';
   
-  // ✅ جميع خلايا tbody: أسود + حجم 11pt + خط عريض واضح
+  // ✅ جميع خلايا الدرجات: أسود + حجم 10pt + خط عريض واضح
   h += '.print-table tbody td { ';
   h += '  color: #000000 !important; ';
-  h += '  font-size: 11pt !important; ';
+  h += '  font-size: 10pt !important; ';
   h += '  font-weight: 700 !important; ';
   h += '  font-family: "Tajawal", Arial, sans-serif !important; ';
   h += '}';
   
-  // ✅ التسلسل: 11pt
-  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; }';
+  // ✅ التسلسل: 9pt
+  h += '.seq-num { font-size: 9pt !important; font-weight: 900 !important; color: #000000 !important; }';
   
-  // ✅ أسماء التلاميذ: 9pt (تم التعديل)
-  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 9pt !important; color: #000 !important; }';
+  // ✅ أسماء التلاميذ: 8pt
+  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 8pt !important; color: #000 !important; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
@@ -680,8 +681,13 @@ function printSubjectRecord(){
       var g = s.grades;
       h += '<tr>';
       
+      // ✅ تسلسل 9pt
       h += '<td class="seq-num" bgcolor="#FEF3C7" style="background:#FEF3C7 !important;">' + arNum(globalIndex) + '</td>';
+      
+      // ✅ اسم التلميذ 8pt
       h += '<td class="td-name" bgcolor="#ffffff" style="background:#ffffff !important;">' + esc(s.name) + '</td>';
+      
+      // ✅ جميع الدرجات 10pt
       h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
       h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
       h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m3!=null?arNum(g.m3):'') + '</td>';
