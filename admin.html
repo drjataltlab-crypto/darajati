@@ -104,12 +104,12 @@
 #dashKpi .stats-bar .progress-wrap { flex: 1.5 !important; min-width: 180px !important; }
 #dashKpi .stats-bar .health-badge { flex-shrink: 0 !important; }
 
-/* ✅ تنسيقات الطباعة العمودية (Portrait) المحسنة لتتسع لـ 35 تلميذ */
+/* ✅ تنسيقات الطباعة العمودية (Portrait) المحسنة */
 .print-container {
   font-family: 'Tajawal', Arial, sans-serif !important;
-  width: 210mm !important; /* عرض A4 العمودي */
+  width: 210mm !important;
   margin: 0 auto !important;
-  padding: 5mm !important; /* هوامش ضيقة جداً */
+  padding: 5mm !important;
   background: #fff !important;
 }
 .print-container h2 {
@@ -120,10 +120,10 @@
   width: 100% !important; border-collapse: collapse !important; border: 1.5px solid #000 !important;
 }
 .print-table th, .print-table td {
-  padding: 2px 3px !important; /* تقليل الحشو لأقصى حد */
+  padding: 2px 3px !important;
   border: 1px solid #000 !important;
   text-align: center !important;
-  font-size: 9px !important; /* خط صغير جداً ليتسع لـ 35 صف */
+  font-size: 9px !important;
   line-height: 1.1 !important;
   color: #000 !important; font-weight: 700 !important;
 }
@@ -147,7 +147,7 @@
     width: 100% !important; margin: 0 !important; padding: 5mm !important;
   }
   @page { 
-    size: A4 portrait !important; /* ✅ ورقة عمودية */
+    size: A4 portrait !important;
     margin: 5mm !important; 
   }
 }
@@ -166,6 +166,53 @@
   #dashKpi .stats-bar { flex-wrap: wrap !important; }
   #dashKpi .stats-bar .stat-item { min-width: calc(50% - 10px) !important; }
 }
+
+/* ═══ تنسيقات صفحة معدلات التلاميذ الاحترافية ═══ */
+.avg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+  font-family: 'Tajawal', sans-serif;
+}
+.avg-table th {
+  background: #1E40AF;
+  color: #fff;
+  font-weight: 800;
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px solid #1E3A8A;
+}
+.avg-table td {
+  padding: 10px 8px;
+  text-align: center;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+}
+.avg-table tbody tr:nth-child(even) td {
+  background: #F8FAFC;
+}
+.avg-table tbody tr:hover td {
+  background: #EFF6FF;
+  transition: 0.2s;
+}
+.rank-1 td { background: #FEF3C7 !important; color: #92400E; font-weight: 800; }
+.rank-2 td { background: #F1F5F9 !important; color: #475569; font-weight: 800; }
+.rank-3 td { background: #FFF7ED !important; color: #9A3412; font-weight: 800; }
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 900;
+  font-size: 9pt;
+  background: #E2E8F0;
+  color: #475569;
+}
+.rank-1 .rank-badge { background: #FDE047; color: #000; box-shadow: 0 2px 8px rgba(253, 224, 71, 0.4); }
+.rank-2 .rank-badge { background: #CBD5E1; color: #000; box-shadow: 0 2px 8px rgba(203, 213, 225, 0.4); }
+.rank-3 .rank-badge { background: #FED7AA; color: #000; box-shadow: 0 2px 8px rgba(254, 215, 170, 0.4); }
 </style>
 </head>
 <body>
@@ -189,6 +236,8 @@
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span>المعلمون</button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
+        <!-- ✅ إضافة صفحة معدلات التلاميذ أسفل نتائج التلاميذ -->
+        <button class="snav" data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico">🏆</span>معدلات التلاميذ</button>
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span>كلمات المرور</button>
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
@@ -264,6 +313,78 @@
           <div id="resBox"></div>
         </div>
 
+        <!-- ✅ محتوى صفحة معدلات التلاميذ الجديد -->
+        <div id="tab-averages" hidden>
+          <div class="ptitle"><span class="bar"></span>معدلات التلاميذ النهائية</div>
+          <p class="psub">استخراج وترتيب التلاميذ بناءً على مجموع درجات نصف السنة والنتيجة النهائية لجميع المواد</p>
+
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="grid3" style="grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+              <div class="form-group" style="margin:0">
+                <label>الصف الدراسي</label>
+                <select id="avgGrade">
+                  <option value="">اختر الصف</option>
+                  <option>الخامس</option>
+                  <option>السادس</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0">
+                <label>الشعبة (اختياري)</label>
+                <select id="avgClass">
+                  <option value="">كل الشعب (تنافس عام)</option>
+                  <option>أ</option>
+                  <option>ب</option>
+                  <option>ج</option>
+                </select>
+              </div>
+              <div style="display:flex; align-items:flex-end;">
+                <button class="btn ok" style="width:100%; font-size:14px;" onclick="calculateAverages()">📊 استخراج المعدلات والترتيب</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="averagesResults" hidden style="display:none;">
+            <!-- القسم الأول: معدلات نصف السنة -->
+            <div class="card" style="margin-bottom: 25px; border-top: 4px solid #059669;">
+              <div class="ct" style="color:#059669; font-size:16px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+                📗 معدلات نصف السنة
+              </div>
+              
+              <div id="midYearClassCard" hidden style="display:none; margin-bottom: 20px; background:#F0FDF4; padding:15px; border-radius:12px;">
+                <h4 style="color:#047857; margin-bottom:10px; font-size:14px;">🏆 ترتيب الشعبة المختارة</h4>
+                <div style="overflow-x:auto;">
+                  <table class="avg-table"><thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead><tbody id="midYearClassBody"></tbody></table>
+                </div>
+              </div>
+
+              <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف</h4>
+              <div style="overflow-x:auto;">
+                <table class="avg-table"><thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead><tbody id="midYearGradeBody"></tbody></table>
+              </div>
+            </div>
+
+            <!-- القسم الثاني: معدلات نهاية السنة -->
+            <div class="card" style="border-top: 4px solid #1E40AF;">
+              <div class="ct" style="color:#1E40AF; font-size:16px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+                📘 معدلات نهاية السنة (النتيجة النهائية)
+              </div>
+              
+              <div id="finalYearClassCard" hidden style="display:none; margin-bottom: 20px; background:#EFF6FF; padding:15px; border-radius:12px;">
+                <h4 style="color:#1D4ED8; margin-bottom:10px; font-size:14px;">🏆 ترتيب الشعبة المختارة</h4>
+                <div style="overflow-x:auto;">
+                  <table class="avg-table"><thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead><tbody id="finalYearClassBody"></tbody></table>
+                </div>
+              </div>
+
+              <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف</h4>
+              <div style="overflow-x:auto;">
+                <table class="avg-table"><thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead><tbody id="finalYearGradeBody"></tbody></table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ✅ نهاية محتوى صفحة معدلات التلاميذ -->
+
         <div id="tab-keys" hidden>
           <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
           <div class="setgrid">
@@ -314,7 +435,6 @@
               <button class="btn" style="background:#DC2626" onclick="sendAdminMessageNew()">📨 إرسال الرسالة</button>
             </div>
 
-            <!-- ✅ بطاقة حذف درجات المعلم (مضافة الآن) -->
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
               <div class="hi">🗑️</div>
               <h3>حذف درجات معلم</h3>
@@ -356,6 +476,8 @@
     <button data-tab="team" data-dev="1" onclick="adminTab('team')"><span class="ico">👥</span><small>المعلمون</small></button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
+    <!-- ✅ إضافة زر معدلات التلاميذ في الشريط السفلي -->
+    <button data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico">🏆</span><small>المعدلات</small></button>
     <button data-tab="keys" data-dev="1" onclick="adminTab('keys')"><span class="ico">🔐</span><small>كلمات</small></button>
     <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
   </nav>
@@ -569,7 +691,6 @@ function sendAdminMessageNew(){
   });
 }
 
-// ✅ دالة حذف درجات المعلم (مضافة الآن)
 function deleteTeacherGrades(){
   var code = document.getElementById('delTeacherCode').value.trim().toUpperCase();
   var cls = document.getElementById('delClass').value.trim();
@@ -611,10 +732,114 @@ function deleteTeacherGrades(){
   });
 }
 
+/* ═══ منطق صفحة معدلات التلاميذ ═══ */
+function calculateAverages(){
+  var grade = document.getElementById('avgGrade').value;
+  var cls = document.getElementById('avgClass').value;
+  
+  if(!grade){ toast('⚠️ يرجى اختيار الصف أولاً', 'err'); return; }
+  
+  toast('⏳ جاري حساب المعدلات والترتيب...', '');
+  
+  api({action:'getStudentAverages', key:key(), grade:grade}).then(function(r){
+    if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
+    
+    var data = r.data;
+    if(data.length === 0){
+      toast('⚠️ لا توجد درجات مسجلة لهذا الصف بعد', 'err');
+      return;
+    }
+    
+    // 1. عرض الترتيب العام لنصف السنة
+    var midYearSorted = data.slice().sort(function(a, b) { return b.midYearAvg - a.midYearAvg; });
+    renderAvgTable('midYearGradeBody', midYearSorted, false, 'midYear');
+    
+    // 2. عرض الترتيب العام لنهاية السنة
+    var finalSorted = data.slice().sort(function(a, b) { return b.finalAvg - a.finalAvg; });
+    renderAvgTable('finalYearGradeBody', finalSorted, false, 'final');
+    
+    // 3. إذا تم اختيار شعبة محددة، نعرض ترتيبها الخاص
+    if(cls){
+      var fullClassName = grade + ' ' + cls;
+      
+      var midYearClassData = midYearSorted.filter(function(s) { return s.section === fullClassName; });
+      if(midYearClassData.length > 0){
+        renderAvgTable('midYearClassBody', midYearClassData, true, 'midYear');
+        document.getElementById('midYearClassCard').style.display = 'block';
+      } else {
+        document.getElementById('midYearClassCard').style.display = 'none';
+      }
+      
+      var finalYearClassData = finalSorted.filter(function(s) { return s.section === fullClassName; });
+      if(finalYearClassData.length > 0){
+        renderAvgTable('finalYearClassBody', finalYearClassData, true, 'final');
+        document.getElementById('finalYearClassCard').style.display = 'block';
+      } else {
+        document.getElementById('finalYearClassCard').style.display = 'none';
+      }
+    } else {
+      document.getElementById('midYearClassCard').style.display = 'none';
+      document.getElementById('finalYearClassCard').style.display = 'none';
+    }
+    
+    document.getElementById('averagesResults').hidden = false;
+    document.getElementById('averagesResults').style.display = 'block';
+    toast('✓ تم استخراج المعدلات بنجاح', 'ok');
+    
+  }).catch(function(){
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
+  });
+}
+
+function renderAvgTable(tbodyId, data, isClassView, type){
+  var tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  
+  var currentRank = 1;
+  
+  data.forEach(function(s, index){
+    if(index > 0){
+      var prevAvg = type === 'midYear' ? data[index-1].midYearAvg : data[index-1].finalAvg;
+      var currAvg = type === 'midYear' ? s.midYearAvg : s.finalAvg;
+      if(currAvg < prevAvg){
+        currentRank = index + 1;
+      }
+    }
+    
+    var avg = type === 'midYear' ? s.midYearAvg : s.finalAvg;
+    var total = type === 'midYear' ? s.midYearTotal : s.finalTotal;
+    
+    var rankBadge = arNum(currentRank);
+    var rowClass = '';
+    
+    if(currentRank === 1){ rankBadge = '🥇 الأول'; rowClass = 'rank-1'; }
+    else if(currentRank === 2){ rankBadge = '🥈 الثاني'; rowClass = 'rank-2'; }
+    else if(currentRank === 3){ rankBadge = '🥉 الثالث'; rowClass = 'rank-3'; }
+    
+    var tr = document.createElement('tr');
+    if(rowClass) tr.className = rowClass;
+    
+    var sectionCell = isClassView ? '' : '<td>' + esc(s.section) + '</td>';
+    
+    tr.innerHTML = 
+      '<td><span class="rank-badge">' + rankBadge + '</span></td>' +
+      '<td style="font-weight:700; text-align:right;">' + esc(s.name) + '</td>' +
+      sectionCell +
+      '<td>' + arNum(s.subjectCount) + '</td>' +
+      '<td style="font-weight:700;">' + arNum(total.toFixed(1)) + '</td>' +
+      '<td style="font-weight:900; color:#1E40AF; font-size:11pt;">' + arNum(avg.toFixed(2)) + '</td>';
+    
+    tbody.appendChild(tr);
+  });
+}
+
 var originalAdminTab = adminTab;
 adminTab = function(tab){
   originalAdminTab(tab);
   if(tab === 'set'){ setTimeout(loadTeachersList, 100); }
+  if(tab === 'averages'){ 
+    document.getElementById('tbTitle').textContent = 'معدلات التلاميذ'; 
+  }
 };
 </script>
 </body>
