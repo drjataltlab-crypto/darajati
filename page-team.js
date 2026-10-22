@@ -556,6 +556,7 @@ function savePrintSettingsAndPrint(){
 /* ═══ الطباعة (تلوين كامل الأعمدة) ═══ */
 /* ═══ الطباعة (درجات سوداء + حجم 12 + خط واضح) ═══ */
 /* ═══ الطباعة (درجات 11pt + تسلسل 11pt + أسماء 10pt) ═══ */
+/* ═══ الطباعة (درجات 11pt + تسلسل 11pt + أسماء 9pt) ═══ */
 function printSubjectRecord(){
   if(!CURRENT_PRINT_DATA){ toast('️ لا توجد بيانات', 'err'); return; }
   var data = CURRENT_PRINT_DATA;
@@ -617,8 +618,8 @@ function printSubjectRecord(){
   // ✅ التسلسل: 11pt
   h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; }';
   
-  // ✅ أسماء التلاميذ: 10pt
-  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 10pt !important; color: #000 !important; }';
+  // ✅ أسماء التلاميذ: 9pt (تم التعديل)
+  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 9pt !important; color: #000 !important; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
@@ -679,13 +680,8 @@ function printSubjectRecord(){
       var g = s.grades;
       h += '<tr>';
       
-      // ✅ تسلسل - 11pt
       h += '<td class="seq-num" bgcolor="#FEF3C7" style="background:#FEF3C7 !important;">' + arNum(globalIndex) + '</td>';
-      
-      // ✅ اسم التلميذ - 10pt
       h += '<td class="td-name" bgcolor="#ffffff" style="background:#ffffff !important;">' + esc(s.name) + '</td>';
-      
-      // ✅ جميع الدرجات - 11pt (تطبق تلقائياً من CSS العام)
       h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
       h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
       h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m3!=null?arNum(g.m3):'') + '</td>';
