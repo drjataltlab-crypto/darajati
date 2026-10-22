@@ -554,6 +554,7 @@ function savePrintSettingsAndPrint(){
 /* ═══ الطباعة (ألوان مضمونة 100% باستخدام Gradients) ═══ */
 /* ═══ الطباعة (ألوان مضمونة 100% باستخدام bgcolor) ═══ */
 /* ═══ الطباعة (تلوين كامل الأعمدة) ═══ */
+/* ═══ الطباعة (درجات سوداء + حجم 12 + خط واضح) ═══ */
 function printSubjectRecord(){
   if(!CURRENT_PRINT_DATA){ toast('⚠️ لا توجد بيانات', 'err'); return; }
   var data = CURRENT_PRINT_DATA;
@@ -604,8 +605,16 @@ function printSubjectRecord(){
   h += '.th-sub { font-size: 7.5pt !important; }';
   h += '.th-annual, .th-final { font-size: 7pt !important; }';
   
-  h += '.seq-num { font-size: 8pt !important; font-weight: 700 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 8pt !important; }';
+  // ✅ جميع خلايا tbody: أسود + حجم 12 + خط عريض واضح
+  h += '.print-table tbody td { ';
+  h += '  color: #000000 !important; ';
+  h += '  font-size: 12pt !important; ';
+  h += '  font-weight: 700 !important; ';
+  h += '  font-family: "Tajawal", Arial, sans-serif !important; ';
+  h += '}';
+  
+  h += '.seq-num { font-size: 12pt !important; font-weight: 900 !important; color: #000000 !important; }';
+  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 11pt !important; color: #000 !important; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
@@ -635,7 +644,7 @@ function printSubjectRecord(){
   
   h += '<table class="print-table">';
   
-  // ✅ العناوين
+  // ✅ العناوين (تبقى ملونة كما هي)
   h += '<thead><tr>';
   h += '<th rowspan="2" class="th-seq" bgcolor="#FDE047" style="background:#FDE047 !important;">ت</th>';
   h += '<th rowspan="2" class="th-name" bgcolor="#ffffff" style="background:#ffffff !important;">اسم التلميذ</th>';
@@ -667,44 +676,37 @@ function printSubjectRecord(){
       var g = s.grades;
       h += '<tr>';
       
-      // ✅ تسلسل - أصفر فاتح
+      // ✅ تسلسل - خلفية صفراء فاتحة + نص أسود 12pt
       h += '<td class="seq-num" bgcolor="#FEF3C7" style="background:#FEF3C7 !important;">' + arNum(globalIndex) + '</td>';
       
-      // ✅ اسم التلميذ - أبيض
+      // ✅ اسم التلميذ - خلفية بيضاء + نص أسود 11pt
       h += '<td class="td-name" bgcolor="#ffffff" style="background:#ffffff !important;">' + esc(s.name) + '</td>';
       
-      // ✅ الفصل الأول (ت1، ت2، ك1) - أزرق فاتح مع نص داكن
-      h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important; color:#1E3A8A !important;">' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
-      h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important; color:#1E3A8A !important;">' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
-      h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important; color:#1E3A8A !important;">' + (g&&g.m3!=null?arNum(g.m3):'') + '</td>';
+      // ✅ جميع خلايا الدرجات: خلفية ملونة + نص أسود 12pt + خط عريض
+      h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m1!=null?arNum(g.m1):'') + '</td>';
+      h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m2!=null?arNum(g.m2):'') + '</td>';
+      h += '<td bgcolor="#DBEAFE" style="background:#DBEAFE !important;">' + (g&&g.m3!=null?arNum(g.m3):'') + '</td>';
       
-      // ✅ معدل ف1 - برتقالي فاتح
-      h += '<td bgcolor="#FEF3C7" style="background:#FEF3C7 !important; color:#92400E !important; font-weight:bold;">' + (g&&g.a1!=null?arNum(g.a1):'') + '</td>';
+      h += '<td bgcolor="#FEF3C7" style="background:#FEF3C7 !important;">' + (g&&g.a1!=null?arNum(g.a1):'') + '</td>';
       
-      // ✅ نصف السنة - بنفسجي فاتح
-      h += '<td bgcolor="#EDE9FE" style="background:#EDE9FE !important; color:#5B21B6 !important;">' + (g&&g.half!=null?arNum(g.half):'') + '</td>';
+      h += '<td bgcolor="#EDE9FE" style="background:#EDE9FE !important;">' + (g&&g.half!=null?arNum(g.half):'') + '</td>';
       
-      // ✅ الفصل الثاني (آذار، نيسان) - سماوي فاتح
-      h += '<td bgcolor="#CFFAFE" style="background:#CFFAFE !important; color:#155E75 !important;">' + (g&&g.m4!=null?arNum(g.m4):'') + '</td>';
-      h += '<td bgcolor="#CFFAFE" style="background:#CFFAFE !important; color:#155E75 !important;">' + (g&&g.m5!=null?arNum(g.m5):'') + '</td>';
+      h += '<td bgcolor="#CFFAFE" style="background:#CFFAFE !important;">' + (g&&g.m4!=null?arNum(g.m4):'') + '</td>';
+      h += '<td bgcolor="#CFFAFE" style="background:#CFFAFE !important;">' + (g&&g.m5!=null?arNum(g.m5):'') + '</td>';
       
-      // ✅ معدل ف2 - برتقالي فاتح
-      h += '<td bgcolor="#FEF3C7" style="background:#FEF3C7 !important; color:#92400E !important; font-weight:bold;">' + (g&&g.a2!=null?arNum(g.a2):'') + '</td>';
+      h += '<td bgcolor="#FEF3C7" style="background:#FEF3C7 !important;">' + (g&&g.a2!=null?arNum(g.a2):'') + '</td>';
       
-      // ✅ السعي السنوي - أخضر فاتح
-      h += '<td bgcolor="#D1FAE5" style="background:#D1FAE5 !important; color:#065F46 !important;">' + (g&&g.annual!=null?arNum(g.annual):'') + '</td>';
+      h += '<td bgcolor="#D1FAE5" style="background:#D1FAE5 !important;">' + (g&&g.annual!=null?arNum(g.annual):'') + '</td>';
       
-      // ✅ نهاية السنة - أحمر فاتح
-      h += '<td bgcolor="#FEE2E2" style="background:#FEE2E2 !important; color:#991B1B !important;">' + (g&&g.exam!=null?arNum(g.exam):'') + '</td>';
+      h += '<td bgcolor="#FEE2E2" style="background:#FEE2E2 !important;">' + (g&&g.exam!=null?arNum(g.exam):'') + '</td>';
       
-      // ✅ الدرجة النهائية - ملونة حسب النتيجة
+      // ✅ الدرجة النهائية - خلفية ملونة حسب النتيجة + نص أسود
       var finalVal = (g && g.final != null) ? g.final : null;
       var isPass = finalVal != null && finalVal >= (g.max||100)/2;
       var isFail = finalVal != null && finalVal < (g.max||100)/2;
       var finalBg = isPass ? '#BBF7D0' : (isFail ? '#FECACA' : '#ffffff');
-      var finalColor = isPass ? '#065F46' : (isFail ? '#991B1B' : '#000');
       
-      h += '<td bgcolor="' + finalBg + '" style="background:' + finalBg + ' !important; color:' + finalColor + ' !important; font-weight:900;">' + (finalVal!=null?arNum(finalVal):'') + '</td>';
+      h += '<td bgcolor="' + finalBg + '" style="background:' + finalBg + ' !important;">' + (finalVal!=null?arNum(finalVal):'') + '</td>';
       
       h += '</tr>';
       globalIndex++;
