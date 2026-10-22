@@ -220,7 +220,6 @@ button{cursor:pointer}
         </div>
       </div>
       <div class="header-actions">
-        <!-- ✅ تم إصلاح الأيقونات لتظهر بشكل واضح -->
         <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
         <button class="icon-btn" onclick="openMessages()" title="الرسائل">🔔<span class="notif-badge" id="msgBadge">0</span></button>
         <button class="icon-btn" onclick="logout()" title="تسجيل الخروج">🚪</button>
@@ -338,13 +337,11 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-// ✅ تسلسل الأرقام الصحيح (يتضمن الرقم ٣)
 var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
 var T = {code:'',name:'',subject:'',classes:[],cls:'',month:'',drafts:{},subjects:[]};
-// ✅ إضافة متغير lockCheckInterval للفحص الدوري
 var toastT,confirmFn=null,msgCheckInterval,syncInterval,lockCheckInterval;
 var draftKey = function(){return T.cls+'¦'+T.month;};
 var SYNC_INTERVAL = 300000;
@@ -493,23 +490,18 @@ function enterHome(){
   msgCheckInterval=setInterval(checkMessages, 30000); 
   syncInterval = setInterval(function() { if (T.cls && T.subject) loadCurrent(true); }, SYNC_INTERVAL);
   
-  // ✅ فحص دوري لحالة قفل الحساب (كل 60 ثانية)
   lockCheckInterval = setInterval(function(){
     if(!T.code) return;
     api({action:'teacherLogin', code:T.code}).then(function(r){
       if(!r.ok){
-        // الحساب قُفل أو لم يعد موجوداً
         clearInterval(lockCheckInterval);
         clearInterval(msgCheckInterval);
         clearInterval(syncInterval);
-        
         localStorage.removeItem('d_session');
-        
         alert('⚠️ تم قفل حسابك من قبل الإدارة\n\nتم تسجيل الخروج تلقائياً.\n\nيرجى التواصل مع الإدارة للاستفسار.');
         location.reload();
       }
     }).catch(function(e){
-      // في حالة انقطاع الإنترنت، لا نفعل شيئاً
       console.log('فشل فحص حالة الحساب:', e);
     });
   }, 60000);
@@ -518,7 +510,7 @@ function enterHome(){
 function logout(){
   clearInterval(msgCheckInterval); 
   clearInterval(syncInterval);
-  clearInterval(lockCheckInterval); // ✅ إيقاف فحص القفل عند الخروج اليدوي
+  clearInterval(lockCheckInterval);
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
   confirmDlg('تسجيل الخروج من حسابك؟',function(){ 
@@ -801,7 +793,6 @@ function requestNotificationPermission(){
 function checkMessages(){
   if(!T.code) return;
   api({action:'getMessages', code:T.code}).then(function(r){
-    console.log("نتيجة فحص الرسائل:", r);
     if(r.ok){
       var badge = $('#msgBadge');
       if(r.unread > 0){
@@ -833,18 +824,57 @@ function playNotificationSound(){
     var audio = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.wav");
     audio.volume = 1.0;
     audio.preload = 'auto';
-    
     var playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.then(function() {
-        console.log('✅ تم تشغيل صوت الإشعار');
-      }).catch(function(error) {
-        console.log('⚠️ المتصفح منع التشغيل:', error);
+      playPromise.then(function() {}).catch(function(error) {});
+    }
+  } catch(e) {}
+}
+
+// ✅ دالة حذف رسالة واحدة (من الخادم والمحلي)
+function deleteMessage(index){
+  if(!confirm('هل تريد حذف هذه الرسالة نهائياً؟')) return;
+  
+  api({action:'getMessages', code:T.code}).then(function(r){
+    if(r.ok && r.messages && r.messages[index]){
+      var rowIndex = r.messages[index].rowIndex;
+      api({action:'deleteMessage', code:T.code, rowIndex:rowIndex}).then(function(res){
+        if(res.ok){
+          deletedMessages = JSON.parse(localStorage.getItem('d_deleted_msgs_'+T.code) || '[]');
+          if(deletedMessages.indexOf(index) === -1){
+            deletedMessages.push(index);
+          }
+          localStorage.setItem('d_deleted_msgs_'+T.code, JSON.stringify(deletedMessages));
+          toast('✓ تم حذف الرسالة نهائياً', 'ok');
+          openMessages();
+          checkMessages();
+        } else {
+          toast('❌ ' + (res.error || 'فشل الحذف'), 'err');
+        }
+      }).catch(function(){
+        toast('⚠️ تعذر الاتصال بالخادم', 'err');
       });
     }
-  } catch(e) {
-    console.log("خطأ في تشغيل الصوت:", e);
-  }
+  });
+}
+
+// ✅ دالة حذف جميع الرسائل
+function deleteAllMessages(){
+  if(!confirm('⚠️ هل أنت متأكد من حذف جميع الرسائل نهائياً؟\n\nلا يمكن التراجع عن هذا الإجراء!')) return;
+  
+  api({action:'deleteAllMessages', code:T.code}).then(function(res){
+    if(res.ok){
+      localStorage.removeItem('d_deleted_msgs_'+T.code);
+      deletedMessages = [];
+      toast('✓✓ تم حذف ' + res.count + ' رسالة نهائياً', 'ok');
+      hideModal('msgModal');
+      checkMessages();
+    } else {
+      toast('❌ ' + (res.error || 'فشل الحذف'), 'err');
+    }
+  }).catch(function(){
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
+  });
 }
 
 function openMessages(){
@@ -873,6 +903,11 @@ function openMessages(){
           '<div class="msg-text">'+esc(m.msg)+'</div>'+
         '</div>'; 
       });
+      
+      html += '<div style="margin-top:15px;text-align:center;">';
+      html += '<button class="btn" style="background:#DC2626;color:#fff;width:100%;padding:10px;border-radius:10px;font-weight:700;" onclick="deleteAllMessages()">🗑️ حذف جميع الرسائل</button>';
+      html += '</div>';
+      
       $('#msgList').innerHTML=html; 
       
       api({action:'markMessagesAsRead', code:T.code}).then(function(){
@@ -884,18 +919,6 @@ function openMessages(){
   }).catch(function(){ 
     $('#msgList').innerHTML='<div style="text-align:center;padding:20px;color:var(--danger)">تعذر التحميل</div>'; 
   });
-}
-
-function deleteMessage(index){
-  if(confirm('هل تريد حذف هذه الرسالة؟')){
-    deletedMessages = JSON.parse(localStorage.getItem('d_deleted_msgs_'+T.code) || '[]');
-    if(deletedMessages.indexOf(index) === -1){
-      deletedMessages.push(index);
-    }
-    localStorage.setItem('d_deleted_msgs_'+T.code, JSON.stringify(deletedMessages));
-    openMessages();
-    toast('✓ تم حذف الرسالة', 'ok');
-  }
 }
 
 window.onbeforeunload = function(e) {
