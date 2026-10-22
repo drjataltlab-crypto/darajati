@@ -205,7 +205,7 @@ button{cursor:pointer}
       </button>
       <div class="login-msg" id="loginMsg"></div>
     </div>
-    <div class="login-footer"> الكود من إدارة النظام</div>
+    <div class="login-footer">💡 الكود من إدارة النظام</div>
   </div>
 </div>
 
@@ -220,8 +220,9 @@ button{cursor:pointer}
         </div>
       </div>
       <div class="header-actions">
+        <!-- ✅ تم إصلاح الأيقونات لتظهر بشكل واضح -->
         <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">🔄</button>
-        <button class="icon-btn" onclick="openMessages()" title="الرسائل"><span class="notif-badge" id="msgBadge">0</span></button>
+        <button class="icon-btn" onclick="openMessages()" title="الرسائل">🔔<span class="notif-badge" id="msgBadge">0</span></button>
         <button class="icon-btn" onclick="logout()" title="تسجيل الخروج">🚪</button>
       </div>
     </div>
@@ -282,7 +283,7 @@ button{cursor:pointer}
         <div class="stat-lbl">مكمل</div>
       </div>
       <div class="stat-box fail">
-        <div class="stat-ico"></div>
+        <div class="stat-ico">✕</div>
         <div class="stat-val" id="statFail">0</div>
         <div class="stat-lbl">راسب</div>
       </div>
@@ -295,7 +296,7 @@ button{cursor:pointer}
 
     <div class="students-card">
       <div class="card-head">
-        <h3> قائمة التلاميذ</h3>
+        <h3>📝 قائمة التلاميذ</h3>
         <span class="count" id="totalCount">0 تلميذ</span>
       </div>
       <div id="studentsList"></div>
@@ -337,13 +338,14 @@ button{cursor:pointer}
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-// ✅ تم إصلاح تسلسل الأرقام - أضفت الرقم ٣
+// ✅ تسلسل الأرقام الصحيح (يتضمن الرقم ٣)
 var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
 var T = {code:'',name:'',subject:'',classes:[],cls:'',month:'',drafts:{},subjects:[]};
-var toastT,confirmFn=null,msgCheckInterval,syncInterval;
+// ✅ إضافة متغير lockCheckInterval للفحص الدوري
+var toastT,confirmFn=null,msgCheckInterval,syncInterval,lockCheckInterval;
 var draftKey = function(){return T.cls+'¦'+T.month;};
 var SYNC_INTERVAL = 300000;
 var hasUnsavedChanges = false;
@@ -376,7 +378,7 @@ var SendQueue = {
     if(queue.length > 0){
       btn.classList.add('pending');
       bar.className = 'send-status queue';
-      bar.textContent = ' في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
+      bar.textContent = '📡 في انتظار الإرسال: ' + arNum(queue.length) + ' عملية';
     }else{ btn.classList.remove('pending'); }
   },
   processQueue: function(){
@@ -397,7 +399,7 @@ var SendQueue = {
     api(item.payload, 30000).then(function(r){
       if(r.ok){ self.remove(item.id); toast('✓✓ تم إرسال البيانات المتراكمة', 'ok'); if(item.onSuccess) item.onSuccess(r); }
       else{ toast('⚠️ فشل الإرسال: ' + r.error, 'err'); }
-    }).catch(function(e){ console.log(' خطأ في الإرسال:', e); });
+    }).catch(function(e){ console.log('❌ خطأ في الإرسال:', e); });
   }
 };
 
@@ -443,7 +445,7 @@ function updateConnectionStatus(){
 }
 
 function manualSyncAndRefresh(){
-  toast(' جاري البحث عن تحديثات...', ''); 
+  toast('⏳ جاري البحث عن تحديثات...', ''); 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) {
@@ -461,7 +463,7 @@ function manualSyncAndRefresh(){
 
 function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
-  if(!code){$('#loginMsg').textContent='️ أدخل الكود';return;}
+  if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
   $('#loginMsg').textContent='⏳ جاري التحقق...'; $('#loginMsg').style.color='var(--muted)';
   api({action:'teacherLogin',code:code}).then(function(r){
     if(!r.ok){$('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
@@ -490,13 +492,39 @@ function enterHome(){
   checkMessages();
   msgCheckInterval=setInterval(checkMessages, 30000); 
   syncInterval = setInterval(function() { if (T.cls && T.subject) loadCurrent(true); }, SYNC_INTERVAL);
+  
+  // ✅ فحص دوري لحالة قفل الحساب (كل 60 ثانية)
+  lockCheckInterval = setInterval(function(){
+    if(!T.code) return;
+    api({action:'teacherLogin', code:T.code}).then(function(r){
+      if(!r.ok){
+        // الحساب قُفل أو لم يعد موجوداً
+        clearInterval(lockCheckInterval);
+        clearInterval(msgCheckInterval);
+        clearInterval(syncInterval);
+        
+        localStorage.removeItem('d_session');
+        
+        alert('⚠️ تم قفل حسابك من قبل الإدارة\n\nتم تسجيل الخروج تلقائياً.\n\nيرجى التواصل مع الإدارة للاستفسار.');
+        location.reload();
+      }
+    }).catch(function(e){
+      // في حالة انقطاع الإنترنت، لا نفعل شيئاً
+      console.log('فشل فحص حالة الحساب:', e);
+    });
+  }, 60000);
 }
 
 function logout(){
-  clearInterval(msgCheckInterval); clearInterval(syncInterval);
+  clearInterval(msgCheckInterval); 
+  clearInterval(syncInterval);
+  clearInterval(lockCheckInterval); // ✅ إيقاف فحص القفل عند الخروج اليدوي
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
-  confirmDlg('تسجيل الخروج من حسابك؟',function(){ localStorage.removeItem('d_session'); location.reload(); });
+  confirmDlg('تسجيل الخروج من حسابك؟',function(){ 
+    localStorage.removeItem('d_session'); 
+    location.reload(); 
+  });
 }
 
 function buildSelectors(){
@@ -537,7 +565,7 @@ function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
-    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = ' لم يتم تحديد الشعبة'; return;
+    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
   if (!T.drafts[k]) {
