@@ -18,7 +18,7 @@
 <link rel="apple-touch-icon" href="icon-admin.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.9">
+<link rel="stylesheet" href="admin.css?v=4.0">
 
 <style>
 .exit, .iconbtn.exit-btn {
@@ -153,7 +153,7 @@
   #dashKpi .stats-bar .stat-item { min-width: calc(50% - 10px) !important; }
 }
 
-/* ═══ تنسيقات صفحة المعدلات ═══ */
+/* ═══ تنسيقات صفحة المعدلات ══ */
 .avg-section {
   margin-bottom: 30px;
   border-radius: 16px;
@@ -233,10 +233,26 @@
 .mid-year .class-rank-card h4 { color: #047857; }
 .final-year .class-rank-card h4 { color: #1D4ED8; }
 
+/* ═══ تنسيقات الأيقونات الاحترافية ═══ */
+.ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
 .ico svg {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   vertical-align: middle;
+  display: inline-block;
+}
+
+.snav .ico svg, .bnav .ico svg {
+  width: 32px;
+  height: 32px;
 }
 
 .lock-svg {
@@ -263,71 +279,120 @@
     <aside class="side">
       <div class="brand"><img src="icon-admin.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
       <nav style="padding:8px 0;flex:1;overflow-y:auto">
+        
+        <!-- ✅ أيقونة الرئيسية - منزل ملون -->
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')">
           <span class="ico">
-            <svg viewBox="0 0 24 24" fill="#3B82F6" stroke="none">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22" fill="#60A5FA"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 6L6 28h6v28h16V42h8v14h16V28h6z" fill="#EF4444"/>
+              <rect x="26" y="42" width="12" height="14" fill="#3B82F6"/>
+              <rect x="28" y="44" width="8" height="10" fill="#DBEAFE"/>
+              <path d="M32 6L6 28h52z" fill="#DC2626"/>
             </svg>
           </span>الرئيسية
         </button>
+
+        <!-- ✅ أيقونة التلاميذ - مجموعة أشخاص خضراء -->
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')">
           <span class="ico">
-            <svg viewBox="0 0 24 24" fill="#10B981" stroke="none">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="18" r="8" fill="#10B981"/>
+              <circle cx="44" cy="18" r="8" fill="#10B981"/>
+              <circle cx="32" cy="14" r="9" fill="#059669"/>
+              <path d="M8 50c0-8 6-14 12-14s12 6 12 14" fill="#34D399"/>
+              <path d="M32 50c0-8 6-14 12-14s12 6 12 14" fill="#34D399"/>
+              <path d="M20 50c0-8 6-14 12-14s12 6 12 14" fill="#10B981"/>
             </svg>
           </span>التلاميذ
         </button>
+
+        <!-- ✅ أيقونة المعلمون - معلم مع سبورة -->
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')">
           <span class="ico">
-            <svg viewBox="0 0 24 24" fill="#8B5CF6" stroke="none">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="10" width="40" height="28" rx="2" fill="#3B82F6"/>
+              <rect x="10" y="12" width="36" height="24" fill="#DBEAFE"/>
+              <line x1="14" y1="18" x2="42" y2="18" stroke="#60A5FA" stroke-width="2"/>
+              <line x1="14" y1="24" x2="38" y2="24" stroke="#60A5FA" stroke-width="2"/>
+              <line x1="14" y1="30" x2="40" y2="30" stroke="#60A5FA" stroke-width="2"/>
+              <circle cx="48" cy="42" r="10" fill="#F59E0B"/>
+              <circle cx="48" cy="38" r="4" fill="#FCD34D"/>
+              <path d="M42 52c0-4 3-7 6-7s6 3 6 7" fill="#F59E0B"/>
+              <line x1="46" y1="20" x2="54" y2="12" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </span>المعلمون
         </button>
-        <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
-        
-        <!-- ✅ أيقونة نتائج التلاميذ - هدف SVG احترافي -->
+
+        <!-- ✅ أيقونة إدخال إداري - قلم مع ورقة -->
+        <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')">
+          <span class="ico">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect x="12" y="8" width="36" height="44" rx="2" fill="#3B82F6"/>
+              <rect x="14" y="10" width="32" height="40" fill="#DBEAFE"/>
+              <line x1="18" y1="18" x2="42" y2="18" stroke="#60A5FA" stroke-width="2"/>
+              <line x1="18" y1="26" x2="42" y2="26" stroke="#60A5FA" stroke-width="2"/>
+              <line x1="18" y1="34" x2="36" y2="34" stroke="#60A5FA" stroke-width="2"/>
+              <line x1="18" y1="42" x2="40" y2="42" stroke="#60A5FA" stroke-width="2"/>
+              <path d="M44 10l10 10-20 20-12 4 4-12z" fill="#F59E0B"/>
+              <path d="M44 10l10 10-4 4-10-10z" fill="#FCD34D"/>
+              <path d="M22 54l4-4" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </span>إدخال إداري
+        </button>
+
+        <!-- ✅ أيقونة نتائج التلاميذ - A+ في دائرة حمراء -->
         <button class="snav" data-tab="res" onclick="adminTab('res')">
           <span class="ico">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
-              <circle cx="12" cy="12" r="6" fill="#FCA5A5"/>
-              <circle cx="12" cy="12" r="3" fill="#EF4444"/>
-              <circle cx="12" cy="12" r="1" fill="#fff"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="32" r="26" fill="#EF4444"/>
+              <circle cx="32" cy="32" r="22" fill="#FCA5A5"/>
+              <circle cx="32" cy="32" r="18" fill="#EF4444"/>
+              <text x="32" y="40" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">A+</text>
             </svg>
           </span>نتائج التلاميذ
         </button>
-        
-        <!-- ✅ أيقونة معدلات التلاميذ - كأس SVG احترافي -->
+
+        <!-- ✅ أيقونة معدلات التلاميذ - كأس ذهبي مع نجمة -->
         <button class="snav" data-tab="averages" data-dev="1" onclick="adminTab('averages')">
           <span class="ico">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" fill="#FCD34D" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" fill="#FCD34D" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-              <path d="M4 22h16" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" fill="#FDE68A" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" fill="#FDE68A" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" fill="#F59E0B" stroke="#F59E0B" stroke-width="2" stroke-linejoin="round"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 8h24v4c0 8-4 14-12 18-8-4-12-10-12-18z" fill="#F59E0B"/>
+              <path d="M22 12h20v2c0 6-3 11-10 14-7-3-10-8-10-14z" fill="#FCD34D"/>
+              <polygon points="32,14 34,20 40,20 35,24 37,30 32,26 27,30 29,24 24,20 30,20" fill="#fff"/>
+              <path d="M14 12h6c0 6-2 10-6 12z" fill="#F59E0B"/>
+              <path d="M50 12h-6c0 6 2 10 6 12z" fill="#F59E0B"/>
+              <rect x="28" y="32" width="8" height="10" fill="#D97706"/>
+              <rect x="22" y="42" width="20" height="4" rx="1" fill="#F59E0B"/>
+              <rect x="18" y="46" width="28" height="4" rx="1" fill="#D97706"/>
             </svg>
           </span>معدلات التلاميذ
         </button>
-        
+
+        <!-- ✅ أيقونة كلمات المرور - قفل ذهبي -->
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')">
           <span class="ico">
-            <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <rect x="5" y="11" width="14" height="10" rx="2" fill="#FCD34D" stroke="#F59E0B" stroke-width="2"/>
-              <path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="12" cy="16" r="1.5" fill="#F59E0B"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect x="14" y="30" width="36" height="26" rx="3" fill="#F59E0B"/>
+              <rect x="16" y="32" width="32" height="22" rx="2" fill="#FCD34D"/>
+              <path d="M22 30v-8a10 10 0 0 1 20 0v8" fill="none" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+              <path d="M24 30v-8a8 8 0 0 1 16 0v8" fill="#FDE68A"/>
+              <circle cx="32" cy="44" r="4" fill="#D97706"/>
+              <rect x="30" y="44" width="4" height="8" fill="#D97706"/>
             </svg>
           </span>كلمات المرور
         </button>
-        
-        <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">️</span>الإعدادات</button>
+
+        <!-- ✅ أيقونة الإعدادات - ترس أزرق -->
+        <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')">
+          <span class="ico">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 8l4 6 7-2 2 7 6 4-4 6 4 6-6 4-2 7-7-2-4 6-4-6-7 2-2-7-6-4 4-6-4-6 6-4 2-7 7 2z" fill="#3B82F6"/>
+              <path d="M32 12l3 5 6-2 2 6 5 3-3 5 3 5-5 3-2 6-6-2-3 5-3-5-6 2-2-6-5-3 3-5-3-5 5-3 2-6 6 2z" fill="#60A5FA"/>
+              <circle cx="32" cy="32" r="10" fill="#1E40AF"/>
+              <circle cx="32" cy="32" r="6" fill="#DBEAFE"/>
+            </svg>
+          </span>الإعدادات
+        </button>
       </nav>
       <div class="sfoot"><div class="rolecard" id="roleCard">
         <div class="dot2" id="roleDot">🛠️</div>
@@ -401,15 +466,14 @@
           <div id="resBox"></div>
         </div>
 
-        <!-- ✅ صفحة معدلات التلاميذ - مقسمة إلى قسمين منفصلين -->
+        <!-- ✅ صفحة معدلات التلاميذ -->
         <div id="tab-averages" hidden>
           <div class="ptitle"><span class="bar"></span>معدلات التلاميذ النهائية</div>
           <p class="psub">استخراج وترتيب التلاميذ بناءً على مجموع درجات نصف السنة والنتيجة النهائية لجميع المواد</p>
 
-          <!-- ═══ القسم الأول: الصف الخامس ═══ -->
           <div class="card" style="margin-bottom: 30px; border-top: 4px solid #059669;">
             <div class="ct" style="color:#059669; font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-              📗 معدلات تلاميذ الصف الخامس
+               معدلات تلاميذ الصف الخامس
             </div>
             
             <div class="grid3" style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
@@ -436,10 +500,10 @@
 
             <div id="averagesResults5" hidden style="display:none;">
               <div class="avg-section mid-year" id="midYearSection5">
-                <div class="avg-header"> معدلات نصف السنة - الصف الخامس</div>
+                <div class="avg-header">📗 معدلات نصف السنة - الصف الخامس</div>
                 <div class="avg-body">
                   <div id="midYearClassCard5" class="class-rank-card">
-                    <h4>🏆 ترتيب الشعبة المختارة</h4>
+                    <h4> ترتيب الشعبة المختارة</h4>
                     <div style="overflow-x:auto;">
                       <table class="avg-table">
                         <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -481,7 +545,6 @@
             </div>
           </div>
 
-          <!-- ═══ القسم الثاني: الصف السادس ═══ -->
           <div class="card" style="border-top: 4px solid #1E40AF;">
             <div class="ct" style="color:#1E40AF; font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
               📘 معدلات تلاميذ الصف السادس
@@ -511,10 +574,10 @@
 
             <div id="averagesResults6" hidden style="display:none;">
               <div class="avg-section mid-year" id="midYearSection6">
-                <div class="avg-header">📗 معدلات نصف السنة - الصف السادس</div>
+                <div class="avg-header"> معدلات نصف السنة - الصف السادس</div>
                 <div class="avg-body">
                   <div id="midYearClassCard6" class="class-rank-card">
-                    <h4>🏆 ترتيب الشعبة المختارة</h4>
+                    <h4> ترتيب الشعبة المختارة</h4>
                     <div style="overflow-x:auto;">
                       <table class="avg-table">
                         <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -576,13 +639,13 @@
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi"></div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
               <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
             </div>
             <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi">📤</div><h3>قالب معبأ بالدرجات</h3>
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
-              <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
+              <button class="btn ok" onclick="downloadTemplate(true)"> تنزيل معبأ</button>
             </div>
             <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
@@ -607,9 +670,9 @@
               <button class="btn" style="background:#DC2626" onclick="sendAdminMessageNew()">📨 إرسال الرسالة</button>
             </div>
 
-            <!-- ✅ بطاقة حذف درجات معلم - محسّنة بقائمة منسدلة -->
+            <!-- ✅ بطاقة حذف درجات معلم - محسّنة مع خيار كل المعلمين وكل الأشهر -->
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
-              <div class="hi">️</div>
+              <div class="hi">🗑️</div>
               <h3>حذف درجات معلم</h3>
               
               <div class="form-group">
@@ -617,13 +680,14 @@
                 <div style="display:flex; gap:8px; align-items:flex-end;">
                   <select id="delTeacherSelect" style="flex:1; padding:10px; border:1.5px solid #E2E8F0; border-radius:10px; font-family:inherit; font-size:14px; background:#fff;">
                     <option value="">-- اختر المعلم --</option>
+                    <option value="ALL_TEACHERS">🗑️ كل المعلمين</option>
                   </select>
                   <button class="btn" style="background:#0891B2; width:auto; padding:10px 15px; white-space:nowrap;" onclick="loadTeachersForDelete()" title="تحديث القائمة">
                     🔄 تحديث
                   </button>
                 </div>
                 <div class="form-hint" style="margin-top:4px;">
-                  💡 يتم تحميل قائمة المعلمين تلقائياً. اضغط "تحديث" إذا أضفت أو حذفت معلماً مؤخراً.
+                  💡 اختر معلماً محدداً أو "كل المعلمين" لحذف درجات جميع المعلمين.
                 </div>
               </div>
               
@@ -635,13 +699,17 @@
               <div class="form-group">
                 <label>الشهر</label>
                 <select id="delMonth">
-                  <option value="">اختر الشهر</option>
+                  <option value="">-- اختر الشهر --</option>
+                  <option value="ALL_MONTHS">🗑️ كل الأشهر</option>
                   <option>تشرين الأول</option>
                   <option>تشرين الثاني</option>
                   <option>كانون الأول</option>
                   <option>آذار</option>
                   <option>نيسان</option>
                 </select>
+                <div class="form-hint" style="margin-top:4px;">
+                  💡 اختر شهراً محدداً أو "كل الأشهر" لحذف جميع الدرجات.
+                </div>
               </div>
               
               <div class="form-group">
@@ -649,7 +717,7 @@
                 <input id="delStudentName" placeholder="اتركه فارغاً لحذف جميع التلاميذ">
               </div>
               
-              <button class="btn" style="background:#DC2626; width:100%;" onclick="deleteTeacherGrades()">🗑️ حذف الدرجات</button>
+              <button class="btn" style="background:#DC2626; width:100%;" onclick="deleteTeacherGrades()">️ حذف الدرجات</button>
             </div>
           </div>
         </div>
@@ -660,69 +728,102 @@
   <nav class="bnav">
     <button data-tab="dash" class="act" onclick="adminTab('dash')">
       <span class="ico">
-        <svg viewBox="0 0 24 24" fill="#3B82F6" stroke="none">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22" fill="#60A5FA"/>
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 6L6 28h6v28h16V42h8v14h16V28h6z" fill="#EF4444"/>
+          <rect x="26" y="42" width="12" height="14" fill="#3B82F6"/>
+          <rect x="28" y="44" width="8" height="10" fill="#DBEAFE"/>
+          <path d="M32 6L6 28h52z" fill="#DC2626"/>
         </svg>
       </span><small>الرئيسية</small>
     </button>
     <button data-tab="studs" data-dev="1" onclick="adminTab('studs')">
       <span class="ico">
-        <svg viewBox="0 0 24 24" fill="#10B981" stroke="none">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="18" r="8" fill="#10B981"/>
+          <circle cx="44" cy="18" r="8" fill="#10B981"/>
+          <circle cx="32" cy="14" r="9" fill="#059669"/>
+          <path d="M8 50c0-8 6-14 12-14s12 6 12 14" fill="#34D399"/>
+          <path d="M32 50c0-8 6-14 12-14s12 6 12 14" fill="#34D399"/>
+          <path d="M20 50c0-8 6-14 12-14s12 6 12 14" fill="#10B981"/>
         </svg>
       </span><small>التلاميذ</small>
     </button>
     <button data-tab="team" data-dev="1" onclick="adminTab('team')">
       <span class="ico">
-        <svg viewBox="0 0 24 24" fill="#8B5CF6" stroke="none">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="10" width="40" height="28" rx="2" fill="#3B82F6"/>
+          <rect x="10" y="12" width="36" height="24" fill="#DBEAFE"/>
+          <line x1="14" y1="18" x2="42" y2="18" stroke="#60A5FA" stroke-width="2"/>
+          <line x1="14" y1="24" x2="38" y2="24" stroke="#60A5FA" stroke-width="2"/>
+          <line x1="14" y1="30" x2="40" y2="30" stroke="#60A5FA" stroke-width="2"/>
+          <circle cx="48" cy="42" r="10" fill="#F59E0B"/>
+          <circle cx="48" cy="38" r="4" fill="#FCD34D"/>
+          <path d="M42 52c0-4 3-7 6-7s6 3 6 7" fill="#F59E0B"/>
+          <line x1="46" y1="20" x2="54" y2="12" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </span><small>المعلمون</small>
     </button>
-    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
-    
-    <!-- ✅ أيقونة نتائج التلاميذ - هدف SVG -->
+    <button data-tab="entry" data-dev="1" onclick="adminTab('entry')">
+      <span class="ico">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="8" width="36" height="44" rx="2" fill="#3B82F6"/>
+          <rect x="14" y="10" width="32" height="40" fill="#DBEAFE"/>
+          <line x1="18" y1="18" x2="42" y2="18" stroke="#60A5FA" stroke-width="2"/>
+          <line x1="18" y1="26" x2="42" y2="26" stroke="#60A5FA" stroke-width="2"/>
+          <line x1="18" y1="34" x2="36" y2="34" stroke="#60A5FA" stroke-width="2"/>
+          <line x1="18" y1="42" x2="40" y2="42" stroke="#60A5FA" stroke-width="2"/>
+          <path d="M44 10l10 10-20 20-12 4 4-12z" fill="#F59E0B"/>
+          <path d="M44 10l10 10-4 4-10-10z" fill="#FCD34D"/>
+          <path d="M22 54l4-4" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </span><small>إدخال</small>
+    </button>
     <button data-tab="res" onclick="adminTab('res')">
       <span class="ico">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
-          <circle cx="12" cy="12" r="6" fill="#FCA5A5"/>
-          <circle cx="12" cy="12" r="3" fill="#EF4444"/>
-          <circle cx="12" cy="12" r="1" fill="#fff"/>
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="26" fill="#EF4444"/>
+          <circle cx="32" cy="32" r="22" fill="#FCA5A5"/>
+          <circle cx="32" cy="32" r="18" fill="#EF4444"/>
+          <text x="32" y="40" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">A+</text>
         </svg>
       </span><small>النتائج</small>
     </button>
-    
-    <!-- ✅ أيقونة معدلات التلاميذ - كأس SVG -->
     <button data-tab="averages" data-dev="1" onclick="adminTab('averages')">
       <span class="ico">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" fill="#FCD34D" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" fill="#FCD34D" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-          <path d="M4 22h16" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" fill="#FDE68A" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" fill="#FDE68A" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" fill="#F59E0B" stroke="#F59E0B" stroke-width="2" stroke-linejoin="round"/>
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 8h24v4c0 8-4 14-12 18-8-4-12-10-12-18z" fill="#F59E0B"/>
+          <path d="M22 12h20v2c0 6-3 11-10 14-7-3-10-8-10-14z" fill="#FCD34D"/>
+          <polygon points="32,14 34,20 40,20 35,24 37,30 32,26 27,30 29,24 24,20 30,20" fill="#fff"/>
+          <path d="M14 12h6c0 6-2 10-6 12z" fill="#F59E0B"/>
+          <path d="M50 12h-6c0 6 2 10 6 12z" fill="#F59E0B"/>
+          <rect x="28" y="32" width="8" height="10" fill="#D97706"/>
+          <rect x="22" y="42" width="20" height="4" rx="1" fill="#F59E0B"/>
+          <rect x="18" y="46" width="28" height="4" rx="1" fill="#D97706"/>
         </svg>
       </span><small>المعدلات</small>
     </button>
-    
     <button data-tab="keys" data-dev="1" onclick="adminTab('keys')">
       <span class="ico">
-        <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <rect x="5" y="11" width="14" height="10" rx="2" fill="#FCD34D" stroke="#F59E0B" stroke-width="2"/>
-          <path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="12" cy="16" r="1.5" fill="#F59E0B"/>
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="30" width="36" height="26" rx="3" fill="#F59E0B"/>
+          <rect x="16" y="32" width="32" height="22" rx="2" fill="#FCD34D"/>
+          <path d="M22 30v-8a10 10 0 0 1 20 0v8" fill="none" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+          <path d="M24 30v-8a8 8 0 0 1 16 0v8" fill="#FDE68A"/>
+          <circle cx="32" cy="44" r="4" fill="#D97706"/>
+          <rect x="30" y="44" width="4" height="8" fill="#D97706"/>
         </svg>
       </span><small>كلمات</small>
     </button>
-    
-    <button data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span><small>الإعدادات</small></button>
+    <button data-tab="set" data-dev="1" onclick="adminTab('set')">
+      <span class="ico">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 8l4 6 7-2 2 7 6 4-4 6 4 6-6 4-2 7-7-2-4 6-4-6-7 2-2-7-6-4 4-6-4-6 6-4 2-7 7 2z" fill="#3B82F6"/>
+          <path d="M32 12l3 5 6-2 2 6 5 3-3 5 3 5-5 3-2 6-6-2-3 5-3-5-6 2-2-6-5-3 3-5-3-5 5-3 2-6 6 2z" fill="#60A5FA"/>
+          <circle cx="32" cy="32" r="10" fill="#1E40AF"/>
+          <circle cx="32" cy="32" r="6" fill="#DBEAFE"/>
+        </svg>
+      </span><small>الإعدادات</small>
+    </button>
   </nav>
 </section>
 
@@ -732,7 +833,7 @@
     <div><b id="tvName"></b><small id="tvSub"></small></div>
     <span class="grow"></span>
     <button class="iconbtn" onclick="showSummary(ADM.tv.code)">📊</button>
-    <button class="iconbtn" onclick="printTView()">️</button>
+    <button class="iconbtn" onclick="printTView()">🖨️</button>
   </header>
   <div class="content" id="tvBox"></div>
 </section>
@@ -749,7 +850,7 @@
     </div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
+      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()"> حفظ التعديلات</button>
     </div>
   </div>
 </div>
@@ -757,7 +858,7 @@
 <div class="ovl" id="teacherRecordModal">
   <div class="modal" style="max-width:950px; max-height:92vh; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
-      <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
+      <h3 style="margin:0; color:#1E40AF;"> كشف المعلم: <span id="trTeacherName"></span></h3>
       <div style="display:flex; gap:8px;">
         <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
         <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
@@ -840,15 +941,15 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=3.9"></script>
-<script src="core.js?v=3.9"></script>
-<script src="page-dash.js?v=3.9"></script>
-<script src="page-results.js?v=3.9"></script>
-<script src="page-team.js?v=3.9"></script>
-<script src="page-entry.js?v=3.9"></script>
-<script src="page-students.js?v=3.9"></script>
-<script src="page-keys.js?v=3.9"></script>
-<script src="page-settings.js?v=3.9"></script>
+<script src="config.js?v=4.0"></script>
+<script src="core.js?v=4.0"></script>
+<script src="page-dash.js?v=4.0"></script>
+<script src="page-results.js?v=4.0"></script>
+<script src="page-team.js?v=4.0"></script>
+<script src="page-entry.js?v=4.0"></script>
+<script src="page-students.js?v=4.0"></script>
+<script src="page-keys.js?v=4.0"></script>
+<script src="page-settings.js?v=4.0"></script>
 
 <script>
 if('serviceWorker' in navigator){
@@ -904,11 +1005,11 @@ function updateSelectedTeachers(){
 
 function sendAdminMessageNew(){
   var message = document.getElementById('msgText').value.trim();
-  if(!message){ toast('⚠️ اكتب نص الرسالة أولاً', 'err'); return; }
+  if(!message){ toast('️ اكتب نص الرسالة أولاً', 'err'); return; }
   if(selectedTeachers.length === 0){ toast('⚠️ اختر معلماً واحداً على الأقل', 'err'); return; }
   
   var targetList = selectedTeachers.length === allTeachers.length ? 'جميع المعلمين (' + selectedTeachers.length + ')' : selectedTeachers.length + ' معلم';
-  if(!confirm(' إرسال رسالة إلى: ' + targetList + '\n\n' + message)){ return; }
+  if(!confirm('📨 إرسال رسالة إلى: ' + targetList + '\n\n' + message)){ return; }
   
   var sentCount = 0; var failedCount = 0;
   selectedTeachers.forEach(function(targetCode, index){
@@ -943,17 +1044,18 @@ function loadTeachersForDelete(){
   if(!select) return;
   
   var currentValue = select.value;
-  select.innerHTML = '<option value="">⏳ جاري التحميل...</option>';
+  select.innerHTML = '<option value=""> جاري التحميل...</option>';
   
   api({action:'adminData', key:key()}).then(function(r){
     if(!r.ok || !r.teachers){
-      select.innerHTML = '<option value="">❌ فشل التحميل</option>';
-      toast('⚠️ فشل تحميل قائمة المعلمين', 'err');
+      select.innerHTML = '<option value="">❌ فشل التحميل</option><option value="ALL_TEACHERS">🗑️ كل المعلمين</option>';
+      toast('️ فشل تحميل قائمة المعلمين', 'err');
       return;
     }
     
     var teachers = r.teachers;
     select.innerHTML = '<option value="">-- اختر المعلم --</option>';
+    select.innerHTML += '<option value="ALL_TEACHERS">🗑️ كل المعلمين</option>';
     
     teachers.forEach(function(t){
       var option = document.createElement('option');
@@ -968,7 +1070,7 @@ function loadTeachersForDelete(){
     
     console.log('✅ تم تحميل ' + teachers.length + ' معلم في قائمة الحذف');
   }).catch(function(err){
-    select.innerHTML = '<option value="">❌ خطأ في الاتصال</option>';
+    select.innerHTML = '<option value="">❌ خطأ في الاتصال</option><option value="ALL_TEACHERS">🗑️ كل المعلمين</option>';
     toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
@@ -985,11 +1087,14 @@ function deleteTeacherGrades(){
   var select = document.getElementById('delTeacherSelect');
   var teacherName = select.options[select.selectedIndex].text;
   
-  var confirmMsg = '⚠️ هل أنت متأكد من حذف درجات:\n\n';
-  confirmMsg += '👨‍🏫 المعلم: ' + teacherName + '\n';
-  confirmMsg += '📅 الشهر: ' + month + '\n';
+  var isAllTeachers = (code === 'ALL_TEACHERS');
+  var isAllMonths = (month === 'ALL_MONTHS');
+  
+  var confirmMsg = '⚠️ هل أنت متأكد من حذف الدرجات:\n\n';
+  confirmMsg += (isAllTeachers ? '👥 جميع المعلمين' : '👨‍ المعلم: ' + teacherName) + '\n';
+  confirmMsg += (isAllMonths ? ' جميع الأشهر' : '📅 الشهر: ' + month) + '\n';
   if(cls) confirmMsg += '🏫 الصف: ' + cls + '\n';
-  if(studentName) confirmMsg += ' التلميذ: ' + studentName + '\n';
+  if(studentName) confirmMsg += '👤 التلميذ: ' + studentName + '\n';
   else confirmMsg += '👥 جميع التلاميذ\n';
   confirmMsg += '\n⚠️ لا يمكن التراجع عن هذا الإجراء!';
   
@@ -997,25 +1102,70 @@ function deleteTeacherGrades(){
   
   toast('⏳ جاري حذف الدرجات...', '');
   
-  api({
-    action: 'deleteGrades',
-    key: key(),
-    code: code,
-    month: month,
-    cls: cls,
-    studentName: studentName
-  }).then(function(r){
-    if(r.ok){
-      toast('✓✓ تم حذف ' + r.count + ' درجة بنجاح', 'ok');
-      document.getElementById('delClass').value = '';
-      document.getElementById('delMonth').value = '';
-      document.getElementById('delStudentName').value = '';
-    } else {
-      toast('❌ ' + (r.error || 'فشل الحذف'), 'err');
-    }
-  }).catch(function(err){
-    toast('⚠️ تعذر الاتصال بالخادم', 'err');
-  });
+  // إذا كان "كل المعلمين"، نرسل طلب لكل معلم
+  if(isAllTeachers){
+    var teachers = allTeachers;
+    var totalDeleted = 0;
+    var failedCount = 0;
+    var processedCount = 0;
+    
+    teachers.forEach(function(t, index){
+      setTimeout(function(){
+        api({
+          action: 'deleteGrades',
+          key: key(),
+          code: t.code,
+          month: isAllMonths ? '' : month,
+          cls: cls,
+          studentName: studentName
+        }).then(function(r){
+          processedCount++;
+          if(r.ok){
+            totalDeleted += (r.count || 0);
+          } else {
+            failedCount++;
+          }
+          if(processedCount === teachers.length){
+            if(failedCount === 0){
+              toast('✓✓ تم حذف ' + totalDeleted + ' درجة من جميع المعلمين', 'ok');
+            } else {
+              toast('⚠️ تم حذف ' + totalDeleted + ' درجة | فشل: ' + failedCount, 'err');
+            }
+            document.getElementById('delClass').value = '';
+            document.getElementById('delMonth').value = '';
+            document.getElementById('delStudentName').value = '';
+          }
+        }).catch(function(err){
+          processedCount++;
+          failedCount++;
+          if(processedCount === teachers.length){
+            toast('️ تم حذف ' + totalDeleted + ' درجة | فشل: ' + failedCount, 'err');
+          }
+        });
+      }, index * 300);
+    });
+  } else {
+    // حذف درجات معلم واحد
+    api({
+      action: 'deleteGrades',
+      key: key(),
+      code: code,
+      month: isAllMonths ? '' : month,
+      cls: cls,
+      studentName: studentName
+    }).then(function(r){
+      if(r.ok){
+        toast('✓✓ تم حذف ' + r.count + ' درجة بنجاح', 'ok');
+        document.getElementById('delClass').value = '';
+        document.getElementById('delMonth').value = '';
+        document.getElementById('delStudentName').value = '';
+      } else {
+        toast(' ' + (r.error || 'فشل الحذف'), 'err');
+      }
+    }).catch(function(err){
+      toast('⚠️ تعذر الاتصال بالخادم', 'err');
+    });
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1033,7 +1183,7 @@ function calculateAveragesGrade5(){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
     
     var data = r.data;
-    console.log('📊 بيانات الصف الخامس الخام:', data.length, 'تلميذ');
+    console.log(' بيانات الصف الخامس الخام:', data.length, 'تلميذ');
     
     if(!data || data.length === 0){
       toast('⚠️ لا توجد درجات مسجلة للصف الخامس', 'err');
@@ -1101,7 +1251,7 @@ function calculateAveragesGrade5(){
     
   }).catch(function(err){
     console.error('❌ خطأ في حساب معدلات الخامس:', err);
-    toast('️ تعذر الاتصال بالخادم', 'err');
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
 
@@ -1119,7 +1269,7 @@ function calculateAveragesGrade6(){
     console.log('📊 بيانات الصف السادس الخام:', data.length, 'تلميذ');
     
     if(!data || data.length === 0){
-      toast('️ لا توجد درجات مسجلة للصف السادس', 'err');
+      toast('⚠️ لا توجد درجات مسجلة للصف السادس', 'err');
       return;
     }
     
@@ -1183,7 +1333,7 @@ function calculateAveragesGrade6(){
     toast('✓ تم استخراج معدلات الصف السادس - ' + filteredData.length + ' تلميذ', 'ok');
     
   }).catch(function(err){
-    console.error('❌ خطأ في حساب معدلات السادس:', err);
+    console.error(' خطأ في حساب معدلات السادس:', err);
     toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
@@ -1191,7 +1341,7 @@ function calculateAveragesGrade6(){
 function renderAvgTable(tbodyId, data, isClassView, type){
   var tbody = document.getElementById(tbodyId);
   if(!tbody){
-    console.error('❌ tbody not found:', tbodyId);
+    console.error(' tbody not found:', tbodyId);
     return;
   }
   
@@ -1222,9 +1372,9 @@ function renderAvgTable(tbodyId, data, isClassView, type){
     var rankBadge = arNum(currentRank);
     var rowClass = '';
     
-    if(currentRank === 1){ rankBadge = '🥇 الأول'; rowClass = 'rank-1'; }
+    if(currentRank === 1){ rankBadge = ' الأول'; rowClass = 'rank-1'; }
     else if(currentRank === 2){ rankBadge = '🥈 الثاني'; rowClass = 'rank-2'; }
-    else if(currentRank === 3){ rankBadge = ' الثالث'; rowClass = 'rank-3'; }
+    else if(currentRank === 3){ rankBadge = '🥉 الثالث'; rowClass = 'rank-3'; }
     
     var tr = document.createElement('tr');
     if(rowClass) tr.className = rowClass;
