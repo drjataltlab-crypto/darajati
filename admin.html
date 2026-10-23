@@ -18,7 +18,7 @@
 <link rel="apple-touch-icon" href="icon-admin.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=4.0">
+<link rel="stylesheet" href="admin.css?v=4.1">
 
 <style>
 .exit, .iconbtn.exit-btn {
@@ -46,44 +46,44 @@
   stroke-linecap: round; stroke-linejoin: round; fill: none;
 }
 
-.form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 5px; }
 .form-group input, .form-group textarea, .form-group select {
-  width: 100%; padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 10px;
+  width: 100%; padding: 9px; border: 1.5px solid #E2E8F0; border-radius: 10px;
   font-family: inherit; font-size: 14px; transition: 0.15s; background: #fff;
 }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
   outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 .form-group textarea { resize: vertical; min-height: 80px; }
-.form-hint { font-size: 11.5px; color: #64748B; margin-top: 4px; line-height: 1.6; }
+.form-hint { font-size: 11px; color: #64748B; margin-top: 3px; line-height: 1.5; }
 
 .teacher-select-box {
   background: #F8FAFC;
   border: 1.5px solid #E2E8F0;
   border-radius: 10px;
-  padding: 12px;
-  max-height: 200px;
+  padding: 8px;
+  max-height: 150px;
   overflow-y: auto;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .teacher-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
-  margin-bottom: 6px;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
   background: #fff;
   border-radius: 8px;
   cursor: pointer;
   transition: 0.15s;
 }
 .teacher-item:hover { background: #F1F5F9; }
-.teacher-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-.teacher-item label { flex: 1; cursor: pointer; font-size: 13px; font-weight: 600; color: #1E293B; }
+.teacher-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+.teacher-item label { flex: 1; cursor: pointer; font-size: 12.5px; font-weight: 600; color: #1E293B; margin: 0; }
 .select-all-btn {
-  width: 100%; padding: 8px; background: #0891B2; color: #fff; border: none;
-  border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; margin-bottom: 10px; transition: 0.2s;
+  width: 100%; padding: 7px; background: #0891B2; color: #fff; border: none;
+  border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 12px; margin-bottom: 8px; transition: 0.2s;
 }
 .select-all-btn:hover { background: #0E7490; }
 
@@ -153,7 +153,7 @@
   #dashKpi .stats-bar .stat-item { min-width: calc(50% - 10px) !important; }
 }
 
-/* ═══ تنسيقات صفحة المعدلات ══ */
+/* ═══ تنسيقات صفحة المعدلات ═══ */
 .avg-section {
   margin-bottom: 30px;
   border-radius: 16px;
@@ -238,21 +238,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
 }
 
 .ico svg {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   vertical-align: middle;
   display: inline-block;
 }
 
 .snav .ico svg, .bnav .ico svg {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
 }
 
 .lock-svg {
@@ -260,6 +260,20 @@
   height: 22px;
   display: inline-block;
   vertical-align: middle;
+}
+
+/* ✅ تقليل المسافات في القائمة الجانبية */
+.side nav .snav {
+  padding: 5px 10px !important;
+  margin: 1px 0 !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  min-height: 34px !important;
+}
+
+/* ✅ إخفاء شريط التنقل السفلي على الشاشات الكبيرة */
+@media (min-width: 769px) {
+  .bnav { display: none !important; }
 }
 </style>
 </head>
@@ -278,9 +292,8 @@
   <div class="app">
     <aside class="side">
       <div class="brand"><img src="icon-admin.png"><div><b>درجاتي</b><small>لوحة التحكم</small></div></div>
-      <nav style="padding:8px 0;flex:1;overflow-y:auto">
+      <nav style="padding:4px 0;flex:1;overflow-y:auto">
         
-        <!-- ✅ أيقونة الرئيسية - منزل ملون -->
         <button class="snav act" data-tab="dash" onclick="adminTab('dash')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -292,7 +305,6 @@
           </span>الرئيسية
         </button>
 
-        <!-- ✅ أيقونة التلاميذ - مجموعة أشخاص خضراء -->
         <button class="snav" data-tab="studs" data-dev="1" onclick="adminTab('studs')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -306,7 +318,6 @@
           </span>التلاميذ
         </button>
 
-        <!-- ✅ أيقونة المعلمون - معلم مع سبورة -->
         <button class="snav" data-tab="team" data-dev="1" onclick="adminTab('team')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -323,7 +334,6 @@
           </span>المعلمون
         </button>
 
-        <!-- ✅ أيقونة إدخال إداري - قلم مع ورقة -->
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -340,7 +350,6 @@
           </span>إدخال إداري
         </button>
 
-        <!-- ✅ أيقونة نتائج التلاميذ - A+ في دائرة حمراء -->
         <button class="snav" data-tab="res" onclick="adminTab('res')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -352,7 +361,6 @@
           </span>نتائج التلاميذ
         </button>
 
-        <!-- ✅ أيقونة معدلات التلاميذ - كأس ذهبي مع نجمة -->
         <button class="snav" data-tab="averages" data-dev="1" onclick="adminTab('averages')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -368,7 +376,6 @@
           </span>معدلات التلاميذ
         </button>
 
-        <!-- ✅ أيقونة كلمات المرور - قفل ذهبي -->
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -382,7 +389,6 @@
           </span>كلمات المرور
         </button>
 
-        <!-- ✅ أيقونة الإعدادات - ترس أزرق -->
         <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')">
           <span class="ico">
             <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -447,7 +453,7 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
           </div>
@@ -466,14 +472,13 @@
           <div id="resBox"></div>
         </div>
 
-        <!-- ✅ صفحة معدلات التلاميذ -->
         <div id="tab-averages" hidden>
           <div class="ptitle"><span class="bar"></span>معدلات التلاميذ النهائية</div>
           <p class="psub">استخراج وترتيب التلاميذ بناءً على مجموع درجات نصف السنة والنتيجة النهائية لجميع المواد</p>
 
           <div class="card" style="margin-bottom: 30px; border-top: 4px solid #059669;">
             <div class="ct" style="color:#059669; font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-               معدلات تلاميذ الصف الخامس
+              📗 معدلات تلاميذ الصف الخامس
             </div>
             
             <div class="grid3" style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
@@ -494,7 +499,7 @@
                 </select>
               </div>
               <div style="display:flex; align-items:flex-end;">
-                <button class="btn ok" style="width:100%; font-size:14px;" onclick="calculateAveragesGrade5()">📊 استخراج معدلات الخامس</button>
+                <button class="btn ok" style="width:100%; font-size:14px;" onclick="calculateAveragesGrade5()"> استخراج معدلات الخامس</button>
               </div>
             </div>
 
@@ -503,7 +508,7 @@
                 <div class="avg-header">📗 معدلات نصف السنة - الصف الخامس</div>
                 <div class="avg-body">
                   <div id="midYearClassCard5" class="class-rank-card">
-                    <h4> ترتيب الشعبة المختارة</h4>
+                    <h4>🏆 ترتيب الشعبة المختارة</h4>
                     <div style="overflow-x:auto;">
                       <table class="avg-table">
                         <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -574,10 +579,10 @@
 
             <div id="averagesResults6" hidden style="display:none;">
               <div class="avg-section mid-year" id="midYearSection6">
-                <div class="avg-header"> معدلات نصف السنة - الصف السادس</div>
+                <div class="avg-header">📗 معدلات نصف السنة - الصف السادس</div>
                 <div class="avg-body">
                   <div id="midYearClassCard6" class="class-rank-card">
-                    <h4> ترتيب الشعبة المختارة</h4>
+                    <h4>🏆 ترتيب الشعبة المختارة</h4>
                     <div style="overflow-x:auto;">
                       <table class="avg-table">
                         <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -585,7 +590,7 @@
                       </table>
                     </div>
                   </div>
-                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف السادس</h4>
+                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;"> الترتيب التنافسي العام للصف السادس</h4>
                   <div style="overflow-x:auto;">
                     <table class="avg-table">
                       <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -596,7 +601,7 @@
               </div>
 
               <div class="avg-section final-year" id="finalYearSection6">
-                <div class="avg-header">📘 معدلات نهاية السنة - الصف السادس</div>
+                <div class="avg-header"> معدلات نهاية السنة - الصف السادس</div>
                 <div class="avg-body">
                   <div id="finalYearClassCard6" class="class-rank-card">
                     <h4>🏆 ترتيب الشعبة المختارة</h4>
@@ -607,7 +612,7 @@
                       </table>
                     </div>
                   </div>
-                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف السادس</h4>
+                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;"> الترتيب التنافسي العام للصف السادس</h4>
                   <div style="overflow-x:auto;">
                     <table class="avg-table">
                       <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -639,15 +644,15 @@
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi"></div><h3>قالب Excel فارغ</h3>
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
               <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
             </div>
             <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi">📤</div><h3>قالب معبأ بالدرجات</h3>
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
-              <button class="btn ok" onclick="downloadTemplate(true)"> تنزيل معبأ</button>
+              <button class="btn ok" onclick="downloadTemplate(true)">📤 تنزيل معبأ</button>
             </div>
-            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
+            <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi"></div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
               <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
               <div id="connRes"></div>
@@ -670,24 +675,41 @@
               <button class="btn" style="background:#DC2626" onclick="sendAdminMessageNew()">📨 إرسال الرسالة</button>
             </div>
 
-            <!-- ✅ بطاقة حذف درجات معلم - محسّنة مع خيار كل المعلمين وكل الأشهر -->
+            <!-- ✅ بطاقة حذف درجات معلم - محسّنة مع مربعات تحديد -->
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
               <div class="hi">🗑️</div>
               <h3>حذف درجات معلم</h3>
               
               <div class="form-group">
-                <label>اختر المعلم</label>
-                <div style="display:flex; gap:8px; align-items:flex-end;">
-                  <select id="delTeacherSelect" style="flex:1; padding:10px; border:1.5px solid #E2E8F0; border-radius:10px; font-family:inherit; font-size:14px; background:#fff;">
-                    <option value="">-- اختر المعلم --</option>
-                    <option value="ALL_TEACHERS">🗑️ كل المعلمين</option>
-                  </select>
-                  <button class="btn" style="background:#0891B2; width:auto; padding:10px 15px; white-space:nowrap;" onclick="loadTeachersForDelete()" title="تحديث القائمة">
-                    🔄 تحديث
-                  </button>
+                <label>اختر المعلمين</label>
+                <button type="button" class="select-all-btn" onclick="toggleAllDeleteTeachers()">✅ تحديد الكل / إلغاء الكل</button>
+                <div class="teacher-select-box" id="deleteTeacherBox" style="max-height: 150px;">
+                  <div style="text-align:center;padding:20px;color:#64748B">⏳ جاري تحميل قائمة المعلمين...</div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>اختر الأشهر</label>
+                <button type="button" class="select-all-btn" onclick="toggleAllDeleteMonths()">✅ تحديد الكل / إلغاء الكل</button>
+                <div class="teacher-select-box" id="deleteMonthBox" style="max-height: 120px;">
+                  <!-- يتم ملؤها بالجافاسكربت -->
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>نوع الحذف</label>
+                <div style="display:flex; flex-direction:column; gap:8px; padding:10px; background:#F8FAFC; border-radius:10px; border:1px solid #E2E8F0;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:600; color:#1E293B; margin:0;">
+                    <input type="checkbox" id="delHalfYear" checked style="width:18px;height:18px;cursor:pointer;">
+                    <span>📗 درجات نصف السنة</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:600; color:#1E293B; margin:0;">
+                    <input type="checkbox" id="delFinalYear" checked style="width:18px;height:18px;cursor:pointer;">
+                    <span>📘 درجات نهاية السنة</span>
+                  </label>
                 </div>
                 <div class="form-hint" style="margin-top:4px;">
-                  💡 اختر معلماً محدداً أو "كل المعلمين" لحذف درجات جميع المعلمين.
+                  💡 يمكنك اختيار نوع أو كلا النوعين للحذف.
                 </div>
               </div>
               
@@ -697,27 +719,11 @@
               </div>
               
               <div class="form-group">
-                <label>الشهر</label>
-                <select id="delMonth">
-                  <option value="">-- اختر الشهر --</option>
-                  <option value="ALL_MONTHS">🗑️ كل الأشهر</option>
-                  <option>تشرين الأول</option>
-                  <option>تشرين الثاني</option>
-                  <option>كانون الأول</option>
-                  <option>آذار</option>
-                  <option>نيسان</option>
-                </select>
-                <div class="form-hint" style="margin-top:4px;">
-                  💡 اختر شهراً محدداً أو "كل الأشهر" لحذف جميع الدرجات.
-                </div>
-              </div>
-              
-              <div class="form-group">
                 <label>اسم التلميذ (اختياري - اتركه فارغاً لحذف الجميع)</label>
                 <input id="delStudentName" placeholder="اتركه فارغاً لحذف جميع التلاميذ">
               </div>
               
-              <button class="btn" style="background:#DC2626; width:100%;" onclick="deleteTeacherGrades()">️ حذف الدرجات</button>
+              <button class="btn" style="background:#DC2626; width:100%;" onclick="deleteTeacherGrades()">🗑️ حذف الدرجات المحددة</button>
             </div>
           </div>
         </div>
@@ -850,7 +856,7 @@
     </div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()"> حفظ التعديلات</button>
+      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
     </div>
   </div>
 </div>
@@ -858,7 +864,7 @@
 <div class="ovl" id="teacherRecordModal">
   <div class="modal" style="max-width:950px; max-height:92vh; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
-      <h3 style="margin:0; color:#1E40AF;"> كشف المعلم: <span id="trTeacherName"></span></h3>
+      <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
       <div style="display:flex; gap:8px;">
         <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
         <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
@@ -877,7 +883,7 @@
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
               <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
@@ -886,7 +892,7 @@
               <th style="padding:6px; border:1px solid #0F172A;"></th>
               <th style="padding:6px; border:1px solid #0F172A;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
-              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت</th>
               <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك</th>
               <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#7C3AED;"></th>
@@ -911,7 +917,7 @@
   <div class="modal" style="max-width:500px">
     <h3>🖨️ إعدادات الطباعة</h3>
     <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٠٢٥ - ٢٢٦"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٢٥ - ٢٠٢٦"></div>
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
@@ -933,7 +939,7 @@
 
 <div class="ovl" id="sumModal">
   <div class="modal">
-    <h3>📊 ملخص النتائج</h3>
+    <h3> ملخص النتائج</h3>
     <div id="sumBox"></div>
     <button class="btn ghost" style="margin-top:10px" onclick="hideModal('sumModal')">إغلاق</button>
   </div>
@@ -941,15 +947,15 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=4.0"></script>
-<script src="core.js?v=4.0"></script>
-<script src="page-dash.js?v=4.0"></script>
-<script src="page-results.js?v=4.0"></script>
-<script src="page-team.js?v=4.0"></script>
-<script src="page-entry.js?v=4.0"></script>
-<script src="page-students.js?v=4.0"></script>
-<script src="page-keys.js?v=4.0"></script>
-<script src="page-settings.js?v=4.0"></script>
+<script src="config.js?v=4.1"></script>
+<script src="core.js?v=4.1"></script>
+<script src="page-dash.js?v=4.1"></script>
+<script src="page-results.js?v=4.1"></script>
+<script src="page-team.js?v=4.1"></script>
+<script src="page-entry.js?v=4.1"></script>
+<script src="page-students.js?v=4.1"></script>
+<script src="page-keys.js?v=4.1"></script>
+<script src="page-settings.js?v=4.1"></script>
 
 <script>
 if('serviceWorker' in navigator){
@@ -962,6 +968,8 @@ if('serviceWorker' in navigator){
 
 var allTeachers = [];
 var selectedTeachers = [];
+var deleteSelectedTeachers = [];
+var deleteSelectedMonths = [];
 
 function loadTeachersList(){
   api({action:'adminData', key:key()}).then(function(r){
@@ -1005,8 +1013,8 @@ function updateSelectedTeachers(){
 
 function sendAdminMessageNew(){
   var message = document.getElementById('msgText').value.trim();
-  if(!message){ toast('️ اكتب نص الرسالة أولاً', 'err'); return; }
-  if(selectedTeachers.length === 0){ toast('⚠️ اختر معلماً واحداً على الأقل', 'err'); return; }
+  if(!message){ toast('⚠️ اكتب نص الرسالة أولاً', 'err'); return; }
+  if(selectedTeachers.length === 0){ toast('️ اختر معلماً واحداً على الأقل', 'err'); return; }
   
   var targetList = selectedTeachers.length === allTeachers.length ? 'جميع المعلمين (' + selectedTeachers.length + ')' : selectedTeachers.length + ' معلم';
   if(!confirm('📨 إرسال رسالة إلى: ' + targetList + '\n\n' + message)){ return; }
@@ -1036,63 +1044,106 @@ function sendAdminMessageNew(){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ دوال حذف درجات المعلم - مع قائمة منسدلة ديناميكية
+   ✅ دوال حذف درجات المعلم - مع مربعات تحديد
    ═══════════════════════════════════════════════════════════════ */
 
 function loadTeachersForDelete(){
-  var select = document.getElementById('delTeacherSelect');
-  if(!select) return;
-  
-  var currentValue = select.value;
-  select.innerHTML = '<option value=""> جاري التحميل...</option>';
+  var box = document.getElementById('deleteTeacherBox');
+  if(!box) return;
+  box.innerHTML = '<div style="text-align:center;padding:20px;color:#64748B">⏳ جاري التحميل...</div>';
   
   api({action:'adminData', key:key()}).then(function(r){
     if(!r.ok || !r.teachers){
-      select.innerHTML = '<option value="">❌ فشل التحميل</option><option value="ALL_TEACHERS">🗑️ كل المعلمين</option>';
-      toast('️ فشل تحميل قائمة المعلمين', 'err');
+      box.innerHTML = '<div style="text-align:center;padding:20px;color:#DC2626">❌ فشل التحميل</div>';
+      toast('⚠️ فشل تحميل قائمة المعلمين', 'err');
       return;
     }
-    
     var teachers = r.teachers;
-    select.innerHTML = '<option value="">-- اختر المعلم --</option>';
-    select.innerHTML += '<option value="ALL_TEACHERS">🗑️ كل المعلمين</option>';
-    
+    var html = '';
     teachers.forEach(function(t){
-      var option = document.createElement('option');
-      option.value = t.code;
-      option.textContent = t.name + ' (' + t.code + ')';
-      select.appendChild(option);
+      html += '<div class="teacher-item">' +
+        '<input type="checkbox" id="delT_' + t.code + '" value="' + t.code + '" onchange="updateDeleteSelection()">' +
+        '<label for="delT_' + t.code + '">' + t.name + ' (' + t.code + ')</label>' +
+        '</div>';
     });
-    
-    if(currentValue && select.querySelector('option[value="' + currentValue + '"]')){
-      select.value = currentValue;
-    }
-    
+    box.innerHTML = html;
+    deleteSelectedTeachers = [];
     console.log('✅ تم تحميل ' + teachers.length + ' معلم في قائمة الحذف');
   }).catch(function(err){
-    select.innerHTML = '<option value="">❌ خطأ في الاتصال</option><option value="ALL_TEACHERS">🗑️ كل المعلمين</option>';
+    box.innerHTML = '<div style="text-align:center;padding:20px;color:#DC2626"> خطأ في الاتصال</div>';
     toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
 
+function loadMonthsForDelete(){
+  var box = document.getElementById('deleteMonthBox');
+  if(!box) return;
+  var months = ['تشرين الأول', 'تشرين الثاني', 'كانون الأول', 'آذار', 'نيسان'];
+  var html = '';
+  months.forEach(function(m){
+    html += '<div class="teacher-item">' +
+      '<input type="checkbox" id="delM_' + m + '" value="' + m + '" onchange="updateDeleteSelection()">' +
+      '<label for="delM_' + m + '">' + m + '</label>' +
+      '</div>';
+  });
+  box.innerHTML = html;
+  deleteSelectedMonths = [];
+}
+
+function toggleAllDeleteTeachers(){
+  var checkboxes = document.querySelectorAll('#deleteTeacherBox input[type="checkbox"]');
+  if(checkboxes.length === 0) return;
+  var allChecked = Array.from(checkboxes).every(function(cb){ return cb.checked; });
+  checkboxes.forEach(function(cb){ cb.checked = !allChecked; });
+  updateDeleteSelection();
+}
+
+function toggleAllDeleteMonths(){
+  var checkboxes = document.querySelectorAll('#deleteMonthBox input[type="checkbox"]');
+  if(checkboxes.length === 0) return;
+  var allChecked = Array.from(checkboxes).every(function(cb){ return cb.checked; });
+  checkboxes.forEach(function(cb){ cb.checked = !allChecked; });
+  updateDeleteSelection();
+}
+
+function updateDeleteSelection(){
+  var tCheckboxes = document.querySelectorAll('#deleteTeacherBox input[type="checkbox"]:checked');
+  deleteSelectedTeachers = Array.from(tCheckboxes).map(function(cb){ return cb.value; });
+  
+  var mCheckboxes = document.querySelectorAll('#deleteMonthBox input[type="checkbox"]:checked');
+  deleteSelectedMonths = Array.from(mCheckboxes).map(function(cb){ return cb.value; });
+}
+
 function deleteTeacherGrades(){
-  var code = document.getElementById('delTeacherSelect').value;
+  if(deleteSelectedTeachers.length === 0){
+    toast('⚠️ يرجى اختيار معلم واحد على الأقل', 'err');
+    return;
+  }
+  if(deleteSelectedMonths.length === 0){
+    toast('️ يرجى اختيار شهر واحد على الأقل', 'err');
+    return;
+  }
+  
+  var delHalf = document.getElementById('delHalfYear').checked;
+  var delFinal = document.getElementById('delFinalYear').checked;
+  
+  if(!delHalf && !delFinal){
+    toast('⚠️ يرجى اختيار نوع الحذف (نصف السنة أو نهاية السنة أو كلاهما)', 'err');
+    return;
+  }
+  
   var cls = document.getElementById('delClass').value.trim();
-  var month = document.getElementById('delMonth').value.trim();
   var studentName = document.getElementById('delStudentName').value.trim();
   
-  if(!code){ toast('⚠️ يرجى اختيار المعلم من القائمة', 'err'); return; }
-  if(!month){ toast('⚠️ يرجى اختيار الشهر', 'err'); return; }
-  
-  var select = document.getElementById('delTeacherSelect');
-  var teacherName = select.options[select.selectedIndex].text;
-  
-  var isAllTeachers = (code === 'ALL_TEACHERS');
-  var isAllMonths = (month === 'ALL_MONTHS');
+  var deleteTypeText = '';
+  if(delHalf && delFinal) deleteTypeText = 'نصف السنة + نهاية السنة';
+  else if(delHalf) deleteTypeText = 'نصف السنة فقط';
+  else deleteTypeText = 'نهاية السنة فقط';
   
   var confirmMsg = '⚠️ هل أنت متأكد من حذف الدرجات:\n\n';
-  confirmMsg += (isAllTeachers ? '👥 جميع المعلمين' : '👨‍ المعلم: ' + teacherName) + '\n';
-  confirmMsg += (isAllMonths ? ' جميع الأشهر' : '📅 الشهر: ' + month) + '\n';
+  confirmMsg += '👥 المعلمون: ' + deleteSelectedTeachers.length + ' معلم\n';
+  confirmMsg += '📅 الأشهر: ' + deleteSelectedMonths.length + ' شهر\n';
+  confirmMsg += '📊 النوع: ' + deleteTypeText + '\n';
   if(cls) confirmMsg += '🏫 الصف: ' + cls + '\n';
   if(studentName) confirmMsg += '👤 التلميذ: ' + studentName + '\n';
   else confirmMsg += '👥 جميع التلاميذ\n';
@@ -1102,70 +1153,52 @@ function deleteTeacherGrades(){
   
   toast('⏳ جاري حذف الدرجات...', '');
   
-  // إذا كان "كل المعلمين"، نرسل طلب لكل معلم
-  if(isAllTeachers){
-    var teachers = allTeachers;
-    var totalDeleted = 0;
-    var failedCount = 0;
-    var processedCount = 0;
-    
-    teachers.forEach(function(t, index){
-      setTimeout(function(){
-        api({
-          action: 'deleteGrades',
-          key: key(),
-          code: t.code,
-          month: isAllMonths ? '' : month,
-          cls: cls,
-          studentName: studentName
-        }).then(function(r){
-          processedCount++;
-          if(r.ok){
-            totalDeleted += (r.count || 0);
-          } else {
-            failedCount++;
-          }
-          if(processedCount === teachers.length){
-            if(failedCount === 0){
-              toast('✓✓ تم حذف ' + totalDeleted + ' درجة من جميع المعلمين', 'ok');
-            } else {
-              toast('⚠️ تم حذف ' + totalDeleted + ' درجة | فشل: ' + failedCount, 'err');
-            }
-            document.getElementById('delClass').value = '';
-            document.getElementById('delMonth').value = '';
-            document.getElementById('delStudentName').value = '';
-          }
-        }).catch(function(err){
-          processedCount++;
+  var totalDeleted = 0;
+  var failedCount = 0;
+  var processedCount = 0;
+  var totalRequests = deleteSelectedTeachers.length * deleteSelectedMonths.length;
+  
+  deleteSelectedTeachers.forEach(function(teacherCode){
+    deleteSelectedMonths.forEach(function(month){
+      api({
+        action: 'deleteGrades',
+        key: key(),
+        code: teacherCode,
+        month: month,
+        cls: cls,
+        studentName: studentName,
+        deleteHalf: delHalf,
+        deleteFinal: delFinal
+      }).then(function(r){
+        processedCount++;
+        if(r.ok){
+          totalDeleted += (r.count || 0);
+        } else {
           failedCount++;
-          if(processedCount === teachers.length){
+        }
+        if(processedCount === totalRequests){
+          if(failedCount === 0){
+            toast('✓✓ تم حذف ' + totalDeleted + ' درجة بنجاح', 'ok');
+          } else {
             toast('️ تم حذف ' + totalDeleted + ' درجة | فشل: ' + failedCount, 'err');
           }
-        });
-      }, index * 300);
+          // إعادة تعيين الحقول
+          document.getElementById('delClass').value = '';
+          document.getElementById('delStudentName').value = '';
+          document.querySelectorAll('#deleteTeacherBox input[type="checkbox"]').forEach(function(cb){ cb.checked = false; });
+          document.querySelectorAll('#deleteMonthBox input[type="checkbox"]').forEach(function(cb){ cb.checked = false; });
+          deleteSelectedTeachers = [];
+          deleteSelectedMonths = [];
+        }
+      }).catch(function(err){
+        processedCount++;
+        failedCount++;
+        if(processedCount === totalRequests){
+          toast('⚠️ تم حذف ' + totalDeleted + ' درجة | فشل: ' + failedCount, 'err');
+        }
+      });
     });
-  } else {
-    // حذف درجات معلم واحد
-    api({
-      action: 'deleteGrades',
-      key: key(),
-      code: code,
-      month: isAllMonths ? '' : month,
-      cls: cls,
-      studentName: studentName
-    }).then(function(r){
-      if(r.ok){
-        toast('✓✓ تم حذف ' + r.count + ' درجة بنجاح', 'ok');
-        document.getElementById('delClass').value = '';
-        document.getElementById('delMonth').value = '';
-        document.getElementById('delStudentName').value = '';
-      } else {
-        toast(' ' + (r.error || 'فشل الحذف'), 'err');
-      }
-    }).catch(function(err){
-      toast('⚠️ تعذر الاتصال بالخادم', 'err');
-    });
-  }
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1173,7 +1206,7 @@ function deleteTeacherGrades(){
    ═══════════════════════════════════════════════════════════════ */
 
 function calculateAveragesGrade5(){
-  console.log('🔍 بدء حساب معدلات الصف الخامس...');
+  console.log(' بدء حساب معدلات الصف الخامس...');
   var cls = document.getElementById('avgClass5').value;
   var avgType = document.getElementById('avgType5').value;
   
@@ -1183,7 +1216,7 @@ function calculateAveragesGrade5(){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
     
     var data = r.data;
-    console.log(' بيانات الصف الخامس الخام:', data.length, 'تلميذ');
+    console.log('📊 بيانات الصف الخامس الخام:', data.length, 'تلميذ');
     
     if(!data || data.length === 0){
       toast('⚠️ لا توجد درجات مسجلة للصف الخامس', 'err');
@@ -1333,7 +1366,7 @@ function calculateAveragesGrade6(){
     toast('✓ تم استخراج معدلات الصف السادس - ' + filteredData.length + ' تلميذ', 'ok');
     
   }).catch(function(err){
-    console.error(' خطأ في حساب معدلات السادس:', err);
+    console.error('❌ خطأ في حساب معدلات السادس:', err);
     toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
@@ -1341,7 +1374,7 @@ function calculateAveragesGrade6(){
 function renderAvgTable(tbodyId, data, isClassView, type){
   var tbody = document.getElementById(tbodyId);
   if(!tbody){
-    console.error(' tbody not found:', tbodyId);
+    console.error('❌ tbody not found:', tbodyId);
     return;
   }
   
@@ -1372,9 +1405,9 @@ function renderAvgTable(tbodyId, data, isClassView, type){
     var rankBadge = arNum(currentRank);
     var rowClass = '';
     
-    if(currentRank === 1){ rankBadge = ' الأول'; rowClass = 'rank-1'; }
+    if(currentRank === 1){ rankBadge = '🥇 الأول'; rowClass = 'rank-1'; }
     else if(currentRank === 2){ rankBadge = '🥈 الثاني'; rowClass = 'rank-2'; }
-    else if(currentRank === 3){ rankBadge = '🥉 الثالث'; rowClass = 'rank-3'; }
+    else if(currentRank === 3){ rankBadge = ' الثالث'; rowClass = 'rank-3'; }
     
     var tr = document.createElement('tr');
     if(rowClass) tr.className = rowClass;
@@ -1399,6 +1432,7 @@ adminTab = function(tab){
   if(tab === 'set'){ 
     setTimeout(loadTeachersList, 100); 
     setTimeout(loadTeachersForDelete, 200);
+    setTimeout(loadMonthsForDelete, 250);
   }
   if(tab === 'averages'){ 
     var tb = document.getElementById('tbTitle');
