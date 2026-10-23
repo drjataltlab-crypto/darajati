@@ -26,7 +26,7 @@ html,body{height:100%}
 body{ font-family:'Tajawal',system-ui,sans-serif; background:linear-gradient(135deg,#e0e7ff 0%,#fce7f3 50%,#dbeafe 100%); color:var(--text); max-width:480px; margin:0 auto; min-height:100vh; position:relative; overflow-x:hidden; }
 button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer} .hidden{display:none!important}
 
-/* ═══ نظام الشاشات - يمنع التداخل ═══ */
+/* ═══ نظام الشاشات ═══ */
 .screen{ display:none; min-height:100vh; width:100%; }
 .screen.active{ display:block; }
 
@@ -74,29 +74,35 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 .user-info small{font-size:11px;opacity:.85;display:flex;align-items:center;gap:4px}
 .header-actions{display:flex;gap:6px}
 
-/* ✅ أزرار الهيدر - ملونة واحترافية */
+/* ✅ أيقونات الهيدر الاحترافية الملونة */
 .icon-btn{
-  width:40px;
-  height:40px;
+  width:42px;
+  height:42px;
   border-radius:12px;
-  background:rgba(255,255,255,.95);
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
   position:relative;
   transition:.2s;
   box-shadow:0 2px 8px rgba(0,0,0,.15);
-  border:2px solid rgba(255,255,255,.3);
+  border:none;
+  cursor:pointer;
 }
-.icon-btn:active{transform:scale(.92);background:#fff}
-.icon-btn svg{width:22px;height:22px}
+.icon-btn:active{transform:scale(.9);background:#f8fafc}
+.icon-btn svg{width:24px;height:24px}
 
 /* ألوان الأيقونات */
-.icon-btn.refresh-btn svg{stroke:#3B82F6;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.icon-btn.message-btn svg{stroke:#EF4444;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.icon-btn.logout-btn svg{stroke:#DC2626;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.refresh-btn{background:linear-gradient(135deg,#3B82F6,#2563EB);box-shadow:0 4px 12px rgba(59,130,246,.4)}
+.icon-btn.refresh-btn svg{stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
-.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:9px;font-weight:900;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;box-shadow:0 2px 6px rgba(239,68,68,.4)}
+.icon-btn.message-btn{background:linear-gradient(135deg,#F59E0B,#D97706);box-shadow:0 4px 12px rgba(245,158,11,.4)}
+.icon-btn.message-btn svg{stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+.icon-btn.logout-btn{background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 4px 12px rgba(239,68,68,.4)}
+.icon-btn.logout-btn svg{stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+.notif-badge{position:absolute;top:-4px;right:-4px;background:#fff;color:#EF4444;font-size:10px;font-weight:900;min-width:20px;height:20px;border-radius:10px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid #EF4444;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 
 .connection-status{position:fixed;top:70px;left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:.3s;display:flex;align-items:center;gap:6px;box-shadow:0 4px 15px rgba(0,0,0,.2)}
 .connection-status.show{opacity:1} .connection-status.online{background:rgba(16,185,129,.95);color:#fff} .connection-status.offline{background:rgba(239,68,68,.95);color:#fff}
@@ -295,7 +301,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
           <div class="user-info"><h3 id="teacherName">مرحباً</h3><small id="teacherCode">🔑</small></div>
         </div>
         <div class="header-actions">
-          <!-- ✅ أيقونة التحديث - زرقاء -->
+          <!-- ✅ أيقونة التحديث - زرقاء مع سهم دوران -->
           <button class="icon-btn refresh-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">
             <svg viewBox="0 0 24 24">
               <path d="M23 4v6h-6"/>
@@ -303,7 +309,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
               <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
             </svg>
           </button>
-          <!-- ✅ أيقونة الرسائل - حمراء -->
+          <!-- ✅ أيقونة الرسائل - صفراء مع جرس حقيقي -->
           <button class="icon-btn message-btn" onclick="openMessages()" title="الرسائل">
             <svg viewBox="0 0 24 24">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -311,7 +317,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
             </svg>
             <span class="notif-badge" id="msgBadge">0</span>
           </button>
-          <!-- ✅ أيقونة الخروج - حمراء داكنة -->
+          <!-- ✅ أيقونة الخروج - حمراء مع باب -->
           <button class="icon-btn logout-btn" onclick="logout()" title="تسجيل الخروج">
             <svg viewBox="0 0 24 24">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -345,7 +351,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
       <div class="search-box"><span class="s-icon">🔍</span><input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()"></div>
 
       <div class="students-card">
-        <div class="card-head"><h3> قائمة التلاميذ</h3><span class="count" id="totalCount">0 تلميذ</span></div>
+        <div class="card-head"><h3>📝 قائمة التلاميذ</h3><span class="count" id="totalCount">0 تلميذ</span></div>
         <div id="studentsList"></div>
       </div>
 
@@ -369,7 +375,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 
 <div class="overlay" id="confirmModal">
   <div class="modal">
-    <h3>️ تأكيد</h3>
+    <h3>⚠️ تأكيد</h3>
     <p id="confirmMsg" style="margin-bottom:15px;line-height:1.6"></p>
     <div class="modal-actions">
       <button class="cancel" onclick="hideModal('confirmModal')">إلغاء</button>
@@ -381,11 +387,11 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 <!-- ✅ مودال قفل الحساب -->
 <div class="overlay lock-modal" id="lockModal">
   <div class="modal">
-    <div class="lock-icon">🔒</div>
+    <div class="lock-icon"></div>
     <h3>تم قفل الحساب</h3>
     <p>قامت الإدارة بقفل حسابك في نظام درجاتي.</p>
     <div class="lock-details">
-      👨🏫 المعلم: <b id="lockTeacherName"></b><br>
+      👨‍🏫 المعلم: <b id="lockTeacherName"></b><br>
       🔑 الكود: <b id="lockTeacherCode"></b><br>
       📅 التاريخ: <b id="lockDate"></b>
     </div>
@@ -419,8 +425,8 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
-// ✅ إصلاح: تسلسل الأرقام العربية الصحيح
-var AR = '٠٢٣٤٥٦٧٨٩';
+// ✅ إصلاح: تسلسل الأرقام العربية الكامل (٠ إلى ٩)
+var AR = '٠١٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
 
@@ -431,7 +437,7 @@ var SYNC_INTERVAL = 300000;
 var hasUnsavedChanges = false;
 var deletedMessages = [];
 
-// ═══ إعدادات الغفوة الزمنية ══
+// ═══ إعدادات الغفوة الزمنية ═══
 var INACTIVITY_TIMEOUT = 120000;
 var WARNING_DURATION = 30000;
 var inactivityTimer = null;
@@ -515,12 +521,12 @@ function updateConnectionStatus(){
     setTimeout(function(){ status.classList.remove('show'); }, 3000);
     SendQueue.processQueue();
   }else{
-    status.className = 'connection-status offline show'; icon.textContent = '🔴'; text.textContent = 'غير متصل - البيانات تُحفظ محلياً';
+    status.className = 'connection-status offline show'; icon.textContent = ''; text.textContent = 'غير متصل - البيانات تُحفظ محلياً';
   }
 }
 
 function manualSyncAndRefresh(){
-  toast('⏳ جاري البحث عن تحديثات...', ''); 
+  toast(' جاري البحث عن تحديثات...', ''); 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) { reg.update(); if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
@@ -575,7 +581,6 @@ function performAutoLogout(){
   hideModal('inactivityModal');
   isWarningShown = false;
   
-  // ✅ الانتقال الآمن: إخفاء التطبيق وإظهار الدخول
   switchScreen('s-login');
   
   localStorage.removeItem('d_session');
@@ -614,21 +619,18 @@ function setupInactivityListeners(){
   });
 }
 
-// ✅ دالة الانتقال بين الشاشات - تمنع التداخل
+// ✅ دالة الانتقال بين الشاشات
 function switchScreen(screenId){
-  // إخفاء جميع الشاشات
   var screens = document.querySelectorAll('.screen');
   screens.forEach(function(screen){
     screen.classList.remove('active');
   });
   
-  // إظهار الشاشة المطلوبة
   var targetScreen = document.getElementById(screenId);
   if(targetScreen){
     targetScreen.classList.add('active');
   }
   
-  // التمرير لأعلى
   window.scrollTo(0, 0);
 }
 
@@ -655,7 +657,6 @@ function enterHome(){
   T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
   $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent='🔑 '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
   
-  // ✅ الانتقال الآمن إلى شاشة التطبيق
   switchScreen('s-app');
   
   buildSelectors();
@@ -670,7 +671,6 @@ function enterHome(){
   msgCheckInterval=setInterval(checkMessages, 30000); 
   syncInterval = setInterval(function() { if (T.cls && T.subject) loadCurrent(true); }, SYNC_INTERVAL);
   
-  // ✅ فحص دوري لحالة قفل الحساب (كل 30 ثانية)
   lockCheckInterval = setInterval(function(){
     if(!T.code) return;
     api({action:'teacherLogin', code:T.code}).then(function(r){
@@ -699,7 +699,6 @@ function enterHome(){
 function forceLogout(){
   hideModal('lockModal');
   
-  // ✅ الانتقال الآمن إلى شاشة الدخول
   switchScreen('s-login');
   
   localStorage.removeItem('d_session');
@@ -765,7 +764,7 @@ function buildSelectors(){
   if(T.subjects&&T.subjects.length>0){
     for(var idx=0;idx<T.subjects.length;idx++){
       var sub=T.subjects[idx], opt=document.createElement('option');
-      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:''};
+      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
       opt.textContent=ci.icon+' '+sub.name; subSel.appendChild(opt);
     }
     subSel.value='0';
@@ -785,7 +784,7 @@ function onSubjectChange(){
   if(idx===''||!T.subjects[idx]){ T.subject='';T.classes=[];T.cls=''; updateWelcome();loadCurrent();return; }
   T.subject=T.subjects[idx].name; T.classes=T.subjects[idx].classes||[];
   for(var i=0;i<T.classes.length;i++){
-    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent='🏫 '+T.classes[i]; clsSel.appendChild(opt);
+    var opt=document.createElement('option'); opt.value=T.classes[i]; opt.textContent=' '+T.classes[i]; clsSel.appendChild(opt);
   }
   if(T.classes.length>0){ clsSel.value=T.classes[0]; T.cls=T.classes[0]; }else{T.cls='';}
   updateWelcome(); loadCurrent(true);
@@ -798,7 +797,7 @@ function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
-    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = ' لم يتم تحديد الشعبة'; return;
+    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
   if (!T.drafts[k]) {
@@ -814,7 +813,7 @@ function loadCurrent(forceRefresh) {
 }
 
 function clearStats(){
-  $('#statStudents').textContent=''; $('#statPass').textContent='٠'; $('#statComp').textContent='٠'; $('#statFail').textContent='٠'; $('#totalCount').textContent='٠ تلميذ';
+  $('#statStudents').textContent='٠'; $('#statPass').textContent='٠'; $('#statComp').textContent='٠'; $('#statFail').textContent='٠'; $('#totalCount').textContent='٠ تلميذ';
 }
 
 function fetchStudents(showLoading) {
@@ -887,7 +886,7 @@ function fetchStudents(showLoading) {
     }
   }).catch(function(e) {
     showSyncIndicator(false);
-    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">⚠️</div><p>تعذر المزامنة</p><small>تحقق من الإنترنت</small></div>';
+    $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">️</div><p>تعذر المزامنة</p><small>تحقق من الإنترنت</small></div>';
   });
 }
 
@@ -930,7 +929,7 @@ function renderRows(){
   }
   $('#totalCount').textContent = arNum(visibleCount) + ' تلميذ';
   if(visibleCount === 0 && !search){ box.innerHTML='<div class="empty-state"><div class="e-icon">📝</div><p>لا توجد أسماء</p></div>'; }
-  else if(visibleCount === 0 && search){ box.innerHTML='<div class="empty-state"><div class="e-icon">🔍</div><p>لا توجد نتائج</p></div>'; }
+  else if(visibleCount === 0 && search){ box.innerHTML='<div class="empty-state"><div class="e-icon"></div><p>لا توجد نتائج</p></div>'; }
 }
 
 function updStats(){
@@ -948,7 +947,7 @@ function updSendBar(){
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
   else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
-  else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
+  else{ el.className='send-status no'; el.textContent=' لم يتم الإرسال بعد'; }
 }
 
 function sendGrades(){
@@ -983,7 +982,7 @@ function sendGrades(){
       if(r.ok){ dr.sentHash=payload.checksum; dr.sentAt=r.time||Date.now(); saveDraft();updSendBar(); toast('✓✓ تم إرسال درجات '+month+' للإدارة'); }
       else{toast('❌ '+r.error,true);}
     }).catch(function(e){
-      toast('⚠️ فشل الإرسال - أُضيف للطابور',true);
+      toast('️ فشل الإرسال - أُضيف للطابور',true);
       SendQueue.add({ payload: payload, onSuccess: function(){ dr.sentHash=payload.checksum; dr.sentAt=Date.now(); saveDraft();updSendBar(); } });
     }).finally(function(){ btn.classList.remove('busy');btn.disabled=false; });
   }else{
@@ -1059,7 +1058,7 @@ function deleteAllMessages(){
       hideModal('msgModal');
       checkMessages();
     } else { toast('❌ ' + (res.error || 'فشل الحذف'), 'err'); }
-  }).catch(function(){ toast('️ تعذر الاتصال بالخادم', 'err'); });
+  }).catch(function(){ toast('⚠️ تعذر الاتصال بالخادم', 'err'); });
 }
 
 function openMessages(){
