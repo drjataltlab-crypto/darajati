@@ -18,7 +18,7 @@
 <link rel="apple-touch-icon" href="icon-admin.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.5">
+<link rel="stylesheet" href="admin.css?v=3.6">
 
 <style>
 .exit, .iconbtn.exit-btn {
@@ -238,7 +238,6 @@
   vertical-align: middle;
 }
 
-/* ✅ تنسيق خاص لأيقونة القفل */
 .lock-svg {
   width: 22px;
   height: 22px;
@@ -253,7 +252,7 @@
 <section class="screen active" id="s-login">
   <div class="login"><div class="lcard">
     <div class="hero"><img src="icon-admin.png"><div><h1>لوحة التحكم</h1><small>درجاتي — إدارة الدرجات</small></div></div>
-    <input id="keyIn" dir="ltr" type="password" placeholder=" كلمة المرور" style="text-align:center;font-weight:700">
+    <input id="keyIn" dir="ltr" type="password" placeholder="🔑 كلمة المرور" style="text-align:center;font-weight:700">
     <button class="btn" id="loginBtn" onclick="adminLogin()">دخول</button>
   </div></div>
 </section>
@@ -293,7 +292,6 @@
         <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
         <button class="snav" data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico">🏆</span>معدلات التلاميذ</button>
         
-        <!-- ✅ أيقونة كلمات المرور - قفل SVG احترافي -->
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')">
           <span class="ico">
             <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -319,7 +317,6 @@
       <header class="topbar">
         <div><b id="tbTitle">الرئيسية</b><small id="admSub">—</small></div>
         <span class="grow"></span>
-        <!-- ✅ زر التحديث مع أيقونة 🔄 -->
         <button class="iconbtn" onclick="refresh()" title="تحديث" style="font-size:20px;">🔄</button>
         <button class="iconbtn exit-btn" onclick="logoutAdmin()" title="تسجيل الخروج">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -329,7 +326,7 @@
       <div class="content">
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>الرئيسية</div>
-          <p class="psub">🟢 فتح حسابه •  لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
           <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
@@ -360,8 +357,8 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
-              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()"> تصدير Excel</button>
+              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
           </div>
           <div id="teamList"></div>
@@ -408,7 +405,7 @@
                 </select>
               </div>
               <div style="display:flex; align-items:flex-end;">
-                <button class="btn ok" style="width:100%; font-size:14px;" onclick="window.calculateAveragesGrade5()">📊 استخراج معدلات الخامس</button>
+                <button class="btn ok" style="width:100%; font-size:14px;" onclick="calculateAveragesGrade5()">📊 استخراج معدلات الخامس</button>
               </div>
             </div>
 
@@ -459,7 +456,7 @@
             </div>
           </div>
 
-          <!-- ═══ القسم الثاني: الصف السادس ══ -->
+          <!-- ═══ القسم الثاني: الصف السادس ═══ -->
           <div class="card" style="border-top: 4px solid #1E40AF;">
             <div class="ct" style="color:#1E40AF; font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
               📘 معدلات تلاميذ الصف السادس
@@ -483,13 +480,13 @@
                 </select>
               </div>
               <div style="display:flex; align-items:flex-end;">
-                <button class="btn ok" style="width:100%; font-size:14px;" onclick="window.calculateAveragesGrade6()">📊 استخراج معدلات السادس</button>
+                <button class="btn ok" style="width:100%; font-size:14px;" onclick="calculateAveragesGrade6()">📊 استخراج معدلات السادس</button>
               </div>
             </div>
 
             <div id="averagesResults6" hidden style="display:none;">
               <div class="avg-section mid-year" id="midYearSection6">
-                <div class="avg-header">📗 معدلات نصف السنة - الصف السادس</div>
+                <div class="avg-header"> معدلات نصف السنة - الصف السادس</div>
                 <div class="avg-body">
                   <div id="midYearClassCard6" class="class-rank-card">
                     <h4>🏆 ترتيب الشعبة المختارة</h4>
@@ -500,7 +497,7 @@
                       </table>
                     </div>
                   </div>
-                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف السادس</h4>
+                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;"> الترتيب التنافسي العام للصف السادس</h4>
                   <div style="overflow-x:auto;">
                     <table class="avg-table">
                       <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -511,7 +508,7 @@
               </div>
 
               <div class="avg-section final-year" id="finalYearSection6">
-                <div class="avg-header">📘 معدلات نهاية السنة - الصف السادس</div>
+                <div class="avg-header"> معدلات نهاية السنة - الصف السادس</div>
                 <div class="avg-body">
                   <div id="finalYearClassCard6" class="class-rank-card">
                     <h4>🏆 ترتيب الشعبة المختارة</h4>
@@ -522,7 +519,7 @@
                       </table>
                     </div>
                   </div>
-                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف السادس</h4>
+                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;"> الترتيب التنافسي العام للصف السادس</h4>
                   <div style="overflow-x:auto;">
                     <table class="avg-table">
                       <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -538,7 +535,7 @@
         <div id="tab-keys" hidden>
           <div class="ptitle"><span class="bar"></span>كلمات المرور</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">️</div><h3>كلمة المطور</h3>
+            <div class="setcard" style="--sc:#B45309;--scb:#FEF3C7"><div class="hi">🛠️</div><h3>كلمة المطور</h3>
               <label class="label">الحالية</label><input id="kDevCur" dir="ltr" readonly style="background:#F8FAFC">
               <label class="label">الجديدة</label><input id="kDevNew" dir="ltr" type="password">
               <button class="btn" style="background:#B45309" onclick="doChangeKey('DEV')">🔐 تغيير</button>
@@ -556,7 +553,7 @@
           <div class="setgrid">
             <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
-              <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
+              <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)"> تنزيل القالب</button>
             </div>
             <div class="setcard" style="--sc:#059669;--scb:#D1FAE5"><div class="hi">📤</div><h3>قالب معبأ بالدرجات</h3>
               <p>كل الدرجات والقيم الإدارية في ملف Excel واحد.</p>
@@ -564,12 +561,12 @@
             </div>
             <div class="setcard" style="--sc:#475569;--scb:#F1F5F9"><div class="hi">🔗</div><h3>رابط الخادم</h3>
               <input id="setUrl" dir="ltr" placeholder="https://…/exec">
-              <button class="btn" style="background:#475569" onclick="saveSettings()">💾 حفظ واختبار</button>
+              <button class="btn" style="background:#475569" onclick="saveSettings()"> حفظ واختبار</button>
               <div id="connRes"></div>
             </div>
             
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
-              <div class="hi"></div>
+              <div class="hi">📨</div>
               <h3>إرسال رسالة للمعلمين</h3>
               <div class="form-group">
                 <label>المعلمون المستهدفون</label>
@@ -650,7 +647,6 @@
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
     <button data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico">🏆</span><small>المعدلات</small></button>
     
-    <!-- ✅ أيقونة كلمات المرور - قفل SVG احترافي -->
     <button data-tab="keys" data-dev="1" onclick="adminTab('keys')">
       <span class="ico">
         <svg class="lock-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -670,7 +666,7 @@
     <button class="iconbtn" onclick="go('s-main')">→</button>
     <div><b id="tvName"></b><small id="tvSub"></small></div>
     <span class="grow"></span>
-    <button class="iconbtn" onclick="showSummary(ADM.tv.code)"></button>
+    <button class="iconbtn" onclick="showSummary(ADM.tv.code)">📊</button>
     <button class="iconbtn" onclick="printTView()">🖨️</button>
   </header>
   <div class="content" id="tvBox"></div>
@@ -688,7 +684,7 @@
     </div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('editTeacherModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()"> حفظ التعديلات</button>
+      <button class="btn ok" style="margin:0" onclick="saveEditedTeacher()">💾 حفظ التعديلات</button>
     </div>
   </div>
 </div>
@@ -696,7 +692,7 @@
 <div class="ovl" id="teacherRecordModal">
   <div class="modal" style="max-width:950px; max-height:92vh; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
-      <h3 style="margin:0; color:#1E40AF;"> كشف المعلم: <span id="trTeacherName"></span></h3>
+      <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
       <div style="display:flex; gap:8px;">
         <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="openPrintSettings()">🖨️ طباعة</button>
         <button class="btn ghost" onclick="hideModal('teacherRecordModal')" style="padding:8px 14px;">✕ إغلاق</button>
@@ -712,10 +708,10 @@
               <th style="padding:8px; border:1px solid #0F172A;">ت</th>
               <th style="padding:8px; border:1px solid #0F172A;">اسم التلميذ</th>
               <th colspan="3" style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">الفصل الأول</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
               <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
@@ -753,7 +749,7 @@
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="savePrintSettingsAndPrint()">💾 حفظ وطباعة</button>
+      <button class="btn ok" style="margin:0" onclick="savePrintSettingsAndPrint()"> حفظ وطباعة</button>
     </div>
   </div>
 </div>
@@ -779,15 +775,15 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=3.5"></script>
-<script src="core.js?v=3.5"></script>
-<script src="page-dash.js?v=3.5"></script>
-<script src="page-results.js?v=3.5"></script>
-<script src="page-team.js?v=3.5"></script>
-<script src="page-entry.js?v=3.5"></script>
-<script src="page-students.js?v=3.5"></script>
-<script src="page-keys.js?v=3.5"></script>
-<script src="page-settings.js?v=3.5"></script>
+<script src="config.js?v=3.6"></script>
+<script src="core.js?v=3.6"></script>
+<script src="page-dash.js?v=3.6"></script>
+<script src="page-results.js?v=3.6"></script>
+<script src="page-team.js?v=3.6"></script>
+<script src="page-entry.js?v=3.6"></script>
+<script src="page-students.js?v=3.6"></script>
+<script src="page-keys.js?v=3.6"></script>
+<script src="page-settings.js?v=3.6"></script>
 
 <script>
 if('serviceWorker' in navigator){
@@ -843,7 +839,7 @@ function updateSelectedTeachers(){
 
 function sendAdminMessageNew(){
   var message = document.getElementById('msgText').value.trim();
-  if(!message){ toast('️ اكتب نص الرسالة أولاً', 'err'); return; }
+  if(!message){ toast('⚠️ اكتب نص الرسالة أولاً', 'err'); return; }
   if(selectedTeachers.length === 0){ toast('⚠️ اختر معلماً واحداً على الأقل', 'err'); return; }
   
   var targetList = selectedTeachers.length === allTeachers.length ? 'جميع المعلمين (' + selectedTeachers.length + ')' : selectedTeachers.length + ' معلم';
@@ -867,7 +863,7 @@ function sendAdminMessageNew(){
         }
       }).catch(function(err){
         failedCount++;
-        if(sentCount + failedCount === selectedTeachers.length){ toast('⚠️ تعذر الاتصال بالخادم', 'err'); }
+        if(sentCount + failedCount === selectedTeachers.length){ toast('️ تعذر الاتصال بالخادم', 'err'); }
       });
     }, index * 500);
   });
@@ -879,8 +875,8 @@ function deleteTeacherGrades(){
   var month = document.getElementById('delMonth').value.trim();
   var studentName = document.getElementById('delStudentName').value.trim();
   
-  if(!code){ toast('⚠️ أدخل كود المعلم', 'err'); return; }
-  if(!month){ toast('⚠️ اختر الشهر', 'err'); return; }
+  if(!code){ toast('️ أدخل كود المعلم', 'err'); return; }
+  if(!month){ toast('️ اختر الشهر', 'err'); return; }
   
   var confirmMsg = '⚠️ هل أنت متأكد من حذف درجات:\n\n';
   confirmMsg += 'المعلم: ' + code + '\n';
@@ -914,20 +910,22 @@ function deleteTeacherGrades(){
   });
 }
 
-/* ═══ منطق صفحة معدلات التلاميذ - معرّف على window ═══ */
+/* ═══════════════════════════════════════════════════════
+   ✅ دوال صفحة المعدلات - معرفة مباشرة في النطاق العام
+   ═══════════════════════════════════════════════════════ */
 
-// ✅ حساب معدلات الصف الخامس - معرّف على window
-window.calculateAveragesGrade5 = function(){
+function calculateAveragesGrade5(){
+  console.log('🔍 بدء حساب معدلات الصف الخامس...');
   var cls = document.getElementById('avgClass5').value;
   var avgType = document.getElementById('avgType5').value;
   
-  toast(' جاري حساب معدلات الصف الخامس...', '');
+  toast('⏳ جاري حساب معدلات الصف الخامس...', '');
   
   api({action:'getStudentAveragesGrade5', key:key()}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
     
     var data = r.data;
-    console.log('📊 بيانات الصف الخامس الخام:', data.length, 'تلميذ');
+    console.log(' بيانات الصف الخامس الخام:', data.length, 'تلميذ');
     
     if(!data || data.length === 0){
       toast('⚠️ لا توجد درجات مسجلة للصف الخامس', 'err');
@@ -943,7 +941,7 @@ window.calculateAveragesGrade5 = function(){
     }
     
     if(filteredData.length === 0){
-      toast('️ لا توجد بيانات للصف الخامس' + (cls ? ' - الشعبة ' + cls : ''), 'err');
+      toast('⚠️ لا توجد بيانات للصف الخامس' + (cls ? ' - الشعبة ' + cls : ''), 'err');
       return;
     }
     
@@ -994,17 +992,17 @@ window.calculateAveragesGrade5 = function(){
     toast('✓ تم استخراج معدلات الصف الخامس - ' + filteredData.length + ' تلميذ', 'ok');
     
   }).catch(function(err){
-    console.error('Error:', err);
+    console.error('❌ خطأ في حساب معدلات الخامس:', err);
     toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
-};
+}
 
-// ✅ حساب معدلات الصف السادس - معرّف على window
-window.calculateAveragesGrade6 = function(){
+function calculateAveragesGrade6(){
+  console.log('🔍 بدء حساب معدلات الصف السادس...');
   var cls = document.getElementById('avgClass6').value;
   var avgType = document.getElementById('avgType6').value;
   
-  toast('⏳ جاري حساب معدلات الصف السادس...', '');
+  toast(' جاري حساب معدلات الصف السادس...', '');
   
   api({action:'getStudentAveragesGrade6', key:key()}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
@@ -1026,7 +1024,7 @@ window.calculateAveragesGrade6 = function(){
     }
     
     if(filteredData.length === 0){
-      toast('️ لا توجد بيانات للصف السادس' + (cls ? ' - الشعبة ' + cls : ''), 'err');
+      toast('⚠️ لا توجد بيانات للصف السادس' + (cls ? ' - الشعبة ' + cls : ''), 'err');
       return;
     }
     
@@ -1044,4 +1042,108 @@ window.calculateAveragesGrade6 = function(){
     var midYearSorted = filteredData.slice().sort(function(a, b) { return b.midYearAvg - a.midYearAvg; });
     renderAvgTable('midYearGradeBody6', midYearSorted, false, 'midYear');
     
-    var finalSorted = filteredData.slice().sort
+    var finalSorted = filteredData.slice().sort(function(a, b) { return b.finalAvg - a.finalAvg; });
+    renderAvgTable('finalYearGradeBody6', finalSorted, false, 'final');
+    
+    if(cls && cls.trim() !== ''){
+      var midYearClassData = midYearSorted.filter(function(s) { 
+        return s.section && s.section.trim() === cls.trim(); 
+      });
+      if(midYearClassData.length > 0){
+        renderAvgTable('midYearClassBody6', midYearClassData, true, 'midYear');
+        document.getElementById('midYearClassCard6').style.display = 'block';
+      } else {
+        document.getElementById('midYearClassCard6').style.display = 'none';
+      }
+      
+      var finalYearClassData = finalSorted.filter(function(s) { 
+        return s.section && s.section.trim() === cls.trim(); 
+      });
+      if(finalYearClassData.length > 0){
+        renderAvgTable('finalYearClassBody6', finalYearClassData, true, 'final');
+        document.getElementById('finalYearClassCard6').style.display = 'block';
+      } else {
+        document.getElementById('finalYearClassCard6').style.display = 'none';
+      }
+    } else {
+      document.getElementById('midYearClassCard6').style.display = 'none';
+      document.getElementById('finalYearClassCard6').style.display = 'none';
+    }
+    
+    document.getElementById('averagesResults6').hidden = false;
+    document.getElementById('averagesResults6').style.display = 'block';
+    toast('✓ تم استخراج معدلات الصف السادس - ' + filteredData.length + ' تلميذ', 'ok');
+    
+  }).catch(function(err){
+    console.error(' خطأ في حساب معدلات السادس:', err);
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
+  });
+}
+
+function renderAvgTable(tbodyId, data, isClassView, type){
+  var tbody = document.getElementById(tbodyId);
+  if(!tbody){
+    console.error(' tbody not found:', tbodyId);
+    return;
+  }
+  
+  tbody.innerHTML = '';
+  
+  if(!data || data.length === 0){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#64748B">لا توجد بيانات</td></tr>';
+    return;
+  }
+  
+  var currentRank = 1;
+  
+  data.forEach(function(s, index){
+    if(index > 0){
+      var prevAvg = type === 'midYear' ? data[index-1].midYearAvg : data[index-1].finalAvg;
+      var currAvg = type === 'midYear' ? s.midYearAvg : s.finalAvg;
+      if(currAvg < prevAvg){
+        currentRank = index + 1;
+      }
+    }
+    
+    var avg = type === 'midYear' ? s.midYearAvg : s.finalAvg;
+    var total = type === 'midYear' ? s.midYearTotal : s.finalTotal;
+    
+    var avgFormatted = avg.toFixed(2);
+    var totalFormatted = total.toFixed(1);
+    
+    var rankBadge = arNum(currentRank);
+    var rowClass = '';
+    
+    if(currentRank === 1){ rankBadge = ' الأول'; rowClass = 'rank-1'; }
+    else if(currentRank === 2){ rankBadge = '🥈 الثاني'; rowClass = 'rank-2'; }
+    else if(currentRank === 3){ rankBadge = '🥉 الثالث'; rowClass = 'rank-3'; }
+    
+    var tr = document.createElement('tr');
+    if(rowClass) tr.className = rowClass;
+    
+    var sectionCell = isClassView ? '' : '<td>' + esc(s.section || '—') + '</td>';
+    
+    tr.innerHTML = 
+      '<td><span class="rank-badge">' + rankBadge + '</span></td>' +
+      '<td style="font-weight:700; text-align:right;">' + esc(s.name) + '</td>' +
+      sectionCell +
+      '<td>' + arNum(s.subjectCount) + '</td>' +
+      '<td style="font-weight:700;">' + arNum(totalFormatted) + '</td>' +
+      '<td style="font-weight:900; color:#1E40AF; font-size:11pt;">' + arNum(avgFormatted) + '</td>';
+    
+    tbody.appendChild(tr);
+  });
+}
+
+var originalAdminTab = adminTab;
+adminTab = function(tab){
+  originalAdminTab(tab);
+  if(tab === 'set'){ setTimeout(loadTeachersList, 100); }
+  if(tab === 'averages'){ 
+    var tb = document.getElementById('tbTitle');
+    if(tb) tb.textContent = 'معدلات التلاميذ';
+  }
+};
+</script>
+</body>
+</html>
