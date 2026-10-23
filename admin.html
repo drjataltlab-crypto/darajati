@@ -18,7 +18,7 @@
 <link rel="apple-touch-icon" href="icon-admin.png">
 <link rel="manifest" href="manifest-admin.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=3.7">
+<link rel="stylesheet" href="admin.css?v=3.8">
 
 <style>
 .exit, .iconbtn.exit-btn {
@@ -56,6 +56,7 @@
   outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 .form-group textarea { resize: vertical; min-height: 80px; }
+.form-hint { font-size: 11.5px; color: #64748B; margin-top: 4px; line-height: 1.6; }
 
 .teacher-select-box {
   background: #F8FAFC;
@@ -289,8 +290,8 @@
           </span>المعلمون
         </button>
         <button class="snav" data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span>إدخال إداري</button>
-        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span>نتائج التلاميذ</button>
-        <button class="snav" data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico">🏆</span>معدلات التلاميذ</button>
+        <button class="snav" data-tab="res" onclick="adminTab('res')"><span class="ico"></span>نتائج التلاميذ</button>
+        <button class="snav" data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico"></span>معدلات التلاميذ</button>
         
         <button class="snav" data-tab="keys" data-dev="1" onclick="adminTab('keys')">
           <span class="ico">
@@ -302,7 +303,7 @@
           </span>كلمات المرور
         </button>
         
-        <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">️</span>الإعدادات</button>
+        <button class="snav" data-tab="set" data-dev="1" onclick="adminTab('set')"><span class="ico">⚙️</span>الإعدادات</button>
       </nav>
       <div class="sfoot"><div class="rolecard" id="roleCard">
         <div class="dot2" id="roleDot">🛠️</div>
@@ -326,7 +327,7 @@
       <div class="content">
         <div id="tab-dash">
           <div class="ptitle"><span class="bar"></span>الرئيسية</div>
-          <p class="psub"> فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
+          <p class="psub">🟢 فتح حسابه • 🔴 لم يفتحه — تحديث تلقائي كل دقيقة</p>
           <div class="kpi" id="dashKpi"></div>
           <div class="card"><div class="ct">👥 كل المعلمين</div><div class="cs">اضغط البطاقة لعرض الكشف</div><div class="tlist" id="dashList"></div></div>
         </div>
@@ -357,7 +358,7 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
+              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
               <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
             </div>
           </div>
@@ -384,7 +385,7 @@
           <!-- ═══ القسم الأول: الصف الخامس ═══ -->
           <div class="card" style="margin-bottom: 30px; border-top: 4px solid #059669;">
             <div class="ct" style="color:#059669; font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-              📗 معدلات تلاميذ الصف الخامس
+               معدلات تلاميذ الصف الخامس
             </div>
             
             <div class="grid3" style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
@@ -422,7 +423,7 @@
                       </table>
                     </div>
                   </div>
-                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف الخامس</h4>
+                  <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;"> الترتيب التنافسي العام للصف الخامس</h4>
                   <div style="overflow-x:auto;">
                     <table class="avg-table">
                       <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -433,7 +434,7 @@
               </div>
 
               <div class="avg-section final-year" id="finalYearSection5">
-                <div class="avg-header"> معدلات نهاية السنة - الصف الخامس</div>
+                <div class="avg-header">📘 معدلات نهاية السنة - الصف الخامس</div>
                 <div class="avg-body">
                   <div id="finalYearClassCard5" class="class-rank-card">
                     <h4>🏆 ترتيب الشعبة المختارة</h4>
@@ -456,7 +457,7 @@
             </div>
           </div>
 
-          <!-- ═══ القسم الثاني: الصف السادس ═══ -->
+          <!-- ═══ القسم الثاني: الصف السادس ══ -->
           <div class="card" style="border-top: 4px solid #1E40AF;">
             <div class="ct" style="color:#1E40AF; font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
               📘 معدلات تلاميذ الصف السادس
@@ -508,7 +509,7 @@
               </div>
 
               <div class="avg-section final-year" id="finalYearSection6">
-                <div class="avg-header">📘 معدلات نهاية السنة - الصف السادس</div>
+                <div class="avg-header"> معدلات نهاية السنة - الصف السادس</div>
                 <div class="avg-body">
                   <div id="finalYearClassCard6" class="class-rank-card">
                     <h4>🏆 ترتيب الشعبة المختارة</h4>
@@ -582,17 +583,31 @@
               <button class="btn" style="background:#DC2626" onclick="sendAdminMessageNew()">📨 إرسال الرسالة</button>
             </div>
 
+            <!-- ✅ بطاقة حذف درجات معلم - محسّنة بقائمة منسدلة -->
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
               <div class="hi">️</div>
               <h3>حذف درجات معلم</h3>
+              
               <div class="form-group">
-                <label>كود المعلم</label>
-                <input id="delTeacherCode" dir="ltr" placeholder="T-XXXX">
+                <label>اختر المعلم</label>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                  <select id="delTeacherSelect" style="flex:1; padding:10px; border:1.5px solid #E2E8F0; border-radius:10px; font-family:inherit; font-size:14px; background:#fff;">
+                    <option value="">-- اختر المعلم --</option>
+                  </select>
+                  <button class="btn" style="background:#0891B2; width:auto; padding:10px 15px; white-space:nowrap;" onclick="loadTeachersForDelete()" title="تحديث القائمة">
+                    🔄 تحديث
+                  </button>
+                </div>
+                <div class="form-hint" style="margin-top:4px;">
+                  💡 يتم تحميل قائمة المعلمين تلقائياً. اضغط "تحديث" إذا أضفت أو حذفت معلماً مؤخراً.
+                </div>
               </div>
+              
               <div class="form-group">
-                <label>الصف والشعبة (اختياري)</label>
+                <label>الصف والشعبة (اختياري - اتركه فارغاً لحذف جميع الشعب)</label>
                 <input id="delClass" placeholder="مثال: الخامس أ">
               </div>
+              
               <div class="form-group">
                 <label>الشهر</label>
                 <select id="delMonth">
@@ -604,11 +619,13 @@
                   <option>نيسان</option>
                 </select>
               </div>
+              
               <div class="form-group">
                 <label>اسم التلميذ (اختياري - اتركه فارغاً لحذف الجميع)</label>
-                <input id="delStudentName" placeholder="اتركه فارغاً لحذف الكل">
+                <input id="delStudentName" placeholder="اتركه فارغاً لحذف جميع التلاميذ">
               </div>
-              <button class="btn" style="background:#DC2626" onclick="deleteTeacherGrades()">🗑️ حذف الدرجات</button>
+              
+              <button class="btn" style="background:#DC2626; width:100%;" onclick="deleteTeacherGrades()">🗑️ حذف الدرجات</button>
             </div>
           </div>
         </div>
@@ -645,7 +662,7 @@
     </button>
     <button data-tab="entry" data-dev="1" onclick="adminTab('entry')"><span class="ico">✍️</span><small>إدخال</small></button>
     <button data-tab="res" onclick="adminTab('res')"><span class="ico">🎯</span><small>النتائج</small></button>
-    <button data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico">🏆</span><small>المعدلات</small></button>
+    <button data-tab="averages" data-dev="1" onclick="adminTab('averages')"><span class="ico"></span><small>المعدلات</small></button>
     
     <button data-tab="keys" data-dev="1" onclick="adminTab('keys')">
       <span class="ico">
@@ -711,7 +728,7 @@
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
               <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
@@ -745,7 +762,7 @@
   <div class="modal" style="max-width:500px">
     <h3>🖨️ إعدادات الطباعة</h3>
     <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٥ - ٢٠٢٦"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٠٢٥ - ٢٢٦"></div>
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
@@ -767,7 +784,7 @@
 
 <div class="ovl" id="sumModal">
   <div class="modal">
-    <h3> ملخص النتائج</h3>
+    <h3>📊 ملخص النتائج</h3>
     <div id="sumBox"></div>
     <button class="btn ghost" style="margin-top:10px" onclick="hideModal('sumModal')">إغلاق</button>
   </div>
@@ -775,15 +792,15 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=3.7"></script>
-<script src="core.js?v=3.7"></script>
-<script src="page-dash.js?v=3.7"></script>
-<script src="page-results.js?v=3.7"></script>
-<script src="page-team.js?v=3.7"></script>
-<script src="page-entry.js?v=3.7"></script>
-<script src="page-students.js?v=3.7"></script>
-<script src="page-keys.js?v=3.7"></script>
-<script src="page-settings.js?v=3.7"></script>
+<script src="config.js?v=3.8"></script>
+<script src="core.js?v=3.8"></script>
+<script src="page-dash.js?v=3.8"></script>
+<script src="page-results.js?v=3.8"></script>
+<script src="page-team.js?v=3.8"></script>
+<script src="page-entry.js?v=3.8"></script>
+<script src="page-students.js?v=3.8"></script>
+<script src="page-keys.js?v=3.8"></script>
+<script src="page-settings.js?v=3.8"></script>
 
 <script>
 if('serviceWorker' in navigator){
@@ -840,7 +857,7 @@ function updateSelectedTeachers(){
 function sendAdminMessageNew(){
   var message = document.getElementById('msgText').value.trim();
   if(!message){ toast('⚠️ اكتب نص الرسالة أولاً', 'err'); return; }
-  if(selectedTeachers.length === 0){ toast('⚠️ اختر معلماً واحداً على الأقل', 'err'); return; }
+  if(selectedTeachers.length === 0){ toast('️ اختر معلماً واحداً على الأقل', 'err'); return; }
   
   var targetList = selectedTeachers.length === allTeachers.length ? 'جميع المعلمين (' + selectedTeachers.length + ')' : selectedTeachers.length + ' معلم';
   if(!confirm('📨 إرسال رسالة إلى: ' + targetList + '\n\n' + message)){ return; }
@@ -869,24 +886,68 @@ function sendAdminMessageNew(){
   });
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   ✅ دوال حذف درجات المعلم - مع قائمة منسدلة ديناميكية
+   ═══════════════════════════════════════════════════════════════ */
+
+function loadTeachersForDelete(){
+  var select = document.getElementById('delTeacherSelect');
+  if(!select) return;
+  
+  var currentValue = select.value;
+  select.innerHTML = '<option value=""> جاري التحميل...</option>';
+  
+  api({action:'adminData', key:key()}).then(function(r){
+    if(!r.ok || !r.teachers){
+      select.innerHTML = '<option value="">❌ فشل التحميل</option>';
+      toast('⚠️ فشل تحميل قائمة المعلمين', 'err');
+      return;
+    }
+    
+    var teachers = r.teachers;
+    select.innerHTML = '<option value="">-- اختر المعلم --</option>';
+    
+    teachers.forEach(function(t){
+      var option = document.createElement('option');
+      option.value = t.code;
+      option.textContent = t.name + ' (' + t.code + ')';
+      select.appendChild(option);
+    });
+    
+    if(currentValue && select.querySelector('option[value="' + currentValue + '"]')){
+      select.value = currentValue;
+    }
+    
+    console.log('✅ تم تحميل ' + teachers.length + ' معلم في قائمة الحذف');
+  }).catch(function(err){
+    select.innerHTML = '<option value="">❌ خطأ في الاتصال</option>';
+    toast('️ تعذر الاتصال بالخادم', 'err');
+  });
+}
+
 function deleteTeacherGrades(){
-  var code = document.getElementById('delTeacherCode').value.trim().toUpperCase();
+  var code = document.getElementById('delTeacherSelect').value;
   var cls = document.getElementById('delClass').value.trim();
   var month = document.getElementById('delMonth').value.trim();
   var studentName = document.getElementById('delStudentName').value.trim();
   
-  if(!code){ toast('️ أدخل كود المعلم', 'err'); return; }
-  if(!month){ toast('⚠️ اختر الشهر', 'err'); return; }
+  if(!code){ toast('⚠️ يرجى اختيار المعلم من القائمة', 'err'); return; }
+  if(!month){ toast('⚠️ يرجى اختيار الشهر', 'err'); return; }
+  
+  var select = document.getElementById('delTeacherSelect');
+  var teacherName = select.options[select.selectedIndex].text;
   
   var confirmMsg = '⚠️ هل أنت متأكد من حذف درجات:\n\n';
-  confirmMsg += 'المعلم: ' + code + '\n';
-  confirmMsg += 'الشهر: ' + month + '\n';
-  if(cls) confirmMsg += 'الصف: ' + cls + '\n';
-  if(studentName) confirmMsg += 'التلميذ: ' + studentName + '\n';
-  else confirmMsg += 'جميع التلاميذ\n';
-  confirmMsg += '\nلا يمكن التراجع عن هذا الإجراء!';
+  confirmMsg += '👨‍ المعلم: ' + teacherName + '\n';
+  confirmMsg += '📅 الشهر: ' + month + '\n';
+  if(cls) confirmMsg += '🏫 الصف: ' + cls + '\n';
+  if(studentName) confirmMsg += '👤 التلميذ: ' + studentName + '\n';
+  else confirmMsg += ' جميع التلاميذ\n';
+  confirmMsg += '\n⚠️ لا يمكن التراجع عن هذا الإجراء!';
   
   if(!confirm(confirmMsg)) return;
+  
+  toast('⏳ جاري حذف الدرجات...', '');
   
   api({
     action: 'deleteGrades',
@@ -898,7 +959,6 @@ function deleteTeacherGrades(){
   }).then(function(r){
     if(r.ok){
       toast('✓✓ تم حذف ' + r.count + ' درجة بنجاح', 'ok');
-      document.getElementById('delTeacherCode').value = '';
       document.getElementById('delClass').value = '';
       document.getElementById('delMonth').value = '';
       document.getElementById('delStudentName').value = '';
@@ -910,9 +970,9 @@ function deleteTeacherGrades(){
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   ✅ دوال صفحة المعدلات - معرفة مباشرة في النطاق العام
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   ✅ دوال صفحة المعدلات
+   ═══════════════════════════════════════════════════════════════ */
 
 function calculateAveragesGrade5(){
   console.log('🔍 بدء حساب معدلات الصف الخامس...');
@@ -993,7 +1053,7 @@ function calculateAveragesGrade5(){
     
   }).catch(function(err){
     console.error('❌ خطأ في حساب معدلات الخامس:', err);
-    toast('️ تعذر الاتصال بالخادم', 'err');
+    toast('⚠️ تعذر الاتصال بالخادم', 'err');
   });
 }
 
@@ -1002,7 +1062,7 @@ function calculateAveragesGrade6(){
   var cls = document.getElementById('avgClass6').value;
   var avgType = document.getElementById('avgType6').value;
   
-  toast('⏳ جاري حساب معدلات الصف السادس...', '');
+  toast(' جاري حساب معدلات الصف السادس...', '');
   
   api({action:'getStudentAveragesGrade6', key:key()}).then(function(r){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
@@ -1011,7 +1071,7 @@ function calculateAveragesGrade6(){
     console.log('📊 بيانات الصف السادس الخام:', data.length, 'تلميذ');
     
     if(!data || data.length === 0){
-      toast('️ لا توجد درجات مسجلة للصف السادس', 'err');
+      toast('⚠️ لا توجد درجات مسجلة للصف السادس', 'err');
       return;
     }
     
@@ -1020,7 +1080,7 @@ function calculateAveragesGrade6(){
       filteredData = data.filter(function(s){
         return s.section && s.section.trim() === cls.trim();
       });
-      console.log('📊 بيانات الصف السادس بعد التصفية:', filteredData.length, 'تلميذ');
+      console.log(' بيانات الصف السادس بعد التصفية:', filteredData.length, 'تلميذ');
     }
     
     if(filteredData.length === 0){
@@ -1076,7 +1136,7 @@ function calculateAveragesGrade6(){
     
   }).catch(function(err){
     console.error('❌ خطأ في حساب معدلات السادس:', err);
-    toast('⚠️ تعذر الاتصال بالخادم', 'err');
+    toast('️ تعذر الاتصال بالخادم', 'err');
   });
 }
 
@@ -1115,8 +1175,8 @@ function renderAvgTable(tbodyId, data, isClassView, type){
     var rowClass = '';
     
     if(currentRank === 1){ rankBadge = '🥇 الأول'; rowClass = 'rank-1'; }
-    else if(currentRank === 2){ rankBadge = '🥈 الثاني'; rowClass = 'rank-2'; }
-    else if(currentRank === 3){ rankBadge = ' الثالث'; rowClass = 'rank-3'; }
+    else if(currentRank === 2){ rankBadge = ' الثاني'; rowClass = 'rank-2'; }
+    else if(currentRank === 3){ rankBadge = '🥉 الثالث'; rowClass = 'rank-3'; }
     
     var tr = document.createElement('tr');
     if(rowClass) tr.className = rowClass;
@@ -1138,7 +1198,10 @@ function renderAvgTable(tbodyId, data, isClassView, type){
 var originalAdminTab = adminTab;
 adminTab = function(tab){
   originalAdminTab(tab);
-  if(tab === 'set'){ setTimeout(loadTeachersList, 100); }
+  if(tab === 'set'){ 
+    setTimeout(loadTeachersList, 100); 
+    setTimeout(loadTeachersForDelete, 200); // ✅ تحميل قائمة المعلمين للحذف تلقائياً
+  }
   if(tab === 'averages'){ 
     var tb = document.getElementById('tbTitle');
     if(tb) tb.textContent = 'معدلات التلاميذ';
