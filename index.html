@@ -26,8 +26,23 @@ html,body{height:100%}
 body{ font-family:'Tajawal',system-ui,sans-serif; background:linear-gradient(135deg,#e0e7ff 0%,#fce7f3 50%,#dbeafe 100%); color:var(--text); max-width:480px; margin:0 auto; min-height:100vh; position:relative; overflow-x:hidden; }
 button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer} .hidden{display:none!important}
 
-#login{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden}
-.login-content{position:relative;z-index:2;animation:fadeInUp .6s ease}
+/* ═══ نظام الشاشات - يمنع التداخل ═══ */
+.screen{ display:none; min-height:100vh; width:100%; }
+.screen.active{ display:block; }
+
+/* ═══ شاشة تسجيل الدخول ═══ */
+#s-login{
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  display:none;
+}
+#s-login.active{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:24px;
+}
+.login-content{position:relative;z-index:2;animation:fadeInUp .6s ease;width:100%;max-width:400px}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .login-logo{text-align:center;margin-bottom:30px}
 .logo-icon{width:90px;height:90px;margin:0 auto 15px;background:linear-gradient(135deg,#fff,#f0f9ff);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:48px;box-shadow:0 15px 40px rgba(0,0,0,.2);animation:float 3s ease-in-out infinite}
@@ -46,7 +61,10 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 .login-msg{text-align:center;min-height:20px;margin-top:12px;font-size:13px;font-weight:bold;color:var(--danger)}
 .login-footer{text-align:center;margin-top:25px;color:rgba(255,255,255,.9);font-size:13px;font-weight:500}
 
-#app{display:none;min-height:100vh}
+/* ═══ شاشة التطبيق ═══ */
+#s-app{ display:none; }
+#s-app.active{ display:block; }
+
 .app-header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:16px 18px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(99,102,241,.3)}
 .header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .user-section{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
@@ -55,10 +73,30 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 .user-info h3{font-size:15px;font-weight:900;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .user-info small{font-size:11px;opacity:.85;display:flex;align-items:center;gap:4px}
 .header-actions{display:flex;gap:6px}
-.icon-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;transition:.2s}
-.icon-btn:active{background:rgba(255,255,255,.3)}
-.icon-btn svg{width:22px;height:22px;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none}
-.notif-badge{position:absolute;top:-2px;right:-2px;background:var(--danger);color:#fff;font-size:9px;font-weight:900;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--primary)}
+
+/* ✅ أزرار الهيدر - ملونة واحترافية */
+.icon-btn{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:rgba(255,255,255,.95);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  transition:.2s;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  border:2px solid rgba(255,255,255,.3);
+}
+.icon-btn:active{transform:scale(.92);background:#fff}
+.icon-btn svg{width:22px;height:22px}
+
+/* ألوان الأيقونات */
+.icon-btn.refresh-btn svg{stroke:#3B82F6;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.message-btn svg{stroke:#EF4444;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.logout-btn svg{stroke:#DC2626;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:9px;font-weight:900;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;box-shadow:0 2px 6px rgba(239,68,68,.4)}
 
 .connection-status{position:fixed;top:70px;left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:.3s;display:flex;align-items:center;gap:6px;box-shadow:0 4px 15px rgba(0,0,0,.2)}
 .connection-status.show{opacity:1} .connection-status.online{background:rgba(16,185,129,.95);color:#fff} .connection-status.offline{background:rgba(239,68,68,.95);color:#fff}
@@ -133,7 +171,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 .msg-delete-btn{position:absolute;top:10px;left:10px;width:26px;height:26px;border-radius:50%;background:#fee2e2;color:#dc2626;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:bold;transition:.2s;line-height:1}
 .msg-delete-btn:hover{background:#dc2626;color:#fff;transform:scale(1.1)}
 
-/* ✅ أنماط مودال القفل والغفوة الزمنية */
+/* ═══ مودال القفل ═══ */
 .lock-modal .modal {
   max-width: 360px;
   text-align: center;
@@ -181,6 +219,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
   background: linear-gradient(135deg, var(--danger), #dc2626);
 }
 
+/* ═══ مودال الغفوة الزمنية ═══ */
 .inactivity-modal .modal {
   max-width: 360px;
   text-align: center;
@@ -227,52 +266,58 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 .inactivity-modal .modal-actions button.cancel {
   flex: 1;
 }
-
-/* ✅ أنيميشن الانتقال بين الشاشات */
-#s-app, #s-login {
-  transition: opacity 0.3s ease;
-}
 </style>
 </head>
 <body>
 <div id="errbar"></div>
 
+<!-- ══ شاشة تسجيل الدخول ═══ -->
 <section class="screen active" id="s-login">
-  <div class="login"><div class="lcard">
-    <div class="login-content">
-      <div class="login-logo"><div class="logo-icon">🎓</div><h1>درجاتي</h1><p>تطبيق المعلمين لإدارة الدرجات</p></div>
-      <div class="login-card">
-        <h2> دخول المعلم</h2>
-        <div class="input-wrapper"><label>الكود الخاص بك</label><input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off"><span class="input-icon">🔑</span></div>
-        <button class="login-btn" onclick="doLogin()"><span>تسجيل الدخول</span><span>←</span></button>
-        <div class="login-msg" id="loginMsg"></div>
-      </div>
-      <div class="login-footer">💡 الكود من إدارة النظام</div>
+  <div class="login-content">
+    <div class="login-logo"><div class="logo-icon">🎓</div><h1>درجاتي</h1><p>تطبيق المعلمين لإدارة الدرجات</p></div>
+    <div class="login-card">
+      <h2>🔐 دخول المعلم</h2>
+      <div class="input-wrapper"><label>الكود الخاص بك</label><input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off"><span class="input-icon">🔑</span></div>
+      <button class="login-btn" onclick="doLogin()"><span>تسجيل الدخول</span><span>←</span></button>
+      <div class="login-msg" id="loginMsg"></div>
     </div>
-  </div></div>
+    <div class="login-footer">💡 الكود من إدارة النظام</div>
+  </div>
 </section>
 
+<!-- ═══ شاشة التطبيق الرئيسي ═══ -->
 <section class="screen" id="s-app">
   <div class="app">
     <div class="app-header">
       <div class="header-row">
         <div class="user-section">
-          <div class="user-avatar">👨‍</div>
-          <div class="user-info"><h3 id="teacherName">مرحباً</h3><small id="teacherCode" style="display:none">🔑</small></div>
+          <div class="user-avatar">👨‍🏫</div>
+          <div class="user-info"><h3 id="teacherName">مرحباً</h3><small id="teacherCode">🔑</small></div>
         </div>
         <div class="header-actions">
-          <!-- ✅ أيقونة التحديث -->
-          <button class="icon-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">
-            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          <!-- ✅ أيقونة التحديث - زرقاء -->
+          <button class="icon-btn refresh-btn" onclick="manualSyncAndRefresh()" title="مزامنة وتحديث">
+            <svg viewBox="0 0 24 24">
+              <path d="M23 4v6h-6"/>
+              <path d="M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
           </button>
-          <!-- ✅ أيقونة الرسائل -->
-          <button class="icon-btn" onclick="openMessages()" title="الرسائل">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <!-- ✅ أيقونة الرسائل - حمراء -->
+          <button class="icon-btn message-btn" onclick="openMessages()" title="الرسائل">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
             <span class="notif-badge" id="msgBadge">0</span>
           </button>
-          <!-- ✅ أيقونة الخروج - SVG احترافية -->
-          <button class="icon-btn" onclick="logout()" title="تسجيل الخروج">
-            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <!-- ✅ أيقونة الخروج - حمراء داكنة -->
+          <button class="icon-btn logout-btn" onclick="logout()" title="تسجيل الخروج">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -286,7 +331,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 
       <div class="selectors">
         <div class="select-card subject-card"><label>📚 المادة</label><select id="subjectSelect" onchange="onSubjectChange()"><option value="">اختر المادة</option></select></div>
-        <div class="select-card class-card"><label> الصف والشعبة</label><select id="classSelect" onchange="onClassChange()"><option value="">اختر الشعبة</option></select></div>
+        <div class="select-card class-card"><label>🏫 الصف والشعبة</label><select id="classSelect" onchange="onClassChange()"><option value="">اختر الشعبة</option></select></div>
         <div class="select-card month-card"><label>📅 الشهر</label><select id="monthSelect" onchange="onMonthChange()"></select></div>
       </div>
 
@@ -297,10 +342,10 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
         <div class="stat-box fail"><div class="stat-ico">✕</div><div class="stat-val" id="statFail">0</div><div class="stat-lbl">راسب</div></div>
       </div>
 
-      <div class="search-box"><span class="s-icon"></span><input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()"></div>
+      <div class="search-box"><span class="s-icon">🔍</span><input id="searchInput" type="text" placeholder="ابحث عن تلميذ..." oninput="renderRows()"></div>
 
       <div class="students-card">
-        <div class="card-head"><h3>📝 قائمة التلاميذ</h3><span class="count" id="totalCount">0 تلميذ</span></div>
+        <div class="card-head"><h3> قائمة التلاميذ</h3><span class="count" id="totalCount">0 تلميذ</span></div>
         <div id="studentsList"></div>
       </div>
 
@@ -316,7 +361,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 
 <div class="overlay" id="msgModal">
   <div class="modal">
-    <h3> الرسائل</h3>
+    <h3>🔔 الرسائل</h3>
     <div id="msgList" style="margin-top:10px"></div>
     <div class="modal-actions"><button class="ok" onclick="hideModal('msgModal')">إغلاق</button></div>
   </div>
@@ -324,7 +369,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 
 <div class="overlay" id="confirmModal">
   <div class="modal">
-    <h3>⚠️ تأكيد</h3>
+    <h3>️ تأكيد</h3>
     <p id="confirmMsg" style="margin-bottom:15px;line-height:1.6"></p>
     <div class="modal-actions">
       <button class="cancel" onclick="hideModal('confirmModal')">إلغاء</button>
@@ -340,9 +385,9 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
     <h3>تم قفل الحساب</h3>
     <p>قامت الإدارة بقفل حسابك في نظام درجاتي.</p>
     <div class="lock-details">
-      👨‍🏫 المعلم: <b id="lockTeacherName"></b><br>
+      👨🏫 المعلم: <b id="lockTeacherName"></b><br>
       🔑 الكود: <b id="lockTeacherCode"></b><br>
-       التاريخ: <b id="lockDate"></b>
+      📅 التاريخ: <b id="lockDate"></b>
     </div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:15px;">
       يرجى التواصل مع إدارة المدرسة للاستفسار.
@@ -356,7 +401,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 <!-- ✅ مودال الغفوة الزمنية -->
 <div class="overlay inactivity-modal" id="inactivityModal">
   <div class="modal">
-    <div class="timer-icon"></div>
+    <div class="timer-icon">⏰</div>
     <h3>تنبيه عدم النشاط</h3>
     <p>لم تلمس الشاشة منذ دقيقتين.<br>سيتم تسجيل الخروج تلقائياً خلال:</p>
     <div class="countdown" id="inactivityCountdown">30</div>
@@ -374,6 +419,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 <script>
 var MONTHS = APP_CONFIG.MONTHS;
 var SUBJECT_COLORS = APP_CONFIG.SUBJECT_COLORS || {};
+// ✅ إصلاح: تسلسل الأرقام العربية الصحيح
 var AR = '٠٢٣٤٥٦٧٨٩';
 var arNum = function(x){return String(x).replace(/\d/g,function(d){return AR[d];});};
 var $ = function(s){return document.querySelector(s);};
@@ -385,11 +431,9 @@ var SYNC_INTERVAL = 300000;
 var hasUnsavedChanges = false;
 var deletedMessages = [];
 
-// ═══════════════════════════════════════════════════════════════
-// ✅ إعدادات الغفوة الزمنية (Auto-logout)
-// ═══════════════════════════════════════════════════════════════
-var INACTIVITY_TIMEOUT = 120000; // دقيقتين قبل التنبيه
-var WARNING_DURATION = 30000;    // 30 ثانية تحذير قبل الخروج
+// ═══ إعدادات الغفوة الزمنية ══
+var INACTIVITY_TIMEOUT = 120000;
+var WARNING_DURATION = 30000;
 var inactivityTimer = null;
 var warningTimer = null;
 var warningCountdown = 30;
@@ -476,7 +520,7 @@ function updateConnectionStatus(){
 }
 
 function manualSyncAndRefresh(){
-  toast(' جاري البحث عن تحديثات...', ''); 
+  toast('⏳ جاري البحث عن تحديثات...', ''); 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistration().then(function(reg) {
       if (reg) { reg.update(); if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
@@ -485,10 +529,7 @@ function manualSyncAndRefresh(){
   setTimeout(function(){ window.location.reload(true); }, 1000);
 }
 
-// ══════════════════════════════════════════════════════════════
-// ✅ دوال الغفوة الزمنية (Inactivity Timer)
-// ═══════════════════════════════════════════════════════════════
-
+// ═══ دوال الغفوة الزمنية ═══
 function resetInactivityTimer(){
   clearTimeout(inactivityTimer);
   clearTimeout(warningTimer);
@@ -534,28 +575,15 @@ function performAutoLogout(){
   hideModal('inactivityModal');
   isWarningShown = false;
   
-  // إخفاء شاشة التطبيق وإظهار الدخول مباشرة
-  var appScreen = document.getElementById('s-app');
-  var loginScreen = document.getElementById('s-login');
+  // ✅ الانتقال الآمن: إخفاء التطبيق وإظهار الدخول
+  switchScreen('s-login');
   
-  if(appScreen) appScreen.style.display = 'none';
-  if(loginScreen) loginScreen.style.display = 'flex';
-  
-  // مسح بيانات الجلسة
   localStorage.removeItem('d_session');
   if(T.code) localStorage.removeItem('d_draft_' + T.code);
   
-  // مسح بيانات المعلم
-  T.code = '';
-  T.name = '';
-  T.subject = '';
-  T.classes = [];
-  T.cls = '';
-  T.month = '';
-  T.drafts = {};
-  T.subjects = [];
+  T.code = ''; T.name = ''; T.subject = ''; T.classes = [];
+  T.cls = ''; T.month = ''; T.drafts = {}; T.subjects = [];
   
-  // إيقاف جميع المؤقتات
   clearInterval(msgCheckInterval);
   clearInterval(syncInterval);
   clearInterval(lockCheckInterval);
@@ -563,21 +591,15 @@ function performAutoLogout(){
   clearTimeout(warningTimer);
   clearInterval(countdownInterval);
   
-  // رسالة تنبيه
   var loginMsg = document.getElementById('loginMsg');
   if(loginMsg){
     loginMsg.textContent = '⏰ تم تسجيل الخروج بسبب عدم النشاط';
     loginMsg.style.color = '#f59e0b';
-    setTimeout(function(){
-      loginMsg.textContent = '';
-    }, 4000);
+    setTimeout(function(){ loginMsg.textContent = ''; }, 4000);
   }
   
-  // إزالة المستمعين
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
-  
-  // التمرير لأعلى
   window.scrollTo(0, 0);
   
   console.log('✅ تم تسجيل الخروج بسبب عدم النشاط');
@@ -587,11 +609,27 @@ function setupInactivityListeners(){
   var events = ['touchstart', 'touchmove', 'mousedown', 'mousemove', 'keypress', 'keydown', 'scroll', 'click', 'wheel'];
   events.forEach(function(event){
     document.addEventListener(event, function(){
-      if(T.code){
-        resetInactivityTimer();
-      }
+      if(T.code){ resetInactivityTimer(); }
     }, {passive: true});
   });
+}
+
+// ✅ دالة الانتقال بين الشاشات - تمنع التداخل
+function switchScreen(screenId){
+  // إخفاء جميع الشاشات
+  var screens = document.querySelectorAll('.screen');
+  screens.forEach(function(screen){
+    screen.classList.remove('active');
+  });
+  
+  // إظهار الشاشة المطلوبة
+  var targetScreen = document.getElementById(screenId);
+  if(targetScreen){
+    targetScreen.classList.add('active');
+  }
+  
+  // التمرير لأعلى
+  window.scrollTo(0, 0);
 }
 
 function doLogin(){
@@ -609,10 +647,7 @@ function doLogin(){
 function enterHome(){
   var s=JSON.parse(localStorage.getItem('d_session')||'null');
   if(!s){
-    var appScreen = document.getElementById('s-app');
-    var loginScreen = document.getElementById('s-login');
-    if(appScreen) appScreen.style.display = 'none';
-    if(loginScreen) loginScreen.style.display = 'flex';
+    switchScreen('s-login');
     return;
   }
   T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
@@ -620,11 +655,8 @@ function enterHome(){
   T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
   $('#teacherName').textContent='مرحباً '+T.name; $('#teacherCode').textContent='🔑 '+T.code; $('#welcomeTitle').textContent='أهلاً '+T.name;
   
-  // ✅ إخفاء شاشة الدخول وإظهار التطبيق
-  var appScreen = document.getElementById('s-app');
-  var loginScreen = document.getElementById('s-login');
-  if(appScreen) appScreen.style.display = 'block';
-  if(loginScreen) loginScreen.style.display = 'none';
+  // ✅ الانتقال الآمن إلى شاشة التطبيق
+  switchScreen('s-app');
   
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
@@ -650,7 +682,6 @@ function enterHome(){
         clearTimeout(warningTimer);
         clearInterval(countdownInterval);
         
-        // عرض مودال القفل
         $('#lockTeacherName').textContent = T.name || 'غير معروف';
         $('#lockTeacherCode').textContent = T.code;
         $('#lockDate').textContent = new Date().toLocaleDateString('ar-EG');
@@ -661,40 +692,22 @@ function enterHome(){
     });
   }, 30000);
   
-  // ✅ بدء مؤقت الغفوة الزمنية
   setupInactivityListeners();
   resetInactivityTimer();
-  
-  // التمرير لأعلى
-  window.scrollTo(0, 0);
 }
 
 function forceLogout(){
-  // إخفاء مودال القفل أولاً
   hideModal('lockModal');
   
-  // إخفاء شاشة التطبيق بشكل فوري
-  var appScreen = document.getElementById('s-app');
-  var loginScreen = document.getElementById('s-login');
+  // ✅ الانتقال الآمن إلى شاشة الدخول
+  switchScreen('s-login');
   
-  if(appScreen) appScreen.style.display = 'none';
-  if(loginScreen) loginScreen.style.display = 'flex';
-  
-  // مسح بيانات الجلسة
   localStorage.removeItem('d_session');
   if(T.code) localStorage.removeItem('d_draft_' + T.code);
   
-  // مسح بيانات المعلم من الذاكرة
-  T.code = '';
-  T.name = '';
-  T.subject = '';
-  T.classes = [];
-  T.cls = '';
-  T.month = '';
-  T.drafts = {};
-  T.subjects = [];
+  T.code = ''; T.name = ''; T.subject = ''; T.classes = [];
+  T.cls = ''; T.month = ''; T.drafts = {}; T.subjects = [];
   
-  // إيقاف جميع المؤقتات والفواصل الزمنية
   clearInterval(msgCheckInterval);
   clearInterval(syncInterval);
   clearInterval(lockCheckInterval);
@@ -702,30 +715,22 @@ function forceLogout(){
   clearTimeout(warningTimer);
   clearInterval(countdownInterval);
   
-  // إعادة تعيين واجهة تسجيل الدخول
   var codeInput = document.getElementById('codeInput');
   var loginMsg = document.getElementById('loginMsg');
   if(codeInput) codeInput.value = '';
   if(loginMsg){
     loginMsg.textContent = '🔒 تم قفل الحساب من قِبل الإدارة';
     loginMsg.style.color = '#ef4444';
-    setTimeout(function(){
-      loginMsg.textContent = '';
-    }, 4000);
+    setTimeout(function(){ loginMsg.textContent = ''; }, 4000);
   }
   
-  // إزالة مستمعي الأحداث
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
-  
-  // التمرير لأعلى الصفحة
-  window.scrollTo(0, 0);
   
   console.log('✅ تم تسجيل الخروج بسبب قفل الحساب');
 }
 
 function logout(){
-  // إيقاف جميع المؤقتات أولاً
   clearInterval(msgCheckInterval); 
   clearInterval(syncInterval); 
   clearInterval(lockCheckInterval);
@@ -733,42 +738,24 @@ function logout(){
   clearTimeout(warningTimer);
   clearInterval(countdownInterval);
   
-  // إزالة مستمعي الأحداث
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
   
-  // عرض تأكيد الخروج
   confirmDlg('تسجيل الخروج من حسابك؟', function(){ 
-    // إخفاء التطبيق وإظهار الدخول
-    var appScreen = document.getElementById('s-app');
-    var loginScreen = document.getElementById('s-login');
+    switchScreen('s-login');
     
-    if(appScreen) appScreen.style.display = 'none';
-    if(loginScreen) loginScreen.style.display = 'flex';
-    
-    // مسح البيانات
     localStorage.removeItem('d_session');
     if(T.code) localStorage.removeItem('d_draft_' + T.code);
     
-    // مسح المتغيرات
-    T.code = '';
-    T.name = '';
-    T.subject = '';
-    T.classes = [];
-    T.cls = '';
-    T.month = '';
-    T.drafts = {};
-    T.subjects = [];
+    T.code = ''; T.name = ''; T.subject = ''; T.classes = [];
+    T.cls = ''; T.month = ''; T.drafts = {}; T.subjects = [];
     
-    // إعادة تعيين حقول الدخول
     var codeInput = document.getElementById('codeInput');
     var loginMsg = document.getElementById('loginMsg');
     if(codeInput) codeInput.value = '';
     if(loginMsg) loginMsg.textContent = '';
     
-    // التمرير لأعلى
     window.scrollTo(0, 0);
-    
     console.log('✅ تم تسجيل الخروج يدوياً');
   });
 }
@@ -778,7 +765,7 @@ function buildSelectors(){
   if(T.subjects&&T.subjects.length>0){
     for(var idx=0;idx<T.subjects.length;idx++){
       var sub=T.subjects[idx], opt=document.createElement('option');
-      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:'📖'};
+      opt.value=idx; var ci=SUBJECT_COLORS[sub.name]||{icon:''};
       opt.textContent=ci.icon+' '+sub.name; subSel.appendChild(opt);
     }
     subSel.value='0';
@@ -811,7 +798,7 @@ function updateWelcome(){ $('#welcomeSub').textContent=(T.subject||'—')+' • 
 function loadCurrent(forceRefresh) {
   if (!T.cls || !T.subject) {
     $('#studentsList').innerHTML = '<div class="empty-state"><div class="e-icon">📋</div><p>اختر المادة والشعبة</p><small>لعرض التلاميذ</small></div>';
-    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = '📤 لم يتم تحديد الشعبة'; return;
+    clearStats(); $('#sendBar').className = 'send-status no'; $('#sendBar').textContent = ' لم يتم تحديد الشعبة'; return;
   }
   var k = draftKey();
   if (!T.drafts[k]) {
@@ -827,7 +814,7 @@ function loadCurrent(forceRefresh) {
 }
 
 function clearStats(){
-  $('#statStudents').textContent='0'; $('#statPass').textContent='0'; $('#statComp').textContent='0'; $('#statFail').textContent='0'; $('#totalCount').textContent='0 تلميذ';
+  $('#statStudents').textContent=''; $('#statPass').textContent='٠'; $('#statComp').textContent='٠'; $('#statFail').textContent='٠'; $('#totalCount').textContent='٠ تلميذ';
 }
 
 function fetchStudents(showLoading) {
@@ -1024,7 +1011,7 @@ function checkMessages(){
       var badge = $('#msgBadge');
       if(r.unread > 0){
         badge.textContent = arNum(r.unread); badge.style.display = 'flex'; 
-        toast(' لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
+        toast('📩 لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
         playNotificationSound();
         if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
         if("Notification" in window && Notification.permission === "granted"){
@@ -1072,7 +1059,7 @@ function deleteAllMessages(){
       hideModal('msgModal');
       checkMessages();
     } else { toast('❌ ' + (res.error || 'فشل الحذف'), 'err'); }
-  }).catch(function(){ toast('⚠️ تعذر الاتصال بالخادم', 'err'); });
+  }).catch(function(){ toast('️ تعذر الاتصال بالخادم', 'err'); });
 }
 
 function openMessages(){
