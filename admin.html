@@ -127,14 +127,6 @@
 .print-table th {
   background: #1E40AF !important; color: #fff !important; font-weight: 900 !important; font-size: 8px !important;
 }
-.print-table td.name-cell {
-  text-align: right !important; font-weight: 900 !important;
-  min-width: 90px !important; max-width: 120px !important;
-  white-space: normal !important; word-wrap: break-word !important;
-}
-.print-table td.avg-cell { background: #FEF3C7 !important; font-weight: 900 !important; }
-.print-table td.pass-cell { color: #047857 !important; font-weight: 900 !important; }
-.print-table td.fail-cell { color: #DC2626 !important; font-weight: 900 !important; }
 
 @media print {
   body * { visibility: hidden !important; }
@@ -360,8 +352,8 @@
             </div>
             <div class="grid3">
               <button class="btn ok" onclick="addNewTeacher()">➕ إضافة / تحديث</button>
-              <button class="btn" onclick="printTeachersList()">🖨️ طباعة القائمة</button>
-              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()">📊 تصدير Excel</button>
+              <button class="btn" onclick="printTeachersList()">️ طباعة القائمة</button>
+              <button class="btn" style="background:#059669" onclick="exportTeachersExcel()"> تصدير Excel</button>
             </div>
           </div>
           <div id="teamList"></div>
@@ -369,7 +361,7 @@
 
         <div id="tab-entry" hidden>
           <div class="ptitle"><span class="bar"></span>إدخال إداري</div>
-          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ٣) أدخل الدرجات</p>
+          <p class="psub">١) اختر المعلم ← ٢) المادة والصف ← ) أدخل الدرجات</p>
           <div id="entBox"></div>
         </div>
 
@@ -397,7 +389,7 @@
               <div class="form-group" style="margin:0">
                 <label>نوع المعدل</label>
                 <select id="avgType">
-                  <option value="midYear">📗 نصف السنة</option>
+                  <option value="midYear"> نصف السنة</option>
                   <option value="finalYear">📘 نهاية السنة</option>
                 </select>
               </div>
@@ -448,7 +440,7 @@
                     </table>
                   </div>
                 </div>
-                <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;"> الترتيب التنافسي العام للصف</h4>
+                <h4 style="color:#0F172A; margin-bottom:10px; font-size:14px;">🌟 الترتيب التنافسي العام للصف</h4>
                 <div style="overflow-x:auto;">
                   <table class="avg-table">
                     <thead><tr><th style="width:80px">المرتبة</th><th>اسم التلميذ</th><th style="width:80px">الشعبة</th><th style="width:80px">المواد</th><th style="width:90px">المجموع</th><th style="width:100px">المعدل</th></tr></thead>
@@ -479,7 +471,7 @@
         <div id="tab-set" hidden>
           <div class="ptitle"><span class="bar"></span>الإعدادات والقوالب</div>
           <div class="setgrid">
-            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi">📥</div><h3>قالب Excel فارغ</h3>
+            <div class="setcard" style="--sc:#0891B2;--scb:#CFFAFE"><div class="hi"></div><h3>قالب Excel فارغ</h3>
               <p>جدول لكل مادة بأسماء التلاميذ وأعمدة الأشهر.</p>
               <button class="btn" style="background:#0891B2" onclick="downloadTemplate(false)">📥 تنزيل القالب</button>
             </div>
@@ -494,7 +486,7 @@
             </div>
             
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
-              <div class="hi">📨</div>
+              <div class="hi"></div>
               <h3>إرسال رسالة للمعلمين</h3>
               <div class="form-group">
                 <label>المعلمون المستهدفون</label>
@@ -511,7 +503,7 @@
             </div>
 
             <div class="setcard" style="--sc:#DC2626;--scb:#FEE2E2">
-              <div class="hi">️</div>
+              <div class="hi">🗑️</div>
               <h3>حذف درجات معلم</h3>
               <div class="form-group">
                 <label>كود المعلم</label>
@@ -637,7 +629,7 @@
               <th style="padding:8px; border:1px solid #0F172A;">ت</th>
               <th style="padding:8px; border:1px solid #0F172A;">اسم التلميذ</th>
               <th colspan="3" style="padding:8px; border:1px solid #0F172A; background:#1D4ED8;">الفصل الأول</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
               <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
@@ -674,7 +666,7 @@
   <div class="modal" style="max-width:500px">
     <h3>🖨️ إعدادات الطباعة</h3>
     <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="مدرسة المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٥ - ٢٠٢٦"></div>
+    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٠٢٥ - ٢٢٦"></div>
     <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
     <div class="mrow" style="margin-top:16px">
       <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
@@ -788,11 +780,11 @@ function sendAdminMessageNew(){
           }
         } else {
           failedCount++;
-          if(sentCount + failedCount === selectedTeachers.length){ toast('️ تم الإرسال: ' + sentCount + ' | فشل: ' + failedCount, 'err'); }
+          if(sentCount + failedCount === selectedTeachers.length){ toast('⚠️ تم الإرسال: ' + sentCount + ' | فشل: ' + failedCount, 'err'); }
         }
       }).catch(function(err){
         failedCount++;
-        if(sentCount + failedCount === selectedTeachers.length){ toast('⚠️ تعذر الاتصال بالخادم', 'err'); }
+        if(sentCount + failedCount === selectedTeachers.length){ toast('️ تعذر الاتصال بالخادم', 'err'); }
       });
     }, index * 500);
   });
@@ -804,8 +796,8 @@ function deleteTeacherGrades(){
   var month = document.getElementById('delMonth').value.trim();
   var studentName = document.getElementById('delStudentName').value.trim();
   
-  if(!code){ toast('⚠️ أدخل كود المعلم', 'err'); return; }
-  if(!month){ toast('⚠️ اختر الشهر', 'err'); return; }
+  if(!code){ toast('️ أدخل كود المعلم', 'err'); return; }
+  if(!month){ toast('️ اختر الشهر', 'err'); return; }
   
   var confirmMsg = '⚠️ هل أنت متأكد من حذف درجات:\n\n';
   confirmMsg += 'المعلم: ' + code + '\n';
@@ -839,28 +831,24 @@ function deleteTeacherGrades(){
   });
 }
 
-// ✅ تحديث خيارات الشعب
+// ✅ تحديث خيارات الشعب - القيمة تكون "الخامس أ" وليس فقط "أ"
 function updateClassOptions(){
   var grade = document.getElementById('avgGrade').value;
   var classSelect = document.getElementById('avgClass');
   
   if(!classSelect) return;
   
-  var currentValue = classSelect.value;
   classSelect.innerHTML = '<option value="">كل الشعب (تنافس عام)</option>';
   
   if(grade){
     var sections = ['أ', 'ب', 'ج'];
     sections.forEach(function(sec){
       var option = document.createElement('option');
+      // ✅ القيمة الكاملة: "الخامس أ"
       option.value = grade + ' ' + sec;
       option.textContent = grade + ' ' + sec;
       classSelect.appendChild(option);
     });
-  }
-  
-  if(currentValue && classSelect.querySelector('option[value="' + currentValue + '"]')){
-    classSelect.value = currentValue;
   }
 }
 
@@ -878,24 +866,21 @@ function calculateAverages(){
     if(!r.ok){ toast('❌ '+r.error, 'err'); return; }
     
     var data = r.data;
-    console.log(' البيانات الخام من الخادم:', data);
+    console.log('📊 البيانات الخام من الخادم:', data);
     
     if(!data || data.length === 0){
       toast('⚠️ لا توجد درجات مسجلة للصف ' + grade + '\n\nتأكد من:\n1. إرسال المعلمين للدرجات\n2. اختيار الصف الصحيح', 'err');
       return;
     }
     
-    // ✅ تصفية إضافية
-    var filteredData = data.filter(function(s){
-      if(!s.section) return false;
-      var sec = String(s.section).trim();
-      if(cls){
-        return sec === cls.trim();
-      }
-      return true;
-    });
-    
-    console.log('📊 البيانات بعد التصفية:', filteredData);
+    // ✅ تصفية حسب الشعبة إذا تم اختيارها
+    var filteredData = data;
+    if(cls && cls.trim() !== ''){
+      filteredData = data.filter(function(s){
+        return s.section && s.section.trim() === cls.trim();
+      });
+      console.log('📊 البيانات بعد تصفية الشعبة ' + cls + ':', filteredData);
+    }
     
     if(filteredData.length === 0){
       toast('⚠️ لا توجد بيانات للصف ' + grade + (cls ? ' - الشعبة ' + cls : '') + '\n\nتأكد من وجود درجات في ورقة "الدرجات"', 'err');
@@ -919,9 +904,10 @@ function calculateAverages(){
     var finalSorted = filteredData.slice().sort(function(a, b) { return b.finalAvg - a.finalAvg; });
     renderAvgTable('finalYearGradeBody', finalSorted, false, 'final');
     
-    if(cls){
+    // ✅ عرض ترتيب الشعبة إذا تم اختيارها
+    if(cls && cls.trim() !== ''){
       var midYearClassData = midYearSorted.filter(function(s) { 
-        return s.section && String(s.section).trim() === cls.trim(); 
+        return s.section && s.section.trim() === cls.trim(); 
       });
       if(midYearClassData.length > 0){
         renderAvgTable('midYearClassBody', midYearClassData, true, 'midYear');
@@ -931,7 +917,7 @@ function calculateAverages(){
       }
       
       var finalYearClassData = finalSorted.filter(function(s) { 
-        return s.section && String(s.section).trim() === cls.trim(); 
+        return s.section && s.section.trim() === cls.trim(); 
       });
       if(finalYearClassData.length > 0){
         renderAvgTable('finalYearClassBody', finalYearClassData, true, 'final');
