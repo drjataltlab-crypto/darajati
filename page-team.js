@@ -780,138 +780,173 @@ function openExportExcelSelection(code) {
 }
 
 function generateTeacherExcelFile(code, teacherName, teacherCode, subjectName, className) {
-  toast('⏳ جاري تجهيز ملف Excel...', '');
+  toast(' جاري تجهيز ملف Excel...', '');
   
-  api({action:'teacherGrades', key:key(), code:code}).then(function(r){
-    if(!r.ok || !r.rows || r.rows.length === 0) {
-      toast('⚠️ لا توجد درجات مسجلة لهذا المعلم في النظام', 'err');
+  // ✅ 1. جلب قائمة التلاميذ الرسمية أولاً (لضمان الترتيب الصحيح)
+  api({action:'getStudents', code:code, cls:className}).then(function(studentsRes){
+    if(!studentsRes.ok || !studentsRes.names || studentsRes.names.length === 0){
+      toast('️ لا توجد قائمة تلاميذ لهذه الشعبة', 'err');
       return;
     }
     
-    var parts = className.split(' ');
-    var grade = (parts[0] || '').trim();
-    var section = (parts[1] || '').trim();
-    var targetCls = className.trim();
-    var targetSubj = subjectName.trim();
-    
-    var filteredRows = r.rows.filter(function(row) {
-      var rowSubj = (row.subject || '').trim();
-      var rowCls = (row.cls || '').trim();
-      var rowGrade = (row.grade || '').trim();
-      var rowSection = (row.section || '').trim();
-      var subjectMatch = (rowSubj === targetSubj);
-      var classMatch = (rowCls === targetCls) || (rowGrade === grade && rowSection === section);
-      return subjectMatch && classMatch;
-    });
-    
-    if(filteredRows.length === 0) {
-      toast('⚠️ لا توجد درجات مسجلة لهذه الشعبة تحديداً (' + className + ')', 'err');
-      return;
-    }
-    
-    var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl">';
-    h += '<head><meta charset="utf-8">';
-    h += '<style>';
-    h += 'table{border-collapse:collapse;width:100%;font-family:Arial,sans-serif;}';
-    h += 'th,td{border:1px solid #000;padding:5px;text-align:center;font-size:11pt;}';
-    h += 'th{color:#fff;font-weight:bold;}';
-    h += '.th-f1{background-color:#1D4ED8;}';
-    h += '.th-f2{background-color:#0E7490;}';
-    h += '.th-avg{background-color:#B45309;color:#fff;}';
-    h += '.th-half{background-color:#7C3AED;color:#fff;}';
-    h += '.th-annual{background-color:#059669;color:#fff;}';
-    h += '.th-exam{background-color:#DC2626;color:#fff;}';
-    h += '.th-final{background-color:#BE123C;color:#fff;}';
-    h += '.th-sub{background-color:#E0E7FF;color:#1E40AF;font-weight:bold;}';
-    h += '.th-seq{background-color:#FDE047;color:#000;width:40px;}';
-    h += '.th-name{background-color:#fff;color:#000;width:180px;}';
-    h += '.td-name{text-align:right;font-weight:bold;padding-right:5px;}';
-    h += '.td-final-pass{background-color:#D1FAE5;color:#047857;font-weight:bold;}';
-    h += '.td-final-fail{background-color:#FEE2E2;color:#DC2626;font-weight:bold;}';
-    h += '.header-right{text-align:right;font-size:14pt;font-weight:bold;color:#1E40AF;}';
-    h += '.header-center{text-align:center;font-size:16pt;font-weight:bold;color:#1E40AF;}';
-    h += '.header-left{text-align:left;font-size:11pt;color:#0F172A;}';
-    h += '.info-row{margin:3px 0;font-weight:bold;}';
-    h += '</style></head><body>';
-    
-    h += '<table style="border:none;width:100%;margin-bottom:10px;">';
-    h += '<tr style="border:none;">';
-    h += '<td style="border:none;" class="header-right">إدارة<br>' + esc(PRINT_SETTINGS.schoolName) + '<br>' + esc(PRINT_SETTINGS.schoolType) + '</td>';
-    h += '<td style="border:none;" class="header-center">كشف درجات المعلم<br><span style="font-size:11pt;color:#64748B;">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</span></td>';
-    h += '<td style="border:none;" class="header-left">';
-    h += '<div class="info-row">المادة: ' + esc(subjectName) + '</div>';
-    h += '<div class="info-row">الصف والشعبة: ' + esc(className) + '</div>';
-    h += '<div class="info-row">عدد التلاميذ: ' + toArabicNumerals(filteredRows.length) + '</div>';
-    h += '</td>';
-    h += '</tr></table>';
-    
-    h += '<table>';
-    h += '<thead>';
-    h += '<tr>';
-    h += '<th rowspan="2" class="th-seq">ت</th>';
-    h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
-    h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
-    h += '<th rowspan="2" class="th-avg">معدل<br>ف١</th>';
-    h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
-    h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
-    h += '<th rowspan="2" class="th-avg">معدل<br>ف٢</th>';
-    h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
-    h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
-    h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
-    h += '</tr>';
-    h += '<tr>';
-    h += '<th class="th-sub">ت١</th>';
-    h += '<th class="th-sub">ت٢</th>';
-    h += '<th class="th-sub">ك١</th>';
-    h += '<th class="th-sub">آذار</th>';
-    h += '<th class="th-sub">نيسان</th>';
-    h += '</tr>';
-    h += '</thead>';
-    h += '<tbody>';
-    
-    filteredRows.forEach(function(row, idx){
-      var finalClass = (row.final != null && row.final >= (row.max||100)/2) ? 'td-final-pass' : (row.final != null ? 'td-final-fail' : '');
+    // ✅ 2. جلب درجات المعلم
+    api({action:'teacherGrades', key:key(), code:code}).then(function(r){
+      if(!r.ok || !r.rows) {
+        toast('⚠️ لا توجد درجات مسجلة لهذا المعلم في النظام', 'err');
+        return;
+      }
+      
+      var parts = className.split(' ');
+      var grade = (parts[0] || '').trim();
+      var section = (parts[1] || '').trim();
+      var targetCls = className.trim();
+      var targetSubj = subjectName.trim();
+      
+      // ✅ 3. بناء خريطة الدرجات للمطابقة السريعة
+      var gradesMap = {};
+      r.rows.forEach(function(row){
+        var rowSubj = (row.subject || '').trim();
+        var rowCls = (row.cls || '').trim();
+        var rowGrade = (row.grade || '').trim();
+        var rowSection = (row.section || '').trim();
+        var subjectMatch = (rowSubj === targetSubj);
+        var classMatch = (rowCls === targetCls) || (rowGrade === grade && rowSection === section);
+        if(subjectMatch && classMatch){
+          gradesMap[row.name.trim()] = row;
+        }
+      });
+      
+      // ✅ 4. بناء قائمة التلاميذ بالترتيب الرسمي مع درجاتهم
+      var orderedRows = [];
+      studentsRes.names.forEach(function(name){
+        var cleanName = name.trim();
+        var g = gradesMap[cleanName];
+        if(g){
+          orderedRows.push(g);
+        } else {
+          // تلميذ بدون درجات - نضيفه ببيانات فارغة
+          orderedRows.push({
+            name: cleanName,
+            m1:null, m2:null, m3:null, a1:null, half:null,
+            m4:null, m5:null, a2:null, annual:null, exam:null, final:null, max:100
+          });
+        }
+      });
+      
+      if(orderedRows.length === 0) {
+        toast('⚠️ لا توجد بيانات لهذه الشعبة', 'err');
+        return;
+      }
+      
+      // ✅ 5. بناء ملف Excel بنفس التصميم الأصلي
+      var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" dir="rtl">';
+      h += '<head><meta charset="utf-8">';
+      h += '<style>';
+      h += 'table{border-collapse:collapse;width:100%;font-family:Arial,sans-serif;}';
+      h += 'th,td{border:1px solid #000;padding:5px;text-align:center;font-size:11pt;}';
+      h += 'th{color:#fff;font-weight:bold;}';
+      h += '.th-f1{background-color:#1D4ED8;}';
+      h += '.th-f2{background-color:#0E7490;}';
+      h += '.th-avg{background-color:#B45309;color:#fff;}';
+      h += '.th-half{background-color:#7C3AED;color:#fff;}';
+      h += '.th-annual{background-color:#059669;color:#fff;}';
+      h += '.th-exam{background-color:#DC2626;color:#fff;}';
+      h += '.th-final{background-color:#BE123C;color:#fff;}';
+      h += '.th-sub{background-color:#E0E7FF;color:#1E40AF;font-weight:bold;}';
+      h += '.th-seq{background-color:#FDE047;color:#000;width:40px;}';
+      h += '.th-name{background-color:#fff;color:#000;width:180px;}';
+      h += '.td-name{text-align:right;font-weight:bold;padding-right:5px;}';
+      h += '.td-final-pass{background-color:#D1FAE5;color:#047857;font-weight:bold;}';
+      h += '.td-final-fail{background-color:#FEE2E2;color:#DC2626;font-weight:bold;}';
+      h += '.header-right{text-align:right;font-size:14pt;font-weight:bold;color:#1E40AF;}';
+      h += '.header-center{text-align:center;font-size:16pt;font-weight:bold;color:#1E40AF;}';
+      h += '.header-left{text-align:left;font-size:11pt;color:#0F172A;}';
+      h += '.info-row{margin:3px 0;font-weight:bold;}';
+      h += '</style></head><body>';
+      
+      h += '<table style="border:none;width:100%;margin-bottom:10px;">';
+      h += '<tr style="border:none;">';
+      h += '<td style="border:none;" class="header-right">إدارة<br>' + esc(PRINT_SETTINGS.schoolName) + '<br>' + esc(PRINT_SETTINGS.schoolType) + '</td>';
+      h += '<td style="border:none;" class="header-center">كشف درجات المعلم<br><span style="font-size:11pt;color:#64748B;">للعام الدراسي ' + esc(PRINT_SETTINGS.schoolYear) + '</span></td>';
+      h += '<td style="border:none;" class="header-left">';
+      h += '<div class="info-row">المادة: ' + esc(subjectName) + '</div>';
+      h += '<div class="info-row">الصف والشعبة: ' + esc(className) + '</div>';
+      h += '<div class="info-row">عدد التلاميذ: ' + toArabicNumerals(orderedRows.length) + '</div>';
+      h += '</td>';
+      h += '</tr></table>';
+      
+      h += '<table>';
+      h += '<thead>';
       h += '<tr>';
-      h += '<td>' + toArabicNumerals(idx+1) + '</td>';
-      h += '<td class="td-name">' + esc(row.name) + '</td>';
-      h += '<td>' + toArabicNumerals(row.m1!=null?row.m1:'') + '</td>';
-      h += '<td>' + toArabicNumerals(row.m2!=null?row.m2:'') + '</td>';
-      h += '<td>' + toArabicNumerals(row.m3!=null?row.m3:'') + '</td>';
-      h += '<td style="font-weight:bold;">' + toArabicNumerals(row.a1!=null?row.a1:'') + '</td>';
-      h += '<td>' + toArabicNumerals(row.half!=null?row.half:'') + '</td>';
-      h += '<td>' + toArabicNumerals(row.m4!=null?row.m4:'') + '</td>';
-      h += '<td>' + toArabicNumerals(row.m5!=null?row.m5:'') + '</td>';
-      h += '<td style="font-weight:bold;">' + toArabicNumerals(row.a2!=null?row.a2:'') + '</td>';
-      h += '<td style="font-weight:bold;">' + toArabicNumerals(row.annual!=null?row.annual:'') + '</td>';
-      h += '<td>' + toArabicNumerals(row.exam!=null?row.exam:'') + '</td>';
-      h += '<td class="' + finalClass + '">' + toArabicNumerals(row.final!=null?row.final:'') + '</td>';
+      h += '<th rowspan="2" class="th-seq">ت</th>';
+      h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
+      h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
+      h += '<th rowspan="2" class="th-avg">معدل<br>ف١</th>';
+      h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
+      h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
+      h += '<th rowspan="2" class="th-avg">معدل<br>ف٢</th>';
+      h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
+      h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
+      h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
       h += '</tr>';
+      h += '<tr>';
+      h += '<th class="th-sub">ت١</th>';
+      h += '<th class="th-sub">ت٢</th>';
+      h += '<th class="th-sub">ك١</th>';
+      h += '<th class="th-sub">آذار</th>';
+      h += '<th class="th-sub">نيسان</th>';
+      h += '</tr>';
+      h += '</thead>';
+      h += '<tbody>';
+      
+      // ✅ 6. بناء الصفوف بالترتيب الرسمي
+      orderedRows.forEach(function(row, idx){
+        var finalClass = (row.final != null && row.final >= (row.max||100)/2) ? 'td-final-pass' : (row.final != null ? 'td-final-fail' : '');
+        h += '<tr>';
+        h += '<td>' + toArabicNumerals(idx+1) + '</td>';
+        h += '<td class="td-name">' + esc(row.name) + '</td>';
+        h += '<td>' + toArabicNumerals(row.m1!=null?row.m1:'') + '</td>';
+        h += '<td>' + toArabicNumerals(row.m2!=null?row.m2:'') + '</td>';
+        h += '<td>' + toArabicNumerals(row.m3!=null?row.m3:'') + '</td>';
+        h += '<td style="font-weight:bold;">' + toArabicNumerals(row.a1!=null?row.a1:'') + '</td>';
+        h += '<td>' + toArabicNumerals(row.half!=null?row.half:'') + '</td>';
+        h += '<td>' + toArabicNumerals(row.m4!=null?row.m4:'') + '</td>';
+        h += '<td>' + toArabicNumerals(row.m5!=null?row.m5:'') + '</td>';
+        h += '<td style="font-weight:bold;">' + toArabicNumerals(row.a2!=null?row.a2:'') + '</td>';
+        h += '<td style="font-weight:bold;">' + toArabicNumerals(row.annual!=null?row.annual:'') + '</td>';
+        h += '<td>' + toArabicNumerals(row.exam!=null?row.exam:'') + '</td>';
+        h += '<td class="' + finalClass + '">' + toArabicNumerals(row.final!=null?row.final:'') + '</td>';
+        h += '</tr>';
+      });
+      
+      h += '</tbody></table>';
+      
+      h += '<table style="border:none;width:100%;margin-top:20px;">';
+      h += '<tr style="border:none;">';
+      h += '<td style="border:none;text-align:center;width:50%;padding-top:30px;"><div style="border-top:1px solid #000;padding-top:5px;">توقيع المعلم</div></td>';
+      h += '<td style="border:none;text-align:center;width:50%;padding-top:30px;"><div style="border-top:1px solid #000;padding-top:5px;">توقيع المدير</div></td>';
+      h += '</tr></table>';
+      
+      h += '</body></html>';
+      
+      var blob = new Blob(['\uFEFF' + h], {type: 'application/vnd.ms-excel;charset=utf-8;'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      var fileName = 'كشف_' + esc(teacherName).replace(/\s+/g, '_') + '_' + esc(subjectName).replace(/\s+/g, '_') + '_' + esc(className).replace(/\s+/g, '_') + '.xls';
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+      toast('✓ تم تصدير Excel بنجاح بالترتيب الصحيح', 'ok');
+      
+    }).catch(function(err){
+      console.error('Export error:', err);
+      toast('️ تعذر جلب الدرجات', 'err');
     });
-    
-    h += '</tbody></table>';
-    
-    h += '<table style="border:none;width:100%;margin-top:20px;">';
-    h += '<tr style="border:none;">';
-    h += '<td style="border:none;text-align:center;width:50%;padding-top:30px;"><div style="border-top:1px solid #000;padding-top:5px;">توقيع المعلم</div></td>';
-    h += '<td style="border:none;text-align:center;width:50%;padding-top:30px;"><div style="border-top:1px solid #000;padding-top:5px;">توقيع المدير</div></td>';
-    h += '</tr></table>';
-    
-    h += '</body></html>';
-    
-    var blob = new Blob(['\uFEFF' + h], {type: 'application/vnd.ms-excel;charset=utf-8;'});
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    var fileName = 'كشف_' + esc(teacherName).replace(/\s+/g, '_') + '_' + esc(subjectName).replace(/\s+/g, '_') + '_' + esc(className).replace(/\s+/g, '_') + '.xls';
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
-    toast('✓ تم تصدير Excel بنجاح', 'ok');
-    
   }).catch(function(err){
-    console.error('Export error:', err);
-    toast('⚠️ تعذر التصدير', 'err');
+    console.error('Students error:', err);
+    toast('⚠️ تعذر جلب قائمة التلاميذ', 'err');
   });
 }
 
