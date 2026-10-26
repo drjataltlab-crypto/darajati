@@ -1,4 +1,4 @@
-var CACHE_NAME = 'darajati-teacher-v16';
+var CACHE_NAME = 'darajati-teacher-v17';
 var urlsToCache = [
   './',
   './index.html',
