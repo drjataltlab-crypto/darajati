@@ -170,7 +170,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 
 <section class="screen active" id="s-login">
   <div class="login-content">
-    <div class="login-logo"><div class="logo-icon"></div><h1>درجاتي</h1><p>تطبيق المعلمين لإدارة الدرجات</p></div>
+    <div class="login-logo"><div class="logo-icon">🎓</div><h1>درجاتي</h1><p>تطبيق المعلمين لإدارة الدرجات</p></div>
     <div class="login-card">
       <h2> دخول المعلم</h2>
       <div class="input-wrapper"><label>الكود الخاص بك</label><input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off"><span class="input-icon"></span></div>
@@ -355,8 +355,17 @@ var SendQueue = {
 };
 
 function toast(m,e){
-  var t=$('#toast'); t.textContent=m; t.className='toast show'+(e?' err':(m.indexOf('✓')>=0?' ok':''));
-  clearTimeout(toastT); toastT=setTimeout(function(){t.className='toast';},3000);
+  var t=$('#toast'); 
+  t.textContent=m; 
+  t.className='toast show';
+  // ✅ الإصلاح: التحقق الصحيح من نوع الرسالة
+  if(e === 'err'){
+    t.className += ' err';
+  } else if(e === 'ok' || m.indexOf('✓')>=0){
+    t.className += ' ok';
+  }
+  clearTimeout(toastT); 
+  toastT=setTimeout(function(){t.className='toast';},3000);
 }
 function hideModal(id){$('#'+id).classList.remove('show');}
 function showInactivityModal(){$('#inactivityModal').classList.add('show');}
