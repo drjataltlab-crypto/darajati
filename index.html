@@ -370,7 +370,7 @@ function api(p,ms){
   var url=localStorage.getItem('d_url')||(typeof SERVER_URL!=='undefined'?SERVER_URL:'');
   if(!url)return Promise.reject(new Error('لا رابط'));
   var ctl=new AbortController();
-  var t=setTimeout(function(){ctl.abort();},ms||25000);
+  var t=setTimeout(function(){ctl.abort();},ms||60000);
   return fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p),signal:ctl.signal}).then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
 }
 
