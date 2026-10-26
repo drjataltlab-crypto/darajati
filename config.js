@@ -7,7 +7,7 @@
 */
 
 // رابط الخادم (Google Apps Script)
-var SERVER_URL = "https://script.google.com/macros/s/AKfycbyZVQkKBJPvx3ewVm77eGUTr_LIsOTZvgVazwXuq5aQiQ4mprAWK_c97ZXrYA9MAc15tA/exec";
+var SERVER_URL = "https://script.google.com/macros/s/AKfycbxm7gaLtfgVkv0vb_Vy2KBRvgqDd2XjQ0TS0ghRwrh2eoekgQ4ZWY1IgMlN-f2ROQul0g/exec";
 
 // ═══ ألوان المواد ══
 var SUBJECT_COLORS = {
