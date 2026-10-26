@@ -170,14 +170,14 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
 
 <section class="screen active" id="s-login">
   <div class="login-content">
-    <div class="login-logo"><div class="logo-icon">🎓</div><h1>درجاتي</h1><p>تطبيق المعلمين لإدارة الدرجات</p></div>
+    <div class="login-logo"><div class="logo-icon"></div><h1>درجاتي</h1><p>تطبيق المعلمين لإدارة الدرجات</p></div>
     <div class="login-card">
-      <h2>🔐 دخول المعلم</h2>
-      <div class="input-wrapper"><label>الكود الخاص بك</label><input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off"><span class="input-icon">🔑</span></div>
+      <h2> دخول المعلم</h2>
+      <div class="input-wrapper"><label>الكود الخاص بك</label><input id="codeInput" dir="ltr" placeholder="T-XXXX" maxlength="10" autocomplete="off"><span class="input-icon"></span></div>
       <button class="login-btn" onclick="doLogin()"><span>تسجيل الدخول</span><span>←</span></button>
       <div class="login-msg" id="loginMsg"></div>
     </div>
-    <div class="login-footer">💡 الكود من إدارة النظام</div>
+    <div class="login-footer"> الكود من إدارة النظام</div>
   </div>
 </section>
 
@@ -204,7 +204,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
       </div>
     </div>
 
-    <div class="connection-status" id="connStatus"><span id="connIcon">🟢</span><span id="connText">متصل بالإنترنت</span></div>
+    <div class="connection-status" id="connStatus"><span id="connIcon"></span><span id="connText">متصل بالإنترنت</span></div>
     <div class="sync-indicator" id="syncIndicator"><div class="spinner"></div><span>جاري المزامنة...</span></div>
 
     <div class="app-content">
@@ -230,7 +230,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
         <div id="studentsList"></div>
       </div>
 
-      <div class="send-status no" id="sendBar">📤 لم يتم الإرسال بعد</div>
+      <div class="send-status no" id="sendBar"> لم يتم الإرسال بعد</div>
       <div class="save-hint" id="saveInd">✓ تم الحفظ التلقائي</div>
     </div>
 
@@ -265,7 +265,7 @@ button,input,select{font:inherit;border:none;outline:none} button{cursor:pointer
     <h3>تم قفل الحساب</h3>
     <p>قامت الإدارة بقفل حسابك في نظام درجاتي.</p>
     <div class="lock-details">
-      👨‍🏫 المعلم: <b id="lockTeacherName"></b><br>
+      👨‍ المعلم: <b id="lockTeacherName"></b><br>
       🔑 الكود: <b id="lockTeacherCode"></b><br>
       📅 التاريخ: <b id="lockDate"></b>
     </div>
@@ -434,7 +434,7 @@ function performAutoLogout(){
   clearInterval(msgCheckInterval); clearInterval(syncInterval); clearInterval(lockCheckInterval);
   clearTimeout(inactivityTimer); clearTimeout(warningTimer); clearInterval(countdownInterval);
   var loginMsg = document.getElementById('loginMsg');
-  if(loginMsg){ loginMsg.textContent = '⏰ تم تسجيل الخروج بسبب عدم النشاط'; loginMsg.style.color = '#f59e0b'; setTimeout(function(){ loginMsg.textContent = ''; }, 4000); }
+  if(loginMsg){ loginMsg.textContent = ' تم تسجيل الخروج بسبب عدم النشاط'; loginMsg.style.color = '#f59e0b'; setTimeout(function(){ loginMsg.textContent = ''; }, 4000); }
   window.removeEventListener('online', updateConnectionStatus);
   window.removeEventListener('offline', updateConnectionStatus);
   window.scrollTo(0, 0);
@@ -589,7 +589,7 @@ function loadCurrent(forceRefresh) {
 }
 
 function clearStats(){
-  $('#statStudents').textContent='٠'; $('#statPass').textContent='٠'; $('#statComp').textContent='٠'; $('#statFail').textContent='٠'; $('#totalCount').textContent='٠ تلميذ';
+  $('#statStudents').textContent='٠'; $('#statPass').textContent=''; $('#statComp').textContent='٠'; $('#statFail').textContent='٠'; $('#totalCount').textContent='٠ تلميذ';
 }
 
 function fetchStudents(showLoading) {
@@ -724,11 +724,11 @@ function updSendBar(){
   var clean=dr.rows.filter(function(r){return(r.name||'').trim()&&String(r.degree??'')!=='';});
   if(dr.sentHash&&clean.length>0){ el.className='send-status ok'; el.textContent='✓✓ تم الإرسال للإدارة • '+T.month; }
   else if(dr.sentHash){ el.className='send-status pending'; el.textContent='⚠️ لديك تعديلات لم تُرسل'; }
-  else{ el.className='send-status no'; el.textContent='📤 لم يتم الإرسال بعد'; }
+  else{ el.className='send-status no'; el.textContent=' لم يتم الإرسال بعد'; }
 }
 
-// ✅ الإصلاح الحاسم: القراءة من dr.rows (مصدر الحقيقة) وليس من الشاشة
-// هذا يمنع فقدان التلاميذ إذا كان المعلم يستخدم مربع البحث
+// ✅ الإصلاح الحاسم: عدم مسح الدرجات إلا بعد نجاح الإرسال الفعلي
+// ✅ دالة إرسال الدرجات - لا تمسح الدرجات بعد الإرسال
 function sendGrades(){
   var dr = T.drafts[draftKey()];
   if(!dr) { toast('لا توجد بيانات', true); return; }
@@ -740,7 +740,7 @@ function sendGrades(){
   
   var clean = [], err = '';
   
-  // ✅ نمر على البيانات المحفوظة في الذاكرة، وليس على عناصر الشاشة
+  // ✅ نقرأ من dr.rows (مصدر الحقيقة)
   for(var i=0; i<dr.rows.length; i++){
     var r = dr.rows[i];
     var nm = (r.name||'').trim();
@@ -781,16 +781,26 @@ function sendGrades(){
   
   api(payload, 30000).then(function(r){
     if(r.ok){
+      // ✅ نحفظ hash فقط، لا نمسح الدرجات
       dr.sentHash = payload.checksum;
       dr.sentAt = Date.now();
       saveDraft();
       updSendBar();
+      
+      // ✅ رسالة نجاح خضراء
       toast('✓✓ تم إرسال ' + clean.length + ' درجة بنجاح', 'ok');
+      
+      // ✅ إعادة تحميل الدرجات من الخادم
+      setTimeout(function(){
+        loadCurrent(true);
+      }, 1000);
     } else {
-      toast('❌ ' + (r.error || 'فشل الإرسال'), true);
+      // ❌ عند الفشل - لا نمسح شيئاً
+      toast('❌ ' + (r.error || 'فشل الإرسال - الدرجات محفوظة محلياً'), true);
     }
   }).catch(function(e){
-    toast('⚠️ فشل الإرسال - أُضيف للطابور', true);
+    // ❌ عند فشل الاتصال - نحفظ في الطابور
+    toast('⚠️ فشل الاتصال - أُضيف للطابور', true);
     SendQueue.add({ 
       payload: payload, 
       onSuccess: function(){ 
@@ -798,6 +808,7 @@ function sendGrades(){
         dr.sentAt = Date.now(); 
         saveDraft(); 
         updSendBar(); 
+        toast('✓✓ تم إرسال البيانات من الطابور', 'ok');
       } 
     });
   }).finally(function(){ 
@@ -855,7 +866,7 @@ function deleteMessage(index){
           toast('✓ تم حذف الرسالة نهائياً', 'ok');
           openMessages(); checkMessages();
         } else { toast('❌ ' + (res.error || 'فشل الحذف'), 'err'); }
-      }).catch(function(){ toast('⚠️ تعذر الاتصال بالخادم', 'err'); });
+      }).catch(function(){ toast('️ تعذر الاتصال بالخادم', 'err'); });
     }
   });
 }
