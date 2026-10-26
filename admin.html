@@ -1442,6 +1442,129 @@ adminTab = function(tab){
     if(tb) tb.textContent = 'معدلات التلاميذ';
   }
 };
+
+  // ✅ تحديث عرض قائمة المعلمين في الصفحة الرئيسية مع أزرار عرض الدرجات
+function updateDashListWithButtons(teachers) {
+  var box = document.getElementById('dashList');
+  if (!box) return;
+  box.innerHTML = '';
+  
+  if (!teachers || teachers.length === 0) {
+    box.innerHTML = '<div class="empty">لا يوجد معلمون</div>';
+    return;
+  }
+  
+  teachers.forEach(function(t) {
+    var card = document.createElement('div');
+    card.className = 'tcard';
+    
+    var classesHtml = '';
+    if (t.subjects && t.subjects.length > 0) {
+      t.subjects.forEach(function(sub) {
+        if (sub.classes && sub.classes.length > 0) {
+          sub.classes.forEach(function(cls) {
+            classesHtml += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px;margin:4px 0;background:#f8fafc;border-radius:8px;">' +
+              '<span style="font-size:13px;font-weight:600;">📚 ' + sub.name + ' - ' + cls + '</span>' +
+              '<button class="btn" style="width:auto;padding:6px 12px;font-size:12px;background:#3B82F6;color:#fff;border:none;border-radius:6px;cursor:pointer;" ' +
+              'onclick="openTeacherClassRecord(\'' + t.code + '\',\'' + t.name + '\',\'' + sub.name + '\',\'' + cls + '\')">📊 عرض الدرجات</button>' +
+              '</div>';
+          });
+        }
+      });
+    }
+    
+    var statusDot = t.locked ? '🔴' : '🟢';
+    var statusText = t.locked ? 'مقفل' : 'نشط';
+    
+    card.innerHTML = 
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+        '<div style="font-size:24px;">👨‍🏫</div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-weight:900;font-size:15px;">' + t.name + '</div>' +
+          '<div style="font-size:12px;color:#64748b;">🔑 ' + t.code + ' • ' + statusDot + ' ' + statusText + '</div>' +
+        '</div>' +
+        '<div style="text-align:left;">' +
+          '<div style="font-size:20px;font-weight:900;color:#3B82F6;">' + (t.sentCount || 0) + '</div>' +
+          '<div style="font-size:10px;color:#64748b;">درجة مرسلة</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="border-top:1px solid #e2e8f0;padding-top:10px;">' +
+        (classesHtml || '<div style="color:#94a3b8;font-size:12px;">لا توجد شعب مسجلة</div>') +
+      '</div>';
+    
+    box.appendChild(card);
+  });
+}
+
+// ✅ دالة فتح كشف المعلم (نفس تصميم صفحة المعلمون تماماً)
+function openTeacherClassRecord(teacherCode, teacherName, subject, cls) {
+  // إظهار مودال الكشف
+  var modal = document.getElementById('teacherRecordModal');
+  if(modal) {
+    document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
+    document.getElementById('trSubjectsList').innerHTML = '';
+    document.getElementById('trTableContainer').style.display = 'none';
+    document.getElementById('trLoading').style.display = 'block';
+    document.getElementById('trEmpty').style.display = 'none';
+    modal.classList.add('show');
+    
+    // جلب درجات المعلم
+    api({action:'teacherGrades', code:teacherCode}).then(function(r){
+      document.getElementById('trLoading').style.display = 'none';
+      
+      if(!r.ok || !r.rows || r.rows.length === 0){
+        document.getElementById('trEmpty').style.display = 'block';
+        document.getElementById('trEmpty').textContent = 'لا توجد درجات لهذا المعلم';
+        return;
+      }
+      
+      // فلترة حسب المادة والشعبة
+      var filteredRows = r.rows.filter(function(row){
+        return row.subject === subject && row.cls === cls;
+      });
+      
+      if(filteredRows.length === 0){
+        document.getElementById('trEmpty').style.display = 'block';
+        document.getElementById('trEmpty').textContent = 'لا توجد درجات لهذه الشعبة';
+        return;
+      }
+      
+      // بناء الجدول بنفس تصميم كشف المعلم
+      var tbody = document.getElementById('trTableBody');
+      tbody.innerHTML = '';
+      
+      filteredRows.forEach(function(row, idx){
+        var tr = document.createElement('tr');
+        tr.innerHTML = 
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx+1) + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 !== null && row.m1 !== undefined ? row.m1 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 !== null && row.m2 !== undefined ? row.m2 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 !== null && row.m3 !== undefined ? row.m3 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 !== null && row.a1 !== undefined ? row.a1 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half !== null && row.half !== undefined ? row.half : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 !== null && row.m4 !== undefined ? row.m4 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 !== null && row.m5 !== undefined ? row.m5 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 !== null && row.a2 !== undefined ? row.a2 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual !== null && row.annual !== undefined ? row.annual : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam !== null && row.exam !== undefined ? row.exam : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
+        tbody.appendChild(tr);
+      });
+      
+      document.getElementById('trTableContainer').style.display = 'block';
+      
+    }).catch(function(e){
+      document.getElementById('trLoading').style.display = 'none';
+      document.getElementById('trEmpty').style.display = 'block';
+      document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب البيانات';
+    });
+  }
+}
+
+// ✅ تعديل دالة adminData الأصلية لتستدعي التحديث الجديد
+var originalAdminDataCallback = null;
+// ملاحظة: إذا كان لديك دالة تستدعي adminData، تأكد من أنها تستدعي updateDashListWithButtons(r.teachers) بعد نجاح الطلب
 </script>
 </body>
 </html>
