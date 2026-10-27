@@ -283,8 +283,8 @@ function loadDashData(silent) {
 // ══ دالة عرض درجات مادة وشعبة محددة ══
 // ✅ دالة عرض درجات معلم لشعبة معينة (مرتبة حسب قائمة التلاميذ الرسمية)
 // ✅ دالة عرض درجات معلم لشعبة معينة (3 معاملات)
+// ✅ دالة عرض درجات معلم - مع أرقام عربية وتنسيق محسّن
 function viewTeacherSubject(teacherCode, subject, cls) {
-  // جلب اسم المعلم
   var teacherName = '';
   if (typeof allTeachers !== 'undefined') {
     var t = allTeachers.find(function(x) { return x.code === teacherCode; });
@@ -293,7 +293,6 @@ function viewTeacherSubject(teacherCode, subject, cls) {
   
   console.log('📊 عرض درجات:', teacherCode, subject, cls);
   
-  // إظهار المودال
   var modal = document.getElementById('teacherRecordModal');
   if (modal) {
     document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
@@ -302,7 +301,6 @@ function viewTeacherSubject(teacherCode, subject, cls) {
     document.getElementById('trEmpty').style.display = 'none';
     modal.classList.add('show');
     
-    // ✅ 1. جلب قائمة التلاميذ الرسمية
     api({action: 'getStudents', code: teacherCode, cls: cls}).then(function(studentsRes) {
       console.log('📋 قائمة التلاميذ:', studentsRes);
       
@@ -313,9 +311,8 @@ function viewTeacherSubject(teacherCode, subject, cls) {
         return;
       }
       
-      // ✅ 2. جلب درجات المعلم
       api({action: 'teacherGrades', code: teacherCode}).then(function(gradesRes) {
-        console.log(' درجات المعلم:', gradesRes);
+        console.log('📊 درجات المعلم:', gradesRes);
         document.getElementById('trLoading').style.display = 'none';
         
         if (!gradesRes.ok || !gradesRes.rows) {
@@ -324,7 +321,6 @@ function viewTeacherSubject(teacherCode, subject, cls) {
           return;
         }
         
-        // ✅ 3. بناء خريطة الدرجات
         var gradesMap = {};
         gradesRes.rows.forEach(function(row) {
           if (row.subject === subject && row.cls === cls) {
@@ -332,7 +328,6 @@ function viewTeacherSubject(teacherCode, subject, cls) {
           }
         });
         
-        // ✅ 4. بناء القائمة بالترتيب الرسمي
         var orderedRows = [];
         studentsRes.names.forEach(function(name) {
           var cleanName = name.trim();
@@ -348,33 +343,40 @@ function viewTeacherSubject(teacherCode, subject, cls) {
           }
         });
         
-        // ✅ 5. بناء الجدول
         var tbody = document.getElementById('trTableBody');
         tbody.innerHTML = '';
+        
+        // ✅ دالة مساعدة لتحويل الأرقام إلى عربية
+        function toArNum(val) {
+          if (val === null || val === undefined || val === '') return '';
+          return String(val).replace(/\d/g, function(d) {
+            return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)];
+          });
+        }
         
         orderedRows.forEach(function(row, idx) {
           var tr = document.createElement('tr');
           tr.innerHTML = 
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx + 1) + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 != null ? row.m1 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 != null ? row.m2 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 != null ? row.m3 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 != null ? row.a1 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half != null ? row.half : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 != null ? row.m4 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 != null ? row.m5 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 != null ? row.a2 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual != null ? row.annual : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam != null ? row.exam : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final != null ? row.final : '') + '</td>';
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:13pt;color:#000;">' + toArNum(idx + 1) + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:right;font-weight:900;font-size:12pt;color:#000;padding-right:8px;">' + row.name + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:12pt;color:#000;">' + toArNum(row.m1 != null ? row.m1 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:12pt;color:#000;">' + toArNum(row.m2 != null ? row.m2 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:12pt;color:#000;">' + toArNum(row.m3 != null ? row.m3 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:900;font-size:13pt;color:#000;background:#f0f9ff;">' + toArNum(row.a1 != null ? row.a1 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:900;font-size:13pt;color:#000;background:#f0fdf4;">' + toArNum(row.half != null ? row.half : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:12pt;color:#000;">' + toArNum(row.m4 != null ? row.m4 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:12pt;color:#000;">' + toArNum(row.m5 != null ? row.m5 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:900;font-size:13pt;color:#000;background:#f0f9ff;">' + toArNum(row.a2 != null ? row.a2 : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:900;font-size:13pt;color:#000;background:#fef3c7;">' + toArNum(row.annual != null ? row.annual : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:bold;font-size:12pt;color:#000;">' + toArNum(row.exam != null ? row.exam : '') + '</td>' +
+            '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:900;font-size:14pt;color:#000;background:#fce7f3;">' + toArNum(row.final != null ? row.final : '') + '</td>';
           tbody.appendChild(tr);
         });
         
         document.getElementById('trTableContainer').style.display = 'block';
         
       }).catch(function(e) {
-        console.error('❌ خطأ في جلب الدرجات:', e);
+        console.error(' خطأ في جلب الدرجات:', e);
         document.getElementById('trLoading').style.display = 'none';
         document.getElementById('trEmpty').style.display = 'block';
         document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب الدرجات';
