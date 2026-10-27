@@ -239,8 +239,7 @@ function loadDashData(silent) {
             h += '<div class="dash-class-item">';
             h += '<div class="dash-class-name">📖 '+esc(cd.subject)+' — '+esc(cd.name)+'</div>';
             h += '<div class="dash-class-stats">';
-            h += '<button class="dash-class-open-btn" onclick="event.stopPropagation();viewTeacherSubject(\''+escA(t.code)+'\',\''+escA(cd.subject)+'\',\''+escA(cd.name)+'\')">📂 عرض الدرجات</button>';
-            h += '</div>';
+            h += '<button class="dash-class-open-btn" onclick="event.stopPropagation();viewTeacherSubject(\''+escA(t.code)+'\',\''+escA(cd.subject)+'\',\''+escA(cd.name)+'\')">📊 عرض الدرجات</button>';            h += '</div>';
             h += '</div>';
           });
           h += '</div>';
@@ -283,18 +282,16 @@ function loadDashData(silent) {
 
 // ══ دالة عرض درجات مادة وشعبة محددة ══
 // ✅ دالة عرض درجات معلم لشعبة معينة (مرتبة حسب قائمة التلاميذ الرسمية)
-function viewTeacherSubject(teacherCode, subjectClass) {
-  // subjectClass يأتي بصيغة "المادة - الشعبة" مثل "الرياضيات - الخامس أ"
-  var parts = subjectClass.split(' - ');
-  var subject = parts[0] ? parts[0].trim() : '';
-  var cls = parts[1] ? parts[1].trim() : '';
-  
+// ✅ دالة عرض درجات معلم لشعبة معينة (3 معاملات)
+function viewTeacherSubject(teacherCode, subject, cls) {
   // جلب اسم المعلم
   var teacherName = '';
   if (typeof allTeachers !== 'undefined') {
     var t = allTeachers.find(function(x) { return x.code === teacherCode; });
     if (t) teacherName = t.name;
   }
+  
+  console.log('📊 عرض درجات:', teacherCode, subject, cls);
   
   // إظهار المودال
   var modal = document.getElementById('teacherRecordModal');
@@ -305,17 +302,20 @@ function viewTeacherSubject(teacherCode, subjectClass) {
     document.getElementById('trEmpty').style.display = 'none';
     modal.classList.add('show');
     
-    // ✅ 1. جلب قائمة التلاميذ الرسمية أولاً
+    // ✅ 1. جلب قائمة التلاميذ الرسمية
     api({action: 'getStudents', code: teacherCode, cls: cls}).then(function(studentsRes) {
+      console.log('📋 قائمة التلاميذ:', studentsRes);
+      
       if (!studentsRes.ok || !studentsRes.names || studentsRes.names.length === 0) {
         document.getElementById('trLoading').style.display = 'none';
         document.getElementById('trEmpty').style.display = 'block';
-        document.getElementById('trEmpty').textContent = '⚠️ لا توجد قائمة تلاميذ';
+        document.getElementById('trEmpty').textContent = '⚠️ لا توجد قائمة تلاميذ لـ ' + cls;
         return;
       }
       
       // ✅ 2. جلب درجات المعلم
       api({action: 'teacherGrades', code: teacherCode}).then(function(gradesRes) {
+        console.log(' درجات المعلم:', gradesRes);
         document.getElementById('trLoading').style.display = 'none';
         
         if (!gradesRes.ok || !gradesRes.rows) {
@@ -374,18 +374,19 @@ function viewTeacherSubject(teacherCode, subjectClass) {
         document.getElementById('trTableContainer').style.display = 'block';
         
       }).catch(function(e) {
+        console.error('❌ خطأ في جلب الدرجات:', e);
         document.getElementById('trLoading').style.display = 'none';
         document.getElementById('trEmpty').style.display = 'block';
         document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب الدرجات';
       });
     }).catch(function(e) {
+      console.error('❌ خطأ في جلب قائمة التلاميذ:', e);
       document.getElementById('trLoading').style.display = 'none';
       document.getElementById('trEmpty').style.display = 'block';
       document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب قائمة التلاميذ';
     });
   }
 }
-
 // ══ دالة تحميل درجات مادة وشعبة محددة ══
 function loadTeacherViewFiltered(code, subject, cls) {
   var el = $('#tvBox');
