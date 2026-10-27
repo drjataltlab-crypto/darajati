@@ -1,5 +1,5 @@
 /* ═══ page-dash.js — الرئيسية (محدث: مستطيل عريض + بطاقات محسنة + طباعة عمودية بخطوط كبيرة) ══ */
-
+var currentPrintData = null;
 window.DASH_TEACHERS = [];
 
 registerPage('dash', {
@@ -372,6 +372,13 @@ function viewTeacherSubject(teacherCode, subject, cls) {
             '<td style="padding:8px;border:1px solid #0F172A;text-align:center;font-weight:900;font-size:14pt;color:#000;background:#fce7f3;">' + toArNum(row.final != null ? row.final : '') + '</td>';
           tbody.appendChild(tr);
         });
+        // حفظ البيانات للطباعة
+currentPrintData = {
+  teacherName: teacherName,
+  subject: subject,
+  cls: cls,
+  rows: orderedRows
+};
         
         document.getElementById('trTableContainer').style.display = 'block';
         
