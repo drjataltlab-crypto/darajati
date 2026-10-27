@@ -1597,144 +1597,128 @@ function openTeacherClassRecord(teacherCode, teacherName, subject, cls) {
   }
 }
 
-  // ✅ تعديل سلوك أزرار "عرض الدرجات" في الصفحة الرئيسية
-// هذا الكود يعمل تلقائياً بعد تحميل الصفحة
+// ✅ حل مباشر: تعديل جميع أزرار "عرض الدرجات" فور تحميل الصفحة
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    // البحث عن جميع الأزرار التي تحتوي على "عرض الدرجات"
+    var allButtons = document.querySelectorAll('button');
+    allButtons.forEach(function(btn) {
+      if (btn.textContent.includes('عرض الدرجات') || btn.textContent.includes('📊')) {
+        var onclickAttr = btn.getAttribute('onclick');
+        if (onclickAttr) {
+          // استخراج المعاملات من onclick
+          var match = onclickAttr.match(/'([^']+)'/g);
+          if (match && match.length >= 4) {
+            var teacherCode = match[0].replace(/'/g, '');
+            var teacherName = match[1].replace(/'/g, '');
+            var subject = match[2].replace(/'/g, '');
+            var cls = match[3].replace(/'/g, '');
+            
+            // تعديل الزر ليستدعي الدالة الجديدة
+            btn.onclick = function() {
+              openCorrectRecord(teacherCode, teacherName, subject, cls);
+            };
+            console.log('✅ تم تعديل زر:', teacherName, subject, cls);
+          }
+        }
+      }
+    });
+  }, 1000); // انتظار ثانية واحدة لضمان تحميل الصفحة
+});
 
-(function() {
-  // دالة لفتح كشف المعلم بالترتيب الصحيح
-  function openCorrectRecord(teacherCode, teacherName, subject, cls) {
-    var modal = document.getElementById('teacherRecordModal');
-    if (!modal) {
-      alert('⚠️ مودال الكشف غير موجود');
+// ✅ الدالة الجديدة لفتح الكشف بالترتيب الصحيح
+function openCorrectRecord(teacherCode, teacherName, subject, cls) {
+  var modal = document.getElementById('teacherRecordModal');
+  if (!modal) {
+    alert('⚠️ مودال الكشف غير موجود');
+    return;
+  }
+  
+  document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
+  document.getElementById('trTableContainer').style.display = 'none';
+  document.getElementById('trLoading').style.display = 'block';
+  document.getElementById('trEmpty').style.display = 'none';
+  modal.classList.add('show');
+  
+  // 1. جلب قائمة التلاميذ الرسمية
+  api({action: 'getStudents', code: teacherCode, cls: cls}).then(function(studentsRes) {
+    if (!studentsRes.ok || !studentsRes.names || studentsRes.names.length === 0) {
+      document.getElementById('trLoading').style.display = 'none';
+      document.getElementById('trEmpty').style.display = 'block';
+      document.getElementById('trEmpty').textContent = '⚠️ لا توجد قائمة تلاميذ';
       return;
     }
     
-    document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
-    document.getElementById('trTableContainer').style.display = 'none';
-    document.getElementById('trLoading').style.display = 'block';
-    document.getElementById('trEmpty').style.display = 'none';
-    modal.classList.add('show');
-    
-    // 1. جلب قائمة التلاميذ الرسمية
-    api({action: 'getStudents', code: teacherCode, cls: cls}).then(function(studentsRes) {
-      if (!studentsRes.ok || !studentsRes.names || studentsRes.names.length === 0) {
-        document.getElementById('trLoading').style.display = 'none';
+    // 2. جلب درجات المعلم
+    api({action: 'teacherGrades', code: teacherCode}).then(function(gradesRes) {
+      document.getElementById('trLoading').style.display = 'none';
+      
+      if (!gradesRes.ok || !gradesRes.rows) {
         document.getElementById('trEmpty').style.display = 'block';
-        document.getElementById('trEmpty').textContent = '⚠️ لا توجد قائمة تلاميذ';
+        document.getElementById('trEmpty').textContent = 'لا توجد درجات';
         return;
       }
       
-      // 2. جلب درجات المعلم
-      api({action: 'teacherGrades', code: teacherCode}).then(function(gradesRes) {
-        document.getElementById('trLoading').style.display = 'none';
-        
-        if (!gradesRes.ok || !gradesRes.rows) {
-          document.getElementById('trEmpty').style.display = 'block';
-          document.getElementById('trEmpty').textContent = 'لا توجد درجات';
-          return;
+      // 3. بناء خريطة الدرجات
+      var gradesMap = {};
+      gradesRes.rows.forEach(function(row) {
+        if (row.subject === subject && row.cls === cls) {
+          gradesMap[row.name.trim()] = row;
         }
-        
-        // 3. بناء خريطة الدرجات
-        var gradesMap = {};
-        gradesRes.rows.forEach(function(row) {
-          if (row.subject === subject && row.cls === cls) {
-            gradesMap[row.name.trim()] = row;
-          }
-        });
-        
-        // 4. بناء القائمة بالترتيب الرسمي
-        var orderedRows = [];
-        studentsRes.names.forEach(function(name) {
-          var cleanName = name.trim();
-          var g = gradesMap[cleanName];
-          if (g) {
-            orderedRows.push(g);
-          } else {
-            orderedRows.push({
-              name: cleanName,
-              m1: null, m2: null, m3: null, a1: null, half: null,
-              m4: null, m5: null, a2: null, annual: null, exam: null, final: null, max: 100
-            });
-          }
-        });
-        
-        // 5. بناء الجدول
-        var tbody = document.getElementById('trTableBody');
-        tbody.innerHTML = '';
-        
-        orderedRows.forEach(function(row, idx) {
-          var tr = document.createElement('tr');
-          tr.innerHTML = 
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx + 1) + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 !== null && row.m1 !== undefined ? row.m1 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 !== null && row.m2 !== undefined ? row.m2 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 !== null && row.m3 !== undefined ? row.m3 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 !== null && row.a1 !== undefined ? row.a1 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half !== null && row.half !== undefined ? row.half : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 !== null && row.m4 !== undefined ? row.m4 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 !== null && row.m5 !== undefined ? row.m5 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 !== null && row.a2 !== undefined ? row.a2 : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual !== null && row.annual !== undefined ? row.annual : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam !== null && row.exam !== undefined ? row.exam : '') + '</td>' +
-            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
-          tbody.appendChild(tr);
-        });
-        
-        document.getElementById('trTableContainer').style.display = 'block';
-        
-      }).catch(function(e) {
-        document.getElementById('trLoading').style.display = 'none';
-        document.getElementById('trEmpty').style.display = 'block';
-        document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب الدرجات';
       });
-    }).catch(function(e) {
-      document.getElementById('trLoading').style.display = 'none';
-      document.getElementById('trEmpty').style.display = 'block';
-      document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب قائمة التلاميذ';
-    });
-  }
-  
-  // ✅ مراقبة DOM لتعديل الأزرار عند إنشائها
-  var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      mutation.addedNodes.forEach(function(node) {
-        if (node.nodeType === 1) { // عنصر HTML
-          var buttons = node.querySelectorAll ? node.querySelectorAll('button[onclick*="عرض الدرجات"]') : [];
-          buttons.forEach(function(btn) {
-            var onclick = btn.getAttribute('onclick');
-            if (onclick) {
-              // استخراج المعاملات من onclick
-              var match = onclick.match(/openTeacherClassRecord\('([^']+)'[^)]*\)/);
-              if (match) {
-                var teacherCode = match[1];
-                // تعديل الزر ليستدعي الدالة الجديدة
-                btn.onclick = function() {
-                  // استخراج باقي المعاملات من الزر
-                  var parts = onclick.split("','");
-                  if (parts.length >= 4) {
-                    var tName = parts[0].replace(/.*\('/, '');
-                    var subj = parts[1];
-                    var cls = parts[2].replace(/'\).*/, '');
-                    openCorrectRecord(teacherCode, tName, subj, cls);
-                  }
-                };
-              }
-            }
+      
+      // 4. بناء القائمة بالترتيب الرسمي
+      var orderedRows = [];
+      studentsRes.names.forEach(function(name) {
+        var cleanName = name.trim();
+        var g = gradesMap[cleanName];
+        if (g) {
+          orderedRows.push(g);
+        } else {
+          orderedRows.push({
+            name: cleanName,
+            m1: null, m2: null, m3: null, a1: null, half: null,
+            m4: null, m5: null, a2: null, annual: null, exam: null, final: null, max: 100
           });
         }
       });
+      
+      // 5. بناء الجدول
+      var tbody = document.getElementById('trTableBody');
+      tbody.innerHTML = '';
+      
+      orderedRows.forEach(function(row, idx) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = 
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx + 1) + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 !== null && row.m1 !== undefined ? row.m1 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 !== null && row.m2 !== undefined ? row.m2 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 !== null && row.m3 !== undefined ? row.m3 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 !== null && row.a1 !== undefined ? row.a1 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half !== null && row.half !== undefined ? row.half : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 !== null && row.m4 !== undefined ? row.m4 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 !== null && row.m5 !== undefined ? row.m5 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 !== null && row.a2 !== undefined ? row.a2 : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual !== null && row.annual !== undefined ? row.annual : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam !== null && row.exam !== undefined ? row.exam : '') + '</td>' +
+          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
+        tbody.appendChild(tr);
+      });
+      
+      document.getElementById('trTableContainer').style.display = 'block';
+      
+    }).catch(function(e) {
+      document.getElementById('trLoading').style.display = 'none';
+      document.getElementById('trEmpty').style.display = 'block';
+      document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب الدرجات';
     });
+  }).catch(function(e) {
+    document.getElementById('trLoading').style.display = 'none';
+    document.getElementById('trEmpty').style.display = 'block';
+    document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب قائمة التلاميذ';
   });
-  
-  // بدء المراقبة
-  var dashList = document.getElementById('dashList');
-  if (dashList) {
-    observer.observe(dashList, { childList: true, subtree: true });
-  }
-  
-  console.log('✅ تم تفعيل تعديل أزرار عرض الدرجات');
-})();
+}
 </script>
 </body>
 </html>
