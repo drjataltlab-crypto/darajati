@@ -282,15 +282,108 @@ function loadDashData(silent) {
 }
 
 // ══ دالة عرض درجات مادة وشعبة محددة ══
-function viewTeacherSubject(code, subject, cls) {
-  var t = (window.DASH_TEACHERS || []).find(function(x){ return x.code === code; });
-  if(!t) { toast('بيانات المعلم غير متاحة', 'err'); return; }
+// ✅ دالة عرض درجات معلم لشعبة معينة (مرتبة حسب قائمة التلاميذ الرسمية)
+function viewTeacherSubject(teacherCode, subjectClass) {
+  // subjectClass يأتي بصيغة "المادة - الشعبة" مثل "الرياضيات - الخامس أ"
+  var parts = subjectClass.split(' - ');
+  var subject = parts[0] ? parts[0].trim() : '';
+  var cls = parts[1] ? parts[1].trim() : '';
   
-  ADM.tv = t;
-  $('#tvName').textContent = t.name + ' — ' + subject + ' — ' + cls;
-  $('#tvSub').textContent = '🔑 '+t.code;
-  go('s-tview');
-  loadTeacherViewFiltered(code, subject, cls);
+  // جلب اسم المعلم
+  var teacherName = '';
+  if (typeof allTeachers !== 'undefined') {
+    var t = allTeachers.find(function(x) { return x.code === teacherCode; });
+    if (t) teacherName = t.name;
+  }
+  
+  // إظهار المودال
+  var modal = document.getElementById('teacherRecordModal');
+  if (modal) {
+    document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
+    document.getElementById('trTableContainer').style.display = 'none';
+    document.getElementById('trLoading').style.display = 'block';
+    document.getElementById('trEmpty').style.display = 'none';
+    modal.classList.add('show');
+    
+    // ✅ 1. جلب قائمة التلاميذ الرسمية أولاً
+    api({action: 'getStudents', code: teacherCode, cls: cls}).then(function(studentsRes) {
+      if (!studentsRes.ok || !studentsRes.names || studentsRes.names.length === 0) {
+        document.getElementById('trLoading').style.display = 'none';
+        document.getElementById('trEmpty').style.display = 'block';
+        document.getElementById('trEmpty').textContent = '⚠️ لا توجد قائمة تلاميذ';
+        return;
+      }
+      
+      // ✅ 2. جلب درجات المعلم
+      api({action: 'teacherGrades', code: teacherCode}).then(function(gradesRes) {
+        document.getElementById('trLoading').style.display = 'none';
+        
+        if (!gradesRes.ok || !gradesRes.rows) {
+          document.getElementById('trEmpty').style.display = 'block';
+          document.getElementById('trEmpty').textContent = 'لا توجد درجات';
+          return;
+        }
+        
+        // ✅ 3. بناء خريطة الدرجات
+        var gradesMap = {};
+        gradesRes.rows.forEach(function(row) {
+          if (row.subject === subject && row.cls === cls) {
+            gradesMap[row.name.trim()] = row;
+          }
+        });
+        
+        // ✅ 4. بناء القائمة بالترتيب الرسمي
+        var orderedRows = [];
+        studentsRes.names.forEach(function(name) {
+          var cleanName = name.trim();
+          var g = gradesMap[cleanName];
+          if (g) {
+            orderedRows.push(g);
+          } else {
+            orderedRows.push({
+              name: cleanName,
+              m1: null, m2: null, m3: null, a1: null, half: null,
+              m4: null, m5: null, a2: null, annual: null, exam: null, final: null, max: 100
+            });
+          }
+        });
+        
+        // ✅ 5. بناء الجدول
+        var tbody = document.getElementById('trTableBody');
+        tbody.innerHTML = '';
+        
+        orderedRows.forEach(function(row, idx) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = 
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx + 1) + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 != null ? row.m1 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 != null ? row.m2 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 != null ? row.m3 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 != null ? row.a1 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half != null ? row.half : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 != null ? row.m4 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 != null ? row.m5 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 != null ? row.a2 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual != null ? row.annual : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam != null ? row.exam : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final != null ? row.final : '') + '</td>';
+          tbody.appendChild(tr);
+        });
+        
+        document.getElementById('trTableContainer').style.display = 'block';
+        
+      }).catch(function(e) {
+        document.getElementById('trLoading').style.display = 'none';
+        document.getElementById('trEmpty').style.display = 'block';
+        document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب الدرجات';
+      });
+    }).catch(function(e) {
+      document.getElementById('trLoading').style.display = 'none';
+      document.getElementById('trEmpty').style.display = 'block';
+      document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب قائمة التلاميذ';
+    });
+  }
 }
 
 // ══ دالة تحميل درجات مادة وشعبة محددة ══
