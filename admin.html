@@ -1497,10 +1497,11 @@ function updateDashListWithButtons(teachers) {
 }
 
 // ✅ دالة فتح كشف المعلم (نفس تصميم صفحة المعلمون تماماً)
+// ✅ دالة فتح كشف المعلم (بنفس ترتيب قائمة التلاميذ الرسمية)
 function openTeacherClassRecord(teacherCode, teacherName, subject, cls) {
-  // إظهار مودال الكشف
+  // إظهار المودال
   var modal = document.getElementById('teacherRecordModal');
-  if(modal) {
+  if (modal) {
     document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
     document.getElementById('trSubjectsList').innerHTML = '';
     document.getElementById('trTableContainer').style.display = 'none';
@@ -1508,63 +1509,93 @@ function openTeacherClassRecord(teacherCode, teacherName, subject, cls) {
     document.getElementById('trEmpty').style.display = 'none';
     modal.classList.add('show');
     
-    // جلب درجات المعلم
-    api({action:'teacherGrades', code:teacherCode}).then(function(r){
-      document.getElementById('trLoading').style.display = 'none';
-      
-      if(!r.ok || !r.rows || r.rows.length === 0){
+    // ✅ 1. جلب قائمة التلاميذ الرسمية أولاً (لضمان الترتيب الصحيح)
+    api({action: 'getStudents', code: teacherCode, cls: cls}).then(function(studentsRes) {
+      if (!studentsRes.ok || !studentsRes.names || studentsRes.names.length === 0) {
+        document.getElementById('trLoading').style.display = 'none';
         document.getElementById('trEmpty').style.display = 'block';
-        document.getElementById('trEmpty').textContent = 'لا توجد درجات لهذا المعلم';
+        document.getElementById('trEmpty').textContent = '⚠️ لا توجد قائمة تلاميذ لهذه الشعبة';
         return;
       }
       
-      // فلترة حسب المادة والشعبة
-      var filteredRows = r.rows.filter(function(row){
-        return row.subject === subject && row.cls === cls;
-      });
-      
-      if(filteredRows.length === 0){
+      // ✅ 2. جلب درجات المعلم
+      api({action: 'teacherGrades', code: teacherCode}).then(function(gradesRes) {
+        document.getElementById('trLoading').style.display = 'none';
+        
+        if (!gradesRes.ok || !gradesRes.rows || gradesRes.rows.length === 0) {
+          document.getElementById('trEmpty').style.display = 'block';
+          document.getElementById('trEmpty').textContent = 'لا توجد درجات لهذا المعلم';
+          return;
+        }
+        
+        // ✅ 3. بناء خريطة الدرجات للمطابقة السريعة
+        var gradesMap = {};
+        gradesRes.rows.forEach(function(row) {
+          if (row.subject === subject && row.cls === cls) {
+            gradesMap[row.name.trim()] = row;
+          }
+        });
+        
+        // ✅ 4. بناء قائمة مرتبة حسب التلاميذ الرسميين
+        var orderedRows = [];
+        studentsRes.names.forEach(function(name) {
+          var cleanName = name.trim();
+          var g = gradesMap[cleanName];
+          if (g) {
+            orderedRows.push(g);
+          } else {
+            // تلميذ بدون درجات - نضيفه ببيانات فارغة
+            orderedRows.push({
+              name: cleanName,
+              m1: null, m2: null, m3: null, a1: null, half: null,
+              m4: null, m5: null, a2: null, annual: null, exam: null, final: null, max: 100
+            });
+          }
+        });
+        
+        if (orderedRows.length === 0) {
+          document.getElementById('trEmpty').style.display = 'block';
+          document.getElementById('trEmpty').textContent = 'لا توجد بيانات لهذه الشعبة';
+          return;
+        }
+        
+        // ✅ 5. بناء الجدول بالترتيب الرسمي
+        var tbody = document.getElementById('trTableBody');
+        tbody.innerHTML = '';
+        
+        orderedRows.forEach(function(row, idx) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = 
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx + 1) + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 !== null && row.m1 !== undefined ? row.m1 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 !== null && row.m2 !== undefined ? row.m2 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 !== null && row.m3 !== undefined ? row.m3 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 !== null && row.a1 !== undefined ? row.a1 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half !== null && row.half !== undefined ? row.half : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 !== null && row.m4 !== undefined ? row.m4 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 !== null && row.m5 !== undefined ? row.m5 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 !== null && row.a2 !== undefined ? row.a2 : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual !== null && row.annual !== undefined ? row.annual : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam !== null && row.exam !== undefined ? row.exam : '') + '</td>' +
+            '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
+          tbody.appendChild(tr);
+        });
+        
+        document.getElementById('trTableContainer').style.display = 'block';
+        
+      }).catch(function(e) {
+        document.getElementById('trLoading').style.display = 'none';
         document.getElementById('trEmpty').style.display = 'block';
-        document.getElementById('trEmpty').textContent = 'لا توجد درجات لهذه الشعبة';
-        return;
-      }
-      
-      // بناء الجدول بنفس تصميم كشف المعلم
-      var tbody = document.getElementById('trTableBody');
-      tbody.innerHTML = '';
-      
-      filteredRows.forEach(function(row, idx){
-        var tr = document.createElement('tr');
-        tr.innerHTML = 
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (idx+1) + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;">' + row.name + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m1 !== null && row.m1 !== undefined ? row.m1 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m2 !== null && row.m2 !== undefined ? row.m2 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m3 !== null && row.m3 !== undefined ? row.m3 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a1 !== null && row.a1 !== undefined ? row.a1 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.half !== null && row.half !== undefined ? row.half : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m4 !== null && row.m4 !== undefined ? row.m4 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;">' + (row.m5 !== null && row.m5 !== undefined ? row.m5 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.a2 !== null && row.a2 !== undefined ? row.a2 : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.annual !== null && row.annual !== undefined ? row.annual : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.exam !== null && row.exam !== undefined ? row.exam : '') + '</td>' +
-          '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
-        tbody.appendChild(tr);
+        document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب الدرجات';
       });
-      
-      document.getElementById('trTableContainer').style.display = 'block';
-      
-    }).catch(function(e){
+    }).catch(function(e) {
       document.getElementById('trLoading').style.display = 'none';
       document.getElementById('trEmpty').style.display = 'block';
-      document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب البيانات';
+      document.getElementById('trEmpty').textContent = '⚠️ تعذر جلب قائمة التلاميذ';
     });
   }
 }
-
-// ✅ تعديل دالة adminData الأصلية لتستدعي التحديث الجديد
-var originalAdminDataCallback = null;
-// ملاحظة: إذا كان لديك دالة تستدعي adminData، تأكد من أنها تستدعي updateDashListWithButtons(r.teachers) بعد نجاح الطلب
 </script>
 </body>
 </html>
