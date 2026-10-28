@@ -1504,13 +1504,6 @@ function openTeacherClassRecord(teacherCode, teacherName, subject, cls) {
   if (modal) {
     document.getElementById('trTeacherName').textContent = teacherName + ' | ' + subject + ' - ' + cls;
     document.getElementById('trSubjectsList').innerHTML = '';
-    // حفظ البيانات للطباعة
-currentPrintData = {
-  teacherName: teacherName,
-  subject: subject,
-  cls: cls,
-  rows: orderedRows
-};
     document.getElementById('trTableContainer').style.display = 'none';
     document.getElementById('trLoading').style.display = 'block';
     document.getElementById('trEmpty').style.display = 'none';
