@@ -1800,6 +1800,76 @@ function openPrintSettings() {
   document.getElementById('printSchoolType').value = PRINT_SETTINGS.schoolType || '';
   document.getElementById('printSettingsModal').classList.add('show');
 }
+
+// ✅ دالة حفظ الإعدادات والطباعة
+function savePrintSettingsAndPrint() {
+  console.log('🖨️ حفظ وطباعة - البيانات:', window.currentPrintData);
+  
+  if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
+    alert('⚠️ لا توجد بيانات للطباعة');
+    return;
+  }
+  
+  // حفظ الإعدادات
+  PRINT_SETTINGS.schoolName = document.getElementById('printSchoolName').value.trim();
+  PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim();
+  PRINT_SETTINGS.schoolType = document.getElementById('printSchoolType').value.trim();
+  
+  hideModal('printSettingsModal');
+  
+  var data = window.currentPrintData;
+  
+  function toArNum(val) {
+    if (val === null || val === undefined || val === '') return '';
+    return String(val).replace(/\d/g, function(d) {
+      return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)];
+    });
+  }
+  
+  var html = '<html dir="rtl"><head><meta charset="utf-8"><title>كشف ' + data.teacherName + '</title>';
+  html += '<style>';
+  html += 'body{font-family:Arial;padding:20px;}';
+  html += 'h1,h2{text-align:center;}';
+  html += 'table{border-collapse:collapse;width:100%;}';
+  html += 'th,td{border:1px solid #000;padding:6px;text-align:center;}';
+  html += 'th{background:#1E40AF;color:#fff;}';
+  html += '@media print{body{padding:0;}}';
+  html += '</style></head><body>';
+  
+  html += '<h1>📊 كشف المعلم</h1>';
+  html += '<h2>' + data.teacherName + ' | ' + data.subject + ' - ' + data.cls + '</h2>';
+  html += '<p style="text-align:center;">عدد التلاميذ: ' + toArNum(data.rows.length) + '</p>';
+  html += '<table><thead><tr><th>ت</th><th>الاسم</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>معدل ف</th><th>نصف السنة</th><th>آذار</th><th>نيسان</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
+  
+  data.rows.forEach(function(row, idx) {
+    html += '<tr>';
+    html += '<td>' + toArNum(idx + 1) + '</td>';
+    html += '<td style="text-align:right;font-weight:bold;">' + row.name + '</td>';
+    html += '<td>' + toArNum(row.m1 != null ? row.m1 : '') + '</td>';
+    html += '<td>' + toArNum(row.m2 != null ? row.m2 : '') + '</td>';
+    html += '<td>' + toArNum(row.m3 != null ? row.m3 : '') + '</td>';
+    html += '<td style="font-weight:bold;">' + toArNum(row.a1 != null ? row.a1 : '') + '</td>';
+    html += '<td style="font-weight:bold;">' + toArNum(row.half != null ? row.half : '') + '</td>';
+    html += '<td>' + toArNum(row.m4 != null ? row.m4 : '') + '</td>';
+    html += '<td>' + toArNum(row.m5 != null ? row.m5 : '') + '</td>';
+    html += '<td style="font-weight:bold;">' + toArNum(row.a2 != null ? row.a2 : '') + '</td>';
+    html += '<td style="font-weight:bold;">' + toArNum(row.annual != null ? row.annual : '') + '</td>';
+    html += '<td>' + toArNum(row.exam != null ? row.exam : '') + '</td>';
+    html += '<td style="font-weight:bold;">' + toArNum(row.final != null ? row.final : '') + '</td>';
+    html += '</tr>';
+  });
+  
+  html += '</tbody></table>';
+  html += '<div style="margin-top:50px;display:flex;justify-content:space-around;">';
+  html += '<div style="text-align:center;"><div style="border-top:1px solid #000;padding-top:10px;">توقيع المعلم</div></div>';
+  html += '<div style="text-align:center;"><div style="border-top:1px solid #000;padding-top:10px;">توقيع المدير</div></div>';
+  html += '</div></body></html>';
+  
+  var win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  setTimeout(function() { win.print(); }, 500);
+}
 </script>
 </body>
 </html>
