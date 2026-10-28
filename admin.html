@@ -1786,6 +1786,20 @@ function openPrint() {
   win.document.close();
   setTimeout(function() { win.print(); }, 500);
 }
+
+function openPrintSettings() {
+  // أولاً نتحقق من وجود البيانات
+  if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
+    alert('⚠️ لا توجد بيانات للطباعة. افتح كشف المعلم أولاً.');
+    return;
+  }
+  
+  // ثم نفتح نافذة الإعدادات
+  document.getElementById('printSchoolName').value = PRINT_SETTINGS.schoolName || '';
+  document.getElementById('printSchoolYear').value = PRINT_SETTINGS.schoolYear || '';
+  document.getElementById('printSchoolType').value = PRINT_SETTINGS.schoolType || '';
+  document.getElementById('printSettingsModal').classList.add('show');
+}
 </script>
 </body>
 </html>
