@@ -1581,7 +1581,15 @@ function openTeacherClassRecord(teacherCode, teacherName, subject, cls) {
             '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
           tbody.appendChild(tr);
         });
-        
+        // ✅ حفظ البيانات للطباعة
+window.currentPrintData = {
+  teacherName: teacherName,
+  subject: subject,
+  cls: cls,
+  rows: orderedRows
+};
+console.log('✅ تم حفظ البيانات للطباعة (1):', window.currentPrintData);
+
         document.getElementById('trTableContainer').style.display = 'block';
         
       }).catch(function(e) {
@@ -1705,7 +1713,15 @@ function openCorrectRecord(teacherCode, teacherName, subject, cls) {
           '<td style="padding:6px;border:1px solid #0F172A;text-align:center;font-weight:bold;">' + (row.final !== null && row.final !== undefined ? row.final : '') + '</td>';
         tbody.appendChild(tr);
       });
-      
+      // ✅ حفظ البيانات للطباعة
+window.currentPrintData = {
+  teacherName: teacherName,
+  subject: subject,
+  cls: cls,
+  rows: orderedRows
+};
+console.log('✅ تم حفظ البيانات للطباعة (2):', window.currentPrintData);
+
       document.getElementById('trTableContainer').style.display = 'block';
       
     }).catch(function(e) {
