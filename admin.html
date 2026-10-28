@@ -1822,14 +1822,14 @@ function savePrintSettingsAndPrint() {
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
     return String(val).replace(/\d/g, function(d) {
-      return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)];
+      return '٠١٢٤٥٦٧٨٩'[parseInt(d)];
     });
   }
   
-  // ✅ إنشاء عنصر طباعة مخفي
+  // ✅ إنشاء عنصر الطباعة
   var printContainer = document.createElement('div');
   printContainer.id = 'printContainer';
-  printContainer.style.display = 'none';
+  printContainer.className = 'print-only';
   
   var html = '';
   html += '<div style="font-family: \'Tajawal\', Arial, sans-serif; direction: rtl; text-align: right; padding: 20px; max-width: 210mm; margin: 0 auto; background: #fff;">';
@@ -1843,7 +1843,7 @@ function savePrintSettingsAndPrint() {
   html += '</td>';
   html += '<td style="width: 34%; text-align: center; font-weight: bold; font-size: 16pt; color: #1E40AF; border: none;">';
   html += 'كشف المعلم';
-  html += '<br><span style="font-size: 11pt; color: #64748B;">العام الدراسي ' + (PRINT_SETTINGS.schoolYear || '٢٠٢٥ - ٢٠٢٦') + '</span>';
+  html += '<br><span style="font-size: 11pt; color: #64748B;">العام الدراسي ' + (PRINT_SETTINGS.schoolYear || '٠٢٥ - ٢٢٦') + '</span>';
   html += '</td>';
   html += '<td style="width: 33%; text-align: left; font-size: 11pt; border: none;">';
   html += '<div style="margin-bottom: 5px;"><b>المادة:</b> ' + data.subject + '</div>';
@@ -1865,7 +1865,7 @@ function savePrintSettingsAndPrint() {
   html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف١</th>';
   html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #7C3AED; color: #fff;">نصف السنة</th>';
   html += '<th colspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #0E7490;">الفصل الثاني</th>';
-  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف٢</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف</th>';
   html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #059669; color: #fff;">السعي السنوي</th>';
   html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #DC2626; color: #fff;">نهاية السنة</th>';
   html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #BE123C; color: #fff;">النهائية</th>';
@@ -1923,17 +1923,48 @@ function savePrintSettingsAndPrint() {
   printContainer.innerHTML = html;
   document.body.appendChild(printContainer);
   
-  // الطباعة
+  // ✅ إضافة CSS للطباعة
+  var printStyle = document.createElement('style');
+  printStyle.id = 'printStyle';
+  printStyle.innerHTML = `
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printContainer, #printContainer * {
+        visibility: visible !important;
+      }
+      #printContainer {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        display: block !important;
+        background: #fff !important;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+    }
+  `;
+  document.head.appendChild(printStyle);
+  
+  // ✅ الطباعة
   setTimeout(function() {
     window.print();
     
-    // إزالة عنصر الطباعة بعد الطباعة
+    // إزالة عنصر الطباعة والـ CSS بعد الطباعة
     setTimeout(function() {
       if (printContainer && printContainer.parentNode) {
         printContainer.parentNode.removeChild(printContainer);
       }
+      var style = document.getElementById('printStyle');
+      if (style && style.parentNode) {
+        style.parentNode.removeChild(style);
+      }
     }, 1000);
-  }, 250);
+  }, 300);
 }
 </script>
 </body>
