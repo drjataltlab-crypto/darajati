@@ -1822,7 +1822,7 @@ function savePrintSettingsAndPrint() {
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
     return String(val).replace(/\d/g, function(d) {
-      return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)];
+      return '٠١٢٤٥٦٧٨٩'[parseInt(d)];
     });
   }
   
@@ -1839,7 +1839,7 @@ function savePrintSettingsAndPrint() {
     
     html += '<div style="font-family: \'Tajawal\', Arial, sans-serif; direction: rtl; padding: 15px; max-width: 297mm; margin: 0 auto; background: #fff; page-break-after: ' + (page < totalPages - 1 ? 'always' : 'auto') + ';">';
     
-    // ✅ الرأس
+    // الرأس
     html += '<table style="width: 100%; border: none; margin-bottom: 15px;">';
     html += '<tr>';
     
@@ -1855,7 +1855,7 @@ function savePrintSettingsAndPrint() {
     // الوسط: العنوان
     html += '<td style="width: 40%; text-align: center; border: none; vertical-align: top;">';
     html += '<div style="font-size: 18pt; font-weight: 900; color: #1E40AF;">درجات المعلم</div>';
-    html += '<div style="font-size: 11pt; color: #64748B; margin-top: 5px;">العام الدراسي ' + (PRINT_SETTINGS.schoolYear || '٠٢٥ - ٢٢٦') + '</div>';
+    html += '<div style="font-size: 11pt; color: #64748B; margin-top: 5px;">العام الدراسي ' + (PRINT_SETTINGS.schoolYear || '٢٠٢٥ - ٢٠٢٦') + '</div>';
     html += '</td>';
     
     // اليسار: المعلومات
@@ -1868,25 +1868,23 @@ function savePrintSettingsAndPrint() {
     html += '</tr>';
     html += '</table>';
     
-    // ✅ الجدول الرئيسي
+    // الجدول الرئيسي
     html += '<table style="width: 100%; border-collapse: collapse; border: 2px solid #0F172A; font-size: 9pt;">';
     
-    // رأس الجدول - الصف الأول
     html += '<thead>';
     html += '<tr style="background: #1E40AF; color: #fff;">';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; width: 30px; background: #FDE047; color: #000;">ت</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; width: 150px; background: #fff; color: #000;">اسم التلميذ</th>';
     html += '<th colspan="3" style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">الفصل الأول</th>';
-    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف١</th>';
+    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #7C3AED; color: #fff;">نصف السنة</th>';
     html += '<th colspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #0E7490;">الفصل الثاني</th>';
-    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف٢</th>';
+    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #059669; color: #fff;">السعي السنوي</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #DC2626; color: #fff;">نهاية السنة</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #BE123C; color: #fff;">النهائية</th>';
     html += '</tr>';
     
-    // رأس الجدول - الصف الثاني
     html += '<tr style="background: #1E40AF; color: #fff;">';
     html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">ت١</th>';
     html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">ت٢</th>';
@@ -1896,10 +1894,9 @@ function savePrintSettingsAndPrint() {
     html += '</tr>';
     html += '</thead>';
     
-    // جسم الجدول
     html += '<tbody>';
     pageRows.forEach(function(row, idx) {
-      var actualIdx = startIdx + idx + 1; // الترقيم الصحيح
+      var actualIdx = startIdx + idx + 1;
       var finalClass = (row.final != null && row.final >= (row.max||100)/2) ? 'background: #D1FAE5; color: #047857;' : (row.final != null ? 'background: #FEE2E2; color: #DC2626;' : '');
       
       html += '<tr style="background: ' + (idx % 2 === 0 ? '#fff' : '#F8FAFC') + ';">';
@@ -1922,7 +1919,7 @@ function savePrintSettingsAndPrint() {
     
     html += '</table>';
     
-    // ✅ نهاية الصفحة: معلم المادة (في اليسار فقط)
+    // نهاية الصفحة: معلم المادة
     html += '<div style="margin-top: 30px; text-align: left; font-size: 11pt; font-weight: bold;">';
     html += 'معلم المادة: ' + data.teacherName;
     html += '</div>';
@@ -1930,54 +1927,27 @@ function savePrintSettingsAndPrint() {
     html += '</div>';
   }
   
-  // ✅ إنشاء عنصر الطباعة
-  var printContainer = document.createElement('div');
-  printContainer.id = 'printContainer';
-  printContainer.innerHTML = html;
-  document.body.appendChild(printContainer);
+  // ✅ فتح نافذة منفصلة للطباعة (معزولة تماماً)
+  var printWindow = window.open('', '_blank', 'width=1200,height=800');
   
-  // ✅ إضافة CSS للطباعة
-  var printStyle = document.createElement('style');
-  printStyle.id = 'printStyle';
-  printStyle.innerHTML = `
-    @media print {
-      body * {
-        visibility: hidden !important;
-      }
-      #printContainer, #printContainer * {
-        visibility: visible !important;
-      }
-      #printContainer {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        display: block !important;
-        background: #fff !important;
-      }
-      @page {
-        size: A4 landscape;
-        margin: 10mm;
-      }
-    }
-  `;
-  document.head.appendChild(printStyle);
+  var fullHtml = '<!DOCTYPE html><html dir="rtl"><head>';
+  fullHtml += '<meta charset="utf-8">';
+  fullHtml += '<title>طباعة - ' + data.teacherName + '</title>';
+  fullHtml += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">';
+  fullHtml += '<style>';
+  fullHtml += '@page { size: A4 landscape; margin: 10mm; }';
+  fullHtml += 'body { margin: 0; padding: 0; background: #fff; }';
+  fullHtml += '</style>';
+  fullHtml += '</head><body>';
+  fullHtml += html;
+  fullHtml += '</body></html>';
   
-  // ✅ الطباعة
+  printWindow.document.write(fullHtml);
+  printWindow.document.close();
+  
   setTimeout(function() {
-    window.print();
-    
-    // إزالة عنصر الطباعة والـ CSS بعد الطباعة
-    setTimeout(function() {
-      if (printContainer && printContainer.parentNode) {
-        printContainer.parentNode.removeChild(printContainer);
-      }
-      var style = document.getElementById('printStyle');
-      if (style && style.parentNode) {
-        style.parentNode.removeChild(style);
-      }
-    }, 1000);
-  }, 300);
+    printWindow.print();
+  }, 500);
 }
 </script>
 </body>
