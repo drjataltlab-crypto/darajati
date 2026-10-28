@@ -1794,13 +1794,13 @@ var ADMIN_PRINT_SETTINGS = {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ نظام الطباعة الخاص بالإدارة (معزول تماماً عن صفحة المعلمين)
+   ✅ نظام الطباعة الخاص بالإدارة (معزول تماماً ومصحح)
    ═══════════════════════════════════════════════════════════════ */
 
 var ADM_PRINT_DATA = null;
 var ADM_PRINT_SETTINGS = {
   schoolName: localStorage.getItem('adm_school_name') || 'المنهل الابتدائية',
-  schoolYear: localStorage.getItem('adm_school_year') || '٢٠٢٥ - ٢٠٢٦',
+  schoolYear: localStorage.getItem('adm_school_year') || '٢٠٢٦ - ٢٠٢٧',
   schoolType: localStorage.getItem('adm_school_type') || 'للبنين'
 };
 
@@ -1820,7 +1820,7 @@ function admOpenPrintSettings() {
 
 function admSaveAndPrint() {
   ADM_PRINT_SETTINGS.schoolName = document.getElementById('printSchoolName').value.trim() || 'المنهل الابتدائية';
-  ADM_PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim() || '٢٠٢٥ - ٢٠٢٦';
+  ADM_PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim() || '٢٠٢٦ - ٢٠٢٧';
   ADM_PRINT_SETTINGS.schoolType = document.getElementById('printSchoolType').value.trim() || 'للبنين';
   
   localStorage.setItem('adm_school_name', ADM_PRINT_SETTINGS.schoolName);
@@ -1858,47 +1858,48 @@ function admSaveAndPrint() {
   h += '.print-page { width: 100%; max-width: 200mm; margin: 0 auto; padding: 0; page-break-after: always; }';
   h += '.print-page:last-child { page-break-after: auto; }';
   
-  // ✅ تصميم الرأس والعناوين الواضحة
-  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
-  h += '.print-header-right, .print-header-center { flex: 1; text-align: center; }';
+  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
+  h += '.print-header-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; }';
+  h += '.print-header-center { flex: 1.2; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: right; }';
   
-  h += '.print-school-name { font-size: 11pt; font-weight: 900; color: #000; line-height: 1.3; text-align: right; }';
-  h += '.print-school-name .line1 { display: block; font-size: 10pt; font-weight: 700; }';
-  h += '.print-school-name .line2 { display: block; font-size: 12pt; font-weight: 900; }';
-  h += '.print-school-name .line3 { display: block; font-size: 10pt; font-weight: 700; }';
+  // ✅ تنسيق اسم المدرسة بالضبط كما طلبت (محاذاة وسط لتبدو "إدارة" و "للبنين" متوازيتين)
+  h += '.print-school-name { text-align: center; width: 100%; color: #000; line-height: 1.4; }';
+  h += '.print-school-name .line1 { display: block; font-size: 11pt; font-weight: 700; }';
+  h += '.print-school-name .line2 { display: block; font-size: 14pt; font-weight: 900; }';
+  h += '.print-school-name .line3 { display: block; font-size: 11pt; font-weight: 700; }';
   
-  h += '.print-title { font-size: 13pt; font-weight: 900; color: #1E40AF; margin: 0; }';
-  h += '.print-year { font-size: 9pt; color: #64748B; font-weight: 700; }';
+  h += '.print-title { font-size: 14pt; font-weight: 900; color: #1E40AF; margin: 0; }';
+  // ✅ حجم ولون أسود للعام الدراسي
+  h += '.print-year { font-size: 12pt !important; color: #000000 !important; font-weight: 900 !important; margin-top: 2mm; }';
   
-  h += '.print-info-box { font-size: 9pt; line-height: 1.5; color: #0F172A; text-align: right; }';
+  h += '.print-info-box { font-size: 10pt; line-height: 1.6; color: #0F172A; text-align: right; }';
   h += '.print-info-row { margin-bottom: 1mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
-  // ✅ تصميم الجدول والألوان الواضحة
-  h += '.print-table { width: 100%; border-collapse: collapse; font-size: 8pt; table-layout: fixed !important; }';
+  h += '.print-table { width: 100%; border-collapse: collapse; table-layout: fixed !important; }';
   h += '.print-table thead { display: table-header-group !important; }';
   h += '.print-table tbody { display: table-row-group !important; }';
-  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.5mm 0.8mm !important; text-align: center; vertical-align: middle; line-height: 1.1; }';
-  h += '.print-table th { font-weight: 900 !important; font-size: 8pt !important; color: #fff !important; }';
+  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 2mm 1mm !important; text-align: center; vertical-align: middle; line-height: 1.2; }';
   
-  h += '.th-seq { width: 10mm !important; background: #FDE047 !important; color: #000 !important; }';
-  h += '.th-name { width: 42mm !important; text-align: right !important; padding-right: 1mm !important; background: #ffffff !important; color: #000 !important; font-size: 8pt !important; }';
-  h += '.th-sub { font-size: 7.5pt !important; background: #E0E7FF !important; color: #1E40AF !important; }';
-  h += '.th-annual, .th-final { font-size: 7pt !important; }';
+  // ✅ عناوين الأعمدة باللون الأسود وحجم واضح
+  h += '.print-table th { font-weight: 900 !important; font-size: 9pt !important; color: #000000 !important; background: #F1F5F9 !important; }';
+  h += '.th-seq { width: 10mm !important; background: #FEF3C7 !important; }';
+  h += '.th-name { width: 45mm !important; text-align: right !important; padding-right: 1mm !important; background: #ffffff !important; }';
+  h += '.th-sub { font-size: 8.5pt !important; }';
   
-  // ✅ تنسيق الخلايا (أرقام سوداء واضحة)
-  h += '.print-table tbody td { color: #000000 !important; font-size: 9pt !important; font-weight: 700 !important; }';
-  h += '.seq-num { font-size: 9pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 8pt !important; color: #000 !important; background: #ffffff !important; }';
+  // ✅ حجم الدرجات كبير وقابل للقراءة بوضوح
+  h += '.print-table tbody td { color: #000000 !important; font-size: 11pt !important; font-weight: 800 !important; }';
+  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; }';
+  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 10pt !important; color: #000 !important; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
-  // ✅ التوقيع في الأسفل
-  h += '.print-footer { margin-top: 5mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
-  h += '.print-signature { text-align: right; width: 80mm; }';
-  h += '.print-signature .sig-text { font-size: 11pt; font-weight: 700; color: #0F172A; }';
-  h += '.print-signature .sig-name { font-size: 12pt; font-weight: 900; color: #1E40AF; margin-right: 2mm; }';
+  // ✅ توقيع المعلم في الأسفل بحجم ولون أسود واضح
+  h += '.print-footer { margin-top: 6mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
+  h += '.print-signature { text-align: right; width: 100mm; }';
+  h += '.print-signature .sig-text { font-size: 12pt; font-weight: 900; color: #000000; }';
+  h += '.print-signature .sig-name { font-size: 12pt; font-weight: 900; color: #000000; }';
   
   h += '</style></head><body>';
   
@@ -1922,7 +1923,7 @@ function admSaveAndPrint() {
     
     h += '<div class="print-header-center">';
     h += '<div class="print-title">درجات المعلم</div>';
-    h += '<div class="print-year">للعام الدراسي ' + ADM_PRINT_SETTINGS.schoolYear + '</div>';
+    h += '<div class="print-year">العام الدراسي ' + ADM_PRINT_SETTINGS.schoolYear + '</div>';
     h += '</div>';
     
     h += '<div class="print-header-left"><div class="print-info-box">';
@@ -1936,14 +1937,14 @@ function admSaveAndPrint() {
     h += '<thead><tr>';
     h += '<th rowspan="2" class="th-seq">ت</th>';
     h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
-    h += '<th colspan="3" style="background:#1D4ED8 !important;">الفصل الأول</th>';
-    h += '<th rowspan="2" style="background:#B45309 !important;">معدل<br>ف١</th>';
-    h += '<th rowspan="2" style="background:#7C3AED !important;">نصف<br>السنة</th>';
-    h += '<th colspan="2" style="background:#0E7490 !important;">الفصل الثاني</th>';
-    h += '<th rowspan="2" style="background:#B45309 !important;">معدل<br>ف٢</th>';
-    h += '<th rowspan="2" class="th-annual" style="background:#059669 !important;">السعي<br>السنوي</th>';
-    h += '<th rowspan="2" style="background:#DC2626 !important;">نهاية<br>السنة</th>';
-    h += '<th rowspan="2" class="th-final" style="background:#BE123C !important;">الدرجة<br>النهائية</th>';
+    h += '<th colspan="3">الفصل الأول</th>';
+    h += '<th rowspan="2">معدل<br>ف١</th>';
+    h += '<th rowspan="2">نصف<br>السنة</th>';
+    h += '<th colspan="2">الفصل الثاني</th>';
+    h += '<th rowspan="2">معدل<br>ف٢</th>';
+    h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
+    h += '<th rowspan="2">نهاية<br>السنة</th>';
+    h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
     h += '</tr>';
     
     h += '<tr>';
@@ -1988,6 +1989,7 @@ function admSaveAndPrint() {
     
     h += '</tbody></table>';
     
+    // ✅ توقيع المعلم في الأسفل
     h += '<div class="print-footer">';
     h += '<div class="print-signature">';
     h += '<span class="sig-text">معلم المادة: </span>';
@@ -1995,12 +1997,12 @@ function admSaveAndPrint() {
     h += '</div>';
     h += '</div>';
     
-    h += '</div>'; // نهاية print-page
+    h += '</div>';
   }
   
   h += '</body></html>';
   
-  // ✅ استخدام iframe منفصل تماماً لضمان العزل
+  // ✅ استخدام iframe منفصل تماماً لضمان العزل عن صفحة المعلمين
   var oldFrame = document.getElementById('admPrintFrame');
   if (oldFrame) oldFrame.remove();
   
