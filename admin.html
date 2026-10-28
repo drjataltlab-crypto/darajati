@@ -1721,12 +1721,16 @@ function openCorrectRecord(teacherCode, teacherName, subject, cls) {
 }
 // ✅ دالة الطباعة
 function openPrint() {
-  if (!currentPrintData || !currentPrintData.rows || currentPrintData.rows.length === 0) {
+  console.log('🖨️ محاولة الطباعة:', window.currentPrintData);
+  
+  if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
     alert('⚠️ لا توجد بيانات للطباعة');
     return;
   }
   
-  var data = currentPrintData;
+  var data = window.currentPrintData;
+  // ... باقي الكود ...
+}
   
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
