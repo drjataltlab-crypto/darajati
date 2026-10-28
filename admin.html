@@ -858,11 +858,15 @@
 
 <div class="ovl" id="teacherRecordModal">
   <div class="modal" style="max-width:950px; max-height:92vh; overflow-y:auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:10px;">
-      <h3 style="margin:0; color:#1E40AF;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
-      <div style="display:flex; gap:8px;">
-      <button class="btn" style="width:auto; background:#059669; margin:0;" onclick="admOpenPrintSettings()">🖨️ طباعة</button>      </div>
+    <!-- ✅ رأس النافذة مع زري الطباعة والإغلاق بجانب بعضهما بوضوح -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:12px;">
+      <h3 style="margin:0; color:#1E40AF; font-size:16px;">📊 كشف المعلم: <span id="trTeacherName"></span></h3>
+      <div style="display:flex; gap:10px;">
+        <button class="btn" style="background:#059669; color:#fff; font-weight:bold; padding:8px 16px;" onclick="admOpenPrintSettings()">🖨️ طباعة</button>
+        <button class="btn" style="background:#EF4444; color:#fff; font-weight:bold; padding:8px 16px;" onclick="hideModal('teacherRecordModal')">✕ إغلاق</button>
+      </div>
     </div>
+    
     <div id="trSubjectsList" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;"></div>
     <div id="trTableContainer" style="display:none;">
       <h4 id="trSubjectTitle" style="color:#047857; margin-bottom:10px;"></h4>
@@ -876,7 +880,7 @@
               <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف١</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#7C3AED;">نصف السنة</th>
               <th colspan="2" style="padding:8px; border:1px solid #0F172A; background:#0E7490;">الفصل الثاني</th>
-              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف٢</th>
+              <th style="padding:8px; border:1px solid #0F172A; background:#B45309;">معدل ف</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#059669;">السعي السنوي</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#DC2626;">نهاية السنة</th>
               <th style="padding:8px; border:1px solid #0F172A; background:#BE123C;">النهائية</th>
@@ -886,7 +890,7 @@
               <th style="padding:6px; border:1px solid #0F172A;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت١</th>
               <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ت٢</th>
-              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك</th>
+              <th style="padding:6px; border:1px solid #0F172A; background:#1D4ED8;">ك١</th>
               <th style="padding:6px; border:1px solid #0F172A; background:#B45309;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#7C3AED;"></th>
               <th style="padding:6px; border:1px solid #0F172A; background:#0E7490;">آذار</th>
@@ -901,7 +905,7 @@
         </table>
       </div>
     </div>
-    <div id="trLoading" class="empty" style="display:none;">⏳ جاري تحميل البيانات...</div>
+    <div id="trLoading" class="empty" style="display:none;"> جاري تحميل البيانات...</div>
     <div id="trEmpty" class="empty" style="display:none;">لا توجد مواد مسجلة لهذا المعلم.</div>
   </div>
 </div>
@@ -1797,6 +1801,10 @@ var ADMIN_PRINT_SETTINGS = {
    ✅ نظام الطباعة الخاص بالإدارة (معزول تماماً ومصحح)
    ═══════════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════════════
+   ✅ نظام الطباعة الخاص بالإدارة (مصحح لـ 35 تلميذ + تنسيق دقيق)
+   ═══════════════════════════════════════════════════════════════ */
+
 var ADM_PRINT_DATA = null;
 var ADM_PRINT_SETTINGS = {
   schoolName: localStorage.getItem('adm_school_name') || 'المنهل الابتدائية',
@@ -1810,11 +1818,9 @@ function admOpenPrintSettings() {
     return;
   }
   ADM_PRINT_DATA = window.currentPrintData;
-  
   document.getElementById('printSchoolName').value = ADM_PRINT_SETTINGS.schoolName;
   document.getElementById('printSchoolYear').value = ADM_PRINT_SETTINGS.schoolYear;
   document.getElementById('printSchoolType').value = ADM_PRINT_SETTINGS.schoolType;
-  
   document.getElementById('printSettingsModal').classList.add('show');
 }
 
@@ -1828,83 +1834,73 @@ function admSaveAndPrint() {
   localStorage.setItem('adm_school_type', ADM_PRINT_SETTINGS.schoolType);
   
   hideModal('printSettingsModal');
-  
-  if (!ADM_PRINT_DATA) {
-    alert('⚠️ لا توجد بيانات');
-    return;
-  }
+  if (!ADM_PRINT_DATA) { alert('⚠️ لا توجد بيانات'); return; }
   
   var data = ADM_PRINT_DATA;
   
-  // ✅ دالة الأرقام العربية الصحيحة: ٠١٢٣٤٥٦٧٨٩
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
-    return String(val).replace(/\d/g, function(d) {
-      return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)];
-    });
+    return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]; });
   }
+  
+  // ✅ إزالة كلمة "مدرسة" إذا كانت مكررة في المتغير لضمان التنسيق الصحيح
+  var cleanSchoolName = ADM_PRINT_SETTINGS.schoolName.replace(/^مدرسة\s*/i, '');
   
   var h = '';
   h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>درجات المعلم</title>';
   h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
   h += '<style>';
   
-  h += '@page { size: A4 portrait; margin: 5mm 5mm 5mm 5mm; ';
-  h += '@top-left { content: none !important; } @top-center { content: none !important; } @top-right { content: none !important; } ';
-  h += '@bottom-left { content: none !important; } @bottom-center { content: none !important; } @bottom-right { content: none !important; } }';
-  
+  h += '@page { size: A4 portrait; margin: 6mm 5mm 6mm 5mm; }';
   h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
   h += 'html, body { width: 100%; font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; }';
   h += '.print-page { width: 100%; max-width: 200mm; margin: 0 auto; padding: 0; page-break-after: always; }';
   h += '.print-page:last-child { page-break-after: auto; }';
   
-  h += '.print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
+  h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
   h += '.print-header-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; }';
   h += '.print-header-center { flex: 1.2; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: right; }';
   
-  // ✅ تنسيق اسم المدرسة بالضبط كما طلبت (محاذاة وسط لتبدو "إدارة" و "للبنين" متوازيتين)
-  h += '.print-school-name { text-align: center; width: 100%; color: #000; line-height: 1.4; }';
-  h += '.print-school-name .line1 { display: block; font-size: 11pt; font-weight: 700; }';
-  h += '.print-school-name .line2 { display: block; font-size: 14pt; font-weight: 900; }';
-  h += '.print-school-name .line3 { display: block; font-size: 11pt; font-weight: 700; }';
+  // ✅ تنسيق اسم المدرسة المصغر والدقيق
+  h += '.print-school-name { text-align: center; width: 100%; color: #000; line-height: 1.3; }';
+  h += '.print-school-name .line1 { display: block; font-size: 9pt; font-weight: 700; }';
+  h += '.print-school-name .line2 { display: block; font-size: 11pt; font-weight: 900; }';
+  h += '.print-school-name .line3 { display: block; font-size: 9pt; font-weight: 700; }';
   
-  h += '.print-title { font-size: 14pt; font-weight: 900; color: #1E40AF; margin: 0; }';
-  // ✅ حجم ولون أسود للعام الدراسي
-  h += '.print-year { font-size: 12pt !important; color: #000000 !important; font-weight: 900 !important; margin-top: 2mm; }';
+  h += '.print-title { font-size: 13pt; font-weight: 900; color: #1E40AF; margin: 0; }';
+  h += '.print-year { font-size: 11pt !important; color: #000000 !important; font-weight: 900 !important; margin-top: 2mm; }';
   
-  h += '.print-info-box { font-size: 10pt; line-height: 1.6; color: #0F172A; text-align: right; }';
+  h += '.print-info-box { font-size: 9pt; line-height: 1.5; color: #0F172A; text-align: right; }';
   h += '.print-info-row { margin-bottom: 1mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
+  // ✅ تصغير الهوامش والخطوط لضمان احتواء 35 تلميذ في الصفحة
   h += '.print-table { width: 100%; border-collapse: collapse; table-layout: fixed !important; }';
   h += '.print-table thead { display: table-header-group !important; }';
   h += '.print-table tbody { display: table-row-group !important; }';
-  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 2mm 1mm !important; text-align: center; vertical-align: middle; line-height: 1.2; }';
+  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1mm 0.5mm !important; text-align: center; vertical-align: middle; line-height: 1.1; }';
   
-  // ✅ عناوين الأعمدة باللون الأسود وحجم واضح
-  h += '.print-table th { font-weight: 900 !important; font-size: 9pt !important; color: #000000 !important; background: #F1F5F9 !important; }';
-  h += '.th-seq { width: 10mm !important; background: #FEF3C7 !important; }';
-  h += '.th-name { width: 45mm !important; text-align: right !important; padding-right: 1mm !important; background: #ffffff !important; }';
-  h += '.th-sub { font-size: 8.5pt !important; }';
+  h += '.print-table th { font-weight: 900 !important; font-size: 7.5pt !important; color: #000000 !important; background: #F1F5F9 !important; }';
+  h += '.th-seq { width: 9mm !important; background: #FEF3C7 !important; }';
+  h += '.th-name { width: 42mm !important; text-align: right !important; padding-right: 1mm !important; background: #ffffff !important; }';
+  h += '.th-sub { font-size: 7pt !important; }';
   
-  // ✅ حجم الدرجات كبير وقابل للقراءة بوضوح
-  h += '.print-table tbody td { color: #000000 !important; font-size: 11pt !important; font-weight: 800 !important; }';
-  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 10pt !important; color: #000 !important; }';
+  // ✅ حجم الدرجات والأسماء مصغر قليلاً ليتسع لـ 35 تلميذ
+  h += '.print-table tbody td { color: #000000 !important; font-size: 8pt !important; font-weight: 700 !important; }';
+  h += '.seq-num { font-size: 8pt !important; font-weight: 900 !important; color: #000000 !important; }';
+  h += '.td-name { text-align: right !important; font-weight: 700 !important; padding-right: 1mm !important; font-size: 7.5pt !important; color: #000 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';
   
   h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
-  // ✅ توقيع المعلم في الأسفل بحجم ولون أسود واضح
-  h += '.print-footer { margin-top: 6mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
+  h += '.print-footer { margin-top: 5mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
   h += '.print-signature { text-align: right; width: 100mm; }';
-  h += '.print-signature .sig-text { font-size: 12pt; font-weight: 900; color: #000000; }';
-  h += '.print-signature .sig-name { font-size: 12pt; font-weight: 900; color: #000000; }';
+  h += '.print-signature .sig-text { font-size: 11pt; font-weight: 900; color: #000000; }';
+  h += '.print-signature .sig-name { font-size: 11pt; font-weight: 900; color: #000000; }';
   
   h += '</style></head><body>';
   
-  // ✅ تقسيم البيانات إلى صفحات (35 تلميذ في كل ورقة)
-  var studentsPerPage = 35;
+  var studentsPerPage = 35; // ✅ الهدف: 35 تلميذ في الورقة
   var totalPages = Math.ceil(data.rows.length / studentsPerPage);
   
   for (var page = 0; page < totalPages; page++) {
@@ -1917,7 +1913,7 @@ function admSaveAndPrint() {
     h += '<div class="print-header">';
     h += '<div class="print-header-right"><div class="print-school-name">';
     h += '<span class="line1">إدارة</span>';
-    h += '<span class="line2">مدرسة ' + ADM_PRINT_SETTINGS.schoolName + '</span>';
+    h += '<span class="line2">مدرسة ' + cleanSchoolName + '</span>'; // ✅ التنسيق الصحيح بدون تكرار
     h += '<span class="line3">' + ADM_PRINT_SETTINGS.schoolType + '</span>';
     h += '</div></div>';
     
@@ -1946,25 +1942,17 @@ function admSaveAndPrint() {
     h += '<th rowspan="2">نهاية<br>السنة</th>';
     h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
     h += '</tr>';
-    
     h += '<tr>';
-    h += '<th class="th-sub">ت١</th>';
-    h += '<th class="th-sub">ت٢</th>';
-    h += '<th class="th-sub">ك١</th>';
-    h += '<th class="th-sub">آذار</th>';
-    h += '<th class="th-sub">نيسان</th>';
-    h += '</tr></thead>';
+    h += '<th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th>';
+    h += '<th class="th-sub">آذار</th><th class="th-sub">نيسان</th>';
+    h += '</tr></thead><tbody>';
     
-    h += '<tbody>';
-    
-    var globalIndex = startIdx + 1; // ✅ ترقيم صحيح ومتسلسل
+    var globalIndex = startIdx + 1;
     pageRows.forEach(function(row) {
       var g = row;
       h += '<tr>';
-      
       h += '<td class="seq-num">' + toArNum(globalIndex) + '</td>';
       h += '<td class="td-name">' + (g.name || '') + '</td>';
-      
       h += '<td style="background:#DBEAFE !important;">' + (g.m1!=null ? toArNum(g.m1) : '') + '</td>';
       h += '<td style="background:#DBEAFE !important;">' + (g.m2!=null ? toArNum(g.m2) : '') + '</td>';
       h += '<td style="background:#DBEAFE !important;">' + (g.m3!=null ? toArNum(g.m3) : '') + '</td>';
@@ -1983,48 +1971,34 @@ function admSaveAndPrint() {
       
       h += '<td style="background:' + finalBg + ' !important;">' + (finalVal!=null ? toArNum(finalVal) : '') + '</td>';
       h += '</tr>';
-      
       globalIndex++;
     });
     
     h += '</tbody></table>';
     
-    // ✅ توقيع المعلم في الأسفل
     h += '<div class="print-footer">';
     h += '<div class="print-signature">';
     h += '<span class="sig-text">معلم المادة: </span>';
     h += '<span class="sig-name">' + data.teacherName + '</span>';
-    h += '</div>';
-    h += '</div>';
-    
+    h += '</div></div>';
     h += '</div>';
   }
   
   h += '</body></html>';
   
-  // ✅ استخدام iframe منفصل تماماً لضمان العزل عن صفحة المعلمين
   var oldFrame = document.getElementById('admPrintFrame');
   if (oldFrame) oldFrame.remove();
   
   var f = document.createElement('iframe');
   f.id = 'admPrintFrame';
-  f.style.position = 'fixed'; 
-  f.style.left = '-10000px'; 
-  f.style.width = '0'; 
-  f.style.height = '0'; 
-  f.style.border = '0';
+  f.style.position = 'fixed'; f.style.left = '-10000px'; f.style.width = '0'; f.style.height = '0'; f.style.border = '0';
   document.body.appendChild(f);
   
   var doc = f.contentWindow.document;
-  doc.open(); 
-  doc.write(h); 
-  doc.close();
+  doc.open(); doc.write(h); doc.close();
   
   setTimeout(function() { 
-    try { 
-      f.contentWindow.focus(); 
-      f.contentWindow.print(); 
-    } catch (e) {} 
+    try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) {} 
   }, 800);
 }
 </script>
