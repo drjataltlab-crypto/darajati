@@ -1,4 +1,11 @@
 /* ═══ page-dash.js — الرئيسية (محدث: مستطيل عريض + بطاقات محسنة + طباعة عمودية بخطوط كبيرة) ══ */
+// ✅ متغيرات خاصة بصفحة المعلمين فقط
+var CURRENT_PRINT_DATA = null;
+var PRINT_SETTINGS = {
+  schoolName: localStorage.getItem('print_school_name') || 'مدرسة المنهل الابتدائية',
+  schoolYear: localStorage.getItem('print_school_year') || '٢٠٢٥ - ٢٠٢٦',
+  schoolType: localStorage.getItem('print_school_type') || 'للبنين'
+};
 var currentPrintData = null;
 window.DASH_TEACHERS = [];
 
