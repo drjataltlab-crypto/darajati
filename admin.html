@@ -1826,49 +1826,114 @@ function savePrintSettingsAndPrint() {
     });
   }
   
-  var html = '<html dir="rtl"><head><meta charset="utf-8"><title>كشف ' + data.teacherName + '</title>';
-  html += '<style>';
-  html += 'body{font-family:Arial;padding:20px;}';
-  html += 'h1,h2{text-align:center;}';
-  html += 'table{border-collapse:collapse;width:100%;}';
-  html += 'th,td{border:1px solid #000;padding:6px;text-align:center;}';
-  html += 'th{background:#1E40AF;color:#fff;}';
-  html += '@media print{body{padding:0;}}';
-  html += '</style></head><body>';
+  // ✅ إنشاء عنصر طباعة مخفي
+  var printContainer = document.createElement('div');
+  printContainer.id = 'printContainer';
+  printContainer.style.display = 'none';
   
-  html += '<h1>📊 كشف المعلم</h1>';
-  html += '<h2>' + data.teacherName + ' | ' + data.subject + ' - ' + data.cls + '</h2>';
-  html += '<p style="text-align:center;">عدد التلاميذ: ' + toArNum(data.rows.length) + '</p>';
-  html += '<table><thead><tr><th>ت</th><th>الاسم</th><th>ت١</th><th>ت٢</th><th>ك١</th><th>معدل ف</th><th>نصف السنة</th><th>آذار</th><th>نيسان</th><th>معدل ف٢</th><th>السعي السنوي</th><th>نهاية السنة</th><th>النهائية</th></tr></thead><tbody>';
+  var html = '';
+  html += '<div style="font-family: \'Tajawal\', Arial, sans-serif; direction: rtl; text-align: right; padding: 20px; max-width: 210mm; margin: 0 auto; background: #fff;">';
   
+  // الرأس
+  html += '<table style="width: 100%; border: none; margin-bottom: 15px;">';
+  html += '<tr>';
+  html += '<td style="width: 33%; text-align: right; font-weight: bold; font-size: 14pt; border: none;">';
+  html += 'إدارة ' + (PRINT_SETTINGS.schoolName || '....................');
+  html += '<br><span style="font-size: 11pt; color: #666;">' + (PRINT_SETTINGS.schoolType || '....................') + '</span>';
+  html += '</td>';
+  html += '<td style="width: 34%; text-align: center; font-weight: bold; font-size: 16pt; color: #1E40AF; border: none;">';
+  html += 'كشف المعلم';
+  html += '<br><span style="font-size: 11pt; color: #64748B;">العام الدراسي ' + (PRINT_SETTINGS.schoolYear || '٢٠٢٥ - ٢٠٢٦') + '</span>';
+  html += '</td>';
+  html += '<td style="width: 33%; text-align: left; font-size: 11pt; border: none;">';
+  html += '<div style="margin-bottom: 5px;"><b>المادة:</b> ' + data.subject + '</div>';
+  html += '<div style="margin-bottom: 5px;"><b>الصف والشعبة:</b> ' + data.cls + '</div>';
+  html += '<div><b>عدد التلاميذ:</b> ' + toArNum(data.rows.length) + '</div>';
+  html += '</td>';
+  html += '</tr>';
+  html += '</table>';
+  
+  // الجدول الرئيسي
+  html += '<table style="width: 100%; border-collapse: collapse; border: 2px solid #0F172A; font-size: 10pt;">';
+  
+  // رأس الجدول - الصف الأول
+  html += '<thead>';
+  html += '<tr style="background: #1E40AF; color: #fff;">';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; width: 40px;">ت</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; width: 180px;">اسم التلميذ</th>';
+  html += '<th colspan="3" style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">الفصل الأول</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف١</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #7C3AED; color: #fff;">نصف السنة</th>';
+  html += '<th colspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #0E7490;">الفصل الثاني</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف٢</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #059669; color: #fff;">السعي السنوي</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #DC2626; color: #fff;">نهاية السنة</th>';
+  html += '<th rowspan="2" style="padding: 8px; border: 1px solid #0F172A; background: #BE123C; color: #fff;">النهائية</th>';
+  html += '</tr>';
+  
+  // رأس الجدول - الصف الثاني
+  html += '<tr style="background: #1E40AF; color: #fff;">';
+  html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">ت١</th>';
+  html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">ت٢</th>';
+  html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">ك</th>';
+  html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #0E7490;">آذار</th>';
+  html += '<th style="padding: 6px; border: 1px solid #0F172A; background: #0E7490;">نيسان</th>';
+  html += '</tr>';
+  html += '</thead>';
+  
+  // جسم الجدول
+  html += '<tbody>';
   data.rows.forEach(function(row, idx) {
-    html += '<tr>';
-    html += '<td>' + toArNum(idx + 1) + '</td>';
-    html += '<td style="text-align:right;font-weight:bold;">' + row.name + '</td>';
-    html += '<td>' + toArNum(row.m1 != null ? row.m1 : '') + '</td>';
-    html += '<td>' + toArNum(row.m2 != null ? row.m2 : '') + '</td>';
-    html += '<td>' + toArNum(row.m3 != null ? row.m3 : '') + '</td>';
-    html += '<td style="font-weight:bold;">' + toArNum(row.a1 != null ? row.a1 : '') + '</td>';
-    html += '<td style="font-weight:bold;">' + toArNum(row.half != null ? row.half : '') + '</td>';
-    html += '<td>' + toArNum(row.m4 != null ? row.m4 : '') + '</td>';
-    html += '<td>' + toArNum(row.m5 != null ? row.m5 : '') + '</td>';
-    html += '<td style="font-weight:bold;">' + toArNum(row.a2 != null ? row.a2 : '') + '</td>';
-    html += '<td style="font-weight:bold;">' + toArNum(row.annual != null ? row.annual : '') + '</td>';
-    html += '<td>' + toArNum(row.exam != null ? row.exam : '') + '</td>';
-    html += '<td style="font-weight:bold;">' + toArNum(row.final != null ? row.final : '') + '</td>';
+    var finalClass = (row.final != null && row.final >= (row.max||100)/2) ? 'background: #D1FAE5; color: #047857; font-weight: bold;' : (row.final != null ? 'background: #FEE2E2; color: #DC2626; font-weight: bold;' : '');
+    
+    html += '<tr style="background: ' + (idx % 2 === 0 ? '#fff' : '#F8FAFC') + ';">';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center; font-weight: bold;">' + toArNum(idx + 1) + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: right; font-weight: bold; padding-right: 8px;">' + row.name + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center;">' + toArNum(row.m1 != null ? row.m1 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center;">' + toArNum(row.m2 != null ? row.m2 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center;">' + toArNum(row.m3 != null ? row.m3 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center; font-weight: bold;">' + toArNum(row.a1 != null ? row.a1 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center; font-weight: bold;">' + toArNum(row.half != null ? row.half : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center;">' + toArNum(row.m4 != null ? row.m4 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center;">' + toArNum(row.m5 != null ? row.m5 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center; font-weight: bold;">' + toArNum(row.a2 != null ? row.a2 : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center; font-weight: bold;">' + toArNum(row.annual != null ? row.annual : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center;">' + toArNum(row.exam != null ? row.exam : '') + '</td>';
+    html += '<td style="padding: 6px; border: 1px solid #0F172A; text-align: center; ' + finalClass + '">' + toArNum(row.final != null ? row.final : '') + '</td>';
     html += '</tr>';
   });
+  html += '</tbody>';
   
-  html += '</tbody></table>';
-  html += '<div style="margin-top:50px;display:flex;justify-content:space-around;">';
-  html += '<div style="text-align:center;"><div style="border-top:1px solid #000;padding-top:10px;">توقيع المعلم</div></div>';
-  html += '<div style="text-align:center;"><div style="border-top:1px solid #000;padding-top:10px;">توقيع المدير</div></div>';
-  html += '</div></body></html>';
+  html += '</table>';
   
-  var win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-  setTimeout(function() { win.print(); }, 500);
+  // التواقيع
+  html += '<table style="width: 100%; border: none; margin-top: 40px;">';
+  html += '<tr>';
+  html += '<td style="width: 50%; text-align: center; border: none; padding-top: 30px;">';
+  html += '<div style="border-top: 1px solid #000; padding-top: 8px; font-weight: bold;">توقيع المعلم</div>';
+  html += '</td>';
+  html += '<td style="width: 50%; text-align: center; border: none; padding-top: 30px;">';
+  html += '<div style="border-top: 1px solid #000; padding-top: 8px; font-weight: bold;">توقيع المدير</div>';
+  html += '</td>';
+  html += '</tr>';
+  html += '</table>';
+  
+  html += '</div>';
+  
+  printContainer.innerHTML = html;
+  document.body.appendChild(printContainer);
+  
+  // الطباعة
+  setTimeout(function() {
+    window.print();
+    
+    // إزالة عنصر الطباعة بعد الطباعة
+    setTimeout(function() {
+      if (printContainer && printContainer.parentNode) {
+        printContainer.parentNode.removeChild(printContainer);
+      }
+    }, 1000);
+  }, 250);
 }
 </script>
 </body>
