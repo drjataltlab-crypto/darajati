@@ -1805,6 +1805,15 @@ var ADMIN_PRINT_SETTINGS = {
 };
 
 // ✅ دالة فتح إعدادات الطباعة (خاصة بالإدارة)
+// ✅ متغيرات خاصة بالإدارة فقط (معزولة تماماً)
+var ADMIN_PRINT_DATA = null;
+var ADMIN_PRINT_SETTINGS = {
+  schoolName: localStorage.getItem('print_school_name') || 'مدرسة المنهل الابتدائية',
+  schoolYear: localStorage.getItem('print_school_year') || '٢٠٢٥ - ٢٠٢٦',
+  schoolType: localStorage.getItem('print_school_type') || 'للبنين'
+};
+
+// ✅ دالة فتح إعدادات الطباعة (خاصة بالإدارة)
 function openPrintSettings() {
   if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
     alert('️ لا توجد بيانات للطباعة');
