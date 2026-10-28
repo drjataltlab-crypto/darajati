@@ -1794,12 +1794,11 @@ var ADMIN_PRINT_SETTINGS = {
   schoolType: ''
 };
 
-// ✅ دالة فتح إعدادات الطباعة (خاصة بالإدارة)
-// ✅ متغيرات خاصة بالإدارة فقط - معزولة تماماً عن page-team.js
+// ✅ متغيرات خاصة بالإدارة فقط - معزولة تماماً
 var ADM_PRINT_DATA = null;
 var ADM_PRINT_SETTINGS = {
   schoolName: localStorage.getItem('adm_school_name') || 'مدرسة المنهل الابتدائية',
-  schoolYear: localStorage.getItem('adm_school_year') || '٢٢٥ - ٢٠٢٦',
+  schoolYear: localStorage.getItem('adm_school_year') || '٢٠٢٥ - ٢٠٢٦',
   schoolType: localStorage.getItem('adm_school_type') || 'للبنين'
 };
 
@@ -1819,7 +1818,7 @@ function admOpenPrint() {
   document.getElementById('printSettingsModal').classList.add('show');
 }
 
-// ✅ دالة حفظ وطباعة (خاصة بالإدارة - معزولة تماماً)
+// ✅ دالة حفظ وطباعة (خاصة بالإدارة)
 function admSaveAndPrint() {
   ADM_PRINT_SETTINGS.schoolName = document.getElementById('printSchoolName').value.trim() || 'مدرسة المنهل الابتدائية';
   ADM_PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim() || '٢٠٢٥ - ٢٠٢٦';
@@ -1832,17 +1831,17 @@ function admSaveAndPrint() {
   hideModal('printSettingsModal');
   
   if (!ADM_PRINT_DATA) {
-    alert('️ لا توجد بيانات');
+    alert('⚠️ لا توجد بيانات');
     return;
   }
   
   var data = ADM_PRINT_DATA;
   
-  // ✅ دالة الأرقام العربية - جميع الأرقام ٠١٢٣٤٥٦٧٨٩
+  // ✅ دالة الأرقام العربية الكاملة
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
     return String(val).replace(/\d/g, function(d) {
-      return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)];
+      return '٠١٢٤٥٦٧٨٩'[parseInt(d)];
     });
   }
   
@@ -1857,56 +1856,75 @@ function admSaveAndPrint() {
     var endIdx = Math.min(startIdx + studentsPerPage, data.rows.length);
     var pageRows = data.rows.slice(startIdx, endIdx);
     
-    html += '<div class="adm-print-page" style="page-break-after: ' + (page < totalPages - 1 ? 'always' : 'auto') + ';">';
+    html += '<div class="adm-page" style="page-break-after: ' + (page < totalPages - 1 ? 'always' : 'auto') + ';">';
     
-    // الرأس
+    // ✅ الرأس - عناوين واضحة وكبيرة
     html += '<div class="adm-header">';
-    html += '<div class="adm-header-right"><div class="adm-school"><span class="line1">إدارة</span><span class="line2">' + ADM_PRINT_SETTINGS.schoolName + '</span><span class="line3">' + ADM_PRINT_SETTINGS.schoolType + '</span></div></div>';
-    html += '<div class="adm-header-center"><div class="adm-title">درجات المعلم</div><div class="adm-year">' + ADM_PRINT_SETTINGS.schoolYear + '</div></div>';
-    html += '<div class="adm-header-left"><div class="adm-info">';
-    html += '<div><b>المادة:</b> ' + data.subject + '</div>';
-    html += '<div><b>الصف:</b> ' + data.cls + '</div>';
-    html += '<div><b>العدد:</b> ' + toArNum(data.rows.length) + '</div>';
-    html += '</div></div>';
+    html += '<div class="adm-header-right">';
+    html += '<div class="adm-school-name">';
+    html += '<span class="line1">إدارة</span>';
+    html += '<span class="line2">' + ADM_PRINT_SETTINGS.schoolName + '</span>';
+    html += '<span class="line3">' + ADM_PRINT_SETTINGS.schoolType + '</span>';
+    html += '</div>';
     html += '</div>';
     
-    // الجدول
+    html += '<div class="adm-header-center">';
+    html += '<div class="adm-title">درجات المعلم</div>';
+    html += '<div class="adm-year">العام الدراسي ' + ADM_PRINT_SETTINGS.schoolYear + '</div>';
+    html += '</div>';
+    
+    html += '<div class="adm-header-left">';
+    html += '<div class="adm-info">';
+    html += '<div class="info-row"><b>المادة:</b> ' + data.subject + '</div>';
+    html += '<div class="info-row"><b>الصف والشعبة:</b> ' + data.cls + '</div>';
+    html += '<div class="info-row"><b>عدد التلاميذ:</b> ' + toArNum(data.rows.length) + '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    // ✅ الجدول
     html += '<table class="adm-table">';
     html += '<thead><tr>';
-    html += '<th rowspan="2" bgcolor="#FDE047" style="width:8mm;">ت</th>';
-    html += '<th rowspan="2" bgcolor="#fff" style="width:45mm;">الاسم</th>';
-    html += '<th colspan="3" bgcolor="#1D4ED8">ف١</th>';
-    html += '<th rowspan="2" bgcolor="#B45309">معدل١</th>';
-    html += '<th rowspan="2" bgcolor="#7C3AED">نصف</th>';
-    html += '<th colspan="2" bgcolor="#0E7490">ف٢</th>';
-    html += '<th rowspan="2" bgcolor="#B45309">معدل٢</th>';
-    html += '<th rowspan="2" bgcolor="#059669">سنوي</th>';
-    html += '<th rowspan="2" bgcolor="#DC2626">نهاية</th>';
-    html += '<th rowspan="2" bgcolor="#BE123C">نهائي</th>';
-    html += '</tr><tr>';
-    html += '<th bgcolor="#E0E7FF">ت١</th><th bgcolor="#E0E7FF">ت٢</th><th bgcolor="#E0E7FF">ك</th>';
-    html += '<th bgcolor="#E0E7FF">آذار</th><th bgcolor="#E0E7FF">نيسان</th>';
-    html += '</tr></thead><tbody>';
+    html += '<th rowspan="2" class="th-seq">ت</th>';
+    html += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
+    html += '<th colspan="3" class="th-f1">الفصل الأول</th>';
+    html += '<th rowspan="2" class="th-avg1">معدل ف١</th>';
+    html += '<th rowspan="2" class="th-half">نصف السنة</th>';
+    html += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
+    html += '<th rowspan="2" class="th-avg2">معدل ف٢</th>';
+    html += '<th rowspan="2" class="th-annual">السعي السنوي</th>';
+    html += '<th rowspan="2" class="th-exam">نهاية السنة</th>';
+    html += '<th rowspan="2" class="th-final">الدرجة النهائية</th>';
+    html += '</tr>';
+    html += '<tr>';
+    html += '<th class="th-sub">ت١</th>';
+    html += '<th class="th-sub">ت٢</th>';
+    html += '<th class="th-sub">ك</th>';
+    html += '<th class="th-sub">آذار</th>';
+    html += '<th class="th-sub">نيسان</th>';
+    html += '</tr></thead>';
     
-    // ✅ ترقيم صحيح من 1
+    html += '<tbody>';
+    
+    // ✅ ترقيم صحيح
     var idx = startIdx + 1;
     pageRows.forEach(function(row) {
       var finalBg = (row.final != null && row.final >= (row.max||100)/2) ? '#BBF7D0' : (row.final != null ? '#FECACA' : '#fff');
       
       html += '<tr>';
-      html += '<td bgcolor="#FEF3C7">' + toArNum(idx) + '</td>';
-      html += '<td class="adm-name">' + (row.name || '') + '</td>';
-      html += '<td bgcolor="#DBEAFE">' + toArNum(row.m1 != null ? row.m1 : '') + '</td>';
-      html += '<td bgcolor="#DBEAFE">' + toArNum(row.m2 != null ? row.m2 : '') + '</td>';
-      html += '<td bgcolor="#DBEAFE">' + toArNum(row.m3 != null ? row.m3 : '') + '</td>';
-      html += '<td bgcolor="#FEF3C7">' + toArNum(row.a1 != null ? row.a1 : '') + '</td>';
-      html += '<td bgcolor="#EDE9FE">' + toArNum(row.half != null ? row.half : '') + '</td>';
-      html += '<td bgcolor="#CFFAFE">' + toArNum(row.m4 != null ? row.m4 : '') + '</td>';
-      html += '<td bgcolor="#CFFAFE">' + toArNum(row.m5 != null ? row.m5 : '') + '</td>';
-      html += '<td bgcolor="#FEF3C7">' + toArNum(row.a2 != null ? row.a2 : '') + '</td>';
-      html += '<td bgcolor="#D1FAE5">' + toArNum(row.annual != null ? row.annual : '') + '</td>';
-      html += '<td bgcolor="#FEE2E2">' + toArNum(row.exam != null ? row.exam : '') + '</td>';
-      html += '<td bgcolor="' + finalBg + '">' + toArNum(row.final != null ? row.final : '') + '</td>';
+      html += '<td class="seq-cell">' + toArNum(idx) + '</td>';
+      html += '<td class="name-cell">' + (row.name || '') + '</td>';
+      html += '<td class="grade-cell">' + toArNum(row.m1 != null ? row.m1 : '') + '</td>';
+      html += '<td class="grade-cell">' + toArNum(row.m2 != null ? row.m2 : '') + '</td>';
+      html += '<td class="grade-cell">' + toArNum(row.m3 != null ? row.m3 : '') + '</td>';
+      html += '<td class="avg-cell">' + toArNum(row.a1 != null ? row.a1 : '') + '</td>';
+      html += '<td class="half-cell">' + toArNum(row.half != null ? row.half : '') + '</td>';
+      html += '<td class="grade-cell">' + toArNum(row.m4 != null ? row.m4 : '') + '</td>';
+      html += '<td class="grade-cell">' + toArNum(row.m5 != null ? row.m5 : '') + '</td>';
+      html += '<td class="avg-cell">' + toArNum(row.a2 != null ? row.a2 : '') + '</td>';
+      html += '<td class="annual-cell">' + toArNum(row.annual != null ? row.annual : '') + '</td>';
+      html += '<td class="exam-cell">' + toArNum(row.exam != null ? row.exam : '') + '</td>';
+      html += '<td class="final-cell" style="background:' + finalBg + ';">' + toArNum(row.final != null ? row.final : '') + '</td>';
       html += '</tr>';
       
       idx++;
@@ -1914,32 +1932,75 @@ function admSaveAndPrint() {
     
     html += '</tbody></table>';
     
-    // ✅ التوقيع - اسم المعلم
-    html += '<div class="adm-footer"><div class="adm-sig"><b>معلم المادة: </b>' + data.teacherName + '</div></div>';
+    // ✅ التوقيع
+    html += '<div class="adm-footer">';
+    html += '<div class="adm-sig"><b>معلم المادة: </b>' + data.teacherName + '</div>';
+    html += '</div>';
+    
     html += '</div>';
   }
   
-  // ✅ CSS خاص بالإدارة - عمودي portrait
+  // ✅ CSS محسّن - عناوين واضحة + 35 تلميذ
   var css = '<style>';
-  css += '@page { size: A4 portrait; margin: 8mm 5mm; }';
-  css += '.adm-print-page { width: 100%; max-width: 200mm; font-family: "Tajawal", Arial; }';
-  css += '.adm-header { display: flex; justify-content: space-between; margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
-  css += '.adm-header-right, .adm-header-center { flex: 1; text-align: center; }';
-  css += '.adm-header-left { flex: 1; text-align: right; }';
-  css += '.adm-school { font-size: 10pt; font-weight: 900; color: #000; line-height: 1.3; }';
-  css += '.adm-school .line1 { display: block; font-size: 9pt; }';
-  css += '.adm-school .line2 { display: block; font-size: 11pt; }';
-  css += '.adm-school .line3 { display: block; font-size: 9pt; }';
-  css += '.adm-title { font-size: 12pt; font-weight: 900; color: #1E40AF; }';
-  css += '.adm-year { font-size: 8pt; color: #64748B; }';
-  css += '.adm-info { font-size: 8pt; line-height: 1.6; }';
-  css += '.adm-table { width: 100%; border-collapse: collapse; font-size: 8pt; }';
-  css += '.adm-table th, .adm-table td { border: 0.5px solid #000; padding: 1.5mm 1mm; text-align: center; font-weight: 700; }';
-  css += '.adm-table th { font-size: 7.5pt; }';
-  css += '.adm-name { text-align: right; font-size: 8pt; font-weight: 700; }';
-  css += '.adm-table td { font-size: 9pt; color: #000; }';
-  css += '.adm-footer { margin-top: 5mm; text-align: right; padding-right: 8mm; }';
-  css += '.adm-sig { font-size: 11pt; font-weight: 900; color: #1E40AF; }';
+  css += '@page { size: A4 portrait; margin: 10mm 8mm; }';
+  css += '* { box-sizing: border-box; margin: 0; padding: 0; }';
+  css += 'body { font-family: "Tajawal", Arial, sans-serif; background: #fff; }';
+  
+  // الصفحة
+  css += '.adm-page { width: 100%; max-width: 200mm; margin: 0 auto; padding: 5mm; }';
+  
+  // الرأس - عناوين واضحة وكبيرة
+  css += '.adm-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; padding-bottom: 3mm; border-bottom: 3px solid #1E40AF; }';
+  css += '.adm-header-right { flex: 1; text-align: right; }';
+  css += '.adm-header-center { flex: 1.2; text-align: center; }';
+  css += '.adm-header-left { flex: 1; text-align: left; }';
+  
+  // اسم المدرسة - كبير وواضح
+  css += '.adm-school-name { font-size: 12pt; font-weight: 900; color: #000; line-height: 1.4; }';
+  css += '.adm-school-name .line1 { display: block; font-size: 10pt; font-weight: 700; }';
+  css += '.adm-school-name .line2 { display: block; font-size: 13pt; font-weight: 900; }';
+  css += '.adm-school-name .line3 { display: block; font-size: 10pt; font-weight: 700; }';
+  
+  // العنوان الرئيسي
+  css += '.adm-title { font-size: 16pt; font-weight: 900; color: #1E40AF; margin-bottom: 2mm; }';
+  css += '.adm-year { font-size: 10pt; color: #64748B; font-weight: 700; }';
+  
+  // المعلومات
+  css += '.adm-info { font-size: 10pt; line-height: 1.6; color: #0F172A; }';
+  css += '.info-row { margin-bottom: 1mm; font-weight: 700; }';
+  css += '.info-row b { color: #1E40AF; font-weight: 900; }';
+  
+  // الجدول - مضغوط لاستيعاب 35 تلميذ
+  css += '.adm-table { width: 100%; border-collapse: collapse; font-size: 7pt; table-layout: fixed; }';
+  css += '.adm-table th, .adm-table td { border: 0.5px solid #000; padding: 1mm 0.5mm; text-align: center; vertical-align: middle; line-height: 1.1; }';
+  
+  // رؤوس الأعمدة
+  css += '.adm-table th { font-weight: 900; font-size: 7pt; color: #fff; }';
+  css += '.th-seq { width: 6mm; background: #FDE047 !important; color: #000; }';
+  css += '.th-name { width: 38mm; background: #fff !important; color: #000; }';
+  css += '.th-f1 { background: #1D4ED8 !important; }';
+  css += '.th-f2 { background: #0E7490 !important; }';
+  css += '.th-avg1, .th-avg2 { background: #B45309 !important; font-size: 6.5pt; }';
+  css += '.th-half { background: #7C3AED !important; font-size: 6.5pt; }';
+  css += '.th-annual { background: #059669 !important; font-size: 6.5pt; }';
+  css += '.th-exam { background: #DC2626 !important; font-size: 6.5pt; }';
+  css += '.th-final { background: #BE123C !important; font-size: 6.5pt; }';
+  css += '.th-sub { background: #E0E7FF !important; color: #1E40AF; font-size: 6.5pt; }';
+  
+  // خلايا البيانات
+  css += '.seq-cell { font-size: 8pt; font-weight: 900; background: #FEF3C7; color: #000; }';
+  css += '.name-cell { text-align: right; font-size: 7.5pt; font-weight: 700; padding-right: 1mm; background: #fff; color: #000; }';
+  css += '.grade-cell { font-size: 8pt; font-weight: 700; background: #DBEAFE; color: #000; }';
+  css += '.avg-cell { font-size: 8pt; font-weight: 900; background: #FEF3C7; color: #000; }';
+  css += '.half-cell { font-size: 8pt; font-weight: 900; background: #EDE9FE; color: #000; }';
+  css += '.annual-cell { font-size: 8pt; font-weight: 900; background: #D1FAE5; color: #000; }';
+  css += '.exam-cell { font-size: 8pt; font-weight: 700; background: #FEE2E2; color: #000; }';
+  css += '.final-cell { font-size: 9pt; font-weight: 900; color: #000; }';
+  
+  // التوقيع
+  css += '.adm-footer { margin-top: 8mm; text-align: right; padding-right: 10mm; }';
+  css += '.adm-sig { font-size: 12pt; font-weight: 900; color: #1E40AF; }';
+  
   css += '</style>';
   
   var fullHtml = '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>' + data.teacherName + '</title>';
@@ -1949,7 +2010,7 @@ function admSaveAndPrint() {
   fullHtml += html;
   fullHtml += '</body></html>';
   
-  // ✅ iframe منفصل تماماً - عزل تام
+  // ✅ iframe منفصل
   var oldFrame = document.getElementById('admPrintFrame');
   if (oldFrame) oldFrame.remove();
   
