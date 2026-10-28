@@ -1787,42 +1787,49 @@ function openPrint() {
   setTimeout(function() { win.print(); }, 500);
 }
 
-function openPrintSettings() {
-  // أولاً نتحقق من وجود البيانات
-  if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
-    alert('⚠️ لا توجد بيانات للطباعة. افتح كشف المعلم أولاً.');
-    return;
-  }
-  
-  // ثم نفتح نافذة الإعدادات
-  document.getElementById('printSchoolName').value = PRINT_SETTINGS.schoolName || '';
-  document.getElementById('printSchoolYear').value = PRINT_SETTINGS.schoolYear || '';
-  document.getElementById('printSchoolType').value = PRINT_SETTINGS.schoolType || '';
-  document.getElementById('printSettingsModal').classList.add('show');
-}
+  // ✅ متغيرات خاصة بالإدارة فقط (معزولة عن page-team.js)
+var ADMIN_PRINT_DATA = null;
+var ADMIN_PRINT_SETTINGS = {
+  schoolName: '',
+  schoolYear: '',
+  schoolType: ''
+};
 
-// ✅ دالة حفظ الإعدادات والطباعة
-function savePrintSettingsAndPrint() {
-  console.log('🖨️ حفظ وطباعة - البيانات:', window.currentPrintData);
-  
+// ✅ دالة فتح إعدادات الطباعة (خاصة بالإدارة)
+function openPrintSettings() {
   if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
     alert('⚠️ لا توجد بيانات للطباعة');
     return;
   }
   
-  // حفظ الإعدادات
-  PRINT_SETTINGS.schoolName = document.getElementById('printSchoolName').value.trim();
-  PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim();
-  PRINT_SETTINGS.schoolType = document.getElementById('printSchoolType').value.trim();
+  ADMIN_PRINT_DATA = window.currentPrintData;
+  
+  document.getElementById('printSchoolName').value = ADMIN_PRINT_SETTINGS.schoolName || 'مدرسة المنهل الابتدائية';
+  document.getElementById('printSchoolYear').value = ADMIN_PRINT_SETTINGS.schoolYear || '٢٠٢٥ - ٢٠٢٦';
+  document.getElementById('printSchoolType').value = ADMIN_PRINT_SETTINGS.schoolType || 'للبنين';
+  
+  document.getElementById('printSettingsModal').classList.add('show');
+}
+
+// ✅ دالة حفظ وطباعة (خاصة بالإدارة - معزولة تماماً)
+function savePrintSettingsAndPrint() {
+  ADMIN_PRINT_SETTINGS.schoolName = document.getElementById('printSchoolName').value.trim() || 'مدرسة المنهل الابتدائية';
+  ADMIN_PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim() || '٢٠٢٥ - ٢٠٢٦';
+  ADMIN_PRINT_SETTINGS.schoolType = document.getElementById('printSchoolType').value.trim() || 'للبنين';
   
   hideModal('printSettingsModal');
   
-  var data = window.currentPrintData;
+  if (!ADMIN_PRINT_DATA) {
+    alert('⚠️ لا توجد بيانات');
+    return;
+  }
+  
+  var data = ADMIN_PRINT_DATA;
   
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
     return String(val).replace(/\d/g, function(d) {
-      return '٠١٢٤٥٦٧٨٩'[parseInt(d)];
+      return '٠١٢٣٤٦٧٨٩'[parseInt(d)];
     });
   }
   
@@ -1837,7 +1844,7 @@ function savePrintSettingsAndPrint() {
     var endIdx = Math.min(startIdx + studentsPerPage, data.rows.length);
     var pageRows = data.rows.slice(startIdx, endIdx);
     
-    html += '<div style="font-family: \'Tajawal\', Arial, sans-serif; direction: rtl; padding: 15px; max-width: 297mm; margin: 0 auto; background: #fff; page-break-after: ' + (page < totalPages - 1 ? 'always' : 'auto') + ';">';
+    html += '<div style="font-family: \'Tajawal\', Arial, sans-serif; direction: rtl; padding: 15px; max-width: 210mm; margin: 0 auto; background: #fff; page-break-after: ' + (page < totalPages - 1 ? 'always' : 'auto') + ';">';
     
     // الرأس
     html += '<table style="width: 100%; border: none; margin-bottom: 15px;">';
@@ -1847,15 +1854,15 @@ function savePrintSettingsAndPrint() {
     html += '<td style="width: 30%; text-align: right; border: none; vertical-align: top;">';
     html += '<div style="font-size: 16pt; font-weight: 900; color: #000; line-height: 1.4;">';
     html += 'إدارة<br>';
-    html += 'مدرسة ' + (PRINT_SETTINGS.schoolName || 'المنهل الابتدائية') + '<br>';
-    html += (PRINT_SETTINGS.schoolType || 'للبنين');
+    html += 'مدرسة ' + ADMIN_PRINT_SETTINGS.schoolName + '<br>';
+    html += ADMIN_PRINT_SETTINGS.schoolType;
     html += '</div>';
     html += '</td>';
     
     // الوسط: العنوان
     html += '<td style="width: 40%; text-align: center; border: none; vertical-align: top;">';
     html += '<div style="font-size: 18pt; font-weight: 900; color: #1E40AF;">درجات المعلم</div>';
-    html += '<div style="font-size: 11pt; color: #64748B; margin-top: 5px;">العام الدراسي ' + (PRINT_SETTINGS.schoolYear || '٢٠٢٥ - ٢٠٢٦') + '</div>';
+    html += '<div style="font-size: 11pt; color: #64748B; margin-top: 5px;">العام الدراسي ' + ADMIN_PRINT_SETTINGS.schoolYear + '</div>';
     html += '</td>';
     
     // اليسار: المعلومات
@@ -1876,10 +1883,10 @@ function savePrintSettingsAndPrint() {
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; width: 30px; background: #FDE047; color: #000;">ت</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; width: 150px; background: #fff; color: #000;">اسم التلميذ</th>';
     html += '<th colspan="3" style="padding: 6px; border: 1px solid #0F172A; background: #1D4ED8;">الفصل الأول</th>';
-    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف</th>';
+    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف١</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #7C3AED; color: #fff;">نصف السنة</th>';
     html += '<th colspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #0E7490;">الفصل الثاني</th>';
-    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف</th>';
+    html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #B45309; color: #fff;">معدل ف٢</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #059669; color: #fff;">السعي السنوي</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #DC2626; color: #fff;">نهاية السنة</th>';
     html += '<th rowspan="2" style="padding: 6px; border: 1px solid #0F172A; background: #BE123C; color: #fff;">النهائية</th>';
@@ -1927,7 +1934,7 @@ function savePrintSettingsAndPrint() {
     html += '</div>';
   }
   
-  // ✅ فتح نافذة منفصلة للطباعة (معزولة تماماً)
+  // ✅ فتح نافذة منفصلة للطباعة (معزولة تماماً عن page-team.js)
   var printWindow = window.open('', '_blank', 'width=1200,height=800');
   
   var fullHtml = '<!DOCTYPE html><html dir="rtl"><head>';
@@ -1949,6 +1956,7 @@ function savePrintSettingsAndPrint() {
     printWindow.print();
   }, 500);
 }
+
 </script>
 </body>
 </html>
