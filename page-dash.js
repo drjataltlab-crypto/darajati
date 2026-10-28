@@ -342,6 +342,15 @@ function viewTeacherSubject(teacherCode, subject, cls) {
             });
           }
         });
+
+// حفظ البيانات للطباعة
+window.currentPrintData = {
+  teacherName: teacherName,
+  subject: subject,
+  cls: cls,
+  rows: orderedRows
+};
+console.log('✅ تم حفظ البيانات للطباعة:', window.currentPrintData);
         
         var tbody = document.getElementById('trTableBody');
         tbody.innerHTML = '';
