@@ -1260,8 +1260,7 @@ function admSaveAndPrint() {
   
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
-    return String(val).replace(/\d/g, function(d) { return '٠١٢٣٥٦٧٨٩'[parseInt(d)]; });
-  }
+return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]; });  }
   
   var cleanSchoolName = ADM_PRINT_SETTINGS.schoolName.replace(/^مدرسة\s*/i, '');
   var h = '';
@@ -1310,10 +1309,9 @@ function admSaveAndPrint() {
   h += '.th-sub { background: #E0E7FF !important; color: #000000 !important; font-size: 7.5pt !important; }';
   
   // ✅ تكبير حجم الأسماء والدرجات لتكون قابلة للقراءة (9pt)
-  h += '.print-table tbody td { color: #000000 !important; font-size: 9pt !important; font-weight: 700 !important; }';
+  h += '.print-table tbody td { color: #000000 !important; font-size: 9.5pt !important; font-weight: 700 !important; }';
   h += '.seq-num { font-size: 9pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 9pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';
-  
+  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 10pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';  
   h += '.col-f1 { background: #DBEAFE !important; }';
   h += '.col-avg1 { background: #FEF3C7 !important; }';
   h += '.col-half { background: #EDE9FE !important; }';
