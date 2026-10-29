@@ -1257,6 +1257,7 @@ function admSaveAndPrint() {
   if (!ADM_PRINT_DATA) { alert('⚠️ لا توجد بيانات'); return; }
   
   var data = ADM_PRINT_DATA;
+  
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
     return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]; });
@@ -1273,43 +1274,45 @@ function admSaveAndPrint() {
   h += '.print-page { width: 100%; max-width: 200mm; margin: 0 auto; padding: 0; page-break-after: always; }';
   h += '.print-page:last-child { page-break-after: auto; }';
   
+  // ✅ 1. الهامش العلوي والرأس (يبقى كما هو تماماً بدون تغيير)
   h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
   h += '.print-header-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; }';
   h += '.print-header-center { flex: 1.2; text-align: center; }';
   h += '.print-header-left { flex: 1; text-align: right; }';
-  
   h += '.print-school-name { text-align: center; width: 100%; color: #000; line-height: 1.3; }';
   h += '.print-school-name .line1 { display: block; font-size: 9pt; font-weight: 700; }';
   h += '.print-school-name .line2 { display: block; font-size: 11pt; font-weight: 900; }';
   h += '.print-school-name .line3 { display: block; font-size: 9pt; font-weight: 700; }';
-  
   h += '.print-title { font-size: 13pt; font-weight: 900; color: #1E40AF; margin: 0; }';
   h += '.print-year { font-size: 11pt !important; color: #000000 !important; font-weight: 900 !important; margin-top: 2mm; }';
-  
   h += '.print-info-box { font-size: 9pt; line-height: 1.5; color: #0F172A; text-align: right; }';
   h += '.print-info-row { margin-bottom: 1mm; font-weight: 700; }';
   h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
   
+  // ✅ 2. إعدادات الجدول لمنع الخروج للورقة الثانية (حجم مضغوط ومناسب لـ 35 تلميذ)
   h += '.print-table { width: 100%; border-collapse: collapse; table-layout: fixed !important; }';
   h += '.print-table thead { display: table-header-group !important; }';
   h += '.print-table tbody { display: table-row-group !important; }';
-  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.2mm 0.5mm !important; text-align: center; vertical-align: middle; line-height: 1.1; }';
+  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1mm 0.5mm !important; text-align: center; vertical-align: middle; line-height: 1.1; }';
+  h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
-  h += '.print-table th { font-weight: 900 !important; font-size: 7.5pt !important; color: #ffffff !important; }';
-  h += '.th-seq { background: #FDE047 !important; color: #000 !important; width: 9mm !important; }';
-  h += '.th-name { background: #1E40AF !important; width: 42mm !important; text-align: right !important; padding-right: 1mm !important; }';
-  h += '.th-f1 { background: #1D4ED8 !important; }';
-  h += '.th-f2 { background: #0E7490 !important; }';
-  h += '.th-avg { background: #B45309 !important; }';
-  h += '.th-half { background: #7C3AED !important; }';
-  h += '.th-annual { background: #059669 !important; }';
-  h += '.th-exam { background: #DC2626 !important; }';
-  h += '.th-final { background: #BE123C !important; }';
-  h += '.th-sub { font-size: 7pt !important; background: #E0E7FF !important; color: #1E40AF !important; }';
+  // ✅ 3. عناوين الأعمدة (ت، ت١، ت٢، ك١، آذار، نيسان) باللون الأسود الصريح
+  h += '.print-table th { font-weight: 900 !important; font-size: 7.5pt !important; }';
+  h += '.th-seq { background: #FDE047 !important; color: #000000 !important; width: 8mm !important; font-size: 8pt !important; }';
+  h += '.th-name { background: #1E40AF !important; color: #ffffff !important; width: 42mm !important; text-align: right !important; padding-right: 1mm !important; }';
+  h += '.th-f1 { background: #1D4ED8 !important; color: #ffffff !important; }';
+  h += '.th-f2 { background: #0E7490 !important; color: #ffffff !important; }';
+  h += '.th-avg { background: #B45309 !important; color: #ffffff !important; }';
+  h += '.th-half { background: #7C3AED !important; color: #ffffff !important; }';
+  h += '.th-annual { background: #059669 !important; color: #ffffff !important; }';
+  h += '.th-exam { background: #DC2626 !important; color: #ffffff !important; }';
+  h += '.th-final { background: #BE123C !important; color: #ffffff !important; }';
+  h += '.th-sub { background: #E0E7FF !important; color: #000000 !important; font-size: 7.5pt !important; }'; /* <-- اللون الأسود هنا */
   
-  h += '.print-table tbody td { color: #000000 !important; font-size: 9pt !important; font-weight: 700 !important; }';
-  h += '.seq-num { font-size: 9pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 8.5pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';
+  // ✅ 4. حجم خط الدرجات والأسماء (صغير ومقروء لضمان عدم الخروج لورقة ثانية)
+  h += '.print-table tbody td { color: #000000 !important; font-size: 8pt !important; font-weight: 700 !important; }';
+  h += '.seq-num { font-size: 8pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
+  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 8pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';
   
   h += '.col-f1 { background: #DBEAFE !important; }';
   h += '.col-avg1 { background: #FEF3C7 !important; }';
@@ -1319,12 +1322,12 @@ function admSaveAndPrint() {
   h += '.col-annual { background: #D1FAE5 !important; }';
   h += '.col-exam { background: #FEE2E2 !important; }';
   
-  h += '.print-table tbody tr { page-break-inside: avoid !important; }';
-  
+  // ✅ 5. توقيع معلم المادة في الأسفل باللون الأزرق
   h += '.print-footer { margin-top: 5mm; display: flex; justify-content: flex-end; padding-right: 5mm; page-break-inside: avoid !important; }';
   h += '.print-signature { text-align: right; width: 100mm; }';
-  h += '.print-signature .sig-text { font-size: 11pt; font-weight: 900; color: #000000; }';
-  h += '.print-signature .sig-name { font-size: 11pt; font-weight: 900; color: #000000; }';
+  h += '.print-signature .sig-text { font-size: 11pt; font-weight: 700; color: #000000; }';
+  h += '.print-signature .sig-name { font-size: 12pt; font-weight: 900; color: #1E40AF !important; }'; /* <-- اللون الأزرق */
+  
   h += '</style></head><body>';
   
   var studentsPerPage = 35;
@@ -1350,6 +1353,7 @@ function admSaveAndPrint() {
     h += '</div></div></div>';
     
     h += '<table class="print-table"><thead><tr>';
+    // ✅ تطبيق اللون الأسود على العناوين المطلوبة
     h += '<th rowspan="2" class="th-seq">ت</th>';
     h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
     h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
@@ -1361,7 +1365,11 @@ function admSaveAndPrint() {
     h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
     h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
     h += '</tr><tr>';
-    h += '<th class="th-sub">ت١</th><th class="th-sub">ت٢</th><th class="th-sub">ك١</th><th class="th-sub">آذار</th><th class="th-sub">نيسان</th>';
+    h += '<th class="th-sub">ت١</th>';
+    h += '<th class="th-sub">ت٢</th>';
+    h += '<th class="th-sub">ك١</th>';
+    h += '<th class="th-sub">آذار</th>';
+    h += '<th class="th-sub">نيسان</th>';
     h += '</tr></thead><tbody>';
     
     var globalIndex = startIdx + 1;
@@ -1392,6 +1400,8 @@ function admSaveAndPrint() {
     });
     
     h += '</tbody></table>';
+    
+    // ✅ اسم معلم المادة في الأسفل
     h += '<div class="print-footer"><div class="print-signature"><span class="sig-text">معلم المادة: </span><span class="sig-name">' + data.teacherName + '</span></div></div>';
     h += '</div>';
   }
