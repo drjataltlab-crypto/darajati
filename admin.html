@@ -1292,12 +1292,11 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
   h += '.print-table { width: 100%; border-collapse: collapse; table-layout: fixed !important; }';
   h += '.print-table thead { display: table-header-group !important; }';
   h += '.print-table tbody { display: table-row-group !important; }';
-  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 0.8mm 0.4mm !important; text-align: center; vertical-align: middle; line-height: 1.1; }';
-  h += '.print-table tbody tr { page-break-inside: avoid !important; }';
+  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.5mm 0.8mm !important; text-align: center; vertical-align: middle; line-height: 1.2; }';  h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
   // ✅ عناوين الأعمدة
   h += '.print-table th { font-weight: 900 !important; font-size: 7.5pt !important; }';
-  h += '.th-seq { background: #FDE047 !important; color: #000000 !important; width: 8mm !important; font-size: 8pt !important; }';
+  h += '.th-seq { background: #FDE047 !important; color: #000000 !important; width: 10mm !important; font-size: 10pt !important; }';
   h += '.th-name { background: #1E40AF !important; color: #ffffff !important; width: 42mm !important; text-align: right !important; padding-right: 1mm !important; }';
   h += '.th-f1 { background: #1D4ED8 !important; color: #ffffff !important; }';
   h += '.th-f2 { background: #0E7490 !important; color: #ffffff !important; }';
@@ -1309,9 +1308,9 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
   h += '.th-sub { background: #E0E7FF !important; color: #000000 !important; font-size: 7.5pt !important; }';
   
   // ✅ تكبير حجم الأسماء والدرجات لتكون قابلة للقراءة (9pt)
-  h += '.print-table tbody td { color: #000000 !important; font-size: 9.5pt !important; font-weight: 700 !important; }';
-  h += '.seq-num { font-size: 9pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1mm !important; font-size: 10pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';  
+  h += '.print-table tbody td { color: #000000 !important; font-size: 11pt !important; font-weight: 700 !important; }';
+  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
+  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1.5mm !important; font-size: 11pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';  
   h += '.col-f1 { background: #DBEAFE !important; }';
   h += '.col-avg1 { background: #FEF3C7 !important; }';
   h += '.col-half { background: #EDE9FE !important; }';
@@ -1398,8 +1397,9 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
     
     h += '</tbody></table>';
     
-    // ✅ اسم معلم المادة في الأسفل - مؤكد الظهور
+    // ✅ اسم معلم المادة في الأسفل - مؤكد الظهور 
     h += '<div style="margin-top: 4mm; text-align: left; padding-left: 5mm; page-break-inside: avoid;">';
+    h += '<div style="margin-top:5mm; text-align:left; padding-left:10mm; font-size:12pt; font-weight:900;"><span style="color:#000;">معلم المادة: </span><span style="color:#1E40AF;">' + (data.teacherName || document.getElementById('trTeacherName').textContent || '') + '</span></div>';
     h += '<div style="font-size: 11pt; font-weight: 700; color: #000;">معلم المادة: <span style="font-size: 12pt; font-weight: 900; color: #1E40AF;">' + data.teacherName + '</span></div>';
     h += '</div>';
     
