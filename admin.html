@@ -1312,25 +1312,30 @@ var ADM_PRINT_SETTINGS = {
 };
 
 function admOpenPrintSettings() {
-  // 1. نحاول أولاً أخذ البيانات من المتغير العام (الذي تستخدمه الصفحة الرئيسية)
-  var dataToPrint = window.currentPrintData;
-
-  // 2. إذا كانت البيانات فارغة أو غير موجودة، نحاول أخذها من متغير صفحة المعلمون (CURRENT_PRINT_DATA)
-  if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
-    if (typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA && CURRENT_PRINT_DATA.rows && CURRENT_PRINT_DATA.rows.length > 0) {
-      dataToPrint = CURRENT_PRINT_DATA;
-      // نقوم بتحديث المتغير العام بالبيانات الجديدة لمنع تكرار المشكلة
-      window.currentPrintData = CURRENT_PRINT_DATA;
-    }
+  var dataToPrint = null;
+  
+  // ✅ 1. نتحقق من التبويب النشط حالياً
+  var activeTab = document.querySelector('.snav.act');
+  var isTeamTab = activeTab && activeTab.getAttribute('data-tab') === 'team';
+  
+  // ✅ 2. إذا كنا في تبويب المعلمون، نستخدم بياناته الخاصة
+  if (isTeamTab && typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA) {
+    dataToPrint = CURRENT_PRINT_DATA;
+    console.log('📊 استخدام بيانات صفحة المعلمون:', dataToPrint);
+  } 
+  // ✅ 3. وإلا نستخدم بيانات الصفحة الرئيسية
+  else if (window.currentPrintData && window.currentPrintData.rows && window.currentPrintData.rows.length > 0) {
+    dataToPrint = window.currentPrintData;
+    console.log('📊 استخدام بيانات الصفحة الرئيسية:', dataToPrint);
   }
-
-  // 3. التحقق النهائي
+  
+  // ✅ 4. التحقق النهائي
   if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
     alert('⚠️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
     return;
   }
-
-  // 4. اعتماد البيانات الصحيحة للطباعة
+  
+  // ✅ 5. اعتماد البيانات الصحيحة
   ADM_PRINT_DATA = dataToPrint;
   
   document.getElementById('printSchoolName').value = ADM_PRINT_SETTINGS.schoolName;
@@ -1339,7 +1344,6 @@ function admOpenPrintSettings() {
   
   document.getElementById('printSettingsModal').classList.add('show');
 }
-
 function admSaveAndPrint() {
   // 1. حفظ إعدادات المدرسة
   localStorage.setItem('adm_school_name', document.getElementById('printSchoolName').value.trim() || 'المنهل الابتدائية');
