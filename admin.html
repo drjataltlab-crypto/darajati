@@ -1314,28 +1314,76 @@ var ADM_PRINT_SETTINGS = {
 function admOpenPrintSettings() {
   var dataToPrint = null;
   
-  // ✅ 1. نتحقق من التبويب النشط حالياً
-  var activeTab = document.querySelector('.snav.act');
-  var isTeamTab = activeTab && activeTab.getAttribute('data-tab') === 'team';
+  // ✅ 1. نحاول استخراج البيانات مباشرة من الجدول المعروض في المودال
+  var tbody = document.getElementById('trTableBody');
+  var teacherNameSpan = document.getElementById('trTeacherName');
   
-  // ✅ 2. إذا كنا في تبويب المعلمون، نستخدم بياناته الخاصة
-  if (isTeamTab && typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA) {
-    dataToPrint = CURRENT_PRINT_DATA;
-    console.log('📊 استخدام بيانات صفحة المعلمون:', dataToPrint);
-  } 
-  // ✅ 3. وإلا نستخدم بيانات الصفحة الرئيسية
-  else if (window.currentPrintData && window.currentPrintData.rows && window.currentPrintData.rows.length > 0) {
-    dataToPrint = window.currentPrintData;
-    console.log('📊 استخدام بيانات الصفحة الرئيسية:', dataToPrint);
+  if (tbody && tbody.rows && tbody.rows.length > 0 && teacherNameSpan) {
+    // استخراج اسم المعلم من العنوان (قبل علامة |)
+    var fullTitle = teacherNameSpan.textContent || '';
+    var realTeacherName = fullTitle.split('|')[0].trim() || 'غير محدد';
+    
+    // استخراج المادة والشعبة من العنوان (بعد علامة |)
+    var subjectAndClass = '';
+    if (fullTitle.includes('|')) {
+      subjectAndClass = fullTitle.split('|')[1].trim();
+    }
+    var subject = subjectAndClass.split('-')[0].trim() || '';
+    var cls = subjectAndClass.split('-')[1].trim() || '';
+    
+    // بناء مصفوفة الصفوف من الجدول المعروض
+    var rows = [];
+    for (var i = 0; i < tbody.rows.length; i++) {
+      var tr = tbody.rows[i];
+      var cells = tr.cells;
+      if (cells.length >= 13) {
+        rows.push({
+          name: cells[1].textContent.trim(),
+          m1: cells[2].textContent.trim() || null,
+          m2: cells[3].textContent.trim() || null,
+          m3: cells[4].textContent.trim() || null,
+          a1: cells[5].textContent.trim() || null,
+          half: cells[6].textContent.trim() || null,
+          m4: cells[7].textContent.trim() || null,
+          m5: cells[8].textContent.trim() || null,
+          a2: cells[9].textContent.trim() || null,
+          annual: cells[10].textContent.trim() || null,
+          exam: cells[11].textContent.trim() || null,
+          final: cells[12].textContent.trim() || null,
+          max: 100
+        });
+      }
+    }
+    
+    if (rows.length > 0) {
+      dataToPrint = {
+        teacherName: realTeacherName,
+        subject: subject,
+        cls: cls,
+        rows: rows
+      };
+      console.log('✅ تم استخراج البيانات من الجدول المعروض:', dataToPrint);
+    }
   }
   
-  // ✅ 4. التحقق النهائي
+  // ✅ 2. إذا فشل الاستخراج من الجدول، نحاول من المتغيرات العامة
   if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
-    alert('⚠️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
+    if (window.currentPrintData && window.currentPrintData.rows && window.currentPrintData.rows.length > 0) {
+      dataToPrint = window.currentPrintData;
+      console.log('📊 استخدام بيانات الصفحة الرئيسية');
+    } else if (typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA && CURRENT_PRINT_DATA.rows && CURRENT_PRINT_DATA.rows.length > 0) {
+      dataToPrint = CURRENT_PRINT_DATA;
+      console.log('📊 استخدام بيانات صفحة المعلمون');
+    }
+  }
+  
+  // ✅ 3. التحقق النهائي
+  if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
+    alert('️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
     return;
   }
   
-  // ✅ 5. اعتماد البيانات الصحيحة
+  // ✅ 4. اعتماد البيانات
   ADM_PRINT_DATA = dataToPrint;
   
   document.getElementById('printSchoolName').value = ADM_PRINT_SETTINGS.schoolName;
@@ -1344,6 +1392,7 @@ function admOpenPrintSettings() {
   
   document.getElementById('printSettingsModal').classList.add('show');
 }
+  
 function admSaveAndPrint() {
   // 1. حفظ إعدادات المدرسة
   localStorage.setItem('adm_school_name', document.getElementById('printSchoolName').value.trim() || 'المنهل الابتدائية');
