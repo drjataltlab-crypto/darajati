@@ -1312,14 +1312,31 @@ var ADM_PRINT_SETTINGS = {
 };
 
 function admOpenPrintSettings() {
-  if (!window.currentPrintData || !window.currentPrintData.rows || window.currentPrintData.rows.length === 0) {
-    alert('⚠️ لا توجد بيانات للطباعة');
+  // 1. نحاول أولاً أخذ البيانات من المتغير العام (الذي تستخدمه الصفحة الرئيسية)
+  var dataToPrint = window.currentPrintData;
+
+  // 2. إذا كانت البيانات فارغة أو غير موجودة، نحاول أخذها من متغير صفحة المعلمون (CURRENT_PRINT_DATA)
+  if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
+    if (typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA && CURRENT_PRINT_DATA.rows && CURRENT_PRINT_DATA.rows.length > 0) {
+      dataToPrint = CURRENT_PRINT_DATA;
+      // نقوم بتحديث المتغير العام بالبيانات الجديدة لمنع تكرار المشكلة
+      window.currentPrintData = CURRENT_PRINT_DATA;
+    }
+  }
+
+  // 3. التحقق النهائي
+  if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
+    alert('⚠️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
     return;
   }
-  ADM_PRINT_DATA = window.currentPrintData;
+
+  // 4. اعتماد البيانات الصحيحة للطباعة
+  ADM_PRINT_DATA = dataToPrint;
+  
   document.getElementById('printSchoolName').value = ADM_PRINT_SETTINGS.schoolName;
   document.getElementById('printSchoolYear').value = ADM_PRINT_SETTINGS.schoolYear;
   document.getElementById('printSchoolType').value = ADM_PRINT_SETTINGS.schoolType;
+  
   document.getElementById('printSettingsModal').classList.add('show');
 }
 
