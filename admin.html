@@ -1321,15 +1321,19 @@ function admOpenPrintSettings() {
   if (tbody && tbody.rows && tbody.rows.length > 0 && teacherNameSpan) {
     // استخراج اسم المعلم من العنوان (قبل علامة |)
     var fullTitle = teacherNameSpan.textContent || '';
-    var realTeacherName = fullTitle.split('|')[0].trim() || 'غير محدد';
+    var realTeacherName = 'غير محدد';
+    var subject = '';
+    var cls = '';
     
-    // استخراج المادة والشعبة من العنوان (بعد علامة |)
-    var subjectAndClass = '';
     if (fullTitle.includes('|')) {
-      subjectAndClass = fullTitle.split('|')[1].trim();
+      var parts = fullTitle.split('|');
+      if (parts[0]) realTeacherName = parts[0].trim();
+      if (parts[1]) {
+        var subjectClassParts = parts[1].split('-');
+        if (subjectClassParts[0]) subject = subjectClassParts[0].trim();
+        if (subjectClassParts[1]) cls = subjectClassParts[1].trim();
+      }
     }
-    var subject = subjectAndClass.split('-')[0].trim() || '';
-    var cls = subjectAndClass.split('-')[1].trim() || '';
     
     // بناء مصفوفة الصفوف من الجدول المعروض
     var rows = [];
@@ -1379,7 +1383,7 @@ function admOpenPrintSettings() {
   
   // ✅ 3. التحقق النهائي
   if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
-    alert('️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
+    alert('⚠️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
     return;
   }
   
