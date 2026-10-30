@@ -1324,235 +1324,238 @@ function admOpenPrintSettings() {
 }
 
 function admSaveAndPrint() {
-  ADM_PRINT_SETTINGS.schoolName = document.getElementById('printSchoolName').value.trim() || 'المنهل الابتدائية';
-  ADM_PRINT_SETTINGS.schoolYear = document.getElementById('printSchoolYear').value.trim() || '٢٠٢٦ - ٢٠٢٧';
-  ADM_PRINT_SETTINGS.schoolType = document.getElementById('printSchoolType').value.trim() || 'للبنين';
+  // 1. حفظ إعدادات المدرسة
+  localStorage.setItem('adm_school_name', document.getElementById('printSchoolName').value.trim() || 'المنهل الابتدائية');
+  localStorage.setItem('adm_school_year', document.getElementById('printSchoolYear').value.trim() || '٢٠٢٦ - ٢٠٢٧');
+  localStorage.setItem('adm_school_type', document.getElementById('printSchoolType').value.trim() || 'للبنين');
   
-  localStorage.setItem('adm_school_name', ADM_PRINT_SETTINGS.schoolName);
-  localStorage.setItem('adm_school_year', ADM_PRINT_SETTINGS.schoolYear);
-  localStorage.setItem('adm_school_type', ADM_PRINT_SETTINGS.schoolType);
-  
-  hideModal('printSettingsModal');
-  if (!ADM_PRINT_DATA) { alert('️ لا توجد بيانات'); return; }
-  
-  var data = ADM_PRINT_DATA;
-  var data = ADM_PRINT_DATA;
-  
-  // ✅ ضع الكود هنا ↓
-  var printSettings = {
-    headerColor: localStorage.getItem('print_header_color') || '#ffffff',
-    headerSize: localStorage.getItem('print_header_size') || '9',
-    seqColor: localStorage.getItem('print_seq_color') || '#000000',
-    seqSize: localStorage.getItem('print_seq_size') || '11',
-    nameColor: localStorage.getItem('print_name_color') || '#000000',
-    nameSize: localStorage.getItem('print_name_size') || '8.5',
-    gradeColor: localStorage.getItem('print_grade_color') || '#000000',
-    gradeSize: localStorage.getItem('print_grade_size') || '11',
-    colF1: localStorage.getItem('print_col_f1') || '#DBEAFE',
-    colAvg1: localStorage.getItem('print_col_avg1') || '#FEF3C7',
-    colHalf: localStorage.getItem('print_col_half') || '#EDE9FE',
-    colF2: localStorage.getItem('print_col_f2') || '#CFFAFE',
-    colAvg2: localStorage.getItem('print_col_avg2') || '#FEF3C7',
-    colAnnual: localStorage.getItem('print_col_annual') || '#D1FAE5',
-    colExam: localStorage.getItem('print_col_exam') || '#FEE2E2',
-    colFinal: localStorage.getItem('print_col_final') || '#ffffff'
-  };
-  
-  localStorage.setItem('print_header_color', document.getElementById('headerColor').value);
-  localStorage.setItem('print_header_size', document.getElementById('headerSize').value);
-  localStorage.setItem('print_seq_color', document.getElementById('seqColor').value);
-  localStorage.setItem('print_seq_size', document.getElementById('seqSize').value);
-  localStorage.setItem('print_name_color', document.getElementById('nameColor').value);
-  localStorage.setItem('print_name_size', document.getElementById('nameSize').value);
-  localStorage.setItem('print_grade_color', document.getElementById('gradeColor').value);
-  localStorage.setItem('print_grade_size', document.getElementById('gradeSize').value);
-  localStorage.setItem('print_col_f1', document.getElementById('colF1').value);
-  localStorage.setItem('print_col_avg1', document.getElementById('colAvg1').value);
-  localStorage.setItem('print_col_half', document.getElementById('colHalf').value);
-  localStorage.setItem('print_col_f2', document.getElementById('colF2').value);
-  localStorage.setItem('print_col_avg2', document.getElementById('colAvg2').value);
-  localStorage.setItem('print_col_annual', document.getElementById('colAnnual').value);
-  localStorage.setItem('print_col_exam', document.getElementById('colExam').value);
-  localStorage.setItem('print_col_final', document.getElementById('colFinal').value);
-  // ✅ انته الكود هنا ↑
-  
-  function toArNum(val) {
-    if (val === null || val === undefined || val === '') return '';
-return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]; });  }
-  
-  var cleanSchoolName = ADM_PRINT_SETTINGS.schoolName.replace(/^مدرسة\s*/i, '');
-  var h = '';
-  h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>درجات المعلم</title>';
-  h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
-  h += '<style>';
-  h += '@page { size: A4 portrait; margin: 6mm 5mm 6mm 5mm; }';
-  h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
-  h += 'html, body { width: 100%; font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; }';
-  h += '.print-page { width: 100%; max-width: 200mm; margin: 0 auto; padding: 0; page-break-after: always; }';
-  h += '.print-page:last-child { page-break-after: auto; }';
-  
-  // ✅ الهامش العلوي والرأس (يبقى كما هو)
-  h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
-  h += '.print-header-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; }';
-  h += '.print-header-center { flex: 1.2; text-align: center; }';
-  h += '.print-header-left { flex: 1; text-align: right; }';
-  h += '.print-school-name { text-align: center; width: 100%; color: #000; line-height: 1.3; }';
-  h += '.print-school-name .line1 { display: block; font-size: 9pt; font-weight: 700; }';
-  h += '.print-school-name .line2 { display: block; font-size: 11pt; font-weight: 900; }';
-  h += '.print-school-name .line3 { display: block; font-size: 9pt; font-weight: 700; }';
-  h += '.print-title { font-size: 13pt; font-weight: 900; color: #1E40AF; margin: 0; }';
-  h += '.print-year { font-size: 11pt !important; color: #000000 !important; font-weight: 900 !important; margin-top: 2mm; }';
-  h += '.print-info-box { font-size: 9pt; line-height: 1.5; color: #0F172A; text-align: right; }';
-  h += '.print-info-row { margin-bottom: 1mm; font-weight: 700; }';
-  h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
-  
-  // ✅ الجدول - تقليل padding للتعويض عن تكبير الخط
-  h += '.print-table { width: 100%; border-collapse: collapse; table-layout: fixed !important; }';
-  h += '.print-table thead { display: table-header-group !important; }';
-  h += '.print-table tbody { display: table-row-group !important; }';
-  h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.5mm 0.8mm !important; text-align: center; vertical-align: middle; line-height: 1.2; }';  h += '.print-table tbody tr { page-break-inside: avoid !important; }';
-  
-  // ✅ عناوين الأعمدة
-  h += '.print-table th { font-weight: 900 !important; font-size: ' + printSettings.headerSize + 'pt !important; color: ' + printSettings.headerColor + ' !important; }';
-  h += '.th-seq { background: #FDE047 !important; color: ' + printSettings.seqColor + ' !important; width: 10mm !important; font-size: ' + printSettings.seqSize + 'pt !important; }';
-  h += '.th-name { background: #1E40AF !important; color: #ffffff !important; width: 42mm !important; text-align: right !important; padding-right: 1mm !important; }';
-  h += '.th-f1 { background: #1D4ED8 !important; color: #ffffff !important; }';
-  h += '.th-f2 { background: #0E7490 !important; color: #ffffff !important; }';
-  h += '.th-avg { background: #B45309 !important; color: #ffffff !important; }';
-  h += '.th-half { background: #7C3AED !important; color: #ffffff !important; }';
-  h += '.th-annual { background: #059669 !important; color: #ffffff !important; }';
-  h += '.th-exam { background: #DC2626 !important; color: #ffffff !important; }';
-  h += '.th-final { background: #BE123C !important; color: #ffffff !important; }';
-  h += '.th-sub { background: #E0E7FF !important; color: #000000 !important; font-size: 7.5pt !important; }';
-  
-  // ✅ تكبير حجم الأسماء والدرجات لتكون قابلة للقراءة (9pt)
-  h += '.print-table tbody td { color: ' + printSettings.gradeColor + ' !important; font-size: ' + printSettings.gradeSize + 'pt !important; font-weight: 700 !important; }'; 
-  h += '.seq-num { font-size: ' + printSettings.seqSize + 'pt !important; font-weight: 900 !important; color: ' + printSettings.seqColor + ' !important; background: #FEF3C7 !important; }'; 
-  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1.5mm !important; font-size: ' + printSettings.nameSize + 'pt !important; color: ' + printSettings.nameColor + ' !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }'; 
-  h += '.col-f1 { background: ' + printSettings.colF1 + ' !important; }';
-  h += '.col-avg1 { background: ' + printSettings.colAvg1 + ' !important; }';
-  h += '.col-half { background: ' + printSettings.colHalf + ' !important; }';
-  h += '.col-f2 { background: ' + printSettings.colF2 + ' !important; }';
-  h += '.col-avg2 { background: ' + printSettings.colAvg2 + ' !important; }';
-  h += '.col-annual { background: ' + printSettings.colAnnual + ' !important; }';
-  h += '.col-exam { background: ' + printSettings.colExam + ' !important; }';
-  h += '.col-final { background: ' + printSettings.colFinal + ' !important; }';
-  
-  // ✅ توقيع معلم المادة في الأسفل - مؤكد الظهور باللون الأزرق
-  h += '.print-footer { margin-top: 4mm; display: flex; justify-content: flex-end; padding-right: 8mm; page-break-inside: avoid !important; visibility: visible !important; }';
-  h += '.print-signature { text-align: right; width: 100mm; visibility: visible !important; }';
-  h += '.print-signature .sig-text { font-size: 11pt; font-weight: 700; color: #000000; visibility: visible !important; }';
-  h += '.print-signature .sig-name { font-size: 12pt; font-weight: 900; color: #1E40AF !important; visibility: visible !important; }';
-  
-  h += '</style></head><body>';
-  
-  var studentsPerPage = 35;
-  var totalPages = Math.ceil(data.rows.length / studentsPerPage);
-  
-  for (var page = 0; page < totalPages; page++) {
-    var startIdx = page * studentsPerPage;
-    var endIdx = Math.min(startIdx + studentsPerPage, data.rows.length);
-    var pageRows = data.rows.slice(startIdx, endIdx);
-    
-    h += '<div class="print-page">';
-    h += '<div class="print-header">';
-    h += '<div class="print-header-right"><div class="print-school-name">';
-    h += '<span class="line1">إدارة</span>';
-    h += '<span class="line2">مدرسة ' + cleanSchoolName + '</span>';
-    h += '<span class="line3">' + ADM_PRINT_SETTINGS.schoolType + '</span>';
-    h += '</div></div>';
-    h += '<div class="print-header-center"><div class="print-title">درجات المعلم</div><div class="print-year">العام الدراسي ' + ADM_PRINT_SETTINGS.schoolYear + '</div></div>';
-    h += '<div class="print-header-left"><div class="print-info-box">';
-    h += '<div class="print-info-row"><b>المادة:</b> ' + data.subject + '</div>';
-    h += '<div class="print-info-row"><b>الصف والشعبة:</b> ' + data.cls + '</div>';
-    h += '<div class="print-info-row"><b>العدد الكلي:</b> ' + toArNum(data.rows.length) + ' تلميذ</div>';
-    h += '</div></div></div>';
-    
-    h += '<table class="print-table"><thead><tr>';
-    h += '<th rowspan="2" class="th-seq">ت</th>';
-    h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
-    h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
-    h += '<th rowspan="2" class="th-avg">معدل<br>ف١</th>';
-    h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
-    h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
-    h += '<th rowspan="2" class="th-avg">معدل<br>ف٢</th>';
-    h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
-    h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
-    h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
-    h += '</tr><tr>';
-    h += '<th class="th-sub">ت١</th>';
-    h += '<th class="th-sub">ت٢</th>';
-    h += '<th class="th-sub">ك١</th>';
-    h += '<th class="th-sub">آذار</th>';
-    h += '<th class="th-sub">نيسان</th>';
-    h += '</tr></thead><tbody>';
-    
-    var globalIndex = startIdx + 1;
-    pageRows.forEach(function(row) {
-      var g = row;
-      h += '<tr>';
-      h += '<td class="seq-num">' + toArNum(globalIndex) + '</td>';
-      h += '<td class="td-name">' + (g.name || '') + '</td>';
-      h += '<td class="col-f1">' + (g.m1!=null ? toArNum(g.m1) : '') + '</td>';
-      h += '<td class="col-f1">' + (g.m2!=null ? toArNum(g.m2) : '') + '</td>';
-      h += '<td class="col-f1">' + (g.m3!=null ? toArNum(g.m3) : '') + '</td>';
-      h += '<td class="col-avg1">' + (g.a1!=null ? toArNum(g.a1) : '') + '</td>';
-      h += '<td class="col-half">' + (g.half!=null ? toArNum(g.half) : '') + '</td>';
-      h += '<td class="col-f2">' + (g.m4!=null ? toArNum(g.m4) : '') + '</td>';
-      h += '<td class="col-f2">' + (g.m5!=null ? toArNum(g.m5) : '') + '</td>';
-      h += '<td class="col-avg2">' + (g.a2!=null ? toArNum(g.a2) : '') + '</td>';
-      h += '<td class="col-annual">' + (g.annual!=null ? toArNum(g.annual) : '') + '</td>';
-      h += '<td class="col-exam">' + (g.exam!=null ? toArNum(g.exam) : '') + '</td>';
-      
-      var finalVal = (g && g.final != null) ? g.final : null;
-      var isPass = finalVal != null && finalVal >= (g.max||100)/2;
-      var isFail = finalVal != null && finalVal < (g.max||100)/2;
-      var finalBg = isPass ? '#BBF7D0' : (isFail ? '#FECACA' : '#ffffff');
-      
-      h += '<td class="col-final" style="background:' + finalBg + ' !important;">' + (finalVal!=null ? toArNum(finalVal) : '') + '</td>';
-      h += '</tr>';
-      globalIndex++;
-    });
-    
-    h += '</tbody></table>';
-    
-    // ✅ اسم معلم المادة في الأسفل - مؤكد الظهور 
-    h += '<div style="margin-top: 4mm; text-align: left; padding-left: 5mm; page-break-inside: avoid;">';
-    // ✅ استخراج اسم المعلم الحقيقي من عنوان المودال (يفصل الاسم عن المادة والشعبة)
-    var fullTitle = document.getElementById('trTeacherName').textContent || '';
-    var realTeacherName = fullTitle.split('|')[0].trim();
-    
-    // إذا فشل الاستخراج، نستخدم الاسم المحفوظ في البيانات كاحتياط
-    if (!realTeacherName) {
-        realTeacherName = data.teacherName || 'غير محدد';
-    }
-
-    h += '<div style="margin-top:5mm; text-align:left; padding-left:10mm; font-size:12pt; font-weight:900; page-break-inside:avoid;">';
-    h += '<span style="color:#000;">معلم المادة: </span>';
-    h += '<span style="color:#1E40AF;">' + realTeacherName + '</span>';
-    h += '</div>';    h += '<div style="font-size: 11pt; font-weight: 700; color: #000;">معلم المادة: <span style="font-size: 12pt; font-weight: 900; color: #1E40AF;">' + data.teacherName + '</span></div>';
-    h += '</div>';
-    
-    h += '</div>';
+  // 2. حفظ إعدادات التصميم (الألوان والأحجام)
+  if (document.getElementById('headerColor')) {
+    localStorage.setItem('print_header_color', document.getElementById('headerColor').value);
+    localStorage.setItem('print_header_size', document.getElementById('headerSize').value);
+    localStorage.setItem('print_seq_color', document.getElementById('seqColor').value);
+    localStorage.setItem('print_seq_size', document.getElementById('seqSize').value);
+    localStorage.setItem('print_name_color', document.getElementById('nameColor').value);
+    localStorage.setItem('print_name_size', document.getElementById('nameSize').value);
+    localStorage.setItem('print_grade_color', document.getElementById('gradeColor').value);
+    localStorage.setItem('print_grade_size', document.getElementById('gradeSize').value);
+    localStorage.setItem('print_col_f1', document.getElementById('colF1').value);
+    localStorage.setItem('print_col_avg1', document.getElementById('colAvg1').value);
+    localStorage.setItem('print_col_half', document.getElementById('colHalf').value);
+    localStorage.setItem('print_col_f2', document.getElementById('colF2').value);
+    localStorage.setItem('print_col_avg2', document.getElementById('colAvg2').value);
+    localStorage.setItem('print_col_annual', document.getElementById('colAnnual').value);
+    localStorage.setItem('print_col_exam', document.getElementById('colExam').value);
+    localStorage.setItem('print_col_final', document.getElementById('colFinal').value);
   }
   
-  h += '</body></html>';
+  // 3. إغلاق المودال والانتظار قليلاً لضمان الحفظ
+  hideModal('printSettingsModal');
   
-  var oldFrame = document.getElementById('admPrintFrame');
-  if (oldFrame) oldFrame.remove();
-  
-  var f = document.createElement('iframe');
-  f.id = 'admPrintFrame';
-  f.style.position = 'fixed'; f.style.left = '-10000px'; f.style.width = '0'; f.style.height = '0'; f.style.border = '0';
-  document.body.appendChild(f);
-  
-  var doc = f.contentWindow.document;
-  doc.open(); doc.write(h); doc.close();
-  
-  setTimeout(function() { 
-    try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) {} 
-  }, 800);
-}
+  setTimeout(function() {
+    if (!ADM_PRINT_DATA) { alert('⚠️ لا توجد بيانات'); return; }
+    
+    var data = ADM_PRINT_DATA;
+    
+    function toArNum(val) {
+      if (val === null || val === undefined || val === '') return '';
+      return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]; });
+    }
+    
+    // 4. قراءة الإعدادات المحفوظة
+    var printSettings = {
+      headerColor: localStorage.getItem('print_header_color') || '#ffffff',
+      headerSize: localStorage.getItem('print_header_size') || '9',
+      seqColor: localStorage.getItem('print_seq_color') || '#000000',
+      seqSize: localStorage.getItem('print_seq_size') || '11',
+      nameColor: localStorage.getItem('print_name_color') || '#000000',
+      nameSize: localStorage.getItem('print_name_size') || '8.5',
+      gradeColor: localStorage.getItem('print_grade_color') || '#000000',
+      gradeSize: localStorage.getItem('print_grade_size') || '11',
+      colF1: localStorage.getItem('print_col_f1') || '#DBEAFE',
+      colAvg1: localStorage.getItem('print_col_avg1') || '#FEF3C7',
+      colHalf: localStorage.getItem('print_col_half') || '#EDE9FE',
+      colF2: localStorage.getItem('print_col_f2') || '#CFFAFE',
+      colAvg2: localStorage.getItem('print_col_avg2') || '#FEF3C7',
+      colAnnual: localStorage.getItem('print_col_annual') || '#D1FAE5',
+      colExam: localStorage.getItem('print_col_exam') || '#FEE2E2',
+      colFinal: localStorage.getItem('print_col_final') || '#ffffff'
+    };
+    
+    var cleanSchoolName = ADM_PRINT_SETTINGS.schoolName.replace(/^مدرسة\s*/i, '');
+    var h = '';
+    h += '<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>درجات المعلم</title>';
+    h += '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">';
+    h += '<style>';
+    h += '@page { size: A4 portrait; margin: 6mm 5mm 6mm 5mm; }';
+    h += '* { box-sizing: border-box; margin: 0; padding: 0; }';
+    h += 'html, body { width: 100%; font-family: "Tajawal", "Arial", sans-serif; background: #fff; color: #000; }';
+    h += '.print-page { width: 100%; max-width: 200mm; margin: 0 auto; padding: 0; page-break-after: always; }';
+    h += '.print-page:last-child { page-break-after: auto; }';
+    
+    h += '.print-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; padding-bottom: 2mm; border-bottom: 2px solid #1E40AF; }';
+    h += '.print-header-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; }';
+    h += '.print-header-center { flex: 1.2; text-align: center; }';
+    h += '.print-header-left { flex: 1; text-align: right; }';
+    h += '.print-school-name { text-align: center; width: 100%; color: #000; line-height: 1.3; }';
+    h += '.print-school-name .line1 { display: block; font-size: 9pt; font-weight: 700; }';
+    h += '.print-school-name .line2 { display: block; font-size: 11pt; font-weight: 900; }';
+    h += '.print-school-name .line3 { display: block; font-size: 9pt; font-weight: 700; }';
+    h += '.print-title { font-size: 13pt; font-weight: 900; color: #1E40AF; margin: 0; }';
+    h += '.print-year { font-size: 11pt !important; color: #000000 !important; font-weight: 900 !important; margin-top: 2mm; }';
+    h += '.print-info-box { font-size: 9pt; line-height: 1.5; color: #0F172A; text-align: right; }';
+    h += '.print-info-row { margin-bottom: 1mm; font-weight: 700; }';
+    h += '.print-info-row b { color: #1E40AF; font-weight: 900; }';
+    
+    h += '.print-table { width: 100%; border-collapse: collapse; table-layout: fixed !important; }';
+    h += '.print-table thead { display: table-header-group !important; }';
+    h += '.print-table tbody { display: table-row-group !important; }';
+    h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.2mm 0.6mm !important; text-align: center; vertical-align: middle; line-height: 1.1; }';
+    h += '.print-table tbody tr { page-break-inside: avoid !important; }';
+    
+    // تطبيق الأحجام والألوان الديناميكية
+    h += '.print-table th { font-weight: 900 !important; }';
+    h += '.th-seq { background: #FDE047 !important; color: ' + printSettings.seqColor + ' !important; width: 10mm !important; font-size: ' + printSettings.seqSize + 'pt !important; }';
+    h += '.th-name { background: #1E40AF !important; color: #ffffff !important; width: 42mm !important; text-align: right !important; padding-right: 1mm !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-f1 { background: #1D4ED8 !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-f2 { background: #0E7490 !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-avg { background: #B45309 !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-half { background: #7C3AED !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-annual { background: #059669 !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-exam { background: #DC2626 !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-final { background: #BE123C !important; color: ' + printSettings.headerColor + ' !important; font-size: ' + printSettings.headerSize + 'pt !important; }';
+    h += '.th-sub { background: #E0E7FF !important; color: ' + printSettings.seqColor + ' !important; font-size: ' + printSettings.seqSize + 'pt !important; }';
+    
+    h += '.print-table tbody td { color: ' + printSettings.gradeColor + ' !important; font-size: ' + printSettings.gradeSize + 'pt !important; font-weight: 700 !important; }';
+    h += '.seq-num { font-size: ' + printSettings.seqSize + 'pt !important; font-weight: 900 !important; color: ' + printSettings.seqColor + ' !important; background: #FEF3C7 !important; }';
+    h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1.5mm !important; font-size: ' + printSettings.nameSize + 'pt !important; color: ' + printSettings.nameColor + ' !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';
+    
+    h += '.col-f1 { background: ' + printSettings.colF1 + ' !important; }';
+    h += '.col-avg1 { background: ' + printSettings.colAvg1 + ' !important; }';
+    h += '.col-half { background: ' + printSettings.colHalf + ' !important; }';
+    h += '.col-f2 { background: ' + printSettings.colF2 + ' !important; }';
+    h += '.col-avg2 { background: ' + printSettings.colAvg2 + ' !important; }';
+    h += '.col-annual { background: ' + printSettings.colAnnual + ' !important; }';
+    h += '.col-exam { background: ' + printSettings.colExam + ' !important; }';
+    h += '.col-final { background: ' + printSettings.colFinal + ' !important; }';
+    
+    h += '</style></head><body>';
+    
+    var studentsPerPage = 35;
+    var totalPages = Math.ceil(data.rows.length / studentsPerPage);
+    
+    for (var page = 0; page < totalPages; page++) {
+      var startIdx = page * studentsPerPage;
+      var endIdx = Math.min(startIdx + studentsPerPage, data.rows.length);
+      var pageRows = data.rows.slice(startIdx, endIdx);
+      
+      h += '<div class="print-page">';
+      h += '<div class="print-header">';
+      h += '<div class="print-header-right"><div class="print-school-name">';
+      h += '<span class="line1">إدارة</span>';
+      h += '<span class="line2">مدرسة ' + cleanSchoolName + '</span>';
+      h += '<span class="line3">' + ADM_PRINT_SETTINGS.schoolType + '</span>';
+      h += '</div></div>';
+      h += '<div class="print-header-center"><div class="print-title">درجات المعلم</div><div class="print-year">العام الدراسي ' + ADM_PRINT_SETTINGS.schoolYear + '</div></div>';
+      h += '<div class="print-header-left"><div class="print-info-box">';
+      h += '<div class="print-info-row"><b>المادة:</b> ' + data.subject + '</div>';
+      h += '<div class="print-info-row"><b>الصف والشعبة:</b> ' + data.cls + '</div>';
+      h += '<div class="print-info-row"><b>العدد الكلي:</b> ' + toArNum(data.rows.length) + ' تلميذ</div>';
+      h += '</div></div></div>';
+      
+      h += '<table class="print-table"><thead><tr>';
+      h += '<th rowspan="2" class="th-seq">ت</th>';
+      h += '<th rowspan="2" class="th-name">اسم التلميذ</th>';
+      h += '<th colspan="3" class="th-f1">الفصل الأول</th>';
+      h += '<th rowspan="2" class="th-avg">معدل<br>ف١</th>';
+      h += '<th rowspan="2" class="th-half">نصف<br>السنة</th>';
+      h += '<th colspan="2" class="th-f2">الفصل الثاني</th>';
+      h += '<th rowspan="2" class="th-avg">معدل<br>ف٢</th>';
+      h += '<th rowspan="2" class="th-annual">السعي<br>السنوي</th>';
+      h += '<th rowspan="2" class="th-exam">نهاية<br>السنة</th>';
+      h += '<th rowspan="2" class="th-final">الدرجة<br>النهائية</th>';
+      h += '</tr><tr>';
+      h += '<th class="th-sub">ت١</th>';
+      h += '<th class="th-sub">ت٢</th>';
+      h += '<th class="th-sub">ك١</th>';
+      h += '<th class="th-sub">آذار</th>';
+      h += '<th class="th-sub">نيسان</th>';
+      h += '</tr></thead><tbody>';
+      
+      var globalIndex = startIdx + 1;
+      pageRows.forEach(function(row) {
+        var g = row;
+        h += '<tr>';
+        h += '<td class="seq-num">' + toArNum(globalIndex) + '</td>';
+        h += '<td class="td-name">' + (g.name || '') + '</td>';
+        h += '<td class="col-f1">' + (g.m1!=null ? toArNum(g.m1) : '') + '</td>';
+        h += '<td class="col-f1">' + (g.m2!=null ? toArNum(g.m2) : '') + '</td>';
+        h += '<td class="col-f1">' + (g.m3!=null ? toArNum(g.m3) : '') + '</td>';
+        h += '<td class="col-avg1">' + (g.a1!=null ? toArNum(g.a1) : '') + '</td>';
+        h += '<td class="col-half">' + (g.half!=null ? toArNum(g.half) : '') + '</td>';
+        h += '<td class="col-f2">' + (g.m4!=null ? toArNum(g.m4) : '') + '</td>';
+        h += '<td class="col-f2">' + (g.m5!=null ? toArNum(g.m5) : '') + '</td>';
+        h += '<td class="col-avg2">' + (g.a2!=null ? toArNum(g.a2) : '') + '</td>';
+        h += '<td class="col-annual">' + (g.annual!=null ? toArNum(g.annual) : '') + '</td>';
+        h += '<td class="col-exam">' + (g.exam!=null ? toArNum(g.exam) : '') + '</td>';
+        
+        var finalVal = (g && g.final != null) ? g.final : null;
+        var isPass = finalVal != null && finalVal >= (g.max||100)/2;
+        var isFail = finalVal != null && finalVal < (g.max||100)/2;
+        var finalBg = isPass ? '#BBF7D0' : (isFail ? '#FECACA' : '#ffffff');
+        
+        h += '<td class="col-final" style="background:' + finalBg + ' !important;">' + (finalVal!=null ? toArNum(finalVal) : '') + '</td>';
+        h += '</tr>';
+        globalIndex++;
+      });
+      
+      h += '</tbody></table>';
+      
+      // ✅ استخراج اسم المعلم الحقيقي من عنوان المودال
+      var modalTitle = document.getElementById('trTeacherName');
+      var teacherNameForPrint = 'غير محدد';
+      
+      if (modalTitle && modalTitle.textContent) {
+        var parts = modalTitle.textContent.split('|');
+        if (parts.length > 0) {
+          teacherNameForPrint = parts[0].trim();
+        }
+      }
+      
+      if (!teacherNameForPrint || teacherNameForPrint === 'غير محدد') {
+        teacherNameForPrint = data.teacherName || 'غير محدد';
+      }
+      
+      // طباعة اسم المعلم مرة واحدة فقط في آخر صفحة
+      if (page === totalPages - 1) {
+        h += '<div style="margin-top:6mm; text-align:left; padding-left:10mm; font-size:12pt; font-weight:900; page-break-inside:avoid;">';
+        h += '<span style="color:#000; font-weight:700;">معلم المادة: </span>';
+        h += '<span style="color:#1E40AF; font-weight:900;">' + teacherNameForPrint + '</span>';
+        h += '</div>';
+      }
+      
+      h += '</div>'; // إغلاق print-page
+    }
+    
+    h += '</body></html>';
+    
+    var oldFrame = document.getElementById('admPrintFrame');
+    if (oldFrame) oldFrame.remove();
+    
+    var f = document.createElement('iframe');
+    f.id = 'admPrintFrame';
+    f.style.position = 'fixed'; f.style.left = '-10000px'; f.style.width = '0'; f.style.height = '0'; f.style.border = '0';
+    document.body.appendChild(f);
+    
+    var doc = f.contentWindow.document;
+    doc.open(); doc.write(h); doc.close();
+    
+    setTimeout(function() { 
+      try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) {} 
+    }, 800);
+    
+  }, 300); // نهاية setTimeout
+} // نهاية الدالة
 
 function resetPrintSettings() {
   if (!confirm('هل تريد استعادة الإعدادات الافتراضية؟')) return;
