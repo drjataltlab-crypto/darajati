@@ -910,14 +910,93 @@
 </div>
 
 <div class="ovl" id="printSettingsModal">
-  <div class="modal" style="max-width:500px">
-    <h3>🖨️ إعدادات الطباعة</h3>
-    <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="المنهل الابتدائية"></div>
-    <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٦ - ٢٠٢٧"></div>
-    <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
-    <div class="mrow" style="margin-top:16px">
-      <button class="btn ghost" style="margin:0" onclick="hideModal('printSettingsModal')">إلغاء</button>
-      <button class="btn ok" style="margin:0" onclick="admSaveAndPrint()">💾 حفظ وطباعة</button>
+  <div class="modal" style="max-width:700px; max-height:90vh; overflow-y:auto;">
+    <h3 style="color:#1E40AF; margin-bottom:15px;">🖨️ إعدادات الطباعة المتقدمة</h3>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+      <!-- معلومات المدرسة -->
+      <div class="form-group"><label>اسم المدرسة</label><input id="printSchoolName" placeholder="المنهل الابتدائية"></div>
+      <div class="form-group"><label>العام الدراسي</label><input id="printSchoolYear" placeholder="٢٠٢٦ - ٢٠٢٧"></div>
+      <div class="form-group"><label>النوع</label><input id="printSchoolType" placeholder="للبنين" value="للبنين"></div>
+      
+      <!-- عناوين الأعمدة -->
+      <div class="form-group">
+        <label>📌 عناوين الأعمدة</label>
+        <div style="display:flex; gap:5px;">
+          <input type="color" id="headerColor" value="#ffffff" style="width:50px; height:38px; border:none; cursor:pointer;">
+          <input type="number" id="headerSize" value="9" min="6" max="14" style="flex:1;" placeholder="الحجم (pt)">
+        </div>
+      </div>
+      
+      <!-- التسلسل -->
+      <div class="form-group">
+        <label>🔢 التسلسل</label>
+        <div style="display:flex; gap:5px;">
+          <input type="color" id="seqColor" value="#000000" style="width:50px; height:38px; border:none; cursor:pointer;">
+          <input type="number" id="seqSize" value="11" min="6" max="14" style="flex:1;" placeholder="الحجم (pt)">
+        </div>
+      </div>
+      
+      <!-- أسماء التلاميذ -->
+      <div class="form-group">
+        <label>👤 أسماء التلاميذ</label>
+        <div style="display:flex; gap:5px;">
+          <input type="color" id="nameColor" value="#000000" style="width:50px; height:38px; border:none; cursor:pointer;">
+          <input type="number" id="nameSize" value="8.5" min="6" max="14" step="0.5" style="flex:1;" placeholder="الحجم (pt)">
+        </div>
+      </div>
+      
+      <!-- الدرجات -->
+      <div class="form-group">
+        <label>📊 الدرجات</label>
+        <div style="display:flex; gap:5px;">
+          <input type="color" id="gradeColor" value="#000000" style="width:50px; height:38px; border:none; cursor:pointer;">
+          <input type="number" id="gradeSize" value="11" min="6" max="14" style="flex:1;" placeholder="الحجم (pt)">
+        </div>
+      </div>
+    </div>
+    
+    <!-- ألوان الأعمدة -->
+    <h4 style="margin-top:20px; color:#1E40AF; border-top:1px solid #E2E8F0; padding-top:10px;">🎨 ألوان خلفيات الأعمدة</h4>
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-top:10px;">
+      <div class="form-group">
+        <label>الفصل الأول</label>
+        <input type="color" id="colF1" value="#DBEAFE" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>معدل ف1</label>
+        <input type="color" id="colAvg1" value="#FEF3C7" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>نصف السنة</label>
+        <input type="color" id="colHalf" value="#EDE9FE" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>الفصل الثاني</label>
+        <input type="color" id="colF2" value="#CFFAFE" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>معدل ف2</label>
+        <input type="color" id="colAvg2" value="#FEF3C7" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>السعي السنوي</label>
+        <input type="color" id="colAnnual" value="#D1FAE5" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>نهاية السنة</label>
+        <input type="color" id="colExam" value="#FEE2E2" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+      <div class="form-group">
+        <label>الدرجة النهائية</label>
+        <input type="color" id="colFinal" value="#ffffff" style="width:100%; height:40px; border:none; cursor:pointer;">
+      </div>
+    </div>
+    
+    <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+      <button class="btn ghost" onclick="hideModal('printSettingsModal')">إلغاء</button>
+      <button class="btn" style="background:#64748B;" onclick="resetPrintSettings()">🔄 استعادة الافتراضي</button>
+      <button class="btn ok" onclick="admSaveAndPrint()">💾 حفظ وطباعة</button>
     </div>
   </div>
 </div>
@@ -1257,6 +1336,45 @@ function admSaveAndPrint() {
   if (!ADM_PRINT_DATA) { alert('️ لا توجد بيانات'); return; }
   
   var data = ADM_PRINT_DATA;
+  var data = ADM_PRINT_DATA;
+  
+  // ✅ ضع الكود هنا ↓
+  var printSettings = {
+    headerColor: localStorage.getItem('print_header_color') || '#ffffff',
+    headerSize: localStorage.getItem('print_header_size') || '9',
+    seqColor: localStorage.getItem('print_seq_color') || '#000000',
+    seqSize: localStorage.getItem('print_seq_size') || '11',
+    nameColor: localStorage.getItem('print_name_color') || '#000000',
+    nameSize: localStorage.getItem('print_name_size') || '8.5',
+    gradeColor: localStorage.getItem('print_grade_color') || '#000000',
+    gradeSize: localStorage.getItem('print_grade_size') || '11',
+    colF1: localStorage.getItem('print_col_f1') || '#DBEAFE',
+    colAvg1: localStorage.getItem('print_col_avg1') || '#FEF3C7',
+    colHalf: localStorage.getItem('print_col_half') || '#EDE9FE',
+    colF2: localStorage.getItem('print_col_f2') || '#CFFAFE',
+    colAvg2: localStorage.getItem('print_col_avg2') || '#FEF3C7',
+    colAnnual: localStorage.getItem('print_col_annual') || '#D1FAE5',
+    colExam: localStorage.getItem('print_col_exam') || '#FEE2E2',
+    colFinal: localStorage.getItem('print_col_final') || '#ffffff'
+  };
+  
+  localStorage.setItem('print_header_color', document.getElementById('headerColor').value);
+  localStorage.setItem('print_header_size', document.getElementById('headerSize').value);
+  localStorage.setItem('print_seq_color', document.getElementById('seqColor').value);
+  localStorage.setItem('print_seq_size', document.getElementById('seqSize').value);
+  localStorage.setItem('print_name_color', document.getElementById('nameColor').value);
+  localStorage.setItem('print_name_size', document.getElementById('nameSize').value);
+  localStorage.setItem('print_grade_color', document.getElementById('gradeColor').value);
+  localStorage.setItem('print_grade_size', document.getElementById('gradeSize').value);
+  localStorage.setItem('print_col_f1', document.getElementById('colF1').value);
+  localStorage.setItem('print_col_avg1', document.getElementById('colAvg1').value);
+  localStorage.setItem('print_col_half', document.getElementById('colHalf').value);
+  localStorage.setItem('print_col_f2', document.getElementById('colF2').value);
+  localStorage.setItem('print_col_avg2', document.getElementById('colAvg2').value);
+  localStorage.setItem('print_col_annual', document.getElementById('colAnnual').value);
+  localStorage.setItem('print_col_exam', document.getElementById('colExam').value);
+  localStorage.setItem('print_col_final', document.getElementById('colFinal').value);
+  // ✅ انته الكود هنا ↑
   
   function toArNum(val) {
     if (val === null || val === undefined || val === '') return '';
@@ -1295,8 +1413,8 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
   h += '.print-table th, .print-table td { border: 0.5px solid #000 !important; padding: 1.5mm 0.8mm !important; text-align: center; vertical-align: middle; line-height: 1.2; }';  h += '.print-table tbody tr { page-break-inside: avoid !important; }';
   
   // ✅ عناوين الأعمدة
-  h += '.print-table th { font-weight: 900 !important; font-size: 7.5pt !important; }';
-  h += '.th-seq { background: #FDE047 !important; color: #000000 !important; width: 10mm !important; font-size: 10pt !important; }';
+  h += '.print-table th { font-weight: 900 !important; font-size: ' + printSettings.headerSize + 'pt !important; color: ' + printSettings.headerColor + ' !important; }';
+  h += '.th-seq { background: #FDE047 !important; color: ' + printSettings.seqColor + ' !important; width: 10mm !important; font-size: ' + printSettings.seqSize + 'pt !important; }';
   h += '.th-name { background: #1E40AF !important; color: #ffffff !important; width: 42mm !important; text-align: right !important; padding-right: 1mm !important; }';
   h += '.th-f1 { background: #1D4ED8 !important; color: #ffffff !important; }';
   h += '.th-f2 { background: #0E7490 !important; color: #ffffff !important; }';
@@ -1308,16 +1426,17 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
   h += '.th-sub { background: #E0E7FF !important; color: #000000 !important; font-size: 7.5pt !important; }';
   
   // ✅ تكبير حجم الأسماء والدرجات لتكون قابلة للقراءة (9pt)
-  h += '.print-table tbody td { color: #000000 !important; font-size: 11pt !important; font-weight: 700 !important; }';
-  h += '.seq-num { font-size: 11pt !important; font-weight: 900 !important; color: #000000 !important; background: #FEF3C7 !important; }';
-  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1.5mm !important; font-size: 11pt !important; color: #000 !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }';  
-  h += '.col-f1 { background: #DBEAFE !important; }';
-  h += '.col-avg1 { background: #FEF3C7 !important; }';
-  h += '.col-half { background: #EDE9FE !important; }';
-  h += '.col-f2 { background: #CFFAFE !important; }';
-  h += '.col-avg2 { background: #FEF3C7 !important; }';
-  h += '.col-annual { background: #D1FAE5 !important; }';
-  h += '.col-exam { background: #FEE2E2 !important; }';
+  h += '.print-table tbody td { color: ' + printSettings.gradeColor + ' !important; font-size: ' + printSettings.gradeSize + 'pt !important; font-weight: 700 !important; }'; 
+  h += '.seq-num { font-size: ' + printSettings.seqSize + 'pt !important; font-weight: 900 !important; color: ' + printSettings.seqColor + ' !important; background: #FEF3C7 !important; }'; 
+  h += '.td-name { text-align: right !important; font-weight: 800 !important; padding-right: 1.5mm !important; font-size: ' + printSettings.nameSize + 'pt !important; color: ' + printSettings.nameColor + ' !important; background: #ffffff !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }'; 
+  h += '.col-f1 { background: ' + printSettings.colF1 + ' !important; }';
+  h += '.col-avg1 { background: ' + printSettings.colAvg1 + ' !important; }';
+  h += '.col-half { background: ' + printSettings.colHalf + ' !important; }';
+  h += '.col-f2 { background: ' + printSettings.colF2 + ' !important; }';
+  h += '.col-avg2 { background: ' + printSettings.colAvg2 + ' !important; }';
+  h += '.col-annual { background: ' + printSettings.colAnnual + ' !important; }';
+  h += '.col-exam { background: ' + printSettings.colExam + ' !important; }';
+  h += '.col-final { background: ' + printSettings.colFinal + ' !important; }';
   
   // ✅ توقيع معلم المادة في الأسفل - مؤكد الظهور باللون الأزرق
   h += '.print-footer { margin-top: 4mm; display: flex; justify-content: flex-end; padding-right: 8mm; page-break-inside: avoid !important; visibility: visible !important; }';
@@ -1399,8 +1518,19 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
     
     // ✅ اسم معلم المادة في الأسفل - مؤكد الظهور 
     h += '<div style="margin-top: 4mm; text-align: left; padding-left: 5mm; page-break-inside: avoid;">';
-    h += '<div style="margin-top:5mm; text-align:left; padding-left:10mm; font-size:12pt; font-weight:900;"><span style="color:#000;">معلم المادة: </span><span style="color:#1E40AF;">' + (data.teacherName || document.getElementById('trTeacherName').textContent || '') + '</span></div>';
-    h += '<div style="font-size: 11pt; font-weight: 700; color: #000;">معلم المادة: <span style="font-size: 12pt; font-weight: 900; color: #1E40AF;">' + data.teacherName + '</span></div>';
+    // ✅ استخراج اسم المعلم الحقيقي من عنوان المودال (يفصل الاسم عن المادة والشعبة)
+    var fullTitle = document.getElementById('trTeacherName').textContent || '';
+    var realTeacherName = fullTitle.split('|')[0].trim();
+    
+    // إذا فشل الاستخراج، نستخدم الاسم المحفوظ في البيانات كاحتياط
+    if (!realTeacherName) {
+        realTeacherName = data.teacherName || 'غير محدد';
+    }
+
+    h += '<div style="margin-top:5mm; text-align:left; padding-left:10mm; font-size:12pt; font-weight:900; page-break-inside:avoid;">';
+    h += '<span style="color:#000;">معلم المادة: </span>';
+    h += '<span style="color:#1E40AF;">' + realTeacherName + '</span>';
+    h += '</div>';    h += '<div style="font-size: 11pt; font-weight: 700; color: #000;">معلم المادة: <span style="font-size: 12pt; font-weight: 900; color: #1E40AF;">' + data.teacherName + '</span></div>';
     h += '</div>';
     
     h += '</div>';
@@ -1422,6 +1552,27 @@ return String(val).replace(/\d/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[pa
   setTimeout(function() { 
     try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) {} 
   }, 800);
+}
+
+function resetPrintSettings() {
+  if (!confirm('هل تريد استعادة الإعدادات الافتراضية؟')) return;
+  localStorage.removeItem('print_header_color');
+  localStorage.removeItem('print_header_size');
+  localStorage.removeItem('print_seq_color');
+  localStorage.removeItem('print_seq_size');
+  localStorage.removeItem('print_name_color');
+  localStorage.removeItem('print_name_size');
+  localStorage.removeItem('print_grade_color');
+  localStorage.removeItem('print_grade_size');
+  localStorage.removeItem('print_col_f1');
+  localStorage.removeItem('print_col_avg1');
+  localStorage.removeItem('print_col_half');
+  localStorage.removeItem('print_col_f2');
+  localStorage.removeItem('print_col_avg2');
+  localStorage.removeItem('print_col_annual');
+  localStorage.removeItem('print_col_exam');
+  localStorage.removeItem('print_col_final');
+  location.reload();
 }
 </script>
 </body>
