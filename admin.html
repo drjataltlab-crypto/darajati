@@ -1314,80 +1314,132 @@ var ADM_PRINT_SETTINGS = {
 function admOpenPrintSettings() {
   var dataToPrint = null;
   
-  // ✅ 1. نحاول استخراج البيانات مباشرة من الجدول المعروض في المودال
-  var tbody = document.getElementById('trTableBody');
-  var teacherNameSpan = document.getElementById('trTeacherName');
-  
-  if (tbody && tbody.rows && tbody.rows.length > 0 && teacherNameSpan) {
-    // استخراج اسم المعلم من العنوان (قبل علامة |)
-    var fullTitle = teacherNameSpan.textContent || '';
-    var realTeacherName = 'غير محدد';
-    var subject = '';
-    var cls = '';
+  // ✅ 1. أولاً: نتحقق من CURRENT_PRINT_DATA (صفحة المعلمون) - لأنه يحتوي على البيانات الكاملة
+  if (typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA) {
+    var cpd = CURRENT_PRINT_DATA;
     
-    if (fullTitle.includes('|')) {
-      var parts = fullTitle.split('|');
-      if (parts[0]) realTeacherName = parts[0].trim();
-      if (parts[1]) {
-        var subjectClassParts = parts[1].split('-');
-        if (subjectClassParts[0]) subject = subjectClassParts[0].trim();
-        if (subjectClassParts[1]) cls = subjectClassParts[1].trim();
-      }
-    }
-    
-    // بناء مصفوفة الصفوف من الجدول المعروض
-    var rows = [];
-    for (var i = 0; i < tbody.rows.length; i++) {
-      var tr = tbody.rows[i];
-      var cells = tr.cells;
-      if (cells.length >= 13) {
-        rows.push({
-          name: cells[1].textContent.trim(),
-          m1: cells[2].textContent.trim() || null,
-          m2: cells[3].textContent.trim() || null,
-          m3: cells[4].textContent.trim() || null,
-          a1: cells[5].textContent.trim() || null,
-          half: cells[6].textContent.trim() || null,
-          m4: cells[7].textContent.trim() || null,
-          m5: cells[8].textContent.trim() || null,
-          a2: cells[9].textContent.trim() || null,
-          annual: cells[10].textContent.trim() || null,
-          exam: cells[11].textContent.trim() || null,
-          final: cells[12].textContent.trim() || null,
-          max: 100
+    // إذا كانت البنية تحتوي على byClass (بنية صفحة المعلمون)
+    if (cpd.byClass && cpd.subjectName) {
+      var allRows = [];
+      var classKeys = Object.keys(cpd.byClass);
+      
+      classKeys.forEach(function(clsKey) {
+        cpd.byClass[clsKey].forEach(function(s) {
+          var g = s.grades || {};
+          allRows.push({
+            name: s.name,
+            m1: g.m1 != null ? g.m1 : null,
+            m2: g.m2 != null ? g.m2 : null,
+            m3: g.m3 != null ? g.m3 : null,
+            a1: g.a1 != null ? g.a1 : null,
+            half: g.half != null ? g.half : null,
+            m4: g.m4 != null ? g.m4 : null,
+            m5: g.m5 != null ? g.m5 : null,
+            a2: g.a2 != null ? g.a2 : null,
+            annual: g.annual != null ? g.annual : null,
+            exam: g.exam != null ? g.exam : null,
+            final: g.final != null ? g.final : null,
+            max: g.max || 100
+          });
         });
+      });
+      
+      if (allRows.length > 0) {
+        // استخراج اسم المعلم من عنوان المودال
+        var teacherNameSpan = document.getElementById('trTeacherName');
+        var realTeacherName = 'غير محدد';
+        if (teacherNameSpan && teacherNameSpan.textContent) {
+          var parts = teacherNameSpan.textContent.split('|');
+          if (parts[0]) realTeacherName = parts[0].trim();
+        }
+        
+        dataToPrint = {
+          teacherName: realTeacherName,
+          subject: cpd.subjectName,
+          cls: classKeys.join(' - '),
+          rows: allRows
+        };
+        console.log('✅ استخدام بيانات صفحة المعلمون الكاملة:', dataToPrint);
       }
     }
-    
-    if (rows.length > 0) {
-      dataToPrint = {
-        teacherName: realTeacherName,
-        subject: subject,
-        cls: cls,
-        rows: rows
-      };
-      console.log('✅ تم استخراج البيانات من الجدول المعروض:', dataToPrint);
+    // إذا كانت البنية بسيطة (subject, cls, rows)
+    else if (cpd.rows && cpd.rows.length > 0) {
+      dataToPrint = cpd;
+      console.log('📊 استخدام بيانات بسيطة من صفحة المعلمون');
     }
   }
   
-  // ✅ 2. إذا فشل الاستخراج من الجدول، نحاول من المتغيرات العامة
+  // ✅ 2. إذا فشل، نحاول من window.currentPrintData (الصفحة الرئيسية)
   if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
     if (window.currentPrintData && window.currentPrintData.rows && window.currentPrintData.rows.length > 0) {
       dataToPrint = window.currentPrintData;
-      console.log('📊 استخدام بيانات الصفحة الرئيسية');
-    } else if (typeof CURRENT_PRINT_DATA !== 'undefined' && CURRENT_PRINT_DATA && CURRENT_PRINT_DATA.rows && CURRENT_PRINT_DATA.rows.length > 0) {
-      dataToPrint = CURRENT_PRINT_DATA;
-      console.log('📊 استخدام بيانات صفحة المعلمون');
+      console.log(' استخدام بيانات الصفحة الرئيسية');
     }
   }
   
-  // ✅ 3. التحقق النهائي
+  // ✅ 3. إذا فشل كل شيء، نستخرج من الجدول المعروض
+  if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
+    var tbody = document.getElementById('trTableBody');
+    var teacherNameSpan = document.getElementById('trTeacherName');
+    
+    if (tbody && tbody.rows && tbody.rows.length > 0 && teacherNameSpan) {
+      var fullTitle = teacherNameSpan.textContent || '';
+      var realTeacherName = 'غير محدد';
+      var subject = '';
+      var cls = '';
+      
+      if (fullTitle.includes('|')) {
+        var parts = fullTitle.split('|');
+        if (parts[0]) realTeacherName = parts[0].trim();
+        if (parts[1]) {
+          var subjectClassParts = parts[1].split('-');
+          if (subjectClassParts[0]) subject = subjectClassParts[0].trim();
+          if (subjectClassParts[1]) cls = subjectClassParts[1].trim();
+        }
+      }
+      
+      var rows = [];
+      for (var i = 0; i < tbody.rows.length; i++) {
+        var tr = tbody.rows[i];
+        var cells = tr.cells;
+        if (cells.length >= 13) {
+          rows.push({
+            name: cells[1].textContent.trim(),
+            m1: cells[2].textContent.trim() || null,
+            m2: cells[3].textContent.trim() || null,
+            m3: cells[4].textContent.trim() || null,
+            a1: cells[5].textContent.trim() || null,
+            half: cells[6].textContent.trim() || null,
+            m4: cells[7].textContent.trim() || null,
+            m5: cells[8].textContent.trim() || null,
+            a2: cells[9].textContent.trim() || null,
+            annual: cells[10].textContent.trim() || null,
+            exam: cells[11].textContent.trim() || null,
+            final: cells[12].textContent.trim() || null,
+            max: 100
+          });
+        }
+      }
+      
+      if (rows.length > 0) {
+        dataToPrint = {
+          teacherName: realTeacherName,
+          subject: subject,
+          cls: cls,
+          rows: rows
+        };
+        console.log('✅ تم استخراج البيانات من الجدول:', dataToPrint);
+      }
+    }
+  }
+  
+  // ✅ 4. التحقق النهائي
   if (!dataToPrint || !dataToPrint.rows || dataToPrint.rows.length === 0) {
     alert('⚠️ لا توجد بيانات للطباعة. يرجى فتح كشف الشعبة أولاً.');
     return;
   }
   
-  // ✅ 4. اعتماد البيانات
+  // ✅ 5. اعتماد البيانات
   ADM_PRINT_DATA = dataToPrint;
   
   document.getElementById('printSchoolName').value = ADM_PRINT_SETTINGS.schoolName;
