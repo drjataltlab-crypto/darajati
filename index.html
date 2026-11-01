@@ -465,14 +465,60 @@ function switchScreen(screenId){
 
 function doLogin(){
   var code=$('#codeInput').value.trim().toUpperCase();
-  if(!code){$('#loginMsg').textContent='⚠️ أدخل الكود';return;}
-  $('#loginMsg').textContent='⏳ جاري التحقق...'; $('#loginMsg').style.color='var(--muted)';
-  api({action:'teacherLogin',code:code}).then(function(r){
-    if(!r.ok){$('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');$('#loginMsg').style.color='var(--danger)';return;}
+  if(!code){
+    $('#loginMsg').textContent='⚠️ أدخل الكود';
+    $('#loginMsg').style.color='var(--warning)';
+    return;
+  }
+  
+  $('#loginMsg').textContent='⏳ جاري التحقق...'; 
+  $('#loginMsg').style.color='var(--muted)';
+  
+  // ✅ محاولة الاتصال مع مهلة زمنية
+  var loginPromise = api({action:'teacherLogin',code:code}, 10000);
+  
+  loginPromise.then(function(r){
+    if(!r.ok){
+      $('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');
+      $('#loginMsg').style.color='var(--danger)';
+      return;
+    }
+    
+    // ✅ تسجيل الدخول ناجح
     localStorage.setItem('d_session',JSON.stringify(r.teacher));
     SendQueue.KEY = 'd_send_queue_' + r.teacher.code;
     enterHome();
-  }).catch(function(e){$('#loginMsg').textContent='📴 تعذر الاتصال';$('#loginMsg').style.color='var(--danger)';});
+    
+  }).catch(function(e){
+    console.log('❌ فشل الاتصال:', e);
+    
+    // ✅ محاولة الدخول بالبيانات المخزنة (Offline Mode)
+    var cachedSession = localStorage.getItem('d_session');
+    if(cachedSession){
+      try{
+        var cachedData = JSON.parse(cachedSession);
+        if(cachedData.code === code){
+          $('#loginMsg').textContent='📴 لا اتصال - الدخول بالبيانات المخزنة';
+          $('#loginMsg').style.color='var(--warning)';
+          setTimeout(function(){
+            SendQueue.KEY = 'd_send_queue_' + code;
+            enterHome();
+          }, 1500);
+          return;
+        }
+      }catch(err){
+        console.error('خطأ في قراءة البيانات المخزنة:', err);
+      }
+    }
+    
+    // ✅ إذا لم توجد بيانات مخزنة، اعرض رسالة واضحة
+    $('#loginMsg').textContent=' تعذر الاتصال - تحقق من الإنترنت';
+    $('#loginMsg').style.color='var(--danger)';
+    
+    setTimeout(function(){
+      $('#loginMsg').textContent='💡 جرب مرة أخرى أو تحقق من الاتصال';
+    }, 3000);
+  });
 }
 
 function enterHome(){
