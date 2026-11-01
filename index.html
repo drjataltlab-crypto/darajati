@@ -464,102 +464,145 @@ function switchScreen(screenId){
 }
 
 function doLogin(){
-  var code=$('#codeInput').value.trim().toUpperCase();
+  var code = $('#codeInput').value.trim().toUpperCase();
   if(!code){
-    $('#loginMsg').textContent='⚠️ أدخل الكود';
-    $('#loginMsg').style.color='var(--warning)';
+    $('#loginMsg').textContent = '⚠️ أدخل الكود';
+    $('#loginMsg').style.color = 'var(--warning)';
     return;
   }
-  
-  $('#loginMsg').textContent='⏳ جاري التحقق...'; 
-  $('#loginMsg').style.color='var(--muted)';
-  
-  // ✅ محاولة الاتصال مع مهلة زمنية
-  var loginPromise = api({action:'teacherLogin',code:code}, 10000);
-  
-  loginPromise.then(function(r){
-    if(!r.ok){
-      $('#loginMsg').textContent='❌ '+(r.error||'كود غير صحيح');
-      $('#loginMsg').style.color='var(--danger)';
+
+  console.log('🔄 محاولة تسجيل الدخول للكود:', code);
+  $('#loginMsg').textContent = '⏳ جاري التحقق...';
+  $('#loginMsg').style.color = 'var(--muted)';
+
+  // محاولة الاتصال مع مهلة زمنية 10 ثواني
+  api({action:'teacherLogin', code:code}, 10000).then(function(r){
+    console.log('📥 استجابة الخادم:', r);
+    
+    if(!r || !r.ok){
+      $('#loginMsg').textContent = '❌ ' + (r && r.error ? r.error : 'كود غير صحيح');
+      $('#loginMsg').style.color = 'var(--danger)';
       return;
     }
-    
-    // ✅ تسجيل الدخول ناجح
-    localStorage.setItem('d_session',JSON.stringify(r.teacher));
+
+    console.log('✅ تسجيل الدخول ناجح، جاري تحميل الصفحة الرئيسية...');
+    localStorage.setItem('d_session', JSON.stringify(r.teacher));
     SendQueue.KEY = 'd_send_queue_' + r.teacher.code;
-    enterHome();
     
+    // ✅ استخدام try-catch لمنع تجميد الشاشة في حال وجود خطأ في enterHome
+    try {
+      enterHome();
+    } catch (err) {
+      console.error('❌ خطأ فادح في دالة enterHome:', err);
+      $('#loginMsg').textContent = '❌ خطأ في تحميل البيانات';
+      $('#loginMsg').style.color = 'var(--danger)';
+    }
+
   }).catch(function(e){
-    console.log('❌ فشل الاتصال:', e);
-    
-    // ✅ محاولة الدخول بالبيانات المخزنة (Offline Mode)
+    console.error('❌ فشل الاتصال أو انتهت المهلة:', e);
+
+    // ✅ محاولة الدخول بدون إنترنت (Offline Mode)
     var cachedSession = localStorage.getItem('d_session');
     if(cachedSession){
       try{
         var cachedData = JSON.parse(cachedSession);
         if(cachedData.code === code){
-          $('#loginMsg').textContent='📴 لا اتصال - الدخول بالبيانات المخزنة';
-          $('#loginMsg').style.color='var(--warning)';
+          console.log('📴 الدخول بالبيانات المخزنة (Offline)');
+          $('#loginMsg').textContent = '📴 لا اتصال - الدخول بالبيانات المخزنة';
+          $('#loginMsg').style.color = 'var(--warning)';
+          SendQueue.KEY = 'd_send_queue_' + code;
           setTimeout(function(){
-            SendQueue.KEY = 'd_send_queue_' + code;
-            enterHome();
-          }, 1500);
+            try { enterHome(); } catch(err) { console.error(err); }
+          }, 1000);
           return;
         }
-      }catch(err){
+      } catch(err){
         console.error('خطأ في قراءة البيانات المخزنة:', err);
       }
     }
-    
-    // ✅ إذا لم توجد بيانات مخزنة، اعرض رسالة واضحة
-    $('#loginMsg').textContent=' تعذر الاتصال - تحقق من الإنترنت';
-    $('#loginMsg').style.color='var(--danger)';
-    
+
+    // فشل كامل في الاتصال
+    $('#loginMsg').textContent = '📴 تعذر الاتصال بالخادم';
+    $('#loginMsg').style.color = 'var(--danger)';
     setTimeout(function(){
-      $('#loginMsg').textContent='💡 جرب مرة أخرى أو تحقق من الاتصال';
+      $('#loginMsg').textContent = '💡 تحقق من الإنترنت أو جرب لاحقاً';
     }, 3000);
   });
 }
 
 function enterHome(){
-  var s=JSON.parse(localStorage.getItem('d_session')||'null');
-  if(!s){ switchScreen('s-login'); return; }
-  T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
-  if(!T.subjects||T.subjects.length===0){ if(T.subject&&T.classes&&T.classes.length>0){ T.subjects=[{name:T.subject,classes:T.classes}]; } }
-  T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
-// ✅ عرض اسم المعلم فقط وإخفاء الكود السري تماماً
+  var s = JSON.parse(localStorage.getItem('d_session') || 'null');
+  if(!s){
+    switchScreen('s-login');
+    return;
+  }
+
+  T.code = s.code || '';
+  T.name = s.name || '';
+  T.subject = s.subject || '';
+  T.classes = s.classes || [];
+  T.subjects = s.subjects || [];
+  T.drafts = {};
+
+  if(!T.subjects || T.subjects.length === 0){
+    if(T.subject && T.classes && T.classes.length > 0){
+      T.subjects = [{name: T.subject, classes: T.classes}];
+    }
+  }
+
+  T.month = MONTHS[0];
+  T.cls = (T.classes && T.classes[0]) || '';
+
+  // ✅ عرض اسم المعلم فقط (بدون الكود السري)
   if (T.name && T.name.trim() !== '') {
     $('#teacherName').textContent = 'مرحباً ' + T.name;
     $('#welcomeTitle').textContent = 'أهلاً ' + T.name;
+    console.log('✅ تم عرض اسم المعلم:', T.name);
   } else {
     $('#teacherName').textContent = 'مرحباً معلم';
     $('#welcomeTitle').textContent = 'أهلاً بك';
+    console.warn('⚠️ اسم المعلم فارغ في البيانات');
   }
-  // تم حذف سطر عرض الكود نهائياً لحماية الخصوصية  switchScreen('s-app');
+
+  switchScreen('s-app');
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
+
   window.addEventListener('online', updateConnectionStatus);
   window.addEventListener('offline', updateConnectionStatus);
   updateConnectionStatus();
   SendQueue.updateUI();
   setTimeout(function(){ SendQueue.processQueue(); }, 2000);
+
   requestNotificationPermission();
   checkMessages();
-  msgCheckInterval=setInterval(checkMessages, 30000); 
-  syncInterval = setInterval(function() { if (T.cls && T.subject) loadCurrent(true); }, SYNC_INTERVAL);
+  msgCheckInterval = setInterval(checkMessages, 30000);
+  
+  syncInterval = setInterval(function() { 
+    if (T.cls && T.subject) loadCurrent(true); 
+  }, SYNC_INTERVAL);
+
   lockCheckInterval = setInterval(function(){
     if(!T.code) return;
     api({action:'teacherLogin', code:T.code}).then(function(r){
       if(!r.ok){
-        clearInterval(lockCheckInterval); clearInterval(msgCheckInterval); clearInterval(syncInterval);
-        clearTimeout(inactivityTimer); clearTimeout(warningTimer); clearInterval(countdownInterval);
+        clearInterval(lockCheckInterval); 
+        clearInterval(msgCheckInterval); 
+        clearInterval(syncInterval);
+        clearTimeout(inactivityTimer); 
+        clearTimeout(warningTimer); 
+        clearInterval(countdownInterval);
+        
         $('#lockTeacherName').textContent = T.name || 'غير معروف';
         $('#lockTeacherCode').textContent = T.code;
         $('#lockDate').textContent = new Date().toLocaleDateString('ar-EG');
         showLockModal();
       }
-    }).catch(function(e){ console.log('فشل فحص حالة الحساب:', e); });
+    }).catch(function(e){ 
+      console.log('فشل فحص حالة الحساب:', e); 
+    });
   }, 30000);
+
   setupInactivityListeners();
   resetInactivityTimer();
 }
