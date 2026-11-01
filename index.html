@@ -481,19 +481,8 @@ function enterHome(){
   T.code=s.code||''; T.name=s.name||''; T.subject=s.subject||''; T.classes=s.classes||[]; T.subjects=s.subjects||[]; T.drafts={};
   if(!T.subjects||T.subjects.length===0){ if(T.subject&&T.classes&&T.classes.length>0){ T.subjects=[{name:T.subject,classes:T.classes}]; } }
   T.month=MONTHS[0]; T.cls=(T.classes&&T.classes[0])||'';
-// ✅ التأكد من وجود اسم المعلم وعرضه
-if (T.name && T.name.trim() !== '') {
-  var nameElement = $('#teacherName');
-  if (nameElement) {
-    nameElement.textContent = 'مرحباً ' + T.name;
-    console.log('✅ تم عرض اسم المعلم:', T.name);
-  } else {
-    console.error('❌ عنصر teacherName غير موجود في HTML');
-  }
-} else {
-  console.warn('⚠️ اسم المعلم فارغ في البيانات:', s);
-  $('#teacherName').textContent = 'مرحباً معلم';
-}
+$('#teacherName').textContent='مرحباً '+T.name;
+// تم إخفاء الكود لحماية الخصوصية - $('#teacherCode').textContent='🔑 '+T.code;
   buildSelectors();
   setTimeout(function() { loadCurrent(true); }, 500);
   window.addEventListener('online', updateConnectionStatus);
