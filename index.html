@@ -375,12 +375,41 @@ function confirmAction(){hideModal('confirmModal');if(confirmFn)confirmFn();conf
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function escA(s){return esc(s).replace(/"/g,'&quot;');}
 
-function api(p,ms){
-  var url=localStorage.getItem('d_url')||(typeof SERVER_URL!=='undefined'?SERVER_URL:'');
-  if(!url)return Promise.reject(new Error('لا رابط'));
-  var ctl=new AbortController();
-  var t=setTimeout(function(){ctl.abort();},ms||60000);
-  return fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p),signal:ctl.signal}).then(function(r){return r.json();}).finally(function(){clearTimeout(t);});
+function api(p, ms){
+  var url = localStorage.getItem('d_url') || (typeof SERVER_URL !== 'undefined' ? SERVER_URL : '');
+  if(!url){
+    console.warn('⚠️ لا يوجد رابط للخادم');
+    return Promise.reject(new Error('لا رابط'));
+  }
+  
+  var ctl = new AbortController();
+  var timeout = ms || 10000; // 10 ثواني افتراضياً
+  var t = setTimeout(function(){
+    ctl.abort();
+    console.log('⏰ انتهت مهلة الاتصال (' + timeout + 'ms)');
+  }, timeout);
+  
+  return fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(p),
+    signal: ctl.signal
+  })
+  .then(function(r){
+    if(!r.ok){
+      throw new Error('HTTP ' + r.status);
+    }
+    return r.json();
+  })
+  .catch(function(err){
+    if(err.name === 'AbortError'){
+      console.log(' انتهى وقت انتظار الخادم');
+    }
+    throw err;
+  })
+  .finally(function(){
+    clearTimeout(t);
+  });
 }
 
 function fnv1a(str){
@@ -932,21 +961,47 @@ function requestNotificationPermission(){
 }
 
 function checkMessages(){
-  if(!T.code) return;
-  api({action:'getMessages', code:T.code}).then(function(r){
-    if(r.ok){
-      var badge = $('#msgBadge');
-      if(r.unread > 0){
-        badge.textContent = arNum(r.unread); badge.style.display = 'flex'; 
-        toast('📩 لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
-        playNotificationSound();
-        if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        if("Notification" in window && Notification.permission === "granted"){
-          try { new Notification("رسالة من الإدارة", { body: "لديك " + r.unread + " رسالة جديدة في درجاتي", icon: "icon.png", tag: "darajati-message" }); } catch(e) {}
+  // ✅ التحقق من الاتصال أولاً
+  if(!navigator.onLine){
+    console.log(' لا اتصال - تخطي فحص الرسائل');
+    return;
+  }
+  
+  if(!T.code){
+    console.log('️ لا يوجد كود معلم - تخطي فحص الرسائل');
+    return;
+  }
+  
+  // ✅ محاولة جلب الرسائل مع معالجة أفضل للأخطاء
+  api({action:'getMessages', code:T.code}, 5000) // مهلة 5 ثواني فقط
+    .then(function(r){
+      if(r && r.ok){
+        var badge = $('#msgBadge');
+        if(r.unread > 0){
+          badge.textContent = arNum(r.unread); 
+          badge.style.display = 'flex'; 
+          toast(' لديك ' + r.unread + ' رسالة جديدة من الإدارة!', 'ok');
+          playNotificationSound();
+          if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          if("Notification" in window && Notification.permission === "granted"){
+            try { 
+              new Notification("رسالة من الإدارة", { 
+                body: "لديك " + r.unread + " رسالة جديدة في درجاتي", 
+                icon: "icon.png", 
+                tag: "darajati-message" 
+              }); 
+            } catch(e) {}
+          }
+        } else { 
+          badge.style.display = 'none'; 
         }
-      } else { badge.style.display = 'none'; }
-    }
-  }).catch(function(e){ console.log('فشل جلب الرسائل:', e); });
+      }
+    })
+    .catch(function(e){
+      // ✅ عدم إظهار الخطأ للمستخدم - فقط تسجيله في Console
+      console.log('📭 فشل جلب الرسائل (طبيعي):', e.message || e);
+      // لا تظهر toast للمستخدم حتى لا تزعجه
+    });
 }
 
 function playNotificationSound(){
