@@ -252,7 +252,7 @@ function renderEditSubjects(){
     html += '<span class="row-num">'+(idx+1)+'.</span>';
     html += '<select onchange="updateEditSubject('+idx+',\'subject\',this.value)">';
     html += '<option value="">اختر المادة</option>';
-    var subjects = ['الرياضة', 'الفنية', 'الاجتماعيات', 'العلوم', 'الرياضيات', 'اللغة الانكليزية ', 'اللغة العربية', 'التربية الإسلامية'];
+    var subjects = ['الاجتماعيات', 'العلوم', 'الرياضيات', 'اللغة الانكليزية', 'اللغة العربية', 'التربية الإسلامية', 'الفنية', 'الرياضة'];
     subjects.forEach(function(s){
       html += '<option value="'+esc(s)+'"'+(item.subject===s?' selected':'')+'>'+esc(s)+'</option>';
     });
